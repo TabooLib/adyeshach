@@ -44,11 +44,32 @@ enum class EntityTypes(
             AdyBat::class.java
     ),
 
+    BEE(
+            EntityType.BEE,
+            4,
+            EntitySize(0.7, 0.6),
+            AdyBee::class.java
+    ),
+
     BLAZE(
             EntityType.BLAZE,
             0,
             EntitySize(0.6, 1.8),
             AdyBat::class.java
+    ),
+
+    BOAT(
+            EntityType.BOAT,
+            6,
+            EntitySize(1.375, 0.5625),
+            AdyBoat::class.java
+    ),
+
+    CAVE_SPIDER(
+            EntityType.CAVE_SPIDER,
+            8,
+            EntitySize(0.7, 0.5),
+            AdyCaveSpider::class.java
     ),
 
     PLAYER(
