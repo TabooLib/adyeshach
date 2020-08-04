@@ -29,7 +29,7 @@ enum class EntityTypes(
 
     BAT(
             EntityType.BAT,
-            EntitySize(0.5, 0.5),
+            EntitySize(0.5, 0.9),
             AdyBat::class.java
     ),
 

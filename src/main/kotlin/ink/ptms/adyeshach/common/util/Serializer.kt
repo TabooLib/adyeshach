@@ -1,13 +1,11 @@
 package ink.ptms.adyeshach.common.util
 
-import io.izzel.taboolib.internal.gson.GsonBuilder
-import io.izzel.taboolib.internal.gson.JsonDeserializer
-import io.izzel.taboolib.internal.gson.JsonPrimitive
-import io.izzel.taboolib.internal.gson.JsonSerializer
+import io.izzel.taboolib.internal.gson.*
 import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.EulerAngle
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import java.io.ByteArrayInputStream
@@ -17,10 +15,21 @@ import java.util.*
 object Serializer {
 
     val serializer = GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(YamlConfiguration::class.java, JsonSerializer<YamlConfiguration> { a, _, _ -> JsonPrimitive(a.saveToString()) })
+            .registerTypeAdapter(YamlConfiguration::class.java, JsonDeserializer<YamlConfiguration> { a, _, _ -> SecuredFile.loadConfiguration(a.asString) })
             .registerTypeAdapter(ItemStack::class.java, JsonSerializer<ItemStack> { a, _, _ -> JsonPrimitive(fromItemStack(a)) })
             .registerTypeAdapter(ItemStack::class.java, JsonDeserializer<ItemStack> { a, _, _ -> toItemStack(a.asString) })
-            .registerTypeAdapter(YamlConfiguration::class.java, JsonSerializer<YamlConfiguration> { a, _, _ -> JsonPrimitive(a.saveToString()) })
-            .registerTypeAdapter(YamlConfiguration::class.java, JsonDeserializer<YamlConfiguration> { a, _, _ -> SecuredFile.loadConfiguration(a.asString) }).create()
+            .registerTypeAdapter(EulerAngle::class.java, JsonSerializer<EulerAngle> { a, _, _ ->
+                JsonObject().run {
+                    addProperty("x", a.x)
+                    addProperty("y", a.y)
+                    addProperty("z", a.z)
+                    this
+                }
+            })
+            .registerTypeAdapter(EulerAngle::class.java, JsonDeserializer<EulerAngle> { a, _, _ ->
+                EulerAngle(a.asJsonObject.get("x").asDouble, a.asJsonObject.get("y").asDouble, a.asJsonObject.get("z").asDouble)
+            }).create()
 
     @Suppress("UNCHECKED_CAST")
     fun toItemStack(data: String): ItemStack {

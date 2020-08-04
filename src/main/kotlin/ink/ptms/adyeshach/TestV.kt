@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.common.entity.MetadataExtend
+import ink.ptms.adyeshach.common.entity.element.EntityRotation
 import ink.ptms.adyeshach.common.entity.type.impl.AdyAreaEffectCloud
 import ink.ptms.adyeshach.common.entity.type.impl.AdyArmorStand
 import ink.ptms.adyeshach.common.entity.type.impl.AdyBat
@@ -13,6 +14,7 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.EulerAngle
 
 /**
  * @author Arasple
@@ -28,6 +30,11 @@ object TestV {
                 if (sender is Player) {
                     val entity = AdyArmorStand(sender)
                     entity.spawn(sender.location)
+                    entity.setArms(true)
+                    entity.setSmall(true)
+                    entity.setGlowing(true)
+                    entity.setRotation(EntityRotation.LEFT_ARM, EulerAngle(10.0, 50.0, 100.0))
+                    entity.setRotation(EntityRotation.RIGHT_ARM, EulerAngle(10.0, 50.0, 100.0))
                     NMS.INSTANCE.updateEntityMetadata(entity.owner, entity.index, *entity.metadata().toTypedArray())
                     Bukkit.getScheduler().runTaskLaterAsynchronously(Adyeshach.plugin, Runnable {
                         entity.destroy()

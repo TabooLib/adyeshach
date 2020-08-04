@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.EulerAngle
 import java.util.*
 
 
@@ -230,6 +231,10 @@ class NMSImpl16 : NMS() {
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.a), value)
+    }
+
+    override fun getMetaEntityVector(index: Int, value: EulerAngle): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
