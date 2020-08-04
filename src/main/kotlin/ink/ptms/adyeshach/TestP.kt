@@ -23,8 +23,23 @@ object TestP {
                 if (sender is Player) {
                     val human = AdyHuman(sender)
                     human.spawn(sender.location)
-                    human.hideInTabList()
+                    human.setSkinData(
+                            cape = true,
+                            jacket = true,
+                            leftSleeve = true,
+                            rightSleeve = true,
+                            leftPants = true,
+                            rightPants = true,
+                            hat = true,
+                            unused = false
+                    )
+                    human.setTexture(
+                            "ewogICJ0aW1lc3RhbXAiIDogMTU5NjU0NjE3OTEzOCwKICAicHJvZmlsZUlkIiA6ICJhMzZkNzY0NDhkYWU0NmIxYmQwMDU0MjJjNjYyOTk3ZiIsCiAgInByb2ZpbGVOYW1lIiA6ICJCYWt1cml0X01hdWVpYyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS80NzRhYzQyNDM1ZTJmMmU4NjA3ZTAxZTAyMmJmOGIzNWMzZDNhNDI0ZDQxMmEzMmQ5YTRmNWU1NzRiZDU2NzZjIgogICAgfQogIH0KfQ==",
+                            "AkZtxjwY8urkJpWUUhi4dR8DELAwfZZ7UUX1nWIIb0r/vvxBcar3ifWhmGAgKUiAh4JYT9i1hOUfL9JeoMPM0XhCxHsFCR5q3LA8ycUkSWfCDWD1h4byr/mH4PuWFIglH0QKOBlSDaCWDSkdhAJ142o4bcl9vH8rNFon93anY2Wb44bWe4JWmMwuMn3YuZnYPkPEeu97j940zf1xgl2cq4ASsuQw/CifMUxO6jG4xrube1dyZNn8dJUmGWrcBVWMHegiWTgGDnQC/2P2ki599STCnzkIXi0Ncj43rOE0jlN7POn6hzrnEIkObYSJZJR02wBjS50Y612q1R9sG8y/UZ7IfORRGq0ke5PaikfCwoApqEji8fKLkl0kG9t5YTT0RZwEaOdbUpKknLMPFYvrRrHFl4lWee6bg5wGu2p5v3Gn9DSd7uU7FQPbt65r+cYknU0mfz7dqzCdz6oEFii8ltAdbUltaSWbWUqNyAcNNr8NVMMqkEuW/BiE5N/cptUKajIz9qLxiWr+2Va9eKQYMUr6gWAUi7KqFc6eYoywgysNbSmZupeMop+jJlLjUcKrE+LdwUX7LjkHiF055qlLT3vwGQUuEE4Nem83Ib9cbPNyGUW3IcsukCtVjzqYofAH8aOF5cYKirlEuyIMXoJRX9DwOVfkBuWTG1xDxfJDxzE="
+                    )
+
                     Bukkit.getScheduler().runTaskLaterAsynchronously(Adyeshach.plugin, Runnable {
+                        human.removePlayerInfo()
                         human.setFired(true)
                         human.setGlowing(true)
                         sender.sendMessage("§c[System] §7Glowing & OnFire Enabled.")
@@ -48,7 +63,7 @@ object TestP {
                         sender.sendMessage(io.izzel.taboolib.internal.gson.GsonBuilder().setPrettyPrinting().create().toJson(Serializer.serializer.toJsonTree(human)))
                         human.destroy()
                         sender.sendMessage("§c[System] §7Removed.")
-                    }, 100)
+                    }, 180)
                     sender.sendMessage("§c[System] §7Done.")
                 }
             }
