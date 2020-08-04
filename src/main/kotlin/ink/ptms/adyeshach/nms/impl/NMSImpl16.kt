@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.nms.impl
 
+import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -74,18 +75,9 @@ class NMSImpl16 : NMS() {
     override fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>) {
         val profile = GameProfile(uuid, name)
         val infoData = PacketPlayOutPlayerInfo()
-
         if (texture.size == 2) {
-            profile.properties.put(
-                    "textures",
-                    Property(
-                            "textures",
-                            texture[0],
-                            texture[1]
-                    )
-            )
+            profile.properties.put("textures", Property("textures", texture[0], texture[1]))
         }
-
         sendPacket(
                 player,
                 infoData,
@@ -95,8 +87,7 @@ class NMSImpl16 : NMS() {
                                 infoData.PlayerInfoData(
                                         profile,
                                         ping,
-                                        EnumGamemode.values().firstOrNull { it.name == gameMode.name }
-                                                ?: EnumGamemode.NOT_SET,
+                                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
                                         ChatComponentText(name)
                                 )
                         )
@@ -106,21 +97,11 @@ class NMSImpl16 : NMS() {
 
     override fun removePlayerInfo(player: Player, uuid: UUID) {
         val infoData = PacketPlayOutPlayerInfo()
-
         sendPacket(
                 player,
                 infoData,
                 Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER),
-                Pair("b",
-                        listOf(
-                                infoData.PlayerInfoData(
-                                        GameProfile(uuid, ""),
-                                        -1,
-                                        null,
-                                        null
-                                )
-                        )
-                )
+                Pair("b", listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null)))
         )
     }
 
@@ -171,31 +152,19 @@ class NMSImpl16 : NMS() {
         )
     }
 
-    override fun updateDisplayName(player: Player, entityId: Int, name: String) = updateEntityMetadata(player, entityId, getMetaEntityCustomName(name))
+    override fun updateDisplayName(player: Player, entityId: Int, name: String) {
+        updateEntityMetadata(player, entityId, getMetaEntityCustomName(name))
+    }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         sendPacket(
                 player,
-                PacketPlayOutEntityEquipment(
-                        entityId,
-                        listOf(
-                                com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))
-                        )
-                )
+                PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))))
         )
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-        val items = mutableListOf<DataWatcher.Item<*>>()
-        for (obj in objects) {
-            items.add(obj as DataWatcher.Item<*>)
-        }
-        sendPacket(
-                player,
-                PacketPlayOutEntityMetadata(),
-                Pair("a", entityId),
-                Pair("b", items)
-        )
+        sendPacket(player, PacketPlayOutEntityMetadata(), Pair("a", entityId), Pair("b", objects.map { it as DataWatcher.Item<*> }.toList()))
     }
 
     override fun getMetaEntityItemStack(itemStack: ItemStack): Any {
@@ -215,13 +184,21 @@ class NMSImpl16 : NMS() {
         return DataWatcher.Item(DataWatcherObject(0, DataWatcherRegistry.a), bits.toByte())
     }
 
-    override fun getMetaEntityGravity(noGravity: Boolean): Any = DataWatcher.Item(DataWatcherObject(5, DataWatcherRegistry.i), noGravity)
+    override fun getMetaEntityGravity(noGravity: Boolean): Any {
+        return DataWatcher.Item(DataWatcherObject(5, DataWatcherRegistry.i), noGravity)
+    }
 
-    override fun getMetaEntitySilenced(silenced: Boolean): Any = DataWatcher.Item(DataWatcherObject(4, DataWatcherRegistry.i), silenced)
+    override fun getMetaEntitySilenced(silenced: Boolean): Any {
+        return DataWatcher.Item(DataWatcherObject(4, DataWatcherRegistry.i), silenced)
+    }
 
-    override fun getMetaEntityCustomNameVisible(visible: Boolean): Any = DataWatcher.Item(DataWatcherObject(3, DataWatcherRegistry.i), visible)
+    override fun getMetaEntityCustomNameVisible(visible: Boolean): Any {
+        return DataWatcher.Item(DataWatcherObject(3, DataWatcherRegistry.i), visible)
+    }
 
-    override fun getMetaEntityCustomName(name: String): Any = DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(2, DataWatcherRegistry.f), Optional.of(ChatComponentText(name)))
+    override fun getMetaEntityCustomName(name: String): Any {
+        return DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(2, DataWatcherRegistry.f), Optional.of(ChatComponentText(name)))
+    }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.b), value)
@@ -252,12 +229,10 @@ class NMSImpl16 : NMS() {
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
-        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true)
-                ?: EntityTypes.ARMOR_STAND
+        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true) ?: EntityTypes.ARMOR_STAND
     }
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
-        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true)
-                ?: Particles.FLAME
+        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
     }
 }
