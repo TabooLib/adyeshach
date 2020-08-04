@@ -1,0 +1,12 @@
+
+
+#         Powered by TabooLib 5.0         #
+
+
+name: ${name}
+main: ${main}
+main-transfer: ${mainTransfer}
+version: ${version}
+authors: [${author}]
+
+api-version: 1.13

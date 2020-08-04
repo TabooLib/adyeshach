@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0-rc'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+ext {
+    name = rootProject.name
+    main = 'ink.ptms.adyeshach'
+    author = '坏黑, Arasple'
+    version = '1.0-SNAPSHOT'
+    redefine = true
+}
+
+configurations {
+    group = rootProject.ext.main
+    version = rootProject.ext.version
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.build.dependsOn tasks.shadowJar
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    defaultTasks 'clean', 'build'
+}
+
+repositories {
+    maven { url "http://repo.ptms.ink/repository/codemc-nms/" }
+    maven { url "http://repo.ptms.ink/repository/maven-releases/" }
+    mavenCentral()
+}
+
+dependencies {
+    compile 'ink.ptms.core:v11600:11600:all'
+    compile 'io.izzel.taboolib:TabooLib:5.34:all'
+    compile 'io.izzel.taboolib:TabooLibLoader:2.2:all'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib'
+    compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+}
+
+shadowJar {
+    dependencies {
+        include dependency('io.izzel.taboolib:TabooLibLoader:.*')
+    }
+    relocate 'io.izzel.taboolib.loader', project.group + ".boot"
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        expand(
+                'name': rootProject.name,
+                'main': rootProject.ext.redefine ? (rootProject.ext.main + ".boot.PluginTransfer") : (rootProject.ext.main + "." + rootProject.ext.name),
+                'mainTransfer': rootProject.ext.redefine ? (rootProject.ext.main + "." + rootProject.ext.name) : "null",
+                'version': rootProject.ext.version,
+                'author': rootProject.ext.author
+        )
+    }
+}
