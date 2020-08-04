@@ -27,18 +27,14 @@ open class EntityProperties(
         var gravity: Boolean = true,
 ) {
 
+    open class Fish : EntityProperties() {
+        @Expose
+        var fromBucket = false
+    }
+
     open class Ageable : EntityProperties() {
         @Expose
         var baby = false
-    }
-
-    open class Tameable : EntityProperties() {
-        @Expose
-        var sitting = false
-        @Expose
-        var angry = false
-        @Expose
-        var tamed = false
     }
 
     open class Raider : EntityProperties() {
@@ -51,6 +47,35 @@ open class EntityProperties(
         var baby = false
         @Expose
         var drowning = false
+    }
+
+    open class Tameable : Ageable() {
+        @Expose
+        var sitting = false
+        @Expose
+        var angry = false
+        @Expose
+        var tamed = false
+    }
+
+    open class Horse : Ageable() {
+        @Expose
+        var tamed = false
+        @Expose
+        var saddled = false
+        @Expose
+        var bred = false
+        @Expose
+        var eating = false
+        @Expose
+        var rearing = false
+        @Expose
+        var mouthOpen = false
+    }
+
+    open class HorseChested : Horse() {
+        @Expose
+        var chest = false
     }
 
     open class Minecart : EntityProperties() {

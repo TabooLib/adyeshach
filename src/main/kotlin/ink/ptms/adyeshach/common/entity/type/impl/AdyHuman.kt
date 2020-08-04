@@ -14,7 +14,7 @@ import java.util.*
  * @Author sky
  * @Since 2020-08-04 15:44
  */
-class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), MetadataExtend {
+class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER), MetadataExtend {
 
     init {
         properties = HumanProperties()

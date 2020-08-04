@@ -10,23 +10,23 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyEntityAgeable(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes), MetadataExtend {
+abstract class AdyFish(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes), MetadataExtend {
 
-    open fun setBaby(value: Boolean) {
-        getProperties().baby = value
+    fun setFromBucket(value: Boolean) {
+        getProperties().fromBucket = value
         NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityBoolean(15, value))
     }
 
-    open fun isBaby(): Boolean {
-        return getProperties().baby
+    fun isFromBucket(): Boolean {
+        return getProperties().fromBucket
     }
 
     override fun metadata(): List<Any> {
         return getProperties().run {
-            listOf(NMS.INSTANCE.getMetaEntityBoolean(15, baby))
+            listOf(NMS.INSTANCE.getMetaEntityBoolean(15, fromBucket))
         }
     }
 
-    private fun getProperties(): EntityProperties.Ageable = properties as EntityProperties.Ageable
+    private fun getProperties(): EntityProperties.Fish = properties as EntityProperties.Fish
 
 }

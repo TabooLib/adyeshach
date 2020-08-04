@@ -44,13 +44,13 @@ class AdyBee(owner: Player) : AdyEntityLiving(owner, EntityTypes.BEE), MetadataE
         return getProperties().hasNectar
     }
 
-    fun setAngerTicks(angerTicks: Int) {
-        getProperties().angerTicks = angerTicks
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityInt(17, angerTicks))
+    fun setAngered(value: Boolean) {
+        getProperties().angerTicks = if (value) 999 else 0
+        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityInt(17, if (value) 999 else 0))
     }
 
-    fun getAngerTicks(): Int {
-        return getProperties().angerTicks
+    fun isAngered(): Boolean {
+        return getProperties().angerTicks > 0
     }
 
     fun baseData(): Byte {
@@ -104,7 +104,5 @@ class AdyBee(owner: Player) : AdyEntityLiving(owner, EntityTypes.BEE), MetadataE
          */
         @Expose
         var angerTicks = 0
-
     }
-
 }

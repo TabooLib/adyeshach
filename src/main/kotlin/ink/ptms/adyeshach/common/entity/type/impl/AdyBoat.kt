@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.entity.MetadataExtend
 import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitBoat
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Player
 
@@ -44,12 +45,12 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT), MetadataExten
         return getProperties().damageTaken
     }
 
-    fun setType(type: Int) {
+    fun setType(type: BukkitBoat) {
         getProperties().type = type
         update()
     }
 
-    fun getType(): Int {
+    fun getType(): BukkitBoat {
         return getProperties().type
     }
 
@@ -90,7 +91,7 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT), MetadataExten
                     NMS.INSTANCE.getMetaEntityInt(7, sinceLastHit),
                     NMS.INSTANCE.getMetaEntityInt(8, forwardDirection),
                     NMS.INSTANCE.getMetaEntityFloat(9, damageTaken),
-                    NMS.INSTANCE.getMetaEntityInt(10, type),
+                    NMS.INSTANCE.getMetaEntityInt(10, type.ordinal),
                     NMS.INSTANCE.getMetaEntityBoolean(11, leftPaddleTurning),
                     NMS.INSTANCE.getMetaEntityBoolean(12, rightPaddleTurning),
                     NMS.INSTANCE.getMetaEntityInt(13, splashTimer),
@@ -111,11 +112,8 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT), MetadataExten
         @Expose
         var damageTaken = 0.0F
 
-        /**
-         * (0=oak, 1=spruce, 2=birch, 3=jungle, 4=acacia, 5=dark oak)
-         */
         @Expose
-        var type = 0
+        var type = BukkitBoat.OAK
 
         @Expose
         var leftPaddleTurning = false
@@ -125,7 +123,5 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT), MetadataExten
 
         @Expose
         var splashTimer = 0
-
     }
-
 }
