@@ -3,9 +3,8 @@ package ink.ptms.adyeshach.common.entity.type.impl
 import ink.ptms.adyeshach.common.entity.MetadataExtend
 import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose
-import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -83,7 +82,7 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
     }
 
     fun updatePlayerInfo() {
-        spawn(position.toLocation(Bukkit.getWorld(world!!)!!))
+        spawn(getLatestLocation())
         NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, skinData()))
     }
 

@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.nms
+package ink.ptms.adyeshach.api.nms
 
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -87,7 +87,7 @@ abstract class NMS {
                 Version.isAfter(Version.v1_9) -> "12"
                 else -> "8"
             }
-            INSTANCE = SimpleVersionControl.createNMS("ink.ptms.adyeshach.nms.impl.NMSImpl$version").useNMS().translate(Adyeshach.plugin).getDeclaredConstructor().newInstance() as NMS
+            INSTANCE = SimpleVersionControl.createNMS("ink.ptms.adyeshach.api.nms.impl.NMSImpl$version").useNMS().translate(Adyeshach.plugin).getDeclaredConstructor().newInstance() as NMS
         }
 
         fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any>) = TPacketHandler.sendPacket(player, setFields(packet, *fields))

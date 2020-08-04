@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.common.entity.type.impl.AdyHuman
-import ink.ptms.adyeshach.utils.Tasks
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
 import org.bukkit.entity.Player

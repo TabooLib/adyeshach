@@ -1,7 +1,8 @@
-package ink.ptms.adyeshach.utils
+package ink.ptms.adyeshach.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.loader.internal.IO
 import io.izzel.taboolib.module.inject.TListener
 import org.bukkit.event.EventHandler
@@ -33,7 +34,5 @@ object AshconAPI {
                 getProfile(e.player.name)
             }
         }
-
     }
-
 }

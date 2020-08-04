@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.entity.type.impl
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Location
 import org.bukkit.entity.Player

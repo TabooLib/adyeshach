@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityBase
 import ink.ptms.adyeshach.common.entity.type.impl.*
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.entity.EntityType
 
 /**

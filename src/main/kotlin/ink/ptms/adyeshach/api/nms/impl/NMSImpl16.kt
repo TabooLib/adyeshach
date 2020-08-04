@@ -1,10 +1,10 @@
-package ink.ptms.adyeshach.nms.impl
+package ink.ptms.adyeshach.api.nms.impl
 
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import net.minecraft.server.v1_16_R1.*

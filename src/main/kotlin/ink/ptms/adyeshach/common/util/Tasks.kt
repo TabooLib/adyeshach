@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.utils
+package ink.ptms.adyeshach.common.util
 
 import ink.ptms.adyeshach.Adyeshach
 import org.bukkit.Bukkit

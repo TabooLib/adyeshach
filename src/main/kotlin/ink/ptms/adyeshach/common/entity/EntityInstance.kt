@@ -2,11 +2,9 @@ package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.util.Indexs
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.entity.Player
 
 /**
@@ -27,11 +25,9 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         NMS.INSTANCE.destroyEntity(owner, index)
     }
 
-    open fun teleport(world: World, entityPosition: EntityPosition) {
-        NMS.INSTANCE.teleportEntity(owner, index, entityPosition.toLocation(world))
-    }
-
     open fun teleport(location: Location) {
+        this.world = location.world!!.name
+        this.position = EntityPosition.fromLocation(location)
         NMS.INSTANCE.teleportEntity(owner, index, location)
     }
 
