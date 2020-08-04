@@ -1,12 +1,15 @@
 package ink.ptms.adyeshach.nms
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.lite.SimpleVersionControl
 import io.izzel.taboolib.module.packet.TPacketHandler
+import net.minecraft.server.v1_16_R1.IRegistry
+import net.minecraft.server.v1_16_R1.PacketPlayOutSpawnEntityLiving
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -20,6 +23,8 @@ import java.util.*
 abstract class NMS {
 
     abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+
+    abstract fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
@@ -53,7 +58,21 @@ abstract class NMS {
 
     abstract fun getMetaEntityCustomName(name: String): Any
 
+    abstract fun getMetaEntityInt(index: Int, value: Int): Any
+
+    abstract fun getMetaEntityFloat(index: Int, value: Float): Any
+
+    abstract fun getMetaEntityString(index: Int, value: String): Any
+
+    abstract fun getMetaEntityBoolean(index: Int, value: Boolean): Any
+
+    abstract fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any
+
+    abstract fun getMetaEntityByte(index: Int, value: Byte): Any
+
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
+
+    abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
 
     companion object {
 

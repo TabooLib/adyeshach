@@ -1,9 +1,10 @@
 package ink.ptms.adyeshach.common.entity
 
+import com.google.gson.GsonBuilder
 import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.position.Position
-import ink.ptms.adyeshach.nms.NMS
+import ink.ptms.adyeshach.common.entity.element.EntityPosition
+import ink.ptms.adyeshach.common.util.Serializer
 import io.izzel.taboolib.internal.gson.annotations.Expose
 
 /**
@@ -17,15 +18,19 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) {
         protected set
 
     @Expose
-    var position = Position.empty()
+    var position = EntityPosition.empty()
         protected set
         get() = field.clone()
 
     @Expose
-    protected val properties = EntityProperties()
+    protected var properties = EntityProperties()
 
-    protected fun initialize(world: String, position: Position) {
+    protected fun initialize(world: String, entityPosition: EntityPosition) {
         this.world = world
-        this.position = position
+        this.position = entityPosition
+    }
+
+    fun toJson(): String {
+        return GsonBuilder().setPrettyPrinting().create().toJson(Serializer.serializer.toJsonTree(this))
     }
 }

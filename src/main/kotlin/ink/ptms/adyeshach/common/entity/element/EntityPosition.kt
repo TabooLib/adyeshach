@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.position
+package ink.ptms.adyeshach.common.entity.element
 
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Location
@@ -8,7 +8,7 @@ import org.bukkit.World
  * @Author sky
  * @Since 2020-08-04 13:09
  */
-class Position(
+class EntityPosition(
         @Expose
         var x: Double = 0.0,
         @Expose
@@ -25,11 +25,11 @@ class Position(
         return Location(world, x, y, z, yaw, pitch)
     }
 
-    fun clone(): Position {
-        return Position(x, y, z, yaw, pitch)
+    fun clone(): EntityPosition {
+        return EntityPosition(x, y, z, yaw, pitch)
     }
 
-    fun reset(): Position {
+    fun reset(): EntityPosition {
         x = 0.0
         y = 0.0
         z = 0.0
@@ -40,12 +40,12 @@ class Position(
 
     companion object {
 
-        fun empty(): Position {
-            return Position(0.0, 0.0, 0.0, 0f, 0f)
+        fun empty(): EntityPosition {
+            return EntityPosition(0.0, 0.0, 0.0, 0f, 0f)
         }
 
-        fun fromLocation(location: Location): Position {
-            return Position(location.x, location.y, location.z, location.yaw, location.pitch)
+        fun fromLocation(location: Location): EntityPosition {
+            return EntityPosition(location.x, location.y, location.z, location.yaw, location.pitch)
         }
     }
 }

@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import com.google.common.collect.Maps
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.position.Position
+import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -23,9 +23,9 @@ open class AdyHumanLike(owner: Player, entityTypes: EntityTypes) : EntityInstanc
     @Expose
     private val equipment = HashMap<EquipmentSlot, ItemStack>()
 
-    override fun spawn(world: World, position: Position) {
-        super.spawn(world, position)
-        NMS.INSTANCE.spawnEntity(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), position.toLocation(world))
+    override fun spawn(location: Location) {
+        super.spawn(location)
+        NMS.INSTANCE.spawnEntityLiving(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
     }
 
     override fun getEquipment(): Map<EquipmentSlot, ItemStack> {

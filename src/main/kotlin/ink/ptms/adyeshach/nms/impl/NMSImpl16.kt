@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.nms.impl
 
 import com.mojang.authlib.GameProfile
+import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.nms.NMS
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
@@ -20,6 +21,21 @@ import java.util.*
 class NMSImpl16 : NMS() {
 
     override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
+        sendPacket(
+                player,
+                PacketPlayOutSpawnEntity(),
+                Pair("a", entityId),
+                Pair("b", uuid),
+                Pair("c", location.x),
+                Pair("d", location.y),
+                Pair("e", location.z),
+                Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
+                Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
+                Pair("k", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>))
+        )
+    }
+
+    override fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntityLiving(),
@@ -192,7 +208,35 @@ class NMSImpl16 : NMS() {
 
     override fun getMetaEntityCustomName(name: String): Any = DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(2, DataWatcherRegistry.f), Optional.of(ChatComponentText(name)))
 
+    override fun getMetaEntityInt(index: Int, value: Int): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.b), value)
+    }
+
+    override fun getMetaEntityFloat(index: Int, value: Float): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.c), value)
+    }
+
+    override fun getMetaEntityString(index: Int, value: String): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.d), value)
+    }
+
+    override fun getMetaEntityBoolean(index: Int, value: Boolean): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
+    }
+
+    override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam?)
+    }
+
+    override fun getMetaEntityByte(index: Int, value: Byte): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.a), value)
+    }
+
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
-        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true)
+        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true) ?: EntityTypes.ARMOR_STAND
+    }
+
+    override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
+        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
     }
 }

@@ -1,8 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.type.impl.AdyHuman
-import ink.ptms.adyeshach.common.entity.type.impl.AdyHumanLike
+import ink.ptms.adyeshach.common.entity.type.impl.*
 import ink.ptms.adyeshach.nms.NMS
 import org.bukkit.entity.EntityType
 
@@ -15,6 +14,18 @@ enum class EntityTypes(
         val entitySize: EntitySize,
         val entityBase: Class<out EntityBase>
 ) {
+
+    AREA_EFFECT_CLOUD(
+            EntityType.AREA_EFFECT_CLOUD,
+            EntitySize(2.0, 0.5),
+            AdyAreaEffectCloud::class.java
+    ),
+
+    BAT(
+            EntityType.BAT,
+            EntitySize(0.5, 0.5),
+            AdyBat::class.java
+    ),
 
     PLAYER(
             EntityType.PLAYER,
