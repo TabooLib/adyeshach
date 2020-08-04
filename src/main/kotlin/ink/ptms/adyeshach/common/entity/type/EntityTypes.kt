@@ -21,6 +21,12 @@ enum class EntityTypes(
             AdyAreaEffectCloud::class.java
     ),
 
+    ARMOR_STAND(
+            EntityType.ARMOR_STAND,
+            EntitySize(0.5, 1.975),
+            AdyAreaEffectCloud::class.java
+    ),
+
     BAT(
             EntityType.BAT,
             EntitySize(0.5, 0.5),

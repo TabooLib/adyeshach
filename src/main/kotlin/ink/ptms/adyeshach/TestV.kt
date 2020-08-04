@@ -2,6 +2,7 @@ package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.common.entity.MetadataExtend
 import ink.ptms.adyeshach.common.entity.type.impl.AdyAreaEffectCloud
+import ink.ptms.adyeshach.common.entity.type.impl.AdyArmorStand
 import ink.ptms.adyeshach.common.entity.type.impl.AdyBat
 import ink.ptms.adyeshach.common.util.Serializer
 import ink.ptms.adyeshach.nms.NMS
@@ -25,9 +26,8 @@ object TestV {
             .create("test-v", Adyeshach.plugin)
             .execute { sender, _ ->
                 if (sender is Player) {
-                    val entity = AdyAreaEffectCloud(sender)
+                    val entity = AdyArmorStand(sender)
                     entity.spawn(sender.location)
-                    entity.setColor(Color.RED)
                     NMS.INSTANCE.updateEntityMetadata(entity.owner, entity.index, *entity.metadata().toTypedArray())
                     Bukkit.getScheduler().runTaskLaterAsynchronously(Adyeshach.plugin, Runnable {
                         entity.destroy()

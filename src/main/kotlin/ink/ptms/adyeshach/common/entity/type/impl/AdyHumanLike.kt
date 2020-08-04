@@ -23,9 +23,15 @@ open class AdyHumanLike(owner: Player, entityTypes: EntityTypes) : EntityInstanc
     @Expose
     private val equipment = HashMap<EquipmentSlot, ItemStack>()
 
+    open fun isLiving(): Boolean = true
+
     override fun spawn(location: Location) {
         super.spawn(location)
-        NMS.INSTANCE.spawnEntityLiving(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
+        if (isLiving()) {
+            NMS.INSTANCE.spawnEntityLiving(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
+        } else {
+            NMS.INSTANCE.spawnEntity(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
+        }
     }
 
     override fun getEquipment(): Map<EquipmentSlot, ItemStack> {

@@ -56,8 +56,8 @@ class AdyAreaEffectCloud(owner: Player) : AdyEntity(owner, EntityTypes.AREA_EFFE
     }
 
     override fun metadata(): List<Any> {
-        getProperties().run {
-            return listOf(
+        return getProperties().run {
+            listOf(
                     NMS.INSTANCE.getMetaEntityFloat(7, radius),
                     NMS.INSTANCE.getMetaEntityInt(8, color),
                     NMS.INSTANCE.getMetaEntityBoolean(9, ignoreRadius),

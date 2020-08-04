@@ -28,8 +28,8 @@ class AdyBat(owner: Player) : AdyEntityLiving(owner, EntityTypes.BAT), MetadataE
     }
 
     override fun metadata(): List<Any> {
-        getProperties().run {
-            return listOf(NMS.INSTANCE.getMetaEntityByte(15, if (hanging) 0x01 else 0x00))
+        return getProperties().run {
+            listOf(NMS.INSTANCE.getMetaEntityByte(15, if (hanging) 0x01 else 0x00))
         }
     }
 
