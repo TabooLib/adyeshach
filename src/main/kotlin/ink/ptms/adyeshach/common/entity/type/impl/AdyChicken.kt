@@ -11,32 +11,32 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyBlaze(owner: Player) : AdyEntityLiving(owner, EntityTypes.BLAZE), MetadataExtend {
+class AdyChicken(owner: Player) : AdyEntityLiving(owner, EntityTypes.CHICKEN), MetadataExtend {
 
     init {
-        properties = BlazeProperties()
+        properties = ChickenProperties()
     }
 
-    fun setFire(value: Boolean) {
-        getProperties().fire = value
+    fun setHanging(value: Boolean) {
+        getProperties().hanging = value
         NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(15, if (value) 0x01 else 0x00))
     }
 
-    fun isFire(): Boolean {
-        return getProperties().fire
+    fun isHanging(): Boolean {
+        return getProperties().hanging
     }
 
     override fun metadata(): List<Any> {
         return getProperties().run {
-            listOf(NMS.INSTANCE.getMetaEntityByte(15, if (fire) 0x01 else 0x00))
+            listOf(NMS.INSTANCE.getMetaEntityByte(15, if (hanging) 0x01 else 0x00))
         }
     }
 
-    private fun getProperties(): BlazeProperties = properties as BlazeProperties
+    private fun getProperties(): ChickenProperties = properties as ChickenProperties
 
-    private class BlazeProperties : EntityProperties() {
+    private class ChickenProperties : EntityProperties() {
 
         @Expose
-        var fire = false
+        var hanging = false
     }
 }

@@ -38,6 +38,7 @@ object TestV {
                     entity.setCritical(true)
                     entity.setGlowing(true)
                     entity.setColor(Color.RED)
+                    entity.setGravity(false)
                     NMS.INSTANCE.updateEntityMetadata(entity.owner, entity.index, *entity.metadata().toTypedArray())
                     Bukkit.getScheduler().runTaskLaterAsynchronously(Adyeshach.plugin, Runnable {
                         entity.destroy()

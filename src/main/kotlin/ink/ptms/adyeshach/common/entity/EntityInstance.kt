@@ -80,6 +80,10 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         return properties.flyingElytra
     }
 
+    open fun isGravity(): Boolean {
+        return properties.gravity
+    }
+
     open fun setFired(onFire: Boolean) {
         properties.onFire = onFire
         updateMetadata()
@@ -113,6 +117,11 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
     open fun setFlyingElytra(flyingElytra: Boolean) {
         properties.flyingElytra = flyingElytra
         updateMetadata()
+    }
+
+    open fun setGravity(gravity: Boolean) {
+        properties.gravity = true
+        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityBoolean(5, !gravity))
     }
 
     protected open fun updateMetadata() {

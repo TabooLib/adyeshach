@@ -48,7 +48,21 @@ enum class EntityTypes(
             EntityType.BLAZE,
             0,
             EntitySize(0.6, 1.8),
-            AdyBat::class.java
+            AdyBlaze::class.java
+    ),
+
+    CAT(
+            EntityType.CAT,
+            0,
+            EntitySize(0.6, 0.7),
+            AdyCat::class.java
+    ),
+
+    CHICKEN(
+            EntityType.CHICKEN,
+            0,
+            EntitySize(0.4, 0.7),
+            AdyChicken::class.java
     ),
 
     PLAYER(

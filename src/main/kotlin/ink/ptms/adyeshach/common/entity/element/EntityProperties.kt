@@ -22,5 +22,49 @@ open class EntityProperties(
         @Expose
         var glowing: Boolean = false,
         @Expose
-        var flyingElytra: Boolean = false
-)
+        var flyingElytra: Boolean = false,
+        @Expose
+        var gravity: Boolean = true,
+) {
+
+    open class Ageable : EntityProperties() {
+        @Expose
+        var baby = false
+    }
+
+    open class Tameable : EntityProperties() {
+        @Expose
+        var sitting = false
+        @Expose
+        var angry = false
+        @Expose
+        var tamed = false
+    }
+
+    open class Raider : EntityProperties() {
+        @Expose
+        var celebrating = false
+    }
+
+    open class Zombie : EntityProperties() {
+        @Expose
+        var baby = false
+        @Expose
+        var drowning = false
+    }
+
+    open class Minecart : EntityProperties() {
+        @Expose
+        var snakingPower = 0
+        @Expose
+        var snakingDirection = 1
+        @Expose
+        var snakingMultiplier = 0f
+        @Expose
+        var customBlockID = 0
+        @Expose
+        var customBlockPosition = 6
+        @Expose
+        var customBlockVisible = false
+    }
+}
