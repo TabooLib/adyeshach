@@ -27,6 +27,12 @@ enum class EntityTypes(
             AdyAreaEffectCloud::class.java
     ),
 
+    ARROW(
+            EntityType.ARROW,
+            EntitySize(0.5, 0.5),
+            AdyArrow::class.java
+    ),
+
     BAT(
             EntityType.BAT,
             EntitySize(0.5, 0.9),

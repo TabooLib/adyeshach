@@ -32,7 +32,7 @@ class NMSImpl16 : NMS() {
                 Pair("e", location.z),
                 Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
                 Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                Pair("k", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>))
+                Pair("k", entityType)
         )
     }
 

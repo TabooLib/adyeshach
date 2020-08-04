@@ -4,11 +4,15 @@ import ink.ptms.adyeshach.common.entity.MetadataExtend
 import ink.ptms.adyeshach.common.entity.element.EntityRotation
 import ink.ptms.adyeshach.common.entity.type.impl.AdyAreaEffectCloud
 import ink.ptms.adyeshach.common.entity.type.impl.AdyArmorStand
+import ink.ptms.adyeshach.common.entity.type.impl.AdyArrow
 import ink.ptms.adyeshach.common.entity.type.impl.AdyBat
 import ink.ptms.adyeshach.common.util.Serializer
 import ink.ptms.adyeshach.nms.NMS
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.packet.Packet
+import io.izzel.taboolib.module.packet.TPacket
+import net.minecraft.server.v1_16_R1.PacketPlayOutSpawnEntityLiving
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
@@ -28,20 +32,17 @@ object TestV {
             .create("test-v", Adyeshach.plugin)
             .execute { sender, _ ->
                 if (sender is Player) {
-                    val entity = AdyArmorStand(sender)
+                    val entity = AdyArrow(sender)
                     entity.spawn(sender.location)
-                    entity.setArms(true)
-                    entity.setSmall(true)
+                    entity.setPiercingLevel(1)
+                    entity.setCritical(true)
                     entity.setGlowing(true)
-                    entity.setRotation(EntityRotation.LEFT_ARM, EulerAngle(10.0, 50.0, 100.0))
-                    entity.setRotation(EntityRotation.RIGHT_ARM, EulerAngle(10.0, 50.0, 100.0))
+                    entity.setColor(Color.RED)
                     NMS.INSTANCE.updateEntityMetadata(entity.owner, entity.index, *entity.metadata().toTypedArray())
                     Bukkit.getScheduler().runTaskLaterAsynchronously(Adyeshach.plugin, Runnable {
                         entity.destroy()
-                        sender.sendMessage("§c[System] §7LRemoved.")
+                        sender.sendMessage("§c[System] §7Removed.")
                     }, 60L)
-                    sender.sendMessage("§c[System] §7Json:")
-                    sender.sendMessage(io.izzel.taboolib.internal.gson.GsonBuilder().setPrettyPrinting().create().toJson(Serializer.serializer.toJsonTree(entity)))
                     sender.sendMessage("§c[System] §7Done.")
                 }
             }
