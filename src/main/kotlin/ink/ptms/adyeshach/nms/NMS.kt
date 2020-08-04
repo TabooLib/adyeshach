@@ -8,8 +8,7 @@ import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.lite.SimpleVersionControl
 import io.izzel.taboolib.module.packet.TPacketHandler
-import net.minecraft.server.v1_16_R1.IRegistry
-import net.minecraft.server.v1_16_R1.PacketPlayOutSpawnEntityLiving
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -29,7 +28,7 @@ abstract class NMS {
 
     abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
-    abstract fun addPlayerInfo(player: Player, uuid: UUID)
+    abstract fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>)
 
     abstract fun removePlayerInfo(player: Player, uuid: UUID)
 
@@ -93,11 +92,13 @@ abstract class NMS {
 
         fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any>) = TPacketHandler.sendPacket(player, setFields(packet, *fields))
 
-        fun setFields(any: Any, vararg fields: Pair<String, Any>): Any {
+        private fun setFields(any: Any, vararg fields: Pair<String, Any>): Any {
             fields.forEach { (key, value) ->
                 SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
             }
             return any
         }
+
     }
+
 }

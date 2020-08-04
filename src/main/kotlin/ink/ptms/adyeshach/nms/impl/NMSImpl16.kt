@@ -1,11 +1,13 @@
 package ink.ptms.adyeshach.nms.impl
 
 import com.mojang.authlib.GameProfile
+import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.nms.NMS
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import net.minecraft.server.v1_16_R1.*
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
@@ -69,9 +71,20 @@ class NMSImpl16 : NMS() {
         )
     }
 
-    override fun addPlayerInfo(player: Player, uuid: UUID) {
-        val profile = GameProfile(uuid, "Bakurit_Maueic")
+    override fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>) {
+        val profile = GameProfile(uuid, name)
         val infoData = PacketPlayOutPlayerInfo()
+
+        if (texture.size == 2) {
+            profile.properties.put(
+                    "textures",
+                    Property(
+                            "textures",
+                            texture[0],
+                            texture[1]
+                    )
+            )
+        }
 
         sendPacket(
                 player,
@@ -81,9 +94,10 @@ class NMSImpl16 : NMS() {
                         listOf(
                                 infoData.PlayerInfoData(
                                         profile,
-                                        60,
-                                        EnumGamemode.SURVIVAL,
-                                        ChatComponentText("Bakurit_Maueic")
+                                        ping,
+                                        EnumGamemode.values().firstOrNull { it.name == gameMode.name }
+                                                ?: EnumGamemode.NOT_SET,
+                                        ChatComponentText(name)
                                 )
                         )
                 )
@@ -100,7 +114,7 @@ class NMSImpl16 : NMS() {
                 Pair("b",
                         listOf(
                                 infoData.PlayerInfoData(
-                                        GameProfile(uuid, "Bakurit_Maueic"),
+                                        GameProfile(uuid, ""),
                                         -1,
                                         null,
                                         null
@@ -238,10 +252,12 @@ class NMSImpl16 : NMS() {
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
-        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true) ?: EntityTypes.ARMOR_STAND
+        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true)
+                ?: EntityTypes.ARMOR_STAND
     }
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
-        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
+        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true)
+                ?: Particles.FLAME
     }
 }
