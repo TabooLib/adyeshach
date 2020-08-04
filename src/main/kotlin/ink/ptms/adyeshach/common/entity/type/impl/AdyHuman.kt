@@ -38,21 +38,27 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
         updatePlayerInfo()
     }
 
-    fun getName() = getProperties().name
+    fun getName(): String {
+        return getProperties().name
+    }
 
     fun setPing(ping: Int) {
         getProperties().ping = ping
         updatePlayerInfo()
     }
 
-    fun getPing() = getProperties().ping
+    fun getPing(): Int {
+        return getProperties().ping
+    }
 
     fun setGameMode(gameMode: GameMode) {
-        getProperties().gamemode = gameMode
+        getProperties().gameMode = gameMode
         updatePlayerInfo()
     }
 
-    fun getGameMode() = getProperties().gamemode
+    fun getGameMode(): GameMode {
+        return getProperties().gameMode
+    }
 
     fun setTexture(texture: String, signature: String) {
         getProperties().texture = arrayOf(texture, signature)
@@ -71,16 +77,26 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
         NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, skinData()))
     }
 
-    fun getTexture() = getProperties().texture
+    fun getTexture(): Array<String> {
+        return getProperties().texture
+    }
 
     fun updatePlayerInfo() {
         removePlayerInfo()
         addPlayerInfo()
     }
 
-    fun addPlayerInfo() = NMS.INSTANCE.addPlayerInfo(owner, uuid, getProperties().name, getProperties().ping, getProperties().gamemode, getProperties().texture)
+    fun addPlayerInfo() {
+        NMS.INSTANCE.addPlayerInfo(owner, uuid, getProperties().name, getProperties().ping, getProperties().gameMode, getProperties().texture)
+    }
 
-    fun removePlayerInfo() = NMS.INSTANCE.removePlayerInfo(owner, uuid)
+    fun removePlayerInfo() {
+        NMS.INSTANCE.removePlayerInfo(owner, uuid)
+    }
+
+    fun hideInTabList() {
+        removePlayerInfo()
+    }
 
     fun skinData(): Byte {
         return getProperties().run {
@@ -105,7 +121,9 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
         }
     }
 
-    private fun getProperties(): HumanProperties = properties as HumanProperties
+    private fun getProperties(): HumanProperties {
+        return properties as HumanProperties
+    }
 
     private class HumanProperties : EntityProperties() {
 
@@ -124,7 +142,7 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
         var ping = 60
 
         @Expose
-        var gamemode = GameMode.SURVIVAL
+        var gameMode = GameMode.SURVIVAL
 
         @Expose
         var texture = arrayOf("")
@@ -152,7 +170,5 @@ class AdyHuman(owner: Player) : AdyHumanLike(owner, EntityTypes.PLAYER), Metadat
 
         @Expose
         var skinUnusedEnabled = false
-
     }
-
 }
