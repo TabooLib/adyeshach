@@ -11,6 +11,16 @@ import org.bukkit.entity.Player
 abstract class AdyHorseBase(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
 
     init {
+        /**
+         * 1.13  Index->13, 0x80 = UnUsed
+         * 1.12 Index->13
+         *      isSaddled 后 + hasChest, bitMask 依次类推, 最后一个 0x80
+         * 1.9 Index->12, 同 1.12
+         *     Index: 13 VarInt	Variant
+         *     Index: 14 VarInt	Color & Style
+         *     Index: 15 OptUUID	Owner
+         *     Index: 16 VarInt	Armor
+         */
         registerMetaByteMask(16, "isTamed", 0x02)
         registerMetaByteMask(16, "isSaddled", 0x04)
         registerMetaByteMask(16, "hasBred", 0x08)

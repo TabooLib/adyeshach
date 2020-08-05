@@ -40,23 +40,11 @@ abstract class NMS {
 
     abstract fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float)
 
-    abstract fun updateDisplayName(player: Player, entityId: Int, name: String)
-
     abstract fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack)
 
     abstract fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any)
 
     abstract fun getMetaEntityItemStack(itemStack: ItemStack): Any
-
-    abstract fun getMetaEntityProperties(onFire: Boolean, crouched: Boolean, unUsedRiding: Boolean, sprinting: Boolean, swimming: Boolean, invisible: Boolean, glowing: Boolean, flyingElytra: Boolean): Any
-
-    abstract fun getMetaEntityGravity(noGravity: Boolean): Any
-
-    abstract fun getMetaEntitySilenced(silenced: Boolean): Any
-
-    abstract fun getMetaEntityCustomNameVisible(visible: Boolean): Any
-
-    abstract fun getMetaEntityCustomName(name: String): Any
 
     abstract fun getMetaEntityInt(index: Int, value: Int): Any
 

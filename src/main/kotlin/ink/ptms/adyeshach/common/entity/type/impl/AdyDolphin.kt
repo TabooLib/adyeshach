@@ -13,6 +13,9 @@ import org.bukkit.entity.Player
 class AdyDolphin(owner: Player) : AdyEntityLiving(owner, EntityTypes.DOLPHIN) {
 
     init {
+        /**
+         * 1.13 -> Index 12, 13, 14
+         */
         registerMeta(16, "findTreasure", false)
         registerMeta(17, "hasFish", false)
     }

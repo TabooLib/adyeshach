@@ -14,6 +14,9 @@ import org.bukkit.entity.Player
  */
 class AdyCat(owner: Player) : AdyEntityTameable(owner, EntityTypes.CAT) {
 
+    /**
+     * 仅 1.16, 1.15 有属性
+     */
     init {
         registerMeta(18, "type", Cat.Type.TABBY.ordinal)
         registerMeta(21, "color", DyeColor.RED.ordinal)

@@ -2,8 +2,6 @@ package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Color
 import org.bukkit.entity.Player
 
@@ -14,6 +12,9 @@ import org.bukkit.entity.Player
 class AdyAreaEffectCloud(owner: Player) : AdyEntity(owner, EntityTypes.AREA_EFFECT_CLOUD) {
 
     init {
+        /**
+         * 仅 1.16 有属性
+         */
         registerMeta(7, "radius", 0.5f)
         registerMeta(8, "color", 0)
         registerMeta(9, "ignoreRadius", false)

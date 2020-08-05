@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Player
 
 /**
@@ -11,6 +9,10 @@ import org.bukkit.entity.Player
  */
 class AdyBlaze(owner: Player) : AdyEntityLiving(owner, EntityTypes.BLAZE) {
 
+    /**
+     * 1.13,1.12 -> Index 12
+     * 1.9 -> Index 11
+     */
     init {
         registerMetaByteMask(15, "fire", 0x01)
     }
