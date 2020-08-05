@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.entity.Player
 
@@ -11,81 +10,60 @@ import org.bukkit.entity.Player
  */
 abstract class AdyHorseBase(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
 
+    init {
+        registerMetaByteMask(16, "isTamed", 0x02)
+        registerMetaByteMask(16, "isSaddled", 0x04)
+        registerMetaByteMask(16, "hasBred", 0x08)
+        registerMetaByteMask(16, "isEating", 0x10)
+        registerMetaByteMask(16, "isRearing", 0x20)
+        registerMetaByteMask(16, "isMouthOpen", 0x40)
+    }
+
     fun setTamed(value: Boolean) {
-        getProperties().tamed = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("isTamed", value)
     }
 
     fun isTamed(): Boolean {
-        return getProperties().tamed
+        return getMetadata("isTamed")
     }
 
     fun setSaddled(value: Boolean) {
-        getProperties().saddled = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("isSaddled", value)
     }
 
     fun isSaddled(): Boolean {
-        return getProperties().saddled
+        return getMetadata("isSaddled")
     }
 
     fun setHasBred(value: Boolean) {
-        getProperties().bred = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("hasBred", value)
     }
 
     fun isHasBred(): Boolean {
-        return getProperties().bred
+        return getMetadata("hasBred")
     }
 
     fun setEating(value: Boolean) {
-        getProperties().eating = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("isEating", value)
     }
 
     fun isEating(): Boolean {
-        return getProperties().eating
+        return getMetadata("isEating")
     }
 
     fun setRearing(value: Boolean) {
-        getProperties().rearing = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("isRearing", value)
     }
 
     fun isRearing(): Boolean {
-        return getProperties().rearing
+        return getMetadata("isRearing")
     }
 
     fun setMouthOpen(value: Boolean) {
-        getProperties().mouthOpen = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(16, baseData()))
+        setMetadata("isMouthOpen", value)
     }
 
     fun isMouthOpen(): Boolean {
-        return getProperties().mouthOpen
+        return getMetadata("isMouthOpen")
     }
-
-    fun baseData(): Byte {
-        return getProperties().run {
-            var bits = 0
-            if (tamed) bits += 0x02
-            if (saddled) bits += 0x04
-            if (bred) bits += 0x08
-            if (eating) bits += 0x10
-            if (rearing) bits += 0x20
-            if (mouthOpen) bits += 0x40
-            bits.toByte()
-        }
-    }
-
-    override fun metadata(): List<Any> {
-        return getProperties().run {
-            listOf(
-                    *super.metadata().toTypedArray(),
-                    NMS.INSTANCE.getMetaEntityByte(16, baseData())
-            )
-        }
-    }
-
-    private fun getProperties(): EntityProperties.Horse = properties as EntityProperties.Horse
 }

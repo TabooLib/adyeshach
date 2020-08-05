@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.MetadataExtend
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose

@@ -14,12 +14,10 @@ import java.lang.RuntimeException
  */
 abstract class EntityMetaable {
 
-    val meta = ArrayList<Meta>()
-        get() = ArrayList(field)
+    protected val meta = ArrayList<Meta>()
 
     @Expose
-    val properties = HashMap<Int, Any>()
-        get() = HashMap(field)
+    protected val properties = HashMap<Int, Any>()
 
     protected fun registerMeta(index: Int, key: String, def: Any) {
         meta.add(MetaNatural(index, key, def))
@@ -32,7 +30,11 @@ abstract class EntityMetaable {
         byteMask.mask[key] = def
     }
 
-    protected fun updateMetadata() {
+    fun listMetadata(): List<String> {
+        return meta.map { it.key }
+    }
+
+    fun updateMetadata() {
         if (this is EntityInstance) {
             meta.forEach {
                 it.update(this)
@@ -94,7 +96,7 @@ abstract class EntityMetaable {
                     bits += it.mask
                 }
             }
-            val metadata = dataWatcher?.getMetadata(index, bits) ?: return
+            val metadata = dataWatcher?.getMetadata(index, bits.toByte()) ?: return
             NMS.INSTANCE.updateEntityMetadata(entityInstance.owner, entityInstance.index, metadata)
         }
     }

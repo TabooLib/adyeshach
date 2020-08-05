@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.MetadataExtend
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.entity.Player
 
@@ -12,24 +10,15 @@ import org.bukkit.entity.Player
  */
 open class AdyZombie(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
 
+    init {
+        registerMeta(17, "isDrowning", false)
+    }
+
     fun setDrowning(value: Boolean) {
-        getProperties().drowning = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityBoolean(15, value))
+        setMetadata("isDrowning", value)
     }
 
     fun isDrowning(): Boolean {
-        return getProperties().drowning
+        return getMetadata("isDrowning")
     }
-
-    override fun metadata(): List<Any> {
-        return getProperties().run {
-            listOf(
-                    *super.metadata().toTypedArray(),
-                    NMS.INSTANCE.getMetaEntityBoolean(17, drowning)
-            )
-        }
-    }
-
-    private fun getProperties(): EntityProperties.Zombie = properties as EntityProperties.Zombie
-
 }

@@ -28,7 +28,6 @@ object TestV {
                     entity.setSitting(true)
                     entity.setCollarColor(DyeColor.WHITE)
                     entity.setType(Cat.Type.ALL_BLACK)
-                    entity.setGravity(true)
                     sender.sendMessage("§c[System] §7Done.")
                 }
             }

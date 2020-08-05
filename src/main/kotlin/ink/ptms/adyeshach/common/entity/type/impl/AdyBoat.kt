@@ -16,7 +16,7 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT) {
         registerMeta(7, "sinceLastHit", 0)
         registerMeta(8, "forwardDirection", 1)
         registerMeta(9, "damageTaken", 0f)
-        registerMeta(10, "type", 0)
+        registerMeta(10, "type", BukkitBoat.OAK.ordinal)
         registerMeta(11, "leftPaddleTurning", false)
         registerMeta(12, "rightPaddleTurning", false)
         registerMeta(13, "splashTimer", 0)
