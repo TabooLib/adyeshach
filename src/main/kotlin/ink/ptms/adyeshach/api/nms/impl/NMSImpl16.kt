@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.api.nms.impl
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import net.minecraft.server.v1_16_R1.*
@@ -26,49 +26,49 @@ class NMSImpl16 : NMS() {
 
     override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
-                player,
-                PacketPlayOutSpawnEntity(),
-                Pair("a", entityId),
-                Pair("b", uuid),
-                Pair("c", location.x),
-                Pair("d", location.y),
-                Pair("e", location.z),
-                Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                Pair("k", entityType)
+            player,
+            PacketPlayOutSpawnEntity(),
+            Pair("a", entityId),
+            Pair("b", uuid),
+            Pair("c", location.x),
+            Pair("d", location.y),
+            Pair("e", location.z),
+            Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
+            Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
+            Pair("k", entityType)
         )
     }
 
     override fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
-                player,
-                PacketPlayOutSpawnEntityLiving(),
-                Pair("a", entityId),
-                Pair("b", uuid),
-                Pair("c", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>)),
-                Pair("d", location.x),
-                Pair("e", location.y),
-                Pair("f", location.z),
-                Pair("g", 0),
-                Pair("h", 0),
-                Pair("i", 0),
-                Pair("j", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                Pair("k", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                Pair("l", (location.yaw * 256.0f / 360.0f).toInt().toByte())
+            player,
+            PacketPlayOutSpawnEntityLiving(),
+            Pair("a", entityId),
+            Pair("b", uuid),
+            Pair("c", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>)),
+            Pair("d", location.x),
+            Pair("e", location.y),
+            Pair("f", location.z),
+            Pair("g", 0),
+            Pair("h", 0),
+            Pair("i", 0),
+            Pair("j", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
+            Pair("k", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
+            Pair("l", (location.yaw * 256.0f / 360.0f).toInt().toByte())
         )
     }
 
     override fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
-                player,
-                PacketPlayOutNamedEntitySpawn(),
-                Pair("a", entityId),
-                Pair("b", uuid),
-                Pair("c", location.x),
-                Pair("d", location.y),
-                Pair("e", location.z),
-                Pair("f", (location.yaw * 256 / 360).toInt().toByte()),
-                Pair("g", (location.pitch * 256 / 360).toInt().toByte())
+            player,
+            PacketPlayOutNamedEntitySpawn(),
+            Pair("a", entityId),
+            Pair("b", uuid),
+            Pair("c", location.x),
+            Pair("d", location.y),
+            Pair("e", location.z),
+            Pair("f", (location.yaw * 256 / 360).toInt().toByte()),
+            Pair("g", (location.pitch * 256 / 360).toInt().toByte())
         )
     }
 
@@ -79,29 +79,30 @@ class NMSImpl16 : NMS() {
             profile.properties.put("textures", Property("textures", texture[0], texture[1]))
         }
         sendPacket(
-                player,
-                infoData,
-                Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER),
-                Pair("b",
-                        listOf(
-                                infoData.PlayerInfoData(
-                                        profile,
-                                        ping,
-                                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
-                                        ChatComponentText(name)
-                                )
-                        )
+            player,
+            infoData,
+            Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER),
+            Pair(
+                "b",
+                listOf(
+                    infoData.PlayerInfoData(
+                        profile,
+                        ping,
+                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
+                        ChatComponentText(name)
+                    )
                 )
+            )
         )
     }
 
     override fun removePlayerInfo(player: Player, uuid: UUID) {
         val infoData = PacketPlayOutPlayerInfo()
         sendPacket(
-                player,
-                infoData,
-                Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER),
-                Pair("b", listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null)))
+            player,
+            infoData,
+            Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER),
+            Pair("b", listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null)))
         )
     }
 
@@ -109,51 +110,47 @@ class NMSImpl16 : NMS() {
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location) {
         sendPacket(
-                player,
-                PacketPlayOutEntityTeleport(),
-                Pair("a", entityId),
-                Pair("b", location.x),
-                Pair("c", location.y),
-                Pair("d", location.z),
-                Pair("e", (location.yaw * 256 / 360).toInt().toByte()),
-                Pair("f", (location.pitch * 256 / 360).toInt().toByte()),
-                Pair("g", false) // onGround
+            player,
+            PacketPlayOutEntityTeleport(),
+            Pair("a", entityId),
+            Pair("b", location.x),
+            Pair("c", location.y),
+            Pair("d", location.z),
+            Pair("e", (location.yaw * 256 / 360).toInt().toByte()),
+            Pair("f", (location.pitch * 256 / 360).toInt().toByte()),
+            Pair("g", false) // onGround
         )
     }
 
     override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {
         sendPacket(
-                player,
-                PacketPlayOutEntity.PacketPlayOutRelEntityMove(
-                        entityId,
-                        (x * 4096).toInt().toShort(),
-                        (y * 4096).toInt().toShort(),
-                        (z * 4096).toInt().toShort(),
-                        true
-                )
+            player,
+            PacketPlayOutEntity.PacketPlayOutRelEntityMove(
+                entityId,
+                (x * 4096).toInt().toShort(),
+                (y * 4096).toInt().toShort(),
+                (z * 4096).toInt().toShort(),
+                true
+            )
         )
     }
 
     override fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
         sendPacket(
-                player,
-                PacketPlayOutEntityHeadRotation(),
-                Pair("a", entityId),
-                Pair("b", MathHelper.d(yaw * 256.0f / 360.0f).toByte())
+            player,
+            PacketPlayOutEntityHeadRotation(),
+            Pair("a", entityId),
+            Pair("b", MathHelper.d(yaw * 256.0f / 360.0f).toByte())
         )
         sendPacket(
-                player,
-                PacketPlayOutEntity.PacketPlayOutEntityLook(
-                        entityId,
-                        MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
-                        MathHelper.d(pitch * 256.0f / 360.0f).toByte(),
-                        true
-                )
+            player,
+            PacketPlayOutEntity.PacketPlayOutEntityLook(
+                entityId,
+                MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
+                MathHelper.d(pitch * 256.0f / 360.0f).toByte(),
+                true
+            )
         )
-    }
-
-    override fun updateDisplayName(player: Player, entityId: Int, name: String) {
-        updateEntityMetadata(player, entityId, getMetaEntityCustomName(name))
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
@@ -166,35 +163,6 @@ class NMSImpl16 : NMS() {
 
     override fun getMetaEntityItemStack(itemStack: ItemStack): Any {
         TODO("Not yet implemented")
-    }
-
-    override fun getMetaEntityProperties(onFire: Boolean, crouched: Boolean, unUsedRiding: Boolean, sprinting: Boolean, swimming: Boolean, invisible: Boolean, glowing: Boolean, flyingElytra: Boolean): Any {
-        var bits = 0
-        if (onFire) bits += 0x01
-        if (crouched) bits += 0x02
-        if (unUsedRiding) bits += 0x04
-        if (sprinting) bits += 0x08
-        if (swimming) bits += 0x10
-        if (invisible) bits += 0x20
-        if (glowing) bits += 0x40
-        if (flyingElytra) bits += 0x80
-        return DataWatcher.Item(DataWatcherObject(0, DataWatcherRegistry.a), bits.toByte())
-    }
-
-    override fun getMetaEntityGravity(noGravity: Boolean): Any {
-        return DataWatcher.Item(DataWatcherObject(5, DataWatcherRegistry.i), noGravity)
-    }
-
-    override fun getMetaEntitySilenced(silenced: Boolean): Any {
-        return DataWatcher.Item(DataWatcherObject(4, DataWatcherRegistry.i), silenced)
-    }
-
-    override fun getMetaEntityCustomNameVisible(visible: Boolean): Any {
-        return DataWatcher.Item(DataWatcherObject(3, DataWatcherRegistry.i), visible)
-    }
-
-    override fun getMetaEntityCustomName(name: String): Any {
-        return DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(2, DataWatcherRegistry.f), Optional.of(ChatComponentText(name)))
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {

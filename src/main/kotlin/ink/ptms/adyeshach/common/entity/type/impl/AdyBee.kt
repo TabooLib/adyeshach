@@ -12,10 +12,19 @@ import org.bukkit.entity.Player
 class AdyBee(owner: Player) : AdyEntityLiving(owner, EntityTypes.BEE) {
 
     init {
+        registerMetaByteMask(16, "unUsed", 0x01)
         registerMetaByteMask(16, "isFlip", 0x02)
         registerMetaByteMask(16, "hasStung", 0x04)
         registerMetaByteMask(16, "hasNectar", 0x08)
         registerMetaByteMask(17, "angerTicks", 0)
+    }
+
+    fun setUnUsed(unused: Boolean) {
+        setMetadata("unUsed", unused)
+    }
+
+    fun isUnUsed(): Boolean {
+        return getMetadata("unUsed")
     }
 
     fun setFlip(anger: Boolean) {

@@ -7,4 +7,4 @@ import org.bukkit.entity.Player
  * @author Arasple
  * @date 2020/8/4 23:15
  */
-class AdyCaveSpider(owner: Player) : AdyEntityLiving(owner, EntityTypes.CAVE_SPIDER)
+class AdyCaveSpider(owner: Player) : AdySpider(owner, EntityTypes.CAVE_SPIDER)

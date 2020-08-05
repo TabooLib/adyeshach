@@ -1,9 +1,10 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.EntityPosition
-import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.entity.element.EntityPosition
+import ink.ptms.adyeshach.common.entity.type.EntityTypes
+import ink.ptms.adyeshach.common.util.Indexs
+import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -16,6 +17,11 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
     val index = Indexs.nextIndex(owner)
 
     init {
+        /**
+         * 1.13 -> 无 Index=6
+         * 1.12 -> 无 0x04
+         * 1.9 -> 同 1.12, 删去 Index=5
+         */
         registerMetaByteMask(0, "onFire", 0x01)
         registerMetaByteMask(0, "isCrouched", 0x02)
         registerMetaByteMask(0, "unUsedRiding", 0x04)
@@ -24,7 +30,11 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         registerMetaByteMask(0, "isInvisible", 0x20)
         registerMetaByteMask(0, "isGlowing", 0x40)
         registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
+        registerMeta(2, "customName", TextComponent(""))
+        registerMeta(3, "isCustomNameVisible", false)
+        registerMeta(4, "isSilent", false)
         registerMeta(5, "noGravity", false)
+//        registerMeta(6, "pose", 0)
     }
 
     open fun spawn(location: Location) {

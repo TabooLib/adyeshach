@@ -10,6 +10,10 @@ import org.bukkit.entity.Player
 abstract class AdyEntityAgeable(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes) {
 
     init {
+        /**
+         * 1.13,1.12 -> 12
+         * 1.9 -> 11
+         */
         registerMeta(15, "isBaby", false)
     }
 

@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitBoat
-import io.izzel.taboolib.Version
-import io.izzel.taboolib.internal.gson.annotations.Expose
+import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import org.bukkit.entity.Player
 
 /**
@@ -13,6 +10,11 @@ import org.bukkit.entity.Player
  */
 class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT) {
 
+    /**
+     * 1.13 -> Index 6-12, 且 leftPaddleTurning / rightPaddleTurning 换位置
+     * 1.12 -> Index 6-11, 在 1.13 基础上砍掉最后一个
+     * 1.9 ->  Index 5-10 和 1.12 对应
+     */
     init {
         registerMeta(7, "sinceLastHit", 0)
         registerMeta(8, "forwardDirection", 1)

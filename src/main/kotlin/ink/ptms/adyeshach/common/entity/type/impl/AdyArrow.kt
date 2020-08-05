@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Color
 import org.bukkit.entity.Player
 
@@ -11,6 +9,20 @@ import org.bukkit.entity.Player
  * @Since 2020-08-04 19:30
  */
 class AdyArrow(owner: Player) : AdyEntity(owner, EntityTypes.ARROW) {
+
+    /**
+     * 1.15 Index=7 一致
+     *              Type       Meaning       Def
+     *      Index=8 OptUUID  Shooter UUID  Empty
+     *      Index=9 Byte    Peircing level   0
+     *
+     * 1.13 Index=6 isCritical 0x01
+     *      Index=7 OptUUID  Shooter UUID  Empty
+     *
+     * 1.12 Index=6 isCritical 0x01
+     *
+     * 1.9 Index=5 isCritical 0x01
+     */
 
     init {
         registerMetaByteMask(7, "isCritical", 0x01)

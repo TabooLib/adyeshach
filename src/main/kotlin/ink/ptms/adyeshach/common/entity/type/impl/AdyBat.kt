@@ -11,6 +11,10 @@ import org.bukkit.entity.Player
  */
 class AdyBat(owner: Player) : AdyEntityLiving(owner, EntityTypes.BAT) {
 
+    /**
+     * 1.13,1.12 Index->12
+     * 1.9 Index->11
+     */
     init {
         registerMetaByteMask(15, "isHanging", 0x01)
     }

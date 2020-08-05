@@ -2,8 +2,6 @@ package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.element.EntityRotation
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Player
 import org.bukkit.util.EulerAngle
 
@@ -14,6 +12,13 @@ import org.bukkit.util.EulerAngle
 class AdyArmorStand(owner: Player) : AdyEntityLiving(owner, EntityTypes.ARMOR_STAND) {
 
     init {
+        /**
+         * 1.15 完全一致
+         * 1.13/1.12, Indexs 依次对应 11-17
+         *
+         * 1.9 依次对应 10-16,
+         *   其中 Index=10 有额外属性 hasGravity 0x02
+         */
         registerMetaByteMask(14, "isSmall", 0x01)
         registerMetaByteMask(14, "hasArms", 0x04)
         registerMetaByteMask(14, "noBasePlate", 0x08)
