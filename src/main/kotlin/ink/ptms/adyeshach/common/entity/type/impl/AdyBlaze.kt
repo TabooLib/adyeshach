@@ -14,7 +14,7 @@ class AdyBlaze(owner: Player) : AdyEntityLiving(owner, EntityTypes.BLAZE) {
      * 1.9 -> Index 11
      */
     init {
-        registerMetaByteMask(15, "fire", 0x01)
+        registerMetaByteMask(at(11600.to(15), 11100.to(12), 10900.to(11)), "fire", 0x01)
     }
 
     fun setFire(value: Boolean) {

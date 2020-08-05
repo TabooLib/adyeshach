@@ -16,7 +16,7 @@ class AdyBat(owner: Player) : AdyEntityLiving(owner, EntityTypes.BAT) {
      * 1.9 Index->11
      */
     init {
-        registerMetaByteMask(15, "isHanging", 0x01)
+        registerMetaByteMask(at(11600.to(15), 11000.to(12), 10900.to(11)), "isHanging", 0x01)
     }
 
     fun setHanging(value: Boolean) {
