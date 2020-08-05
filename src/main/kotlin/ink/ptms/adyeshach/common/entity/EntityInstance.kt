@@ -15,6 +15,18 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
 
     val index = Indexs.nextIndex(owner)
 
+    init {
+        registerMetaByteMask(0, "onFire", 0x01)
+        registerMetaByteMask(0, "isCrouched", 0x02)
+        registerMetaByteMask(0, "unUsedRiding", 0x04)
+        registerMetaByteMask(0, "isSprinting", 0x08)
+        registerMetaByteMask(0, "isSwimming", 0x010)
+        registerMetaByteMask(0, "isInvisible", 0x20)
+        registerMetaByteMask(0, "isGlowing", 0x40)
+        registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
+        registerMeta(5, "noGravity", false)
+    }
+
     open fun spawn(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
@@ -31,6 +43,14 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         NMS.INSTANCE.teleportEntity(owner, index, location)
     }
 
+    open fun controllerLook(location: Location) {
+        val entityLocation = position.toLocation(location.world!!).also {
+            it.y += (entityType.entitySize.height * 0.85)
+        }
+        entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+        setHeadRotation(entityLocation.yaw, entityLocation.pitch)
+    }
+
     open fun setHeadRotation(yaw: Float, pitch: Float) {
         position = position.run {
             this.yaw = yaw
@@ -40,96 +60,67 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         NMS.INSTANCE.setHeadRotation(owner, index, yaw, pitch)
     }
 
-    open fun controllerLook(targetLocation: Location) {
-        val entityLocation = position.toLocation(targetLocation.world!!).also {
-            it.y += (entityType.entitySize.height * 0.85)
-        }
-        entityLocation.direction = targetLocation.subtract(entityLocation).toVector()
-        setHeadRotation(entityLocation.yaw, entityLocation.pitch)
-    }
-
     open fun isFired(): Boolean {
-        return properties.onFire
+        return getMetadata("onFire")
     }
 
     open fun isSneaking(): Boolean {
-        return properties.crouched
+        return getMetadata("isCrouched")
     }
 
     open fun isSprinting(): Boolean {
-        return properties.sprinting
+        return getMetadata("isSprinting")
     }
 
     open fun isSwimming(): Boolean {
-        return properties.swimming
+        return getMetadata("isSwimming")
     }
 
     open fun isInvisible(): Boolean {
-        return properties.invisible
+        return getMetadata("isInvisible")
     }
 
     open fun isGlowing(): Boolean {
-        return properties.glowing
+        return getMetadata("isGlowing")
     }
 
     open fun isFlyingElytra(): Boolean {
-        return properties.flyingElytra
+        return getMetadata("isFlyingElytra")
     }
 
-    open fun isGravity(): Boolean {
-        return properties.gravity
+    open fun isNoGravity(): Boolean {
+        return getMetadata("noGravity")
     }
 
     open fun setFired(onFire: Boolean) {
-        properties.onFire = onFire
-        updateMetadata()
+        setMetadata("onFire", onFire)
     }
 
     open fun setSneaking(sneaking: Boolean) {
-        properties.crouched = sneaking
-        updateMetadata()
+        setMetadata("sneaking", sneaking)
     }
 
     open fun setSprinting(sprinting: Boolean) {
-        properties.sprinting = sprinting
-        updateMetadata()
+        setMetadata("isSprinting", sprinting)
     }
 
     open fun setSwimming(swimming: Boolean) {
-        properties.swimming = swimming
-        updateMetadata()
+        setMetadata("isSwimming", swimming)
     }
 
     open fun setInvisible(invisible: Boolean) {
-        properties.invisible = invisible
-        updateMetadata()
+        setMetadata("isInvisible", invisible)
     }
 
     open fun setGlowing(glowing: Boolean) {
-        properties.glowing = glowing
-        updateMetadata()
+        setMetadata("isGlowing", glowing)
     }
 
     open fun setFlyingElytra(flyingElytra: Boolean) {
-        properties.flyingElytra = flyingElytra
-        updateMetadata()
+        setMetadata("isFlyingElytra", flyingElytra)
     }
 
-    open fun setGravity(gravity: Boolean) {
-        properties.gravity = true
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityBoolean(5, !gravity))
-    }
-
-    protected open fun updateMetadata() {
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityProperties(
-                onFire = properties.onFire,
-                crouched = properties.crouched,
-                unUsedRiding = properties.unUsedRiding,
-                sprinting = properties.sprinting,
-                swimming = properties.swimming,
-                invisible = properties.invisible,
-                glowing = properties.glowing,
-                flyingElytra = properties.flyingElytra
-        ))
+    open fun setNoGravity(noGravity: Boolean) {
+        setMetadata("noGravity", noGravity)
     }
 }

@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.MetadataExtend
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose
@@ -12,78 +10,44 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyArrow(owner: Player) : AdyEntity(owner, EntityTypes.ARROW), MetadataExtend {
+class AdyArrow(owner: Player) : AdyEntity(owner, EntityTypes.ARROW) {
 
     init {
-        properties = ArrowProperties()
+        registerMetaByteMask(7, "isCritical", 0x01)
+        registerMetaByteMask(7, "noclip", 0x02)
+        registerMeta(8, "piercingLevel", 0.toByte())
+        registerMeta(9, "color", -1)
     }
 
     fun setCritical(value: Boolean) {
-        getProperties().critical = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(7, baseData()))
+        setMetadata("isCritical", value)
     }
 
     fun isCritical(): Boolean {
-        return getProperties().critical
+        return getMetadata("isCritical")
     }
 
     fun setNoclip(value: Boolean) {
-        getProperties().critical = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(7, baseData()))
+        setMetadata("noclip", value)
     }
 
     fun isNoclip(): Boolean {
-        return getProperties().noclip
+        return getMetadata("noclip")
     }
 
     fun setPiercingLevel(value: Byte) {
-        getProperties().piercingLevel = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityByte(8, value))
+        setMetadata("piercingLevel", value)
     }
 
     fun getPiercingLevel(): Byte {
-        return getProperties().piercingLevel
+        return getMetadata("piercingLevel")
     }
 
     fun setColor(value: Color) {
-        getProperties().color = value.asRGB()
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityInt(9, value.asRGB()))
+        setMetadata("color", value.asRGB())
     }
 
     fun getColor(): Color {
-        return Color.fromRGB(getProperties().color)
-    }
-
-    fun baseData(): Byte {
-        return getProperties().run {
-            var bits = 0
-            if (critical) bits += 0x01
-            if (noclip) bits += 0x02
-            bits.toByte()
-        }
-    }
-
-    override fun metadata(): List<Any> {
-        return getProperties().run {
-            listOf(
-                    NMS.INSTANCE.getMetaEntityByte(7, baseData()),
-                    NMS.INSTANCE.getMetaEntityByte(8, piercingLevel),
-                    NMS.INSTANCE.getMetaEntityInt(9, color)
-            )
-        }
-    }
-
-    private fun getProperties(): ArrowProperties = properties as ArrowProperties
-
-    private class ArrowProperties : EntityProperties() {
-
-        @Expose
-        var critical = false
-        @Expose
-        var noclip = false
-        @Expose
-        var piercingLevel: Byte = 0
-        @Expose
-        var color = -1
+        return Color.fromRGB(getMetadata("color"))
     }
 }

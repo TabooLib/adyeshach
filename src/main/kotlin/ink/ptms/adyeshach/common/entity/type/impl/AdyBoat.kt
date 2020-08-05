@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.MetadataExtend
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitBoat
@@ -12,116 +10,71 @@ import org.bukkit.entity.Player
  * @author Arasple
  * @date 2020/8/4 22:48
  */
-class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT), MetadataExtend {
+class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT) {
 
     init {
-        properties = BoatProperties()
+        registerMeta(7, "sinceLastHit", 0)
+        registerMeta(8, "forwardDirection", 1)
+        registerMeta(9, "damageTaken", 0f)
+        registerMeta(10, "type", 0)
+        registerMeta(11, "leftPaddleTurning", false)
+        registerMeta(12, "rightPaddleTurning", false)
+        registerMeta(13, "splashTimer", 0)
     }
 
     fun setTimeSinceLastHit(time: Int) {
-        getProperties().sinceLastHit = time
-        update()
+        setMetadata("sinceLastHit", time)
     }
 
     fun getTimeSinceLastHit(): Int {
-        return getProperties().sinceLastHit
+        return getMetadata("sinceLastHit")
     }
 
     fun setForwardDirection(direction: Int) {
-        getProperties().forwardDirection = direction
-        update()
+        setMetadata("forwardDirection", direction)
     }
 
     fun getForwardDirection(): Int {
-        return getProperties().forwardDirection
+        return getMetadata("forwardDirection")
     }
 
     fun setDamageTaken(damageTaken: Float) {
-        getProperties().damageTaken = damageTaken
-        update()
+        setMetadata("damageTaken", damageTaken)
     }
 
     fun getDamageTaken(): Float {
-        return getProperties().damageTaken
+        return getMetadata("damageTaken")
     }
 
     fun setType(type: BukkitBoat) {
-        getProperties().type = type
-        update()
+        setMetadata("type", type.ordinal)
     }
 
     fun getType(): BukkitBoat {
-        return getProperties().type
+        return BukkitBoat.of(getMetadata("type"))
     }
 
     fun setLeftPaddleTurning(boolean: Boolean) {
-        getProperties().leftPaddleTurning = boolean
-        update()
+        setMetadata("leftPaddleTurning", boolean)
     }
 
     fun isLeftPaddleTurning(): Boolean {
-        return getProperties().leftPaddleTurning
+        return getMetadata("leftPaddleTurning")
     }
 
     fun setRightPaddleTurning(boolean: Boolean) {
-        getProperties().rightPaddleTurning = boolean
-        update()
+        setMetadata("rightPaddleTurning", boolean)
     }
 
     fun isRightPaddleTurning(): Boolean {
-        return getProperties().rightPaddleTurning
+        return getMetadata("rightPaddleTurning")
     }
 
     fun setSplashTimer(timer: Int) {
-        getProperties().splashTimer = timer
-        update()
+        setMetadata("splashTimer", timer)
     }
 
     fun getSplashTimer(): Int {
-        return getProperties().splashTimer
-    }
-
-    private fun update() {
-        NMS.INSTANCE.updateEntityMetadata(owner, index, *metadata().toTypedArray())
-    }
-
-    override fun metadata(): List<Any> {
-        return getProperties().run {
-            listOf(
-                    NMS.INSTANCE.getMetaEntityInt(7, sinceLastHit),
-                    NMS.INSTANCE.getMetaEntityInt(8, forwardDirection),
-                    NMS.INSTANCE.getMetaEntityFloat(9, damageTaken),
-                    NMS.INSTANCE.getMetaEntityInt(10, type.ordinal),
-                    NMS.INSTANCE.getMetaEntityBoolean(11, leftPaddleTurning),
-                    NMS.INSTANCE.getMetaEntityBoolean(12, rightPaddleTurning),
-                    NMS.INSTANCE.getMetaEntityInt(13, splashTimer),
-            )
-        }
-    }
-
-    private fun getProperties(): BoatProperties = properties as BoatProperties
-
-    private class BoatProperties : EntityProperties() {
-
-        @Expose
-        var sinceLastHit = 0
-
-        @Expose
-        var forwardDirection = 1
-
-        @Expose
-        var damageTaken = 0.0F
-
-        @Expose
-        var type = BukkitBoat.OAK
-
-        @Expose
-        var leftPaddleTurning = false
-
-        @Expose
-        var rightPaddleTurning = false
-
-        @Expose
-        var splashTimer = 0
+        return getMetadata("splashTimer")
     }
 }

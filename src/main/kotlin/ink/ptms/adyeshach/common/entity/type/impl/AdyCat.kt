@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import io.izzel.taboolib.internal.gson.annotations.Expose
@@ -15,16 +14,16 @@ import org.bukkit.entity.Player
 class AdyCat(owner: Player) : AdyEntityTameable(owner, EntityTypes.CAT) {
 
     init {
-        properties = CatProperties()
+        registerMeta(18, "type", 0)
+        registerMeta(21, "color", 14)
     }
 
     fun setType(value: Cat.Type) {
-        getProperties().type = value
-        NMS.INSTANCE.updateEntityMetadata(owner, index, NMS.INSTANCE.getMetaEntityInt(18, value.ordinal))
+        setMetadata("type", value.ordinal)
     }
 
     fun getType(): Cat.Type {
-        return getProperties().type
+        return getMetadata("type")
     }
 
     fun setCollarColor(value: DyeColor) {
@@ -34,25 +33,5 @@ class AdyCat(owner: Player) : AdyEntityTameable(owner, EntityTypes.CAT) {
 
     fun getCollarColor(): DyeColor {
         return getProperties().color
-    }
-
-    override fun metadata(): List<Any> {
-        return getProperties().run {
-            listOf(
-                    *super.metadata().toTypedArray(),
-                    NMS.INSTANCE.getMetaEntityInt(18, type.ordinal),
-                    NMS.INSTANCE.getMetaEntityInt(21, color.ordinal)
-            )
-        }
-    }
-
-    private fun getProperties(): CatProperties = properties as CatProperties
-
-    private class CatProperties : EntityProperties.Tameable() {
-
-        @Expose
-        var type = Cat.Type.TABBY
-        @Expose
-        var color = DyeColor.RED
     }
 }

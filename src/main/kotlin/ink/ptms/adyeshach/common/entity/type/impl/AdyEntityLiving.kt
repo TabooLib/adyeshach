@@ -18,7 +18,7 @@ import java.util.*
 open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInstance(owner, entityTypes), EntityEquipable {
 
     @Expose
-    private val equipment = HashMap<EquipmentSlot, ItemStack>()
+    protected val equipment = HashMap<EquipmentSlot, ItemStack>()
 
     override fun spawn(location: Location) {
         super.spawn(location)

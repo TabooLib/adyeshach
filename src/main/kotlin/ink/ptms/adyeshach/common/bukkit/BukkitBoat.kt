@@ -11,6 +11,12 @@ enum class BukkitBoat {
     BIRCH,
     JUNGLE,
     ACACIA,
-    DARK_OAK
+    DARK_OAK;
 
+    companion object {
+
+        fun of(index: Int): BukkitBoat {
+            return values().first { it.ordinal == index }
+        }
+    }
 }

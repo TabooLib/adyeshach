@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
 import com.google.gson.GsonBuilder
-import ink.ptms.adyeshach.common.entity.element.EntityProperties
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.util.Serializer
@@ -13,7 +12,7 @@ import org.bukkit.Location
  * @Author sky
  * @Since 2020-08-04 12:47
  */
-abstract class EntityBase(@Expose val entityType: EntityTypes) {
+abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable() {
 
     @Expose
     var world: String? = null
@@ -23,9 +22,6 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) {
     var position = EntityPosition.empty()
         protected set
         get() = field.clone()
-
-    @Expose
-    protected var properties = EntityProperties()
 
     protected fun initialize(world: String, entityPosition: EntityPosition) {
         this.world = world

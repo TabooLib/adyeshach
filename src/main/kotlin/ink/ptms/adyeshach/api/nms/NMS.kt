@@ -72,6 +72,8 @@ abstract class NMS {
 
     abstract fun getMetaEntityVector(index: Int, value: EulerAngle): Any
 
+    abstract fun getMetaEntityChatBaseComponent(index: Int, name: String): Any
+
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 
     abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
