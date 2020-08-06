@@ -11,9 +11,15 @@ import org.bukkit.entity.Player
 abstract class AdyEntityTameable(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
 
     init {
-        registerMetaByteMask(16, "isSitting", 0x01)
-        registerMetaByteMask(16, "isAngry", 0x02)
-        registerMetaByteMask(16, "isTamed", 0x04)
+        /**
+         * 1.9 -> 12
+         * 1.10 -> 13
+         * 1.14 -> 15
+         * 1.15 -> 16
+         */
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isSitting", 0x01)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isAngry", 0x02)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isTamed", 0x04)
     }
 
     fun setSitting(value: Boolean) {

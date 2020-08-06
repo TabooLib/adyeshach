@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.type.impl
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.entity.Player
+import java.lang.RuntimeException
 
 /**
  * @Author sky
@@ -12,21 +13,32 @@ abstract class AdyHorseBase(owner: Player, entityTypes: EntityTypes) : AdyEntity
 
     init {
         /**
-         * 1.13  Index->13, 0x80 = UnUsed
-         * 1.12 Index->13
-         *      isSaddled 后 + hasChest, bitMask 依次类推, 最后一个 0x80
-         * 1.9 Index->12, 同 1.12
-         *     Index: 13 VarInt	Variant
-         *     Index: 14 VarInt	Color & Style
-         *     Index: 15 OptUUID	Owner
-         *     Index: 16 VarInt	Armor
+         * 1.15 -> 16
+         * 1.14 -> 15
+         * 1.13 -> 13
+         * -- (no chested horse)
+         * 1.12 -> 13
+         * 1.11 -> 13
+         * -- (no abstract horse)
+         * 1.10 -> 13
+         * 1.9 -> 12
          */
-        registerMetaByteMask(16, "isTamed", 0x02)
-        registerMetaByteMask(16, "isSaddled", 0x04)
-        registerMetaByteMask(16, "hasBred", 0x08)
-        registerMetaByteMask(16, "isEating", 0x10)
-        registerMetaByteMask(16, "isRearing", 0x20)
-        registerMetaByteMask(16, "isMouthOpen", 0x40)
+        if (version >= 11300) {
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "isTamed", 0x02)
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "isSaddled", 0x04)
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "hasBred", 0x08)
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "isEating", 0x10)
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "isRearing", 0x20)
+            registerMetaByteMask(at(11500 to 16, 11400 to 15, 11300 to 13), "isMouthOpen", 0x40)
+        } else {
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isTamed", 0x02)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isSaddled", 0x04)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "hasChest", 0x08)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "hasBred", 0x10)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isEating", 0x20)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isRearing", 0x40)
+            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isMouthOpen", 0x80.toByte())
+        }
     }
 
     fun setTamed(value: Boolean) {
@@ -75,5 +87,19 @@ abstract class AdyHorseBase(owner: Player, entityTypes: EntityTypes) : AdyEntity
 
     fun isMouthOpen(): Boolean {
         return getMetadata("isMouthOpen")
+    }
+
+    open fun setHasChest(value: Boolean) {
+        if (version >= 11300) {
+            throw RuntimeException("Metadata \"hasChest\" not supported this minecraft version.")
+        }
+        setMetadata("hasChest", value)
+    }
+
+    open fun isHasChest(): Boolean {
+        if (version >= 11300) {
+            throw RuntimeException("Metadata \"hasChest\" not supported this minecraft version.")
+        }
+        return getMetadata("hasChest")
     }
 }

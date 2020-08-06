@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.util.EulerAngle
 import java.lang.RuntimeException
@@ -19,10 +20,10 @@ abstract class EntityMetaable {
     protected val version = Version.getCurrentVersionInt()
 
     @Expose
-    protected val properties = HashMap<Int, Any>()
+    protected val metadata = HashMap<String, Any>()
 
     protected fun at(vararg index: Pair<Int, Int>): Int {
-        return index.firstOrNull { version > it.first }?.second ?: -1
+        return index.firstOrNull { version >= it.first }?.second ?: -1
     }
 
     protected fun Int.to(index: Int): Pair<Int, Int> {
@@ -31,13 +32,17 @@ abstract class EntityMetaable {
 
     protected fun registerMeta(index: Int, key: String, def: Any) {
         meta.add(MetaNatural(index, key, def))
-        properties[index] = def
+        metadata[key] = def
     }
 
     protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false) {
         meta.add(MetaMasked(index, key, mask))
-        val byteMask = properties.computeIfAbsent(index) { ByteMask() } as ByteMask
+        val byteMask = metadata.computeIfAbsent(getByteMaskKey(index)) { ByteMask() } as ByteMask
         byteMask.mask[key] = def
+    }
+
+    protected fun getByteMaskKey(index: Int): String {
+        return "\$${Strings.hashKeyForDisk(meta.firstOrNull { it.index == index }!!.key).substring(0, 8)}"
     }
 
     fun listMetadata(): List<String> {
@@ -54,13 +59,13 @@ abstract class EntityMetaable {
 
     fun setMetadata(key: String, value: Any) {
         val registerMeta = meta.firstOrNull { it.key == key } ?: throw RuntimeException("Metadata \"$key\" not registered.")
-        when (registerMeta) {
-            is MetaMasked -> {
-                (properties.computeIfAbsent(registerMeta.index) { ByteMask() } as ByteMask).mask[key] = value as Boolean
-            }
-            is MetaNatural<*> -> {
-                properties[registerMeta.index] = value
-            }
+        if (registerMeta.index == -1) {
+            throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
+        }
+        if (registerMeta is MetaMasked) {
+            (metadata.computeIfAbsent(getByteMaskKey(registerMeta.index)) { ByteMask() } as ByteMask).mask[key] = value as Boolean
+        } else {
+            metadata[key] = value
         }
         if (this is EntityInstance) {
             registerMeta.update(this)
@@ -73,11 +78,10 @@ abstract class EntityMetaable {
         if (registerMeta.index == -1) {
             throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
         }
-        val obj = properties[registerMeta.index]
-        return if (obj is ByteMask) {
-            obj.mask[key]!! as T
+        return if (registerMeta is MetaMasked) {
+            (metadata[getByteMaskKey(registerMeta.index)] as ByteMask).mask[key] as T
         } else {
-            obj as T
+            metadata[key] as T
         }
     }
 
@@ -102,8 +106,11 @@ abstract class EntityMetaable {
         }
 
         override fun update(entityInstance: EntityInstance) {
+            if (index == -1) {
+                return
+            }
             var bits = 0
-            val byteMask = (entityInstance.properties[index] ?: return) as ByteMask
+            val byteMask = (entityInstance.metadata[entityInstance.getByteMaskKey(index)] ?: return) as ByteMask
             entityInstance.meta.filter { it.index == index }.map { it as MetaMasked }.forEach {
                 if (byteMask.mask[it.key] == true) {
                     bits += it.mask
@@ -130,7 +137,10 @@ abstract class EntityMetaable {
         }
 
         override fun update(entityInstance: EntityInstance) {
-            val obj = entityInstance.properties[index] ?: return
+            if (index == -1) {
+                return
+            }
+            val obj = entityInstance.metadata[key] ?: return
             val metadata = dataWatcher?.getMetadata(index, obj) ?: return
             NMS.INSTANCE.updateEntityMetadata(entityInstance.owner, entityInstance.index, metadata)
         }

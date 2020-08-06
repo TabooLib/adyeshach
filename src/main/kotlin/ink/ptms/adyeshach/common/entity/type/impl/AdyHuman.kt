@@ -20,13 +20,19 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
     private val gameProfile = GameProfile()
 
     init {
-        registerMetaByteMask(16, "skinCapeEnabled", 0x01, true)
-        registerMetaByteMask(16, "skinJacketEnabled", 0x02, true)
-        registerMetaByteMask(16, "skinLeftSleeveEnabled", 0x04, true)
-        registerMetaByteMask(16, "skinRightSleeveEnabled", 0x08, true)
-        registerMetaByteMask(16, "skinLeftPantsEnabled", 0x10, true)
-        registerMetaByteMask(16, "skinRightPantsEnabled", 0x20, true)
-        registerMetaByteMask(16, "skinHatEnabled", 0x40, true)
+        /**
+         * 1.15 -> 16
+         * 1.14 -> 15
+         * 1.10 -> 13
+         * 1.9 -> 12
+         */
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCapeEnabled", 0x01, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacketEnabled", 0x02, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeveEnabled", 0x04, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeveEnabled", 0x08, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPantsEnabled", 0x10, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPantsEnabled", 0x20, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHatEnabled", 0x40, true)
     }
 
     override fun spawn(location: Location) {

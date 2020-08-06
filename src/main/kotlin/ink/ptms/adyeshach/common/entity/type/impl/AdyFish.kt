@@ -11,7 +11,12 @@ import org.bukkit.entity.Player
 abstract class AdyFish(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes) {
 
     init {
-        registerMeta(15, "fromBucket", false)
+        /**
+         * 1.15 -> 15
+         * 1.14 -> 14
+         * 1.13 -> 12
+         */
+        registerMeta(at(11500 to 15, 11400 to 14, 11300 to 12), "fromBucket", false)
     }
 
     fun setFromBucket(value: Boolean) {

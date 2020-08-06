@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -19,6 +20,10 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     @Expose
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
+
+    init {
+        registerMeta(at(11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
+    }
 
     override fun spawn(location: Location) {
         super.spawn(location)
@@ -85,5 +90,13 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun clear() {
         equipment.clear()
+    }
+
+    fun setPotionEffectColor(value: Color) {
+        setMetadata("potionEffectColor", value.asRGB())
+    }
+
+    fun getPotionEffectColor(): Color {
+        return Color.fromRGB(getMetadata("potionEffectColor"))
     }
 }

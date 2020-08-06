@@ -5,9 +5,12 @@ import ink.ptms.adyeshach.common.entity.type.impl.AdyHuman
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.util.Files
+import org.bukkit.Color
 import org.bukkit.DyeColor
 import org.bukkit.entity.Cat
 import org.bukkit.entity.Player
+import java.io.File
 
 /**
  * @author Arasple
@@ -28,6 +31,12 @@ object TestV {
                     entity.setSitting(true)
                     entity.setCollarColor(DyeColor.WHITE)
                     entity.setType(Cat.Type.ALL_BLACK)
+                    entity.setCustomName("坏嘿嘿的小猫咪")
+                    entity.setCustomNameVisible(true)
+                    entity.setPotionEffectColor(Color.RED)
+                    Files.write(File(Adyeshach.plugin.dataFolder, "output.json")) {
+                        it.write(entity.toJson())
+                    }
                     sender.sendMessage("§c[System] §7Done.")
                 }
             }

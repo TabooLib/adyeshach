@@ -18,13 +18,13 @@ class AdyBoat(owner: Player) : AdyEntity(owner, EntityTypes.BOAT) {
      * 1.9 ->  Index 5-10 和 1.12 对应
      */
     init {
-        registerMeta(7, "sinceLastHit", 0)
-        registerMeta(8, "forwardDirection", 1)
-        registerMeta(9, "damageTaken", 0f)
-        registerMeta(10, "type", BukkitBoat.OAK.ordinal)
-        registerMeta(11, "leftPaddleTurning", false)
-        registerMeta(12, "rightPaddleTurning", false)
-        registerMeta(13, "splashTimer", 0)
+        registerMeta(at(11600.to(7), 11000.to(6), 10900.to(5)), "sinceLastHit", 0)
+        registerMeta(at(11600.to(8), 11000.to(7), 10900.to(6)), "forwardDirection", 1)
+        registerMeta(at(11600.to(9), 11000.to(8), 10900.to(7)), "damageTaken", 0f)
+        registerMeta(at(11600.to(10), 11000.to(9), 10900.to(8)), "type", BukkitBoat.OAK.ordinal)
+        registerMeta(at(11600.to(11), 11000.to(11), 10900.to(10)), "leftPaddleTurning", false)
+        registerMeta(at(11600.to(12), 11000.to(10), 10900.to(9)), "rightPaddleTurning", false)
+        registerMeta(at(11600.to(13), 11300.to(12), 0.to(-1)), "splashTimer", 0)
     }
 
     fun setTimeSinceLastHit(time: Int) {

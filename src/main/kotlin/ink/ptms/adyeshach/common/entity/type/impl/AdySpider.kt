@@ -11,10 +11,12 @@ abstract class AdySpider(owner: Player, entityTypes: EntityTypes) : AdyEntityLiv
 
     init {
         /**
-         * 1.13,1.12 -> Index 12
-         * 1.9 -> Index 11
+         * 1.15 -> 15
+         * 1.14 -> 14
+         * 1.10 -> 12
+         * 1.9 -> 11
          */
-        registerMeta(15, "isClimbing", false)
+        registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isClimbing", false)
     }
 
     fun setClimbing(climbing: Boolean) {
@@ -24,5 +26,4 @@ abstract class AdySpider(owner: Player, entityTypes: EntityTypes) : AdyEntityLiv
     fun isClibmbing(): Boolean {
         return getMetadata("isClimbing")
     }
-
 }

@@ -11,14 +11,19 @@ import org.bukkit.entity.Player
 abstract class AdyHorseChested(owner: Player, entityTypes: EntityTypes) : AdyHorseBase(owner, entityTypes) {
 
     init {
-        registerMeta(18, "hasChest", false)
+        /**
+         * 1.15 -> 18
+         * 1.14 -> 17
+         * 1.11 -> 15
+         */
+        registerMeta(at(11500 to 18, 11400 to 17, 11100 to 15), "hasChest", false)
     }
 
-    fun setHasChest(value: Boolean) {
+    override fun setHasChest(value: Boolean) {
         setMetadata("hasChest", value)
     }
 
-    fun isHasChest(): Boolean {
+    override fun isHasChest(): Boolean {
         return getMetadata("hasChest")
     }
 }

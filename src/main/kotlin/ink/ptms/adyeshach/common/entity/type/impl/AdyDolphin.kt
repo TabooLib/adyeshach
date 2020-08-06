@@ -14,10 +14,12 @@ class AdyDolphin(owner: Player) : AdyEntityLiving(owner, EntityTypes.DOLPHIN) {
 
     init {
         /**
-         * 1.13 -> Index 12, 13, 14
+         * 1.15 -> 16, 17
+         * 1.14 -> 15, 16
+         * 1.13 -> 13, 14
          */
-        registerMeta(16, "findTreasure", false)
-        registerMeta(17, "hasFish", false)
+        registerMeta(at(11500 to 16, 11400 to 15, 11300 to 13), "findTreasure", false)
+        registerMeta(at(11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
     }
 
     fun setFindTreasure(value: Boolean) {

@@ -26,9 +26,9 @@ class AdyArrow(owner: Player) : AdyEntity(owner, EntityTypes.ARROW) {
 
     init {
         registerMetaByteMask(at(11600.to(7), 11000.to(6), 10900.to(5)), "isCritical", 0x01)
-        registerMetaByteMask(at(11400.to(7), 0.to(-1)), "noclip", 0x02)
+        registerMetaByteMask(at(11400.to(7)), "noclip", 0x02)
         registerMeta(at(11600.to(8), 11500.to(9)), "piercingLevel", 0.toByte())
-        registerMeta(at(11600.to(9), 0.to(-1)), "color", -1)
+        registerMeta(at(11600.to(9)), "color", -1)
     }
 
     fun setCritical(value: Boolean) {

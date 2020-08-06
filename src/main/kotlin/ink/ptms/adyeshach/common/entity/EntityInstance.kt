@@ -30,11 +30,13 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         registerMetaByteMask(0, "isInvisible", 0x20)
         registerMetaByteMask(0, "isGlowing", 0x40)
         registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
-        registerMeta(2, "customName", TextComponent(""))
+        if (version > 11200) {
+            registerMeta(2, "customName", TextComponent(""))
+        } else {
+            registerMeta(2, "customName", "")
+        }
         registerMeta(3, "isCustomNameVisible", false)
-        registerMeta(4, "isSilent", false)
-        registerMeta(5, "noGravity", false)
-//        registerMeta(6, "pose", 0)
+        registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
     }
 
     open fun spawn(location: Location) {
@@ -132,5 +134,29 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
 
     open fun setNoGravity(noGravity: Boolean) {
         setMetadata("noGravity", noGravity)
+    }
+
+    open fun setCustomName(value: String) {
+        if (version > 11200) {
+            setMetadata("customName", TextComponent(value))
+        } else {
+            setMetadata("customName", value)
+        }
+    }
+
+    open fun getCustomName(value: String): String {
+        return if (version > 11200) {
+            getMetadata<TextComponent>("customName").text
+        } else {
+            getMetadata("customName")
+        }
+    }
+
+    open fun setCustomNameVisible(value: Boolean) {
+        setMetadata("isCustomNameVisible", value)
+    }
+
+    open fun isCustomNameVisible(): Boolean {
+        return getMetadata("isCustomNameVisible")
     }
 }
