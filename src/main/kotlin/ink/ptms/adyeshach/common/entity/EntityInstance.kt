@@ -55,7 +55,7 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
 
     open fun controllerLook(location: Location) {
         val entityLocation = position.toLocation(location.world!!).also {
-            it.y += (entityType.entitySize.height * 0.85)
+            it.y += (entityType.entitySize.width * 0.85)
         }
         entityLocation.direction = location.clone().subtract(entityLocation).toVector()
         setHeadRotation(entityLocation.yaw, entityLocation.pitch)
