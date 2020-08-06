@@ -154,10 +154,7 @@ class NMSImpl16 : NMS() {
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
-        sendPacket(
-            player,
-            PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))))
-        )
+        sendPacket(player, PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))))
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
@@ -207,5 +204,4 @@ class NMSImpl16 : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
     }
-
 }

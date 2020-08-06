@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.util.EulerAngle
@@ -15,9 +16,18 @@ import java.lang.RuntimeException
 abstract class EntityMetaable {
 
     protected val meta = ArrayList<Meta>()
+    protected val version = Version.getCurrentVersionInt()
 
     @Expose
     protected val properties = HashMap<Int, Any>()
+
+    protected fun at(vararg index: Pair<Int, Int>): Int {
+        return index.firstOrNull { version > it.first }?.second ?: -1
+    }
+
+    protected fun Int.to(index: Int): Pair<Int, Int> {
+        return this to index
+    }
 
     protected fun registerMeta(index: Int, key: String, def: Any) {
         meta.add(MetaNatural(index, key, def))
@@ -60,6 +70,9 @@ abstract class EntityMetaable {
     @Suppress("UNCHECKED_CAST")
     fun <T> getMetadata(key: String): T {
         val registerMeta = meta.firstOrNull { it.key == key } ?: throw RuntimeException("Metadata \"$key\" not registered.")
+        if (registerMeta.index == -1) {
+            throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
+        }
         val obj = properties[registerMeta.index]
         return if (obj is ByteMask) {
             obj.mask[key]!! as T

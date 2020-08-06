@@ -185,7 +185,6 @@ class NMSImpl12 : NMS() {
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
         return 0
-//        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam?)
     }
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
@@ -206,7 +205,6 @@ class NMSImpl12 : NMS() {
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return 0
-//        return SimpleReflection.getFieldValueChecked(Particle::class.java, null, bukkitParticles.name, true) ?: Particles.A
     }
 
 }

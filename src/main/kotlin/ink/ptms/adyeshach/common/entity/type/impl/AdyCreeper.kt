@@ -16,7 +16,7 @@ class AdyCreeper(owner: Player) : AdyEntityLiving(owner, EntityTypes.CREEPER) {
     init {
         /**
          * 1.12 -> 12,13,14
-         * 1.9 0> 11,12,13
+         * 1.9 -> 11,12,13
          */
         registerMeta(15, "state", BukkitCreeperState.IDLE.ordinal)
         registerMeta(16, "isCharged", false)

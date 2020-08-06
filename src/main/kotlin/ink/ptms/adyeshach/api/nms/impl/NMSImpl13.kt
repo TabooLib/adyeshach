@@ -156,7 +156,7 @@ class NMSImpl13 : NMS() {
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         sendPacket(
             player,
-            PacketPlayOutEntityEquipment(entityId, EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))
+            PacketPlayOutEntityEquipment(entityId, EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))
         )
     }
 
