@@ -11,6 +11,8 @@ import java.lang.RuntimeException
  */
 open class AdyZombie(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
 
+    constructor(owner: Player): this(owner, EntityTypes.ZOMBIE)
+
     init {
         /**
          * 1.14 -> 16 isDrowning
