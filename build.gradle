@@ -36,8 +36,11 @@ repositories {
 dependencies {
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11500:11500:all'
+    compile 'ink.ptms.core:v11400:11400:all'
     compile 'ink.ptms.core:v11300:11300:all'
     compile 'ink.ptms.core:v11200:11200:all'
+    compile 'ink.ptms.core:v11100:11100:all'
+    compile 'ink.ptms.core:v11000:11000:all'
     compile 'ink.ptms.core:v10900:10900:all'
     compile 'io.izzel.taboolib:TabooLib:5.34:all'
     compile 'io.izzel.taboolib:TabooLibLoader:2.2:all'

@@ -4,6 +4,8 @@ import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitDirection
+import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
@@ -69,6 +71,30 @@ class NMSImpl15 : NMS() {
             Pair("e", location.z),
             Pair("f", (location.yaw * 256 / 360).toInt().toByte()),
             Pair("g", (location.pitch * 256 / 360).toInt().toByte())
+        )
+    }
+
+    override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
+        sendPacket(
+            player,
+            PacketPlayOutSpawnEntityExperienceOrb(),
+            Pair("a", entityId),
+            Pair("b", location.x),
+            Pair("c", location.y),
+            Pair("d", location.z),
+            Pair("e", amount),
+        )
+    }
+
+    override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
+        sendPacket(
+            player,
+            PacketPlayOutSpawnEntityPainting(),
+            Pair("a", entityId),
+            Pair("b", uuid),
+            Pair("c", getBlockPositionNMS(location)),
+            Pair("d", EnumDirection.valueOf(direction.name)),
+            Pair("e", IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?))
         )
     }
 
@@ -202,6 +228,14 @@ class NMSImpl15 : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
         return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true) ?: EntityTypes.ARMOR_STAND
+    }
+
+    override fun getBlockPositionNMS(location: Location): Any {
+        return BlockPosition(location.blockX, location.blockY, location.blockZ)
+    }
+
+    override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
+        return SimpleReflection.getFieldValueChecked(Paintings::class.java, null, bukkitPaintings.index.toString(), true) ?: Paintings.a
     }
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {

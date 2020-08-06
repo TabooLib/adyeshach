@@ -9,10 +9,10 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
-import net.minecraft.server.v1_16_R1.*
+import net.minecraft.server.v1_14_R1.*
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -22,9 +22,9 @@ import java.util.*
 
 /**
  * @author Arasple
- * @date 2020/8/3 21:51
+ * @date 2020/8/6 18:38
  */
-class NMSImpl16 : NMS() {
+class NMSImpl14 : NMS() {
 
     override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
@@ -180,7 +180,10 @@ class NMSImpl16 : NMS() {
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
-        sendPacket(player, PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))))
+        sendPacket(
+            player,
+            PacketPlayOutEntityEquipment(entityId, EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))
+        )
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {

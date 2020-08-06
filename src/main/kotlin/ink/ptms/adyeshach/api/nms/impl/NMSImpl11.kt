@@ -8,11 +8,10 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.module.lite.SimpleEquip
-import io.izzel.taboolib.module.lite.SimpleReflection
-import net.minecraft.server.v1_16_R1.*
+import net.minecraft.server.v1_11_R1.*
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -22,9 +21,9 @@ import java.util.*
 
 /**
  * @author Arasple
- * @date 2020/8/3 21:51
+ * @date 2020/8/6 18:39
  */
-class NMSImpl16 : NMS() {
+class NMSImpl11 : NMS() {
 
     override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
@@ -47,7 +46,7 @@ class NMSImpl16 : NMS() {
             PacketPlayOutSpawnEntityLiving(),
             Pair("a", entityId),
             Pair("b", uuid),
-            Pair("c", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>)),
+            Pair("c", entityType),
             Pair("d", location.x),
             Pair("e", location.y),
             Pair("f", location.z),
@@ -94,7 +93,7 @@ class NMSImpl16 : NMS() {
             Pair("b", uuid),
             Pair("c", getBlockPositionNMS(location)),
             Pair("d", EnumDirection.valueOf(direction.name)),
-            Pair("e", IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?))
+            Pair("e", getPaintingNMS(painting))
         )
     }
 
@@ -153,9 +152,9 @@ class NMSImpl16 : NMS() {
             player,
             PacketPlayOutEntity.PacketPlayOutRelEntityMove(
                 entityId,
-                (x * 4096).toInt().toShort(),
-                (y * 4096).toInt().toShort(),
-                (z * 4096).toInt().toShort(),
+                x.toLong(),
+                y.toLong(),
+                z.toLong(),
                 true
             )
         )
@@ -180,7 +179,10 @@ class NMSImpl16 : NMS() {
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
-        sendPacket(player, PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))))
+        sendPacket(
+            player,
+            PacketPlayOutEntityEquipment(entityId, EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack))
+        )
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
@@ -204,11 +206,11 @@ class NMSImpl16 : NMS() {
     }
 
     override fun getMetaEntityBoolean(index: Int, value: Boolean): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.h), value)
     }
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam?)
+        return 0
     }
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
@@ -216,15 +218,15 @@ class NMSImpl16 : NMS() {
     }
 
     override fun getMetaEntityVector(index: Int, value: EulerAngle): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
     }
 
     override fun getMetaEntityChatBaseComponent(index: Int, name: String): Any {
-        return DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.of(ChatComponentText(name)))
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.e), ChatComponentText(name))
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
-        return SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true) ?: EntityTypes.ARMOR_STAND
+        return entityTypes.bukkitId
     }
 
     override fun getBlockPositionNMS(location: Location): Any {
@@ -232,11 +234,12 @@ class NMSImpl16 : NMS() {
     }
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
-        return SimpleReflection.getFieldValueChecked(Paintings::class.java, null, bukkitPaintings.index.toString(), true) ?: Paintings.a
+        // TODO 待测试
+        return bukkitPaintings.name
     }
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
-        return SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
+        return 0
     }
 
 }

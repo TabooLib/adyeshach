@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.api.nms
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.common.bukkit.BukkitDirection
+import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.Version
@@ -27,6 +29,10 @@ abstract class NMS {
     abstract fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+
+    abstract fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int)
+
+    abstract fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings)
 
     abstract fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>)
 
@@ -64,6 +70,10 @@ abstract class NMS {
 
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 
+    abstract fun getBlockPositionNMS(location: Location): Any
+
+    abstract fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any
+
     abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
 
     companion object {
@@ -72,11 +82,7 @@ abstract class NMS {
 
         @TSchedule
         fun init() {
-            val version = when {
-                Version.isAfter(Version.v1_13) -> "16"
-                Version.isAfter(Version.v1_9) -> "12"
-                else -> "8"
-            }
+            val version = Version.getCurrentVersion().name.removePrefix("v1_")
             INSTANCE = SimpleVersionControl.createNMS("ink.ptms.adyeshach.api.nms.impl.NMSImpl$version").useNMS().translate(Adyeshach.plugin).getDeclaredConstructor().newInstance() as NMS
         }
 
