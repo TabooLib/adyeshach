@@ -24,7 +24,7 @@ import java.util.*
  */
 abstract class NMS {
 
-    abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+    abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location, vararg data: Int)
 
     abstract fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 

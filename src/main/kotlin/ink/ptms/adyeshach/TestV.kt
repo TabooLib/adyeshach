@@ -1,16 +1,18 @@
 package ink.ptms.adyeshach
 
-import ink.ptms.adyeshach.common.entity.type.impl.AdyCat
-import ink.ptms.adyeshach.common.entity.type.impl.AdyHuman
+import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.common.entity.type.impl.AdyExperienceOrb
+import ink.ptms.adyeshach.common.entity.type.impl.AdyPainting
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.Files
-import org.bukkit.Color
-import org.bukkit.DyeColor
-import org.bukkit.entity.Cat
 import org.bukkit.entity.Player
-import java.io.File
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerInteractEvent
 
 /**
  * @author Arasple
@@ -19,25 +21,48 @@ import java.io.File
  */
 object TestV {
 
+    @TListener
+    class Interact : Listener {
+
+        @EventHandler
+        fun onInteract(e: PlayerInteractEvent) {
+            val player = e.player
+            val block = e.clickedBlock ?: return
+
+            if (player.isSneaking && e.action == Action.RIGHT_CLICK_BLOCK) {
+                val entity = AdyPainting(player)
+                entity.spawn(block.location)
+
+                var delay = 20L
+                BukkitPaintings.values().forEach {
+                    Tasks.delay(delay, true) {
+                        entity.setPainting(it)
+                    }
+                    delay += 20
+                }
+
+                Tasks.delay(20 * 20) {
+                    entity.destroy()
+                }
+
+                Files.file(Adyeshach.plugin.dataFolder, "output.json").writeText(entity.toJson())
+                player.sendMessage("§c[System] §7Done.")
+            }
+        }
+
+    }
+
     @TInject
     val testV: CommandBuilder = CommandBuilder
-            .create("test-v", Adyeshach.plugin)
-            .execute { sender, _ ->
-                if (sender is Player) {
-                    val entity = AdyCat(sender)
-                    entity.spawn(sender.location)
-                    entity.setBaby(true)
-                    entity.setTamed(true)
-                    entity.setSitting(true)
-                    entity.setCollarColor(DyeColor.WHITE)
-                    entity.setType(Cat.Type.ALL_BLACK)
-                    entity.setCustomName("坏嘿嘿的小猫咪")
-                    entity.setCustomNameVisible(true)
-                    entity.setPotionEffectColor(Color.RED)
-                    Files.write(File(Adyeshach.plugin.dataFolder, "output.json")) {
-                        it.write(entity.toJson())
-                    }
-                    sender.sendMessage("§c[System] §7Done.")
-                }
+        .create("test-v", Adyeshach.plugin)
+        .execute { sender, _ ->
+            if (sender is Player) {
+                val entity = AdyExperienceOrb(sender)
+
+                entity.spawn(sender.location)
+
+                Files.file(Adyeshach.plugin.dataFolder, "output.json").writeText(entity.toJson())
+                sender.sendMessage("§c[System] §7Done.")
             }
+        }
 }

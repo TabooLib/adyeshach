@@ -25,7 +25,7 @@ import java.util.*
  */
 class NMSImpl10 : NMS() {
 
-    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location, vararg data: Int) {
         sendPacket(
             player,
             PacketPlayOutSpawnEntity(),

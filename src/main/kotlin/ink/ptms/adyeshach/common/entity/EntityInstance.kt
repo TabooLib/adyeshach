@@ -49,6 +49,11 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
         NMS.INSTANCE.destroyEntity(owner, index)
     }
 
+    fun respawn(){
+        destroy()
+        spawn(getLatestLocation())
+    }
+
     open fun teleport(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)

@@ -185,7 +185,7 @@ enum class EntityTypes(
     ),
 
     // 需要 [Spawn Experience Orb] 包
-    EXPERIENCE_ORGB(
+    EXPERIENCE_ORB(
         EntityType.EXPERIENCE_ORB,
         -1,
         EntitySize(0.5, 0.5),

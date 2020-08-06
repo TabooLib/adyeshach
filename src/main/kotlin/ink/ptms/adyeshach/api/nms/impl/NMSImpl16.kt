@@ -26,7 +26,7 @@ import java.util.*
  */
 class NMSImpl16 : NMS() {
 
-    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location, vararg data: Int) {
         sendPacket(
             player,
             PacketPlayOutSpawnEntity(),
@@ -37,7 +37,8 @@ class NMSImpl16 : NMS() {
             Pair("e", location.z),
             Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
             Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-            Pair("k", entityType)
+            Pair("k", entityType),
+            Pair("l", data)
         )
     }
 
