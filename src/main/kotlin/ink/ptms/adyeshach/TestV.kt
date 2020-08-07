@@ -1,13 +1,14 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.entity.type.impl.AdyExperienceOrb
+import ink.ptms.adyeshach.common.entity.type.impl.AdyFallingBlock
 import ink.ptms.adyeshach.common.entity.type.impl.AdyPainting
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.Files
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -57,9 +58,21 @@ object TestV {
         .create("test-v", Adyeshach.plugin)
         .execute { sender, _ ->
             if (sender is Player) {
-                val entity = AdyExperienceOrb(sender)
+                val entity = AdyFallingBlock(sender)
 
                 entity.spawn(sender.location)
+                entity.setNoGravity(true)
+                entity.setMaterial(Material.CRYING_OBSIDIAN)
+
+                Tasks.delay(40) {
+                    entity.setMaterial(
+                        Material.DIAMOND_ORE
+                    )
+                }
+
+                Tasks.delay(80) {
+                    entity.destroy()
+                }
 
                 Files.file(Adyeshach.plugin.dataFolder, "output.json").writeText(entity.toJson())
                 sender.sendMessage("§c[System] §7Done.")

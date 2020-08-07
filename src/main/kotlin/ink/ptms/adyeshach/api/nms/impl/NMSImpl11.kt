@@ -11,6 +11,7 @@ import io.izzel.taboolib.module.lite.SimpleEquip
 import net.minecraft.server.v1_11_R1.*
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -25,7 +26,7 @@ import java.util.*
  */
 class NMSImpl11 : NMS() {
 
-    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location, vararg data: Int) {
+    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
             player,
             PacketPlayOutSpawnEntity(),
@@ -70,6 +71,23 @@ class NMSImpl11 : NMS() {
             Pair("e", location.z),
             Pair("f", (location.yaw * 256 / 360).toInt().toByte()),
             Pair("g", (location.pitch * 256 / 360).toInt().toByte())
+        )
+    }
+
+    @Suppress("DEPRECATION")
+    override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
+        sendPacket(
+            player,
+            PacketPlayOutSpawnEntity(),
+            Pair("a", entityId),
+            Pair("b", uuid),
+            Pair("c", location.x),
+            Pair("d", location.y),
+            Pair("e", location.z),
+            Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
+            Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
+            Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.type.EntityTypes.FALLING_BLOCK)),
+            Pair("l", material.id + (data.toInt() shl 12))
         )
     }
 

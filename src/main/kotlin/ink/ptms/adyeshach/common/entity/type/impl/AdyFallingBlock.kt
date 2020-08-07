@@ -39,15 +39,9 @@ class AdyFallingBlock(owner: Player) : EntityInstance(owner, EntityTypes.FALLING
         return data
     }
 
-    @Suppress("DEPRECATION")
-    private fun toMaterialData(): Int {
-        // TODO
-        return material.id + (data.toInt() shl 12)
-    }
-
     override fun spawn(location: Location) {
         super.spawn(location)
-        NMS.INSTANCE.spawnEntity(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location, toMaterialData())
+        NMS.INSTANCE.spawnEntityFallingBlock(owner, index, UUID.randomUUID(), location, material, data)
     }
 
 }

@@ -12,6 +12,7 @@ import io.izzel.taboolib.module.lite.SimpleVersionControl
 import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -24,11 +25,13 @@ import java.util.*
  */
 abstract class NMS {
 
-    abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location, vararg data: Int)
+    abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+
+    abstract fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte)
 
     abstract fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int)
 

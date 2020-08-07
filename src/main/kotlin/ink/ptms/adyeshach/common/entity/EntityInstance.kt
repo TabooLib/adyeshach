@@ -52,6 +52,7 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
     fun respawn(){
         destroy()
         spawn(getLatestLocation())
+        updateMetadata()
     }
 
     open fun teleport(location: Location) {
