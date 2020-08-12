@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyCreeper(owner: Player) : AdyEntityLiving(owner, EntityTypes.CREEPER) {
+class AdyCreeper() : AdyEntityLiving(EntityTypes.CREEPER) {
 
     init {
         /**

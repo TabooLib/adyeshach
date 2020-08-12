@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyEnderman(owner: Player) : AdyEntityLiving(owner, EntityTypes.ENDER_MAN)
+class AdyEnderman() : AdyEntityLiving(EntityTypes.ENDER_MAN)

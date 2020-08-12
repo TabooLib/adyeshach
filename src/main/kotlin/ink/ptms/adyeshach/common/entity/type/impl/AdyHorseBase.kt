@@ -9,7 +9,7 @@ import java.lang.RuntimeException
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyHorseBase(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
+abstract class AdyHorseBase(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
 
     init {
         /**

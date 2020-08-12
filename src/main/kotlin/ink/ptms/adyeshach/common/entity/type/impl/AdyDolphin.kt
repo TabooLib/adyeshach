@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyDolphin(owner: Player) : AdyEntityLiving(owner, EntityTypes.DOLPHIN) {
+class AdyDolphin() : AdyEntityLiving(EntityTypes.DOLPHIN) {
 
     init {
         /**

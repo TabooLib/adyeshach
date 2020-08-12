@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPrimedTNT(owner: Player) : EntityInstance(owner, EntityTypes.PRIMED_TNT)
+class AdyPrimedTNT() : EntityInstance(EntityTypes.PRIMED_TNT)

@@ -9,7 +9,7 @@ import org.bukkit.util.EulerAngle
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyArmorStand(owner: Player) : AdyEntityLiving(owner, EntityTypes.ARMOR_STAND) {
+class AdyArmorStand() : AdyEntityLiving(EntityTypes.ARMOR_STAND) {
 
     init {
         /**

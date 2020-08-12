@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdySmallFireball(owner: Player) : EntityInstance(owner, EntityTypes.SMALL_FIREBALL)
+class AdySmallFireball() : EntityInstance(EntityTypes.SMALL_FIREBALL)

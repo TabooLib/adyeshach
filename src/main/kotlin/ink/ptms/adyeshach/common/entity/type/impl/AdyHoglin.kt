@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyHoglin(owner: Player) : AdyEntityLiving(owner, EntityTypes.HOGLIN)
+class AdyHoglin() : AdyEntityLiving(EntityTypes.HOGLIN)

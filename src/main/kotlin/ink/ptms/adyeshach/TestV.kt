@@ -1,19 +1,29 @@
 package ink.ptms.adyeshach
 
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.entity.type.impl.AdyFallingBlock
-import ink.ptms.adyeshach.common.entity.type.impl.AdyPainting
 import ink.ptms.adyeshach.common.util.Tasks
+import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.util.Files
-import org.bukkit.Material
+import io.izzel.taboolib.module.packet.Packet
+import io.izzel.taboolib.module.packet.TPacket
+import io.izzel.taboolib.util.Reflection
+import io.izzel.taboolib.util.lite.Effects
+import net.minecraft.server.v1_16_R1.*
+import org.bukkit.Location
+import org.bukkit.Particle
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftSilverfish
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftVillager
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.entity.Silverfish
+import org.bukkit.entity.Villager
+import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Function
+import java.util.stream.Collectors
 
 /**
  * @author Arasple
@@ -22,60 +32,4 @@ import org.bukkit.event.player.PlayerInteractEvent
  */
 object TestV {
 
-    @TListener
-    class Interact : Listener {
-
-        @EventHandler
-        fun onInteract(e: PlayerInteractEvent) {
-            val player = e.player
-            val block = e.clickedBlock ?: return
-
-            if (player.isSneaking && e.action == Action.RIGHT_CLICK_BLOCK) {
-                val entity = AdyPainting(player)
-                entity.spawn(block.location)
-
-                var delay = 20L
-                BukkitPaintings.values().forEach {
-                    Tasks.delay(delay, true) {
-                        entity.setPainting(it)
-                    }
-                    delay += 20
-                }
-
-                Tasks.delay(20 * 20) {
-                    entity.destroy()
-                }
-
-                Files.file(Adyeshach.plugin.dataFolder, "output.json").writeText(entity.toJson())
-                player.sendMessage("§c[System] §7Done.")
-            }
-        }
-
-    }
-
-    @TInject
-    val testV: CommandBuilder = CommandBuilder
-        .create("test-v", Adyeshach.plugin)
-        .execute { sender, _ ->
-            if (sender is Player) {
-                val entity = AdyFallingBlock(sender)
-
-                entity.spawn(sender.location)
-                entity.setNoGravity(true)
-                entity.setMaterial(Material.CRYING_OBSIDIAN)
-
-                Tasks.delay(40) {
-                    entity.setMaterial(
-                        Material.DIAMOND_ORE
-                    )
-                }
-
-                Tasks.delay(80) {
-                    entity.destroy()
-                }
-
-                Files.file(Adyeshach.plugin.dataFolder, "output.json").writeText(entity.toJson())
-                sender.sendMessage("§c[System] §7Done.")
-            }
-        }
 }

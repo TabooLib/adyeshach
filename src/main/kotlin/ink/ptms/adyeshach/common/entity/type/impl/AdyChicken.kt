@@ -9,4 +9,4 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyChicken(owner: Player) : AdyEntityAgeable(owner, EntityTypes.CHICKEN)
+class AdyChicken() : AdyEntityAgeable(EntityTypes.CHICKEN)

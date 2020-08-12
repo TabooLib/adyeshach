@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdySnowGolem(owner: Player) : EntityInstance(owner, EntityTypes.SNOW_GOLEM)
+class AdySnowGolem() : EntityInstance(EntityTypes.SNOW_GOLEM)

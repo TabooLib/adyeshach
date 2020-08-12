@@ -16,7 +16,7 @@ import java.util.*
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInstance(owner, entityTypes), EntityEquipable {
+open class AdyEntityLiving(entityTypes: EntityTypes) : EntityInstance(entityTypes), EntityEquipable {
 
     @Expose
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
@@ -27,7 +27,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun spawn(location: Location) {
         super.spawn(location)
-        NMS.INSTANCE.spawnEntityLiving(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
+        NMS.INSTANCE.spawnEntityLiving(owner!!, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
     }
 
     override fun getEquipment(): Map<EquipmentSlot, ItemStack> {
@@ -36,7 +36,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setItemInMainHand(itemStack: ItemStack) {
         equipment[EquipmentSlot.HAND] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.HAND, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.HAND, itemStack)
     }
 
     override fun getItemInMainHand(): ItemStack? {
@@ -45,7 +45,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setItemInOffHand(itemStack: ItemStack) {
         equipment[EquipmentSlot.OFF_HAND] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.OFF_HAND, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.OFF_HAND, itemStack)
     }
 
     override fun getItemInOffHand(): ItemStack? {
@@ -54,7 +54,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setHelmet(itemStack: ItemStack) {
         equipment[EquipmentSlot.HEAD] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.HEAD, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.HEAD, itemStack)
     }
 
     override fun getHelmet(): ItemStack? {
@@ -63,7 +63,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setChestplate(itemStack: ItemStack) {
         equipment[EquipmentSlot.CHEST] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.CHEST, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.CHEST, itemStack)
     }
 
     override fun getChestplate(): ItemStack? {
@@ -72,7 +72,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setLeggings(itemStack: ItemStack) {
         equipment[EquipmentSlot.LEGS] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.LEGS, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.LEGS, itemStack)
     }
 
     override fun getLeggings(): ItemStack? {
@@ -81,7 +81,7 @@ open class AdyEntityLiving(owner: Player, entityTypes: EntityTypes) : EntityInst
 
     override fun setBoots(itemStack: ItemStack) {
         equipment[EquipmentSlot.FEET] = itemStack
-        NMS.INSTANCE.updateEquipment(owner, index, EquipmentSlot.FEET, itemStack)
+        NMS.INSTANCE.updateEquipment(owner!!, index, EquipmentSlot.FEET, itemStack)
     }
 
     override fun getBoots(): ItemStack? {

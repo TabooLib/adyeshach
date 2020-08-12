@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyWitherSkull(owner: Player) : EntityInstance(owner, EntityTypes.WITHER_SKULL)
+class AdyWitherSkull() : EntityInstance(EntityTypes.WITHER_SKULL)

@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPiglinBrute(owner: Player) : AdyEntityLiving(owner, EntityTypes.PIGLIN_BRUTE)
+class AdyPiglinBrute() : AdyEntityLiving(EntityTypes.PIGLIN_BRUTE)

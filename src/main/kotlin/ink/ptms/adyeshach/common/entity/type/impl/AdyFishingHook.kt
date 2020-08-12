@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyFishingHook(owner: Player) : EntityInstance(owner, EntityTypes.FISHING_HOOK)
+class AdyFishingHook() : EntityInstance(EntityTypes.FISHING_HOOK)

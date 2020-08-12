@@ -13,7 +13,7 @@ import java.util.*
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyFallingBlock(owner: Player) : EntityInstance(owner, EntityTypes.FALLING_BLOCK) {
+class AdyFallingBlock() : EntityInstance(EntityTypes.FALLING_BLOCK) {
 
     @Expose
     private var material = Material.STONE
@@ -41,7 +41,7 @@ class AdyFallingBlock(owner: Player) : EntityInstance(owner, EntityTypes.FALLING
 
     override fun spawn(location: Location) {
         super.spawn(location)
-        NMS.INSTANCE.spawnEntityFallingBlock(owner, index, UUID.randomUUID(), location, material, data)
+        NMS.INSTANCE.spawnEntityFallingBlock(owner!!, index, UUID.randomUUID(), location, material, data)
     }
 
 }

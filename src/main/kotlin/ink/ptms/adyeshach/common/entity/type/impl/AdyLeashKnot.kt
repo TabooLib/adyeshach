@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyLeashKnot(owner: Player) : EntityInstance(owner, EntityTypes.LEASH_KNOT)
+class AdyLeashKnot() : EntityInstance(EntityTypes.LEASH_KNOT)

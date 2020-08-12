@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyBat(owner: Player) : AdyEntityLiving(owner, EntityTypes.BAT) {
+class AdyBat() : AdyEntityLiving(EntityTypes.BAT) {
 
     /**
      * 1.13,1.12 Index->12

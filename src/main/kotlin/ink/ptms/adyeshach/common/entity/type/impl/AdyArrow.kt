@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyArrow(owner: Player) : AdyEntity(owner, EntityTypes.ARROW) {
+class AdyArrow() : AdyEntity(EntityTypes.ARROW) {
 
     /**
      * 1.15 Index=7 一致

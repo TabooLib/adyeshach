@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyWanderingTrader(owner: Player) : AdyEntityLiving(owner, EntityTypes.WANDERING_TRADER)
+class AdyWanderingTrader() : AdyEntityLiving(EntityTypes.WANDERING_TRADER)

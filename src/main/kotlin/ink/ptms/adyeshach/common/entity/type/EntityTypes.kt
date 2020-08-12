@@ -1,779 +1,786 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityBase
+import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.impl.*
+import io.izzel.taboolib.internal.gson.GsonBuilder
+import io.izzel.taboolib.internal.gson.TypeAdapter
+import io.izzel.taboolib.internal.gson.stream.JsonReader
+import io.izzel.taboolib.internal.gson.stream.JsonWriter
+import io.izzel.taboolib.util.Reflection
+import org.bukkit.Bukkit
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 
 /**
  * @Author sky
  * @Since 2020-08-04 12:53
  */
 enum class EntityTypes(
-    val bukkitType: EntityType,
+    val bukkitType: EntityType?,
     val bukkitId: Int,
     val entitySize: EntitySize,
-    val entityBase: Class<out EntityBase>,
+    val entityBase: Class<out EntityInstance>
 ) {
 
     AREA_EFFECT_CLOUD(
-        EntityType.AREA_EFFECT_CLOUD,
+        Enums.getIfPresent(EntityType::class.java, "AREA_EFFECT_CLOUD").orNull(),
         3,
         EntitySize(2.0, 0.5),
-        AdyAreaEffectCloud::class.java
+        AdyAreaEffectCloud::class.java,
     ),
 
     ARMOR_STAND(
-        EntityType.ARMOR_STAND,
+        Enums.getIfPresent(EntityType::class.java, "ARMOR_STAND").orNull(),
         78,
         EntitySize(0.5, 1.975),
-        AdyAreaEffectCloud::class.java
+        AdyArmorStand::class.java
     ),
 
     ARROW(
-        EntityType.ARROW,
+        Enums.getIfPresent(EntityType::class.java, "ARROW").orNull(),
         60,
         EntitySize(0.5, 0.5),
         AdyArrow::class.java
     ),
 
     BAT(
-        EntityType.BAT,
+        Enums.getIfPresent(EntityType::class.java, "BAT").orNull(),
         65,
         EntitySize(0.5, 0.9),
         AdyBat::class.java
     ),
 
     BEE(
-        EntityType.BEE,
+        Enums.getIfPresent(EntityType::class.java, "BEE").orNull(),
         -1,
         EntitySize(0.7, 0.6),
         AdyBee::class.java
     ),
 
     BLAZE(
-        EntityType.BLAZE,
+        Enums.getIfPresent(EntityType::class.java, "BLAZE").orNull(),
         61,
         EntitySize(0.6, 1.8),
         AdyBlaze::class.java
     ),
 
     BOAT(
-        EntityType.BOAT,
+        Enums.getIfPresent(EntityType::class.java, "BOAT").orNull(),
         1,
         EntitySize(1.375, 0.5625),
         AdyBoat::class.java
     ),
 
     CAT(
-        EntityType.CAT,
+        Enums.getIfPresent(EntityType::class.java, "CAT").orNull(),
         98,
         EntitySize(0.6, 0.7),
         AdyCat::class.java
     ),
 
     CAVE_SPIDER(
-        EntityType.CAVE_SPIDER,
+        Enums.getIfPresent(EntityType::class.java, "CAVE_SPIDER").orNull(),
         59,
         EntitySize(0.7, 0.5),
         AdyCaveSpider::class.java
     ),
 
     CHICKEN(
-        EntityType.CHICKEN,
+        Enums.getIfPresent(EntityType::class.java, "CHICKEN").orNull(),
         93,
         EntitySize(0.4, 0.7),
         AdyChicken::class.java
     ),
 
     COD(
-        EntityType.COD,
+        Enums.getIfPresent(EntityType::class.java, "COD").orNull(),
         -1,
         EntitySize(0.5, 0.3),
         AdyCod::class.java
     ),
 
     COW(
-        EntityType.COW,
+        Enums.getIfPresent(EntityType::class.java, "COW").orNull(),
         92,
         EntitySize(0.9, 1.4),
         AdyCow::class.java
     ),
 
     CREEPER(
-        EntityType.CREEPER,
+        Enums.getIfPresent(EntityType::class.java, "CREEPER").orNull(),
         50,
         EntitySize(0.6, 1.7),
         AdyCreeper::class.java
     ),
 
     DOLPHIN(
-        EntityType.DOLPHIN,
+        Enums.getIfPresent(EntityType::class.java, "DOLPHIN").orNull(),
         -1,
         EntitySize(0.9, 0.6),
         AdyDolphin::class.java
     ),
 
     DONKEY(
-        EntityType.DONKEY,
+        Enums.getIfPresent(EntityType::class.java, "DONKEY").orNull(),
         31,
         EntitySize(1.5, 1.39648),
         AdyDonkey::class.java
     ),
 
     DRAGON_FIREBALL(
-        EntityType.DRAGON_FIREBALL,
+        Enums.getIfPresent(EntityType::class.java, "DRAGON_FIREBALL").orNull(),
         93,
         EntitySize(1.0, 1.0),
         AdyDragonFireball::class.java
     ),
 
     DROWNED(
-        EntityType.DROWNED,
+        Enums.getIfPresent(EntityType::class.java, "DROWNED").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyDragonFireball::class.java
+        AdyDrowned::class.java
     ),
 
     ELDER_GUARDIAN(
-        EntityType.ELDER_GUARDIAN,
+        Enums.getIfPresent(EntityType::class.java, "ELDER_GUARDIAN").orNull(),
         4,
         EntitySize(1.9975, 1.9975),
-        AdyEntityLiving::class.java
+        AdyElderGuardian::class.java
     ),
 
     ENDER_CRYSTAL(
-        EntityType.ENDER_CRYSTAL,
+        Enums.getIfPresent(EntityType::class.java, "ENDER_CRYSTAL").orNull(),
         51,
         EntitySize(2.0, 2.0),
-        AdyEntityLiving::class.java
+        AdyEndCrystal::class.java
     ),
 
     ENDER_DRAGON(
-        EntityType.ENDER_DRAGON,
+        Enums.getIfPresent(EntityType::class.java, "ENDER_DRAGON").orNull(),
         63,
         EntitySize(16.0, 8.0),
-        AdyEntityLiving::class.java
+        AdyEndDragon::class.java
     ),
 
     ENDER_MAN(
-        EntityType.ENDERMAN,
+        Enums.getIfPresent(EntityType::class.java, "ENDERMAN").orNull(),
         58,
         EntitySize(16.0, 8.0),
-        AdyEntityLiving::class.java
+        AdyEnderman::class.java
     ),
 
     ENDER_MITE(
-        EntityType.ENDERMITE,
+        Enums.getIfPresent(EntityType::class.java, "ENDERMITE").orNull(),
         67,
         EntitySize(0.4, 0.3),
-        AdyEntityLiving::class.java
+        AdyEndermite::class.java
     ),
 
     EVOKER(
-        EntityType.EVOKER,
+        Enums.getIfPresent(EntityType::class.java, "EVOKER").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyEvoker::class.java
     ),
 
     EVOKER_FANGS(
-        EntityType.EVOKER_FANGS,
+        Enums.getIfPresent(EntityType::class.java, "EVOKER_FANGS").orNull(),
         -1,
         EntitySize(0.5, 0.8),
-        AdyEntityLiving::class.java
+        AdyEvokerFangs::class.java
     ),
 
     // 需要 [Spawn Experience Orb] 包
     EXPERIENCE_ORB(
-        EntityType.EXPERIENCE_ORB,
+        Enums.getIfPresent(EntityType::class.java, "EXPERIENCE_ORB").orNull(),
         -1,
         EntitySize(0.5, 0.5),
-        AdyEntity::class.java
+        AdyExperienceOrb::class.java
     ),
 
     EYE_OF_ENDER(
-        EntityType.ENDER_SIGNAL,
+        Enums.getIfPresent(EntityType::class.java, "ENDER_SIGNAL").orNull(),
         72,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyEyeOfEnder::class.java
     ),
 
     FALLING_BLOCK(
-        EntityType.FALLING_BLOCK,
+        Enums.getIfPresent(EntityType::class.java, "FALLING_BLOCK").orNull(),
         70,
         EntitySize(0.98, 0.98),
-        AdyEntity::class.java
+        AdyFallingBlock::class.java
     ),
 
     FIREWORK_ROCKET(
-        EntityType.FIREWORK,
+        Enums.getIfPresent(EntityType::class.java, "FIREWORK").orNull(),
         76,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyFireworkRocket::class.java
     ),
 
     FOX(
-        EntityType.FOX,
+        Enums.getIfPresent(EntityType::class.java, "FOX").orNull(),
         -1,
         EntitySize(0.6, 0.7),
-        AdyEntityLiving::class.java
+        AdyFox::class.java
     ),
 
     GHAST(
-        EntityType.GHAST,
+        Enums.getIfPresent(EntityType::class.java, "GHAST").orNull(),
         56,
         EntitySize(4.0, 4.0),
-        AdyEntityLiving::class.java
+        AdyGhast::class.java
     ),
 
     GIANT(
-        EntityType.GIANT,
+        Enums.getIfPresent(EntityType::class.java, "GIANT").orNull(),
         53,
         EntitySize(3.6, 12.0),
-        AdyEntityLiving::class.java
+        AdyGiant::class.java
     ),
 
     GUARDIAN(
-        EntityType.GUARDIAN,
+        Enums.getIfPresent(EntityType::class.java, "GUARDIAN").orNull(),
         68,
         EntitySize(0.85, 0.85),
-        AdyEntityLiving::class.java
+        AdyGuardian::class.java
     ),
 
     HOGLIN(
-        EntityType.HOGLIN,
+        Enums.getIfPresent(EntityType::class.java, "HOGLIN").orNull(),
         -1,
         EntitySize(1.39648, 1.4),
-        AdyEntityLiving::class.java
+        AdyHoglin::class.java
     ),
 
     HORSE(
-        EntityType.HORSE,
+        Enums.getIfPresent(EntityType::class.java, "HORSE").orNull(),
         100,
         EntitySize(1.39648, 1.6),
-        AdyEntityLiving::class.java
+        AdyHorse::class.java
     ),
 
 
     HUSK(
-        EntityType.HUSK,
+        Enums.getIfPresent(EntityType::class.java, "HUSK").orNull(),
         23,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyHusk::class.java
     ),
 
     ILLUSIONER(
-        EntityType.ILLUSIONER,
+        Enums.getIfPresent(EntityType::class.java, "ILLUSIONER").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyIllusioner::class.java
     ),
 
     IRON_GOLEM(
-        EntityType.IRON_GOLEM,
+        Enums.getIfPresent(EntityType::class.java, "IRON_GOLEM").orNull(),
         99,
         EntitySize(1.4, 2.7),
-        AdyEntityLiving::class.java
+        AdyIronGolem::class.java
     ),
 
     ITEM(
-        EntityType.DROPPED_ITEM,
+        Enums.getIfPresent(EntityType::class.java, "DROPPED_ITEM").orNull(),
         2,
         EntitySize(0.25, 0.25),
-        AdyEntityLiving::class.java
+        AdyItem::class.java
     ),
 
     ITEM_FRAME(
-        EntityType.ITEM_FRAME,
+        Enums.getIfPresent(EntityType::class.java, "ITEM_FRAME").orNull(),
         71,
         EntitySize(0.75, 0.75),
-        AdyEntityLiving::class.java
+        AdyItemFrame::class.java
     ),
 
     FIREBALL(
-        EntityType.FIREBALL,
+        Enums.getIfPresent(EntityType::class.java, "FIREBALL").orNull(),
         63,
         EntitySize(1.0, 1.0),
-        AdyEntityLiving::class.java
+        AdyFireball::class.java
     ),
 
     LEASH_KNOT(
-        EntityType.LEASH_HITCH,
+        Enums.getIfPresent(EntityType::class.java, "LEASH_HITCH").orNull(),
         77,
         EntitySize(0.375, 0.5),
-        AdyEntityLiving::class.java
+        AdyLeashKnot::class.java
     ),
 
     LLAMA(
-        EntityType.LLAMA,
+        Enums.getIfPresent(EntityType::class.java, "LLAMA").orNull(),
         103,
         EntitySize(0.9, 1.87),
-        AdyEntityLiving::class.java
+        AdyLlama::class.java
     ),
 
     LLAMA_SPIT(
-        EntityType.LLAMA_SPIT,
+        Enums.getIfPresent(EntityType::class.java, "LLAMA_SPIT").orNull(),
         68,
         EntitySize(0.25, 0.25),
-        AdyEntityLiving::class.java
+        AdyLlamaSpit::class.java
     ),
 
     MAGMA_CUBE(
-        EntityType.MAGMA_CUBE,
+        Enums.getIfPresent(EntityType::class.java, "MAGMA_CUBE").orNull(),
         62,
         EntitySize(0.51000005, 0.51000005), // * size
-        AdyEntityLiving::class.java
+        AdyMagmaCube::class.java
     ),
 
     MINECART(
-        EntityType.MINECART,
+        Enums.getIfPresent(EntityType::class.java, "MINECART").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecart::class.java
     ),
 
     MINECART_CHEST(
-        EntityType.MINECART_CHEST,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_CHEST").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartChest::class.java
     ),
 
     MINECART_COMMAND(
-        EntityType.MINECART_COMMAND,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_COMMAND").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartCommandBlock::class.java
     ),
 
     MINECART_FURNACE(
-        EntityType.MINECART_FURNACE,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_FURNACE").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartFurnace::class.java
     ),
 
     MINECART_HOPPER(
-        EntityType.MINECART_HOPPER,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_HOPPER").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartHopper::class.java
     ),
 
-
     MINECART_MOB_SPAWNER(
-        EntityType.MINECART_MOB_SPAWNER,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_MOB_SPAWNER").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartSpawner::class.java
     ),
 
     MINECART_TNT(
-        EntityType.MINECART_TNT,
+        Enums.getIfPresent(EntityType::class.java, "MINECART_TNT").orNull(),
         10,
         EntitySize(0.98, 0.7),
-        AdyEntity::class.java
+        AdyMinecartTNT::class.java
     ),
 
     MULE(
-        EntityType.MULE,
+        Enums.getIfPresent(EntityType::class.java, "MULE").orNull(),
         32,
         EntitySize(1.39648, 1.6),
-        AdyEntityLiving::class.java
+        AdyMule::class.java
     ),
 
     MUSHROOM(
-        EntityType.MUSHROOM_COW,
+        Enums.getIfPresent(EntityType::class.java, "MUSHROOM_COW").orNull(),
         96,
         EntitySize(0.9, 1.4),
-        AdyEntityLiving::class.java
+        AdyMushroom::class.java
     ),
 
     OCELOT(
-        EntityType.OCELOT,
+        Enums.getIfPresent(EntityType::class.java, "OCELOT").orNull(),
         98,
         EntitySize(0.6, 0.7),
-        AdyEntityLiving::class.java
+        AdyOcelot::class.java
     ),
 
     // 需要 [Spawn Paintings] 包
     PAINTING(
-        EntityType.PAINTING,
+        Enums.getIfPresent(EntityType::class.java, "PAINTING").orNull(),
         -1,
         EntitySize(0.0625, 0.0625), // varies in types
-        AdyEntityLiving::class.java
+        AdyPainting::class.java
     ),
 
     PANDA(
-        EntityType.PANDA,
+        Enums.getIfPresent(EntityType::class.java, "PANDA").orNull(),
         -1,
         EntitySize(1.3, 1.25),
-        AdyEntityLiving::class.java
+        AdyPanda::class.java
     ),
 
     PARROT(
-        EntityType.PARROT,
+        Enums.getIfPresent(EntityType::class.java, "PARROT").orNull(),
         105,
         EntitySize(0.5, 0.9),
-        AdyEntityLiving::class.java
+        AdyParrot::class.java
     ),
 
     PHANTOM(
-        EntityType.PHANTOM,
+        Enums.getIfPresent(EntityType::class.java, "PHANTOM").orNull(),
         -1,
         EntitySize(0.9, 0.5),
-        AdyEntityLiving::class.java
+        AdyPhantom::class.java
     ),
 
     PIG(
-        EntityType.PIG,
+        Enums.getIfPresent(EntityType::class.java, "PIG").orNull(),
         90,
         EntitySize(0.9, 0.9),
-        AdyEntityLiving::class.java
+        AdyPig::class.java
     ),
 
 
     PIGLIN(
-        EntityType.PIGLIN,
+        Enums.getIfPresent(EntityType::class.java, "PIGLIN").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyPiglin::class.java
     ),
 
     PIGLIN_BRUTE(
-        EntityType.PIGLIN,
+        Enums.getIfPresent(EntityType::class.java, "PIGLIN").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyPiglinBrute::class.java
     ),
 
     PILLAGER(
-        EntityType.PILLAGER,
+        Enums.getIfPresent(EntityType::class.java, "PILLAGER").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyPillager::class.java
     ),
 
     POLAR_BEAR(
-        EntityType.POLAR_BEAR,
+        Enums.getIfPresent(EntityType::class.java, "POLAR_BEAR").orNull(),
         102,
         // ver<1.16 -> 1.3,1.4
         EntitySize(1.4, 1.4),
-        AdyEntityLiving::class.java
+        AdyPolarBear::class.java
     ),
 
     PRIMED_TNT(
-        EntityType.PRIMED_TNT,
+        Enums.getIfPresent(EntityType::class.java, "PRIMED_TNT").orNull(),
         50,
         EntitySize(0.98, 0.98),
-        AdyEntityLiving::class.java
+        AdyPrimedTNT::class.java
     ),
 
     PUFFERFISH(
-        EntityType.PUFFERFISH,
+        Enums.getIfPresent(EntityType::class.java, "PUFFERFISH").orNull(),
         -1,
         EntitySize(0.7, 0.7),
-        AdyEntityLiving::class.java
+        AdyPufferfish::class.java
     ),
 
     RABBIT(
-        EntityType.RABBIT,
+        Enums.getIfPresent(EntityType::class.java, "RABBIT").orNull(),
         101,
         EntitySize(0.4, 0.5),
-        AdyEntityLiving::class.java
+        AdyRabbit::class.java
     ),
 
     RAVAGER(
-        EntityType.RAVAGER,
+        Enums.getIfPresent(EntityType::class.java, "RAVAGER").orNull(),
         -1,
         EntitySize(1.95, 2.2),
-        AdyEntityLiving::class.java
+        AdyRavager::class.java
     ),
 
     SALMON(
-        EntityType.SALMON,
+        Enums.getIfPresent(EntityType::class.java, "SALMON").orNull(),
         -1,
         EntitySize(0.7, 0.4),
-        AdyFish::class.java
+        AdySalmon::class.java
     ),
 
     SHEEP(
-        EntityType.SHEEP,
+        Enums.getIfPresent(EntityType::class.java, "SHEEP").orNull(),
         91,
         EntitySize(0.9, 1.3),
-        AdyEntityAgeable::class.java
+        AdySheep::class.java
     ),
 
     SHULKER(
-        EntityType.SHULKER,
+        Enums.getIfPresent(EntityType::class.java, "SHULKER").orNull(),
         69,
         // SecondValue: 1.0-2.0 (depending on peek)
         EntitySize(1.0, 2.0),
-        AdyEntityLiving::class.java
+        AdyShulker::class.java
     ),
 
     SHULKER_BULLET(
-        EntityType.SHULKER_BULLET,
+        Enums.getIfPresent(EntityType::class.java, "SHULKER_BULLET").orNull(),
         67,
         EntitySize(0.3125, 0.3125),
-        AdyEntityLiving::class.java
+        AdyShulkerBullet::class.java
     ),
 
     SILVERFISH(
-        EntityType.SILVERFISH,
+        Enums.getIfPresent(EntityType::class.java, "SILVERFISH").orNull(),
         60,
         EntitySize(0.4, 0.3),
-        AdyEntityLiving::class.java
+        AdySilverfish::class.java
     ),
 
     SKELETON(
-        EntityType.SKELETON,
+        Enums.getIfPresent(EntityType::class.java, "SKELETON").orNull(),
         51,
         EntitySize(0.6, 1.99),
-        AdyEntityLiving::class.java
+        AdySkeleton::class.java
     ),
 
     SKELETON_HORSE(
-        EntityType.SKELETON_HORSE,
+        Enums.getIfPresent(EntityType::class.java, "SKELETON_HORSE").orNull(),
         28,
         EntitySize(1.396484, 1.6),
-        AdyEntityLiving::class.java
+        AdySkeletonHorse::class.java
     ),
 
     SLIME(
-        EntityType.SLIME,
+        Enums.getIfPresent(EntityType::class.java, "SLIME").orNull(),
         55,
         EntitySize(0.51000005, 0.51000005),
-        AdyEntityLiving::class.java
+        AdySlime::class.java
     ),
 
     SMALL_FIREBALL(
-        EntityType.SMALL_FIREBALL,
+        Enums.getIfPresent(EntityType::class.java, "SMALL_FIREBALL").orNull(),
         64,
         EntitySize(0.3125, 0.3125),
-        AdyEntityLiving::class.java
+        AdySmallFireball::class.java
     ),
 
     SNOW_GOLEM(
-        EntityType.SNOWMAN,
+        Enums.getIfPresent(EntityType::class.java, "SNOWMAN").orNull(),
         97,
         EntitySize(0.7, 1.9),
-        AdyEntityLiving::class.java
+        AdySnowGolem::class.java
     ),
 
     SNOWBALL(
-        EntityType.SNOWBALL,
+        Enums.getIfPresent(EntityType::class.java, "SNOWBALL").orNull(),
         61,
         EntitySize(0.25, 0.25),
-        AdyEntityLiving::class.java
+        AdySnowball::class.java
     ),
 
     SPECTRAL_ARROW(
-        EntityType.SPECTRAL_ARROW,
+        Enums.getIfPresent(EntityType::class.java, "SPECTRAL_ARROW").orNull(),
         91,
         EntitySize(0.5, 0.5),
-        AdyArrow::class.java
+        AdySpectralArrow::class.java
     ),
 
     SPIDER(
-        EntityType.SPIDER,
+        Enums.getIfPresent(EntityType::class.java, "SPIDER").orNull(),
         52,
         EntitySize(1.4, 0.9),
         AdySpider::class.java
     ),
 
     SQUID(
-        EntityType.SQUID,
+        Enums.getIfPresent(EntityType::class.java, "SQUID").orNull(),
         94,
         EntitySize(0.8, 0.8),
-        AdyEntityLiving::class.java
+        AdySquid::class.java
     ),
 
     STRAY(
-        EntityType.STRAY,
+        Enums.getIfPresent(EntityType::class.java, "STRAY").orNull(),
         6,
         EntitySize(0.6, 1.99),
-        AdyEntityLiving::class.java
+        AdyStray::class.java
     ),
 
     STRIDER(
-        EntityType.STRIDER,
+        Enums.getIfPresent(EntityType::class.java, "STRIDER").orNull(),
         6,
         EntitySize(0.9, 1.7),
-        AdyEntityLiving::class.java
+        AdyStrider::class.java
     ),
 
     THROWN_EGG(
-        EntityType.EGG,
+        Enums.getIfPresent(EntityType::class.java, "EGG").orNull(),
         62,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyThrownEgg::class.java
     ),
 
     THROWN_ENDER_PEARL(
-        EntityType.ENDER_PEARL,
+        Enums.getIfPresent(EntityType::class.java, "ENDER_PEARL").orNull(),
         65,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyThrownEnderPearl::class.java
     ),
 
     THROWN_EXPERIENCE_BOTTLE(
-        EntityType.THROWN_EXP_BOTTLE,
+        Enums.getIfPresent(EntityType::class.java, "THROWN_EXP_BOTTLE").orNull(),
         75,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyThrownExperienceBottle::class.java
     ),
 
     THROWN_POTION(
-        EntityType.SPLASH_POTION,
+        Enums.getIfPresent(EntityType::class.java, "SPLASH_POTION").orNull(),
         73,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyThrownPotion::class.java
     ),
 
     THROWN_TRIDENT(
-        EntityType.TRIDENT,
+        Enums.getIfPresent(EntityType::class.java, "TRIDENT").orNull(),
         73,
         EntitySize(0.5, 0.5),
-        AdyEntity::class.java
+        AdyThrownTrident::class.java
     ),
 
     TRADER_LLAMA(
-        EntityType.TRADER_LLAMA,
+        Enums.getIfPresent(EntityType::class.java, "TRADER_LLAMA").orNull(),
         -1,
         EntitySize(0.9, 1.87),
-        AdyEntity::class.java
+        AdyTraderLlama::class.java
     ),
 
     TROPICAL_FISH(
-        EntityType.TROPICAL_FISH,
+        Enums.getIfPresent(EntityType::class.java, "TROPICAL_FISH").orNull(),
         -1,
         EntitySize(0.5, 0.4),
-        AdyFish::class.java
+        AdyTropicalFish::class.java
     ),
 
     TURTLE(
-        EntityType.TURTLE,
+        Enums.getIfPresent(EntityType::class.java, "TURTLE").orNull(),
         -1,
         EntitySize(1.2, 0.4),
-        AdyEntityAgeable::class.java
+        AdyTurtle::class.java
     ),
 
     VEX(
-        EntityType.VEX,
+        Enums.getIfPresent(EntityType::class.java, "VEX").orNull(),
         -1,
         EntitySize(0.4, 0.8),
-        AdyEntityLiving::class.java
+        AdyVex::class.java
     ),
 
     VILLAGER(
-        EntityType.VILLAGER,
+        Enums.getIfPresent(EntityType::class.java, "VILLAGER").orNull(),
         120,
-        EntitySize(1.95, 0.6),
+        EntitySize(0.6, 1.95),
         AdyVillager::class.java
     ),
 
     VINDICATOR(
-        EntityType.VINDICATOR,
+        Enums.getIfPresent(EntityType::class.java, "VINDICATOR").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyVindicator::class.java
     ),
 
     WANDERING_TRADER(
-        EntityType.WANDERING_TRADER,
+        Enums.getIfPresent(EntityType::class.java, "WANDERING_TRADER").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyWanderingTrader::class.java
     ),
 
     WITCH(
-        EntityType.WITCH,
+        Enums.getIfPresent(EntityType::class.java, "WITCH").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyWither::class.java
     ),
 
     WITHER(
-        EntityType.WITHER,
+        Enums.getIfPresent(EntityType::class.java, "WITHER").orNull(),
         64,
         EntitySize(0.9, 3.5),
-        AdyEntityLiving::class.java
+        AdyWither::class.java
     ),
 
     WITHER_SKELETON(
-        EntityType.WITHER_SKELETON,
+        Enums.getIfPresent(EntityType::class.java, "WITHER_SKELETON").orNull(),
         5,
         EntitySize(0.7, 2.4),
-        AdyEntityLiving::class.java
+        AdyWitherSkeleton::class.java
     ),
 
     WITHER_SKULL(
-        EntityType.WITHER_SKULL,
+        Enums.getIfPresent(EntityType::class.java, "WITHER_SKULL").orNull(),
         66,
         EntitySize(0.3125, 0.3125),
-        AdyAreaEffectCloud::class.java
+        AdyWitherSkull::class.java
     ),
 
     WOLF(
-        EntityType.WOLF,
+        Enums.getIfPresent(EntityType::class.java, "WOLF").orNull(),
         95,
         EntitySize(0.6, 0.85),
-        AdyEntityTameable::class.java
+        AdyWolf::class.java
     ),
 
     ZOGLIN(
-        EntityType.ZOGLIN,
+        Enums.getIfPresent(EntityType::class.java, "ZOGLIN").orNull(),
         -1,
         EntitySize(1.39648, 1.4),
-        AdyEntityLiving::class.java
+        AdyZoglin::class.java
     ),
 
     ZOMBIE(
-        EntityType.ZOMBIE,
+        Enums.getIfPresent(EntityType::class.java, "ZOMBIE").orNull(),
         54,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyZombie::class.java
     ),
 
     ZOMBIE_HORSE(
-        EntityType.ZOMBIE_HORSE,
+        Enums.getIfPresent(EntityType::class.java, "ZOMBIE_HORSE").orNull(),
         29,
         EntitySize(1.39648, 1.6),
-        AdyEntityLiving::class.java
+        AdyZombieHorse::class.java
     ),
 
     ZOMBIE_VILLAGER(
-        EntityType.ZOMBIE_VILLAGER,
+        Enums.getIfPresent(EntityType::class.java, "ZOMBIE_VILLAGER").orNull(),
         27,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyZombieVillager::class.java
     ),
 
     ZOMBIFIED_PIGLIN(
-        EntityType.ZOMBIFIED_PIGLIN,
+        Enums.getIfPresent(EntityType::class.java, "ZOMBIFIED_PIGLIN").orNull(),
         -1,
         EntitySize(0.6, 1.95),
-        AdyEntityLiving::class.java
+        AdyZombifiedPiglin::class.java
     ),
 
     PLAYER(
-        EntityType.PLAYER,
+        Enums.getIfPresent(EntityType::class.java, "PLAYER").orNull(),
         0,
         EntitySize(0.6, 1.8),
         AdyHuman::class.java
     ),
 
     FISHING_HOOK(
-        EntityType.FISHING_HOOK,
+        Enums.getIfPresent(EntityType::class.java, "FISHING_HOOK").orNull(),
         90,
         EntitySize(0.25, 0.25),
-        AdyEntity::class.java
+        AdyFishingHook::class.java
     );
 
     fun getEntityTypeNMS(): Any {
         return NMS.INSTANCE.getEntityTypeNMS(this)
     }
-
 }

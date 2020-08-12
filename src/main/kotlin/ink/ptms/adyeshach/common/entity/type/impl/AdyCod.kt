@@ -7,4 +7,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyCod(owner: Player) : AdyFish(owner, EntityTypes.COD)
+class AdyCod() : AdyFish(EntityTypes.COD)

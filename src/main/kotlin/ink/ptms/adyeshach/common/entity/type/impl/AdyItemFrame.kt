@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyItemFrame(owner: Player) : EntityInstance(owner, EntityTypes.ITEM_FRAME)
+class AdyItemFrame() : EntityInstance(EntityTypes.ITEM_FRAME)

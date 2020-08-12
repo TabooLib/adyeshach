@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyEndCrystal(owner: Player) : EntityInstance(owner, EntityTypes.ENDER_CRYSTAL)
+class AdyEndCrystal() : EntityInstance(EntityTypes.ENDER_CRYSTAL)

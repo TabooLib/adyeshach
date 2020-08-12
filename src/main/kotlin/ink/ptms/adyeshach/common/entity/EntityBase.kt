@@ -1,11 +1,8 @@
 package ink.ptms.adyeshach.common.entity
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParseException
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.common.util.Serializer
-import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -31,7 +28,7 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
     }
 
     fun toJson(): String {
-        return Serializer.serializer.toJson(this)
+        return Serializer.serializerEntity.toJson(this)
     }
 
     fun getLatestLocation(): Location {

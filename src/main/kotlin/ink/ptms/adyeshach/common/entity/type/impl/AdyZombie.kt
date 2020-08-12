@@ -9,9 +9,9 @@ import java.lang.RuntimeException
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-open class AdyZombie(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
+open class AdyZombie(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
 
-    constructor(owner: Player): this(owner, EntityTypes.ZOMBIE)
+    constructor(): this(EntityTypes.ZOMBIE)
 
     init {
         /**

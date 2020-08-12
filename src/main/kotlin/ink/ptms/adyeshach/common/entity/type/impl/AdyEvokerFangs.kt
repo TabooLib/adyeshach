@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyEvokerFangs(owner: Player) : EntityInstance(owner, EntityTypes.EVOKER_FANGS)
+class AdyEvokerFangs() : EntityInstance(EntityTypes.EVOKER_FANGS)

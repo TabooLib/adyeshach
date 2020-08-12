@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 18:31
  */
-class AdyAreaEffectCloud(owner: Player) : AdyEntity(owner, EntityTypes.AREA_EFFECT_CLOUD) {
+class AdyAreaEffectCloud : AdyEntity(EntityTypes.AREA_EFFECT_CLOUD) {
 
     init {
         /**

@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyMule(owner: Player) : AdyHorseChested(owner, EntityTypes.MULE)
+class AdyMule() : AdyHorseChested(EntityTypes.MULE)

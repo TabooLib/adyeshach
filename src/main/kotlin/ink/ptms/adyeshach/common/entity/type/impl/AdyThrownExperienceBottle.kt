@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownExperienceBottle(owner: Player) : EntityInstance(owner, EntityTypes.THROWN_EXPERIENCE_BOTTLE)
+class AdyThrownExperienceBottle() : EntityInstance(EntityTypes.THROWN_EXPERIENCE_BOTTLE)

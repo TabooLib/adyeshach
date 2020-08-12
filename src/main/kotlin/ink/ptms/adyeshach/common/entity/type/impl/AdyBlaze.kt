@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyBlaze(owner: Player) : AdyEntityLiving(owner, EntityTypes.BLAZE) {
+class AdyBlaze() : AdyEntityLiving(EntityTypes.BLAZE) {
 
     /**
      * 1.13,1.12 -> Index 12

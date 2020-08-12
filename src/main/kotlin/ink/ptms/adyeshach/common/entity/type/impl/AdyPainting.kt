@@ -15,7 +15,7 @@ import java.util.*
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPainting(owner: Player) : EntityInstance(owner, EntityTypes.PAINTING) {
+class AdyPainting() : EntityInstance(EntityTypes.PAINTING) {
 
     @Expose
     private var direction: BukkitDirection = BukkitDirection.NORTH
@@ -44,7 +44,6 @@ class AdyPainting(owner: Player) : EntityInstance(owner, EntityTypes.PAINTING) {
     override fun spawn(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
-        NMS.INSTANCE.spawnEntityPainting(owner, index, UUID.randomUUID(), location, direction, painting)
+        NMS.INSTANCE.spawnEntityPainting(owner!!, index, UUID.randomUUID(), location, direction, painting)
     }
-
 }

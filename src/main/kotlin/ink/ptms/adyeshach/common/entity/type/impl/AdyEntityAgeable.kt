@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyEntityAgeable(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes) {
+abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
 
     init {
         /**

@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyTraderLlama(owner: Player) : AdyLlama(owner, EntityTypes.TRADER_LLAMA)
+class AdyTraderLlama() : AdyLlama(EntityTypes.TRADER_LLAMA)

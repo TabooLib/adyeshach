@@ -13,7 +13,7 @@ import java.util.*
  * @Author sky
  * @Since 2020-08-04 15:44
  */
-class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
+class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
 
     private val uuid = UUID.randomUUID()!!
     @Expose
@@ -38,7 +38,7 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
     override fun spawn(location: Location) {
         super.spawn(location)
         addPlayerInfo()
-        NMS.INSTANCE.spawnNamedEntity(owner, EntityTypes.PLAYER.getEntityTypeNMS(), index, uuid, location)
+        NMS.INSTANCE.spawnNamedEntity(owner!!, EntityTypes.PLAYER.getEntityTypeNMS(), index, uuid, location)
     }
 
     override fun destroy() {
@@ -48,7 +48,7 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
 
     fun setName(name: String) {
         gameProfile.name = name
-        refreshPlayerInfo()
+        respawn()
     }
 
     fun getName(): String {
@@ -57,7 +57,7 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
 
     fun setPing(ping: Int) {
         gameProfile.ping = ping
-        refreshPlayerInfo()
+        respawn()
     }
 
     fun getPing(): Int {
@@ -66,7 +66,7 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
 
     fun setGameMode(gameMode: GameMode) {
         gameProfile.gameMode = gameMode
-        refreshPlayerInfo()
+        respawn()
     }
 
     fun getGameMode(): GameMode {
@@ -75,7 +75,7 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
 
     fun setTexture(texture: String, signature: String) {
         gameProfile.texture = arrayOf(texture, signature)
-        refreshPlayerInfo()
+        respawn()
     }
 
     fun getTexture(): Array<String> {
@@ -139,15 +139,10 @@ class AdyHuman(owner: Player) : AdyEntityLiving(owner, EntityTypes.PLAYER) {
     }
 
     fun addPlayerInfo() {
-        NMS.INSTANCE.addPlayerInfo(owner, uuid, gameProfile.name, gameProfile.ping, gameProfile.gameMode, gameProfile.texture)
+        NMS.INSTANCE.addPlayerInfo(owner!!, uuid, gameProfile.name, gameProfile.ping, gameProfile.gameMode, gameProfile.texture)
     }
 
     fun removePlayerInfo() {
-        NMS.INSTANCE.removePlayerInfo(owner, uuid)
-    }
-
-    fun refreshPlayerInfo() {
-        spawn(getLatestLocation())
-        updateMetadata()
+        NMS.INSTANCE.removePlayerInfo(owner!!, uuid)
     }
 }

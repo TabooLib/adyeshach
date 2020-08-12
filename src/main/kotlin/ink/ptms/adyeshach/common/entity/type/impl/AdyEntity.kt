@@ -11,10 +11,10 @@ import java.util.*
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-open class AdyEntity(owner: Player, entityTypes: EntityTypes) : EntityInstance(owner, entityTypes) {
+open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
 
     override fun spawn(location: Location) {
         super.spawn(location)
-        NMS.INSTANCE.spawnEntity(owner, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
+        NMS.INSTANCE.spawnEntity(owner!!, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), location)
     }
 }

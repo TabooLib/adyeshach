@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @author Arasple
  * @date 2020/8/4 22:18
  */
-class AdyBee(owner: Player) : AdyEntityLiving(owner, EntityTypes.BEE) {
+class AdyBee() : AdyEntityLiving(EntityTypes.BEE) {
 
     /**
      * 1.15+ 一致

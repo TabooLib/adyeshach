@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownTrident(owner: Player) : EntityInstance(owner, EntityTypes.THROWN_TRIDENT)
+class AdyThrownTrident() : EntityInstance(EntityTypes.THROWN_TRIDENT)

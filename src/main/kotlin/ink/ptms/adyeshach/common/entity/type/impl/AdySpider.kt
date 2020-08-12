@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
  * @author Arasple
  * @date 2020/8/5 22:35
  */
-abstract class AdySpider(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes) {
+abstract class AdySpider(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
 
     init {
         /**

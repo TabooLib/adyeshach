@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyShulkerBullet(owner: Player) : EntityInstance(owner, EntityTypes.SHULKER_BULLET)
+class AdyShulkerBullet() : EntityInstance(EntityTypes.SHULKER_BULLET)

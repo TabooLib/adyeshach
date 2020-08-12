@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyMinecartHopper(owner: Player) : AdyMinecart(owner, EntityTypes.MINECART_HOPPER)
+class AdyMinecartHopper() : AdyMinecart(EntityTypes.MINECART_HOPPER)

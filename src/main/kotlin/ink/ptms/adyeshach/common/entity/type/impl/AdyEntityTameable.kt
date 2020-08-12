@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyEntityTameable(owner: Player, entityTypes: EntityTypes) : AdyEntityAgeable(owner, entityTypes) {
+abstract class AdyEntityTameable(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
 
     init {
         /**

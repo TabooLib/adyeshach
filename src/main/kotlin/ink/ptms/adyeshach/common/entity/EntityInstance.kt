@@ -12,9 +12,25 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 12:51
  */
-abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : EntityBase(entityTypes) {
+abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
-    val index = Indexs.nextIndex(owner)
+    var owner: Player? = null
+        set(value) {
+            if (spawned) {
+                destroy()
+            }
+            field = value
+        }
+
+    val index by lazy {
+        Indexs.nextIndex(owner!!)
+    }
+
+    var spawned = false
+        private set
+
+    var destroyed = false
+        private set
 
     init {
         /**
@@ -40,17 +56,17 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
     }
 
     open fun spawn(location: Location) {
+        this.spawned = true
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
-        setHeadRotation(location.yaw, location.pitch)
     }
 
     open fun destroy() {
-        NMS.INSTANCE.destroyEntity(owner, index)
+        this.destroyed = true
+        NMS.INSTANCE.destroyEntity(owner ?: return, index)
     }
 
-    fun respawn(){
-        destroy()
+    open fun respawn(){
         spawn(getLatestLocation())
         updateMetadata()
     }
@@ -58,12 +74,12 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
     open fun teleport(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
-        NMS.INSTANCE.teleportEntity(owner, index, location)
+        NMS.INSTANCE.teleportEntity(owner!!, index, location)
     }
 
     open fun controllerLook(location: Location) {
         val entityLocation = position.toLocation(location.world!!).also {
-            it.y += (entityType.entitySize.width * 0.85)
+            it.y += entityType.entitySize.height * 0.9
         }
         entityLocation.direction = location.clone().subtract(entityLocation).toVector()
         setHeadRotation(entityLocation.yaw, entityLocation.pitch)
@@ -75,7 +91,7 @@ abstract class EntityInstance(val owner: Player, entityTypes: EntityTypes) : Ent
             this.pitch = pitch
             this
         }
-        NMS.INSTANCE.setHeadRotation(owner, index, yaw, pitch)
+        NMS.INSTANCE.setHeadRotation(owner!!, index, yaw, pitch)
     }
 
     open fun isFired(): Boolean {

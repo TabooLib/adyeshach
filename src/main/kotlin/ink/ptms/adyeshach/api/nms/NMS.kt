@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.lite.SimpleVersionControl
@@ -53,8 +54,6 @@ abstract class NMS {
 
     abstract fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any)
 
-    abstract fun getMetaEntityItemStack(itemStack: ItemStack): Any
-
     abstract fun getMetaEntityInt(index: Int, value: Int): Any
 
     abstract fun getMetaEntityFloat(index: Int, value: Float): Any
@@ -69,7 +68,7 @@ abstract class NMS {
 
     abstract fun getMetaEntityVector(index: Int, value: EulerAngle): Any
 
-    abstract fun getMetaEntityChatBaseComponent(index: Int, name: String): Any
+    abstract fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any
 
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 
@@ -81,23 +80,18 @@ abstract class NMS {
 
     companion object {
 
+        @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")
         lateinit var INSTANCE: NMS
 
-        @TSchedule
-        fun init() {
-            val version = Version.getCurrentVersion().name.removePrefix("v1_")
-            INSTANCE = SimpleVersionControl.createNMS("ink.ptms.adyeshach.api.nms.impl.NMSImpl$version").useNMS().translate(Adyeshach.plugin).getDeclaredConstructor().newInstance() as NMS
+        fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any>) {
+            TPacketHandler.sendPacket(player, setFields(packet, *fields))
         }
 
-        fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any>) = TPacketHandler.sendPacket(player, setFields(packet, *fields))
-
-        private fun setFields(any: Any, vararg fields: Pair<String, Any>): Any {
+        fun setFields(any: Any, vararg fields: Pair<String, Any>): Any {
             fields.forEach { (key, value) ->
                 SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
             }
             return any
         }
-
     }
-
 }

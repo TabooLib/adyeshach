@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownEnderPearl(owner: Player) : EntityInstance(owner, EntityTypes.THROWN_ENDER_PEARL)
+class AdyThrownEnderPearl() : EntityInstance(EntityTypes.THROWN_ENDER_PEARL)

@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyHusk(owner: Player) : AdyZombie(owner, EntityTypes.HUSK)
+class AdyHusk() : AdyZombie(EntityTypes.HUSK)

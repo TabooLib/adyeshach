@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-open class AdyLlama(owner: Player, entityTypes: EntityTypes) : AdyEntityLiving(owner, entityTypes) {
+open class AdyLlama(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
 
-    constructor(owner: Player): this(owner, EntityTypes.LLAMA)
+    constructor(): this(EntityTypes.LLAMA)
 }

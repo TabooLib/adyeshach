@@ -7,4 +7,8 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyVillager(owner: Player) : AdyEntityAgeable(owner, EntityTypes.VILLAGER)
+open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
+
+    constructor() : this(EntityTypes.VILLAGER)
+
+}

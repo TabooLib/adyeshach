@@ -61,7 +61,8 @@ abstract class DataWatcher {
     class DataIChatBaseComponent : DataWatcher() {
 
         override fun getMetadata(index: Int, value: Any): Any {
-            return NMS.INSTANCE.getMetaEntityChatBaseComponent(index, (value as TextComponent).text)
+            val text = (value as TextComponent).text
+            return NMS.INSTANCE.getMetaEntityChatBaseComponent(index, if (text.isEmpty()) null else text)
         }
     }
 }

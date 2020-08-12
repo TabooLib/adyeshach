@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyZombieHorse(owner: Player) : AdyHorseBase(owner, EntityTypes.ZOMBIE_HORSE)
+class AdyZombieHorse() : AdyHorseBase(EntityTypes.ZOMBIE_HORSE)

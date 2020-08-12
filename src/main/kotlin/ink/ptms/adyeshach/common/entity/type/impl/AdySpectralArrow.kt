@@ -8,4 +8,4 @@ import org.bukkit.entity.Player
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdySpectralArrow(owner: Player) : EntityInstance(owner, EntityTypes.SPECTRAL_ARROW)
+class AdySpectralArrow() : EntityInstance(EntityTypes.SPECTRAL_ARROW)

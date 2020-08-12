@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyHorseChested(owner: Player, entityTypes: EntityTypes) : AdyHorseBase(owner, entityTypes) {
+abstract class AdyHorseChested(entityTypes: EntityTypes) : AdyHorseBase(entityTypes) {
 
     init {
         /**
