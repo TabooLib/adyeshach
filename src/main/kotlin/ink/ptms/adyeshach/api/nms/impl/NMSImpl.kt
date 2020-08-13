@@ -11,6 +11,7 @@ import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import net.minecraft.server.v1_16_R1.*
+import net.minecraft.server.v1_9_R2.PacketPlayOutEntityVelocity
 import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import java.util.*
 
 /**
@@ -224,6 +226,14 @@ class NMSImpl : NMS() {
             sendPacket(player, PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, (x * 4096).toInt().toShort(), (y * 4096).toInt().toShort(), (z * 4096).toInt().toShort(), true))
         } else {
             sendPacket(player, net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
+        }
+    }
+
+    override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
+        if (version >= 11400) {
+            sendPacket(player, net.minecraft.server.v1_16_R1.PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
+        } else {
+            sendPacket(player, net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
         }
     }
 

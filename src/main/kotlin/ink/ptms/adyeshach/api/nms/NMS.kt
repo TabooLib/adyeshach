@@ -18,6 +18,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import java.util.*
 
 /**
@@ -47,6 +48,8 @@ abstract class NMS {
     abstract fun teleportEntity(player: Player, entityId: Int, location: Location)
 
     abstract fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double)
+
+    abstract fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector)
 
     abstract fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float)
 

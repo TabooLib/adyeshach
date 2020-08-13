@@ -21,6 +21,11 @@ class AdyFallingBlock() : EntityInstance(EntityTypes.FALLING_BLOCK) {
     @Expose
     private var data = 0.toByte()
 
+    override fun spawn(location: Location) {
+        super.spawn(location)
+        NMS.INSTANCE.spawnEntityFallingBlock(owner!!, index, UUID.randomUUID(), location, material, data)
+    }
+
     fun setMaterial(material: Material) {
         this.material = material
         respawn()
@@ -38,10 +43,4 @@ class AdyFallingBlock() : EntityInstance(EntityTypes.FALLING_BLOCK) {
     fun getData(data: Byte): Byte {
         return data
     }
-
-    override fun spawn(location: Location) {
-        super.spawn(location)
-        NMS.INSTANCE.spawnEntityFallingBlock(owner!!, index, UUID.randomUUID(), location, material, data)
-    }
-
 }

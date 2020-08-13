@@ -23,13 +23,18 @@ class AdyPainting() : EntityInstance(EntityTypes.PAINTING) {
     @Expose
     private var painting: BukkitPaintings = BukkitPaintings.KEBAB
 
-    fun getDirection(): BukkitDirection {
-        return direction
+    override fun spawn(location: Location) {
+        super.spawn(location)
+        NMS.INSTANCE.spawnEntityPainting(owner!!, index, UUID.randomUUID(), location, direction, painting)
     }
 
     fun setDirection(direction: BukkitDirection) {
         this.direction = direction
         respawn()
+    }
+
+    fun getDirection(): BukkitDirection {
+        return direction
     }
 
     fun setPainting(painting: BukkitPaintings) {
@@ -39,11 +44,5 @@ class AdyPainting() : EntityInstance(EntityTypes.PAINTING) {
 
     fun getPainting(): BukkitPaintings {
         return painting
-    }
-
-    override fun spawn(location: Location) {
-        this.world = location.world!!.name
-        this.position = EntityPosition.fromLocation(location)
-        NMS.INSTANCE.spawnEntityPainting(owner!!, index, UUID.randomUUID(), location, direction, painting)
     }
 }
