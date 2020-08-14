@@ -10,13 +10,13 @@ import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.attribute.Attribute
-import org.bukkit.entity.*
+import org.bukkit.entity.Ambient
+import org.bukkit.entity.Mob
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.jvm.Throws
 
 /**
  * @Author sky

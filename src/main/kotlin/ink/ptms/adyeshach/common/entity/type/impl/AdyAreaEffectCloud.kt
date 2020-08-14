@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.common.entity.type.impl
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import org.bukkit.Color
-import org.bukkit.entity.Player
 
 /**
  * @Author sky

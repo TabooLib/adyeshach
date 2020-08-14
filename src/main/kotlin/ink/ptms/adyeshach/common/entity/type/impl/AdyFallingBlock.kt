@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.Player
 import java.util.*
 
 /**

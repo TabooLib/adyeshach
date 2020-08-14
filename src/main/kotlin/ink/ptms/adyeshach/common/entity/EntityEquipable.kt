@@ -1,11 +1,5 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.module.lite.SimpleEquip
-import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 

@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.java;
 
-import com.google.common.base.Enums;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
 

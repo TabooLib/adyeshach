@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.element.EntityRotation
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import org.bukkit.entity.Player
 import org.bukkit.util.EulerAngle
 
 /**

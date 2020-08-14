@@ -1,12 +1,11 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.element.GameProfile
+import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import java.util.*
 
 /**

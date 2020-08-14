@@ -16,7 +16,6 @@ import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import java.io.File
 import java.io.InputStream
-import java.lang.RuntimeException
 
 object AdyeshachAPI {
 

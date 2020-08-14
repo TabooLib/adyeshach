@@ -12,7 +12,6 @@ import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
 import net.minecraft.server.v1_16_R1.*
-import net.minecraft.server.v1_9_R2.PacketPlayOutEntityVelocity
 import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
 import org.bukkit.Location

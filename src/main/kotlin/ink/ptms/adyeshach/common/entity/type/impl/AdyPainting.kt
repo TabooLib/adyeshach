@@ -4,11 +4,9 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import java.util.*
 
 /**

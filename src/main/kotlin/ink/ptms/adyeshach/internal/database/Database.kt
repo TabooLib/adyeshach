@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.internal.database
 
-import io.izzel.taboolib.module.inject.TFunction
 import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 
 /**

@@ -8,7 +8,6 @@ import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.util.EulerAngle
-import java.lang.RuntimeException
 
 /**
  * @Author sky

@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
-import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import org.bukkit.entity.Player
 
 /**
  * @author sky

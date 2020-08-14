@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.util.serializer
 
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.internal.gson.*
-import io.izzel.taboolib.module.db.local.SecuredFile
 import org.bukkit.configuration.ConfigurationSection
 
 /**

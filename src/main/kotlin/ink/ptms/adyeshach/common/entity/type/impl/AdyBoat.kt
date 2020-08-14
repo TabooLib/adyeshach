@@ -2,9 +2,6 @@ package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.bukkit.BukkitBoat
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import org.bukkit.TreeSpecies
-import org.bukkit.entity.Boat
-import org.bukkit.entity.Player
 
 /**
  * @author Arasple

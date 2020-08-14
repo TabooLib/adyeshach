@@ -1,12 +1,9 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.java.JavaUtil
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.DyeColor
 import org.bukkit.entity.Cat
-import org.bukkit.entity.Player
 
 /**
  * @Author sky

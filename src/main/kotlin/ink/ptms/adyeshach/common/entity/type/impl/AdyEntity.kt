@@ -1,10 +1,9 @@
 package ink.ptms.adyeshach.common.entity.type.impl
 
+import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.api.nms.NMS
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import java.util.*
 
 /**
