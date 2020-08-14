@@ -10,19 +10,23 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
+import io.izzel.taboolib.module.nms.impl.Position
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_9_R2.PacketPlayOutEntityVelocity
 import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Arasple
@@ -339,5 +343,11 @@ class NMSImpl : NMS() {
         } else {
             0
         }
+    }
+
+    override fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position> {
+        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return ArrayList()
+        val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
+        return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
     }
 }

@@ -10,10 +10,12 @@ import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.lite.SimpleVersionControl
+import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -80,6 +82,8 @@ abstract class NMS {
     abstract fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any
 
     abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
+
+    abstract fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position>
 
     companion object {
 

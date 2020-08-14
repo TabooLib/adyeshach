@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach
 
+import ink.ptms.adyeshach.common.path.PathFinderProxy
+import ink.ptms.adyeshach.common.path.PathType
 import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
@@ -26,28 +28,34 @@ object TestV {
             .create("test", Adyeshach.plugin)
             .execute { sender, _ ->
                 if (sender is Player) {
-                    if (proxy == null) {
-                        proxy = sender.world.spawn(sender.location, Silverfish::class.java)
-                        proxy!!.isSilent = true
-                        proxy!!.isCollidable = false
-                        proxy!!.isInvulnerable = true
-
-                        SimpleAiSelector.getExecutor().clearTargetAi(proxy)
-                        SimpleAiSelector.getExecutor().clearGoalAi(proxy)
-                        sender.sendMessage(" proxy created.")
-                    } else{
-                        val pathEntity = (proxy as CraftSilverfish).handle.navigation.a(BlockPosition(sender.location.blockX, sender.location.blockY, sender.location.blockZ), 1)
-                        if (pathEntity != null) {
-                            // field a
-                            pathEntity.d().forEach {
-                                Effects.create(Particle.VILLAGER_HAPPY, Location(sender.world, it.a().x + 0.5, it.a().y + 0.5, it.a().z + 0.5)).count(10).range(100.0).play()
-                            }
-                            proxy!!.teleport(sender.location)
-                            sender.sendMessage(" path created.")
-                        } else {
-                            sender.sendMessage(" path not found.")
+                    PathFinderProxy.request(sender.location, sender.location) {
+                        it.pointList.forEach { point ->
+                            // logic ...
                         }
                     }
+
+//                    if (proxy == null) {
+//                        proxy = sender.world.spawn(sender.location, Silverfish::class.java)
+//                        proxy!!.isSilent = true
+//                        proxy!!.isCollidable = false
+//                        proxy!!.isInvulnerable = true
+//
+//                        SimpleAiSelector.getExecutor().clearTargetAi(proxy)
+//                        SimpleAiSelector.getExecutor().clearGoalAi(proxy)
+//                        sender.sendMessage(" proxy created.")
+//                    } else{
+//                        val pathEntity = (proxy as CraftSilverfish).handle.navigation.a(BlockPosition(sender.location.blockX, sender.location.blockY, sender.location.blockZ), 1)
+//                        if (pathEntity != null) {
+//                            // field a
+//                            pathEntity.d().forEach {
+//                                Effects.create(Particle.VILLAGER_HAPPY, Location(sender.world, it.a().x + 0.5, it.a().y + 0.5, it.a().z + 0.5)).count(10).range(100.0).play()
+//                            }
+//                            proxy!!.teleport(sender.location)
+//                            sender.sendMessage(" path created.")
+//                        } else {
+//                            sender.sendMessage(" path not found.")
+//                        }
+//                    }
 
 
 

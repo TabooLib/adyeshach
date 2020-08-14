@@ -15,7 +15,7 @@ import java.io.File
  * @Since 2020-08-05 0:05
  */
 @BaseCommand(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.command")
-class CommandAPI : BaseMainCommand() {
+class CommandAPI : BaseMainCommand(), Helper {
 
     @SubCommand(description = "upload skin file")
     val uploadskin = object : BaseSubCommand() {
@@ -28,17 +28,17 @@ class CommandAPI : BaseMainCommand() {
             val file = File(Adyeshach.plugin.dataFolder, "skin/upload/${args[0]}")
             if (file.name.endsWith(".png")) {
                 Tasks.task(true) {
-                    sender.sendMessage("§c[Adyeshach] §7File provided and found, now attempting to upload to mineskin.org.")
+                    sender.info("File provided and found, now attempting to upload to mineskin.org.")
                     val repose = MojangAPI.upload(file, sender)
                     if (repose != null) {
                         Files.write(File(Adyeshach.plugin.dataFolder, "skin/${args[0].split(".")[0]}")) {
                             it.write(GsonBuilder().setPrettyPrinting().create().toJson(repose))
                         }
-                        sender.sendMessage("§c[Adyeshach] §7Successfully uploaded skin and saved as \"§f${args[0].split(".")[0]}§77\".")
+                        sender.info("Successfully uploaded skin and saved as \"§f${args[0].split(".")[0]}§77\".")
                     }
                 }
             } else {
-                sender.sendMessage("§c[Adyeshach] §7Invalid file provided! Please ensure it is a valid .png skin!")
+                sender.info("Invalid file provided! Please ensure it is a valid .png skin!")
             }
         }
     }
