@@ -10,6 +10,7 @@ import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -75,7 +76,7 @@ object PathFinderProxy {
             if (pathEntity.schedule.isEmpty()) {
                 return@forEach
             }
-            Mirror.get("PathFinderProxy:schedule_5:world_$world").run {
+            Mirror.get("PathFinderProxy:schedule_5:world_$world").eval {
                 pathEntity.schedule.forEach { schedule ->
                     val entity = pathEntity.entity[schedule.pathType]
                     if (entity != null) {

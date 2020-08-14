@@ -29,23 +29,18 @@ import java.io.File
  */
 object TestV {
 
-    var proxy: Silverfish? = null
-
     @TInject
     val testV: CommandBuilder = CommandBuilder
             .create("test", Adyeshach.plugin)
             .execute { sender, _ ->
                 if (sender is Player) {
-                    Files.read(File(Adyeshach.plugin.dataFolder, "output.json")) {
-                        val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n"), sender)
-                        entity?.respawn()
-                        sender.sendMessage(entity!!.toJson())
+                    PathFinderProxy.request(sender.location, sender.getTargetBlockExact(50)!!.location) {
+                        it.pointList.forEach { point ->
+                            Effects.create(Particle.VILLAGER_HAPPY, Location(sender.world, point.x + 0.5, point.y + 0.5, point.z + 0.5)).count(10).range(100.0).play()
+                        }
+                        sender.sendMessage(" wait: ${it.waitTime} ms, cost: ${it.costTime} ms")
                     }
-                    Files.read(File(Adyeshach.plugin.dataFolder, "output.yml")) {
-                        val entity = AdyeshachAPI.fromYaml(it.lines().toArray().joinToString("\n"), sender)
-                        entity?.respawn()
-                    }
-                    sender.sendMessage("done.")
+                    sender.sendMessage("requested.")
                 }
             }
 
