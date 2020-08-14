@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.loader.internal.IO
+import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -17,6 +18,8 @@ import org.bukkit.event.player.PlayerJoinEvent
 object AshconAPI {
 
     private val ASHCON_API = arrayOf("https://api.ashcon.app/mojang/v2/user/")
+
+    @PlayerContainer
     private val CACHED_PROFILES = mutableMapOf<String, JsonObject>()
 
     fun getProfile(name: String) = CACHED_PROFILES.computeIfAbsent(name) { JsonParser().parse(IO.readFromURL("${ASHCON_API[0]}$name")) as JsonObject }

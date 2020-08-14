@@ -45,6 +45,7 @@ dependencies {
     compile 'io.izzel.taboolib:TabooLib:5.34:all'
     compile 'io.izzel.taboolib:TabooLibLoader:2.2:all'
     compile 'org.jetbrains.kotlin:kotlin-stdlib'
+    compile 'net.citizensnpcs:Citizens:2.0.18'
     compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
 }
 

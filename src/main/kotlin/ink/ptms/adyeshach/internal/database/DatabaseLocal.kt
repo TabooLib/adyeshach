@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.internal.database.impl
+package ink.ptms.adyeshach.internal.database
 
 import ink.ptms.adyeshach.internal.database.Database
 import io.izzel.taboolib.module.db.local.LocalPlayer

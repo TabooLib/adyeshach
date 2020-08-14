@@ -6,8 +6,10 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
-import ink.ptms.adyeshach.internal.database.impl.DatabaseLocal
-import ink.ptms.adyeshach.internal.database.impl.DatabaseMongodb
+import ink.ptms.adyeshach.internal.database.DatabaseLocal
+import ink.ptms.adyeshach.internal.database.DatabaseMongodb
+import ink.ptms.adyeshach.internal.migrate.MigrateCitizens
+import ink.ptms.adyeshach.internal.migrate.MigrateServerNPC
 import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.util.Files

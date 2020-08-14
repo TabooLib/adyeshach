@@ -1,7 +1,6 @@
-package ink.ptms.adyeshach.internal.database.impl
+package ink.ptms.adyeshach.internal.database
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.internal.database.Database
 import io.izzel.taboolib.cronus.bridge.CronusBridge
 import io.izzel.taboolib.cronus.bridge.database.IndexType
 import org.bukkit.configuration.file.FileConfiguration
