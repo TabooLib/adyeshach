@@ -1,0 +1,7 @@
+Database:
+  # LOCAL (using taboolib player database), MONGODB (will not support mysql storage)
+  method: LOCAL
+  url:
+    client: 'mongodb://localhost:3307'
+    database: test
+    collection: adyeshach

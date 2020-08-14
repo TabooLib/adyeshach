@@ -1,17 +1,32 @@
 package ink.ptms.adyeshach.api
 
+import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.event.CustomDatabaseInitEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.util.Serializer
+import ink.ptms.adyeshach.common.util.serializer.Converter
+import ink.ptms.adyeshach.common.util.serializer.Serializer
+import ink.ptms.adyeshach.internal.database.impl.DatabaseLocal
+import ink.ptms.adyeshach.internal.database.impl.DatabaseMongodb
 import io.izzel.taboolib.internal.gson.JsonParser
+import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.util.Files
 import org.bukkit.Location
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import java.io.File
 import java.io.InputStream
 import java.lang.RuntimeException
 
 object AdyeshachAPI {
+
+    val database by lazy {
+        when (Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
+            "LOCAL" -> DatabaseLocal()
+            "METHOD" -> DatabaseMongodb()
+            else -> CustomDatabaseInitEvent().call().database ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+        }
+    }
 
     fun spawn(entityTypes: EntityTypes, player: Player, location: Location): EntityInstance {
         return spawn(entityTypes, player, location) { }
@@ -28,6 +43,14 @@ object AdyeshachAPI {
         entityInstance.updateMetadata()
         entityInstance.setHeadRotation(location.yaw, location.pitch)
         return entityInstance
+    }
+
+    fun fromYaml(section: ConfigurationSection, player: Player): EntityInstance? {
+        return fromJson(Converter.yamlToJson(section).toString(), player)
+    }
+
+    fun fromYaml(source: String, player: Player): EntityInstance? {
+        return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString(), player)
     }
 
     fun fromJson(inputStream: InputStream, player: Player): EntityInstance? {
@@ -53,7 +76,7 @@ object AdyeshachAPI {
             t.printStackTrace()
             return null
         }
-        return Serializer.serializerEntity.fromJson(source, entityType.entityBase).run {
+        return Serializer.gson.fromJson(source, entityType.entityBase).run {
             this.owner = player
             this
         }

@@ -2,10 +2,12 @@ package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.type.EntityTypes
-import ink.ptms.adyeshach.common.util.Serializer
+import ink.ptms.adyeshach.common.util.serializer.Converter
+import ink.ptms.adyeshach.common.util.serializer.Serializer
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.configuration.ConfigurationSection
 
 /**
  * @Author sky
@@ -28,7 +30,11 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
     }
 
     fun toJson(): String {
-        return Serializer.serializerEntity.toJson(this)
+        return Serializer.gson.toJson(this)
+    }
+
+    fun toYaml(section: ConfigurationSection) {
+        Converter.jsonToYaml(toJson(), section)
     }
 
     fun getLatestLocation(): Location {

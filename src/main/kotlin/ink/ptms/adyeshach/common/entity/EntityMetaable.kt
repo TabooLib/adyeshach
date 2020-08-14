@@ -22,6 +22,9 @@ abstract class EntityMetaable {
     @Expose
     protected val metadata = HashMap<String, Any>()
 
+    @Expose
+    protected val metadataMask = HashMap<String, HashMap<String, Boolean>>()
+
     protected fun at(vararg index: Pair<Int, Int>): Int {
         return index.firstOrNull { version >= it.first }?.second ?: -1
     }
@@ -37,8 +40,8 @@ abstract class EntityMetaable {
 
     protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false) {
         meta.add(MetaMasked(index, key, mask))
-        val byteMask = metadata.computeIfAbsent(getByteMaskKey(index)) { ByteMask() } as ByteMask
-        byteMask.mask[key] = def
+        val byteMask = metadataMask.computeIfAbsent(getByteMaskKey(index)) { HashMap() }
+        byteMask[key] = def
     }
 
     protected fun getByteMaskKey(index: Int): String {
@@ -51,9 +54,7 @@ abstract class EntityMetaable {
 
     fun updateMetadata() {
         if (this is EntityInstance) {
-            meta.forEach {
-                it.update(this)
-            }
+            meta.forEach { it.update(this) }
         }
     }
 
@@ -63,7 +64,7 @@ abstract class EntityMetaable {
             throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
         }
         if (registerMeta is MetaMasked) {
-            (metadata.computeIfAbsent(getByteMaskKey(registerMeta.index)) { ByteMask() } as ByteMask).mask[key] = value as Boolean
+            metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = value as Boolean
         } else {
             metadata[key] = value
         }
@@ -79,16 +80,10 @@ abstract class EntityMetaable {
             throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
         }
         return if (registerMeta is MetaMasked) {
-            (metadata[getByteMaskKey(registerMeta.index)] as ByteMask).mask[key] as T
+            metadataMask[getByteMaskKey(registerMeta.index)]!![key] as T
         } else {
             metadata[key] as T
         }
-    }
-
-    class ByteMask {
-
-        @Expose
-        val mask = HashMap<String, Boolean>()
     }
 
     abstract class Meta(val index: Int, val key: String) {
@@ -110,9 +105,9 @@ abstract class EntityMetaable {
                 return
             }
             var bits = 0
-            val byteMask = (entityInstance.metadata[entityInstance.getByteMaskKey(index)] ?: return) as ByteMask
+            val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return
             entityInstance.meta.filter { it.index == index }.map { it as MetaMasked }.forEach {
-                if (byteMask.mask[it.key] == true) {
+                if (byteMask[it.key] == true) {
                     bits += it.mask
                 }
             }

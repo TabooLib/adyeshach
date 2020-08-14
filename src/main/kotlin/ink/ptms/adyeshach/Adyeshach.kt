@@ -15,8 +15,8 @@ import org.bukkit.entity.Player
 @Plugin.Version(5.34) // The TabooLib dependency version (required)
 object Adyeshach : PluginRedefine() {
 
-//    @TInject
-//    lateinit var conf: TConfig
-//        private set
+    @TInject
+    lateinit var conf: TConfig
+        private set
 
 }

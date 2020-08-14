@@ -11,6 +11,11 @@ class MirrorData {
     var times: Long = 0
         private set
 
+    var lowest = 0.0
+        private set
+    var highest = 0.0
+        private set
+
     private var runtime: Long = 0
 
     fun start(): MirrorData {
@@ -22,6 +27,12 @@ class MirrorData {
         timeLatest = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - runtime).toDouble()
         timeTotal += timeLatest
         times += 1
+        if (timeLatest > highest) {
+            highest = timeLatest
+        }
+        if (timeLatest < lowest) {
+            lowest = timeLatest
+        }
         return this
     }
 

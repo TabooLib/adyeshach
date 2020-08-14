@@ -1,15 +1,9 @@
-package ink.ptms.adyeshach.common.util
+package ink.ptms.adyeshach.common.util.serializer
 
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
 import io.izzel.taboolib.internal.gson.*
-import io.izzel.taboolib.internal.gson.stream.JsonReader
-import io.izzel.taboolib.internal.gson.stream.JsonWriter
 import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.util.chat.TextComponent
-import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.io.BukkitObjectInputStream
@@ -20,7 +14,7 @@ import java.util.*
 
 object Serializer {
 
-    val serializerEntity = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
+    val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
             .registerTypeAdapter(YamlConfiguration::class.java, JsonSerializer<YamlConfiguration> { a, _, _ -> JsonPrimitive(a.saveToString()) })
             .registerTypeAdapter(YamlConfiguration::class.java, JsonDeserializer<YamlConfiguration> { a, _, _ -> SecuredFile.loadConfiguration(a.asString) })
             .registerTypeAdapter(TextComponent::class.java, JsonSerializer<TextComponent> { a, _, _ -> JsonPrimitive(a.text) })

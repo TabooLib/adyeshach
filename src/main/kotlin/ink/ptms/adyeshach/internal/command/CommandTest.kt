@@ -6,6 +6,7 @@ import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.PageBuilder
 import io.izzel.taboolib.util.chat.ComponentSerializer
+import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -36,9 +37,9 @@ class CommandTest : BaseMainCommand(), Helper {
                         .append("  §1§l§n${k.split(":")[0]}").newLine()
                         .append("  §1" + toSimple(name)).hoverText(name).newLine()
                         .append("").newLine()
-                        .append("  Total §7" + v.times + " times").newLine()
-                        .append("  Total §7" + v.timeTotal + " ms").newLine()
-                        .append("  Average §7" + v.timeLatest + " ms").newLine()
+                        .append("  Total §7${v.times} times").newLine()
+                        .append("  Total §7${v.timeTotal} ms").newLine()
+                        .append("  Average §7${Numbers.format(v.timeLatest)} ms ").append("§4(?)").hoverText("§8Details:\n§fLowest §7${v.lowest} ms\n§fHighest §7${v.highest} ms").newLine()
                         .toRawMessage(sender as Player)))
             }
             sender.info("Created.")
