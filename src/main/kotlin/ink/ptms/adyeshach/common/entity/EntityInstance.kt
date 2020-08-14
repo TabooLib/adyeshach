@@ -1,9 +1,15 @@
 package ink.ptms.adyeshach.common.entity
 
+import ink.ptms.adyeshach.api.event.AdyeshachEntityDestroyEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
-import ink.ptms.adyeshach.common.entity.type.EntityTypes
+import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
 import ink.ptms.adyeshach.common.util.Indexs
+import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -14,23 +20,20 @@ import org.bukkit.entity.Player
  */
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
-    var owner: Player? = null
-        set(value) {
-            if (spawned) {
-                destroy()
-            }
-            field = value
-        }
+    /**
+     * 实体序号
+     */
+    val index by lazy { Indexs.nextIndex() }
 
-    val index by lazy {
-        Indexs.nextIndex(owner!!)
-    }
+    /**
+     * 管理工具
+     */
+    var manager: Manager? = null
 
-    var spawned = false
-        private set
-
-    var destroyed = false
-        private set
+    /**
+     *  玩家管理
+     */
+    val viewPlayers by lazy { ViewPlayers(this) }
 
     init {
         /**
@@ -46,119 +49,206 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMetaByteMask(0, "isInvisible", 0x20)
         registerMetaByteMask(0, "isGlowing", 0x40)
         registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
-        if (version > 11200) {
-            registerMeta(2, "customName", TextComponent(""))
-        } else {
-            registerMeta(2, "customName", "")
-        }
+        registerMeta(2, "customName", if (version > 11200) TextComponent("") else "")
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
     }
 
-    open fun spawn(location: Location) {
-        this.spawned = true
-        this.world = location.world!!.name
-        this.position = EntityPosition.fromLocation(location)
+    fun forViewers(viewer: (Player) -> (Unit)) {
+        viewPlayers.getViewers().forEach { viewer.invoke(it) }
     }
 
-    open fun destroy() {
-        this.destroyed = true
-        NMS.INSTANCE.destroyEntity(owner ?: return, index)
+    protected fun spawn(viewer: Player, spawn: () -> (Unit)) {
+        if (AdyeshachEntityVisibleEvent(this, viewer, true).call().nonCancelled()) {
+            spawn.invoke()
+            updateMetadata()
+            setHeadRotation(position.yaw, position.pitch)
+        }
     }
 
-    open fun respawn(){
+    protected fun destroy(viewer: Player, destroy: () -> (Unit)) {
+        if (AdyeshachEntityVisibleEvent(this, viewer, false).call().nonCancelled()) {
+            destroy.invoke()
+        }
+    }
+
+    /**
+     * 是否公开取决于 manager 是否为 ManagerPublic 即由谁管理，而非其他参数
+     */
+    fun isPublic(): Boolean {
+        return manager is ManagerPublic
+    }
+
+    /**
+     * 添加观察者，在公开状态下这个选项无效
+     */
+    fun addViewer(viewer: Player) {
+        viewPlayers.viewers.add(viewer.name)
+        viewPlayers.visible.add(viewer.name)
+        visible(viewer, true)
+    }
+
+    /**
+     * 移除观察者，在公开状态下这个选项无效
+     */
+    fun removeViewer(viewer: Player) {
+        viewPlayers.viewers.remove(viewer.name)
+        viewPlayers.visible.remove(viewer.name)
+        visible(viewer, false)
+    }
+
+    /**
+     * 生成实体，会覆盖相同 index 的实体。
+     */
+    fun spawn(location: Location) {
+        world = location.world!!.name
+        position = EntityPosition.fromLocation(location)
+        forViewers {
+            visible(it, true)
+        }
+        AdyeshachEntitySpawnEvent(this).call()
+    }
+
+    /**
+     * 重新生成实体
+     */
+    fun respawn(){
         spawn(getLatestLocation())
-        updateMetadata()
     }
 
+    /**
+     * 销毁实体，从玩家视野中移除该实体
+     */
+    fun destroy() {
+        forViewers {
+            visible(it, false)
+        }
+        AdyeshachEntityDestroyEvent(this).call()
+    }
+
+    /**
+     * 删除实体，从管理器中移除，不再接受托管，但不会销毁实体
+     */
+    fun remove() {
+        if (manager != null) {
+            manager!!.remove(this)
+            AdyeshachEntityRemoveEvent(this).call()
+        }
+    }
+
+    /**
+     * 切换可视状态
+     */
+    abstract fun visible(viewer: Player, visible: Boolean)
+
+    /**
+     * 修改实体位置
+     */
     open fun teleport(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
-        NMS.INSTANCE.teleportEntity(owner!!, index, location)
-    }
-
-    open fun controllerLook(location: Location) {
-        val entityLocation = position.toLocation(location.world!!).also {
-            it.y += entityType.entitySize.height * 0.9
+        forViewers {
+            NMS.INSTANCE.teleportEntity(it, index, location)
         }
-        entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-        setHeadRotation(entityLocation.yaw, entityLocation.pitch)
     }
 
+    /**
+     * 修改实体视角
+     */
     open fun setHeadRotation(yaw: Float, pitch: Float) {
         position = position.run {
             this.yaw = yaw
             this.pitch = pitch
             this
         }
-        NMS.INSTANCE.setHeadRotation(owner!!, index, yaw, pitch)
+        forViewers {
+            NMS.INSTANCE.setHeadRotation(it, index, yaw, pitch)
+        }
     }
 
-    open fun isFired(): Boolean {
+    /**
+     * 使实体看向某个方向
+     */
+    open fun controllerLook(location: Location) {
+        position.toLocation(location.world!!).add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
+            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+            setHeadRotation(entityLocation.yaw, entityLocation.pitch)
+        }
+    }
+
+    fun isFired(): Boolean {
         return getMetadata("onFire")
     }
 
-    open fun isSneaking(): Boolean {
+    fun isSneaking(): Boolean {
         return getMetadata("isCrouched")
     }
 
-    open fun isSprinting(): Boolean {
+    fun isSprinting(): Boolean {
         return getMetadata("isSprinting")
     }
 
-    open fun isSwimming(): Boolean {
+    fun isSwimming(): Boolean {
         return getMetadata("isSwimming")
     }
 
-    open fun isInvisible(): Boolean {
+    fun isInvisible(): Boolean {
         return getMetadata("isInvisible")
     }
 
-    open fun isGlowing(): Boolean {
+    fun isGlowing(): Boolean {
         return getMetadata("isGlowing")
     }
 
-    open fun isFlyingElytra(): Boolean {
+    fun isFlyingElytra(): Boolean {
         return getMetadata("isFlyingElytra")
     }
 
-    open fun isNoGravity(): Boolean {
+    fun isNoGravity(): Boolean {
         return getMetadata("noGravity")
     }
 
-    open fun setFired(onFire: Boolean) {
+    fun setFired(onFire: Boolean) {
         setMetadata("onFire", onFire)
     }
 
-    open fun setSneaking(sneaking: Boolean) {
+    fun setSneaking(sneaking: Boolean) {
         setMetadata("sneaking", sneaking)
     }
 
-    open fun setSprinting(sprinting: Boolean) {
+    fun setSprinting(sprinting: Boolean) {
         setMetadata("isSprinting", sprinting)
     }
 
-    open fun setSwimming(swimming: Boolean) {
+    fun setSwimming(swimming: Boolean) {
         setMetadata("isSwimming", swimming)
     }
 
-    open fun setInvisible(invisible: Boolean) {
+    fun setInvisible(invisible: Boolean) {
         setMetadata("isInvisible", invisible)
     }
 
-    open fun setGlowing(glowing: Boolean) {
+    fun setGlowing(glowing: Boolean) {
         setMetadata("isGlowing", glowing)
     }
 
-    open fun setFlyingElytra(flyingElytra: Boolean) {
+    fun setFlyingElytra(flyingElytra: Boolean) {
         setMetadata("isFlyingElytra", flyingElytra)
     }
 
-    open fun setNoGravity(noGravity: Boolean) {
+    fun setNoGravity(noGravity: Boolean) {
         setMetadata("noGravity", noGravity)
     }
 
-    open fun setCustomName(value: String) {
+    fun setCustomNameVisible(value: Boolean) {
+        setMetadata("isCustomNameVisible", value)
+    }
+
+    fun isCustomNameVisible(): Boolean {
+        return getMetadata("isCustomNameVisible")
+    }
+
+    fun setCustomName(value: String) {
         if (version > 11200) {
             setMetadata("customName", TextComponent(value))
         } else {
@@ -166,7 +256,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
-    open fun getCustomName(value: String): String {
+    fun getCustomName(): String {
         return if (version > 11200) {
             getMetadata<TextComponent>("customName").text
         } else {
@@ -174,11 +264,26 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
-    open fun setCustomNameVisible(value: Boolean) {
-        setMetadata("isCustomNameVisible", value)
-    }
-
-    open fun isCustomNameVisible(): Boolean {
-        return getMetadata("isCustomNameVisible")
+    /**
+     * 实体计算
+     */
+    fun onTick() {
+        // 确保客户端显示实体正常
+        if (viewPlayers.visibleLock.next()) {
+            // 复活
+            viewPlayers.getOutsider().forEach { player ->
+                if (player.world.name == world && player.location.distance(getLatestLocation()) < 127) {
+                    viewPlayers.visible.add(player.name)
+                    visible(player, true)
+                }
+            }
+            // 销毁
+            viewPlayers.getViewers().forEach { player ->
+                if (player.world.name != world || player.location.distance(getLatestLocation()) > 127) {
+                    viewPlayers.visible.remove(player.name)
+                    visible(player, false)
+                }
+            }
+        }
     }
 }

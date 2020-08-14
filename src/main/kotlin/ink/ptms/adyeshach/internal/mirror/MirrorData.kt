@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.internal.mirror
 
 import java.util.concurrent.TimeUnit
 
-class MirrorData {
+class MirrorData(val total: Boolean) {
 
     var timeTotal = 0.0
         private set
@@ -26,7 +26,9 @@ class MirrorData {
     fun stop(): MirrorData {
         timeLatest = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - runtime).toDouble()
         timeTotal += timeLatest
-        times += 1
+        if (total) {
+            times += 1
+        }
         if (timeLatest > highest) {
             highest = timeLatest
         }

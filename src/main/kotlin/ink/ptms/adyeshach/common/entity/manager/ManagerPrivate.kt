@@ -1,34 +1,54 @@
 package ink.ptms.adyeshach.common.entity.manager
 
-import com.google.common.collect.Lists
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import org.bukkit.entity.Player
+import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.internal.database.Database
+import org.bukkit.Bukkit
+import org.bukkit.Location
 
 /**
  * @Author sky
  * @Since 2020-08-14 14:25
  */
-class ManagerPrivate(val player: Player) {
+class ManagerPrivate(val player: String, val database: Database): Manager() {
 
-    val activeEntity = Lists.newCopyOnWriteArrayList<EntityInstance>()
-
-    fun onLoad() {
-
+    override fun onLoad() {
+        val player = Bukkit.getPlayerExact(player)!!
+        val file = database.download(player)
+        val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
+        conf.getKeys(false).forEach {
+            val entity = AdyeshachAPI.fromYaml(conf.getConfigurationSection(it)!!, player) ?: return@forEach
+            if (entity.entityType.bukkitType == null) {
+                println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
+            } else {
+                entity.manager = this
+                entity.addViewer(player)
+                AdyeshachAPI.activeEntity.add(entity)
+            }
+        }
     }
 
-    fun onSave() {
-
+    override fun onSave() {
+        val player = Bukkit.getPlayerExact(player)!!
+        val file = database.download(player)
+        AdyeshachAPI.activeEntity.forEach {
+            it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
+        }
+        database.upload(player)
     }
 
-    fun onTick() {
-
+    override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> (Unit)): EntityInstance {
+        return create(entityTypes, location, listOf(Bukkit.getPlayerExact(player)!!), function).run {
+            AdyeshachAPI.activeEntity.add(this)
+            this
+        }
     }
 
-    fun onSpawn(entityInstance: EntityInstance) {
-
-    }
-
-    fun onDestroy(entityInstance: EntityInstance) {
-
+    override fun remove(entityInstance: EntityInstance) {
+        val player = Bukkit.getPlayerExact(player)!!
+        val file = database.download(player)
+        file.set("AdyeshachNPC.${entityInstance.uniqueId}", null)
+        AdyeshachAPI.activeEntity.remove(entityInstance)
     }
 }

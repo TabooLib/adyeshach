@@ -10,7 +10,7 @@ object Mirror {
 
     val dataMap = Maps.newTreeMap<String, MirrorData>()!!
 
-    fun get(id: String): MirrorData {
-        return dataMap.computeIfAbsent(id) { MirrorData() }
+    fun get(id: String, total: Boolean = true): MirrorData {
+        return dataMap.computeIfAbsent(id) { MirrorData(total) }
     }
 }

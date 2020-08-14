@@ -15,6 +15,8 @@ import java.util.*
 object Serializer {
 
     val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(UUID::class.java, JsonSerializer<UUID> { a, _, _ -> JsonPrimitive(a.toString()) })
+            .registerTypeAdapter(UUID::class.java, JsonDeserializer<UUID> { a, _, _ -> UUID.fromString(a.asString) })
             .registerTypeAdapter(YamlConfiguration::class.java, JsonSerializer<YamlConfiguration> { a, _, _ -> JsonPrimitive(a.saveToString()) })
             .registerTypeAdapter(YamlConfiguration::class.java, JsonDeserializer<YamlConfiguration> { a, _, _ -> SecuredFile.loadConfiguration(a.asString) })
             .registerTypeAdapter(TextComponent::class.java, JsonSerializer<TextComponent> { a, _, _ -> JsonPrimitive(a.text) })

@@ -13,7 +13,11 @@ object Indexs {
     @PlayerContainer
     private val index = ConcurrentHashMap<String, Int>()
 
-    fun nextIndex(player: Player): Int {
-        return index.put(player.name, index.computeIfAbsent(player.name) { 449599702 } + 1)!!
+    fun nextIndex(): Int {
+        return nextIndex("@public")
+    }
+
+    fun nextIndex(name: String): Int {
+        return index.put(name, index.computeIfAbsent(name) { 449599702 } + 1)!!
     }
 }

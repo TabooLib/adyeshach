@@ -111,7 +111,9 @@ abstract class EntityMetaable {
                 }
             }
             val metadata = dataWatcher?.getMetadata(index, bits.toByte()) ?: return
-            NMS.INSTANCE.updateEntityMetadata(entityInstance.owner!!, entityInstance.index, metadata)
+            entityInstance.forViewers {
+                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
+            }
         }
     }
 
@@ -136,7 +138,9 @@ abstract class EntityMetaable {
             }
             val obj = entityInstance.metadata[key] ?: return
             val metadata = dataWatcher?.getMetadata(index, obj) ?: return
-            NMS.INSTANCE.updateEntityMetadata(entityInstance.owner!!, entityInstance.index, metadata)
+            entityInstance.forViewers {
+                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
+            }
         }
     }
 }

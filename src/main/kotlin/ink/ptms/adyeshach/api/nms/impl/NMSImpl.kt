@@ -116,7 +116,7 @@ class NMSImpl : NMS() {
                     Pair("e", location.z),
                     Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
                     Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.type.EntityTypes.FALLING_BLOCK)),
+                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK)),
                     Pair("l", id)
             )
         } else {
@@ -130,7 +130,7 @@ class NMSImpl : NMS() {
                     Pair("e", location.z),
                     Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
                     Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.type.EntityTypes.FALLING_BLOCK)),
+                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK)),
                     Pair("l", material.id + (data.toInt() shl 12))
             )
         }
@@ -314,7 +314,7 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.type.EntityTypes): Any {
+    override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
         return if (version >= 11300) {
             SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true)
         } else {
