@@ -17,7 +17,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
-    override fun onLoad() {
+    override fun onEnable() {
         val player = Bukkit.getPlayerExact(player)!!
         val file = database.download(player)
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
@@ -30,6 +30,12 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
                 entity.addViewer(player)
                 activeEntity.add(entity)
             }
+        }
+    }
+
+    override fun onDisable() {
+        activeEntity.forEach {
+            it.destroy()
         }
     }
 

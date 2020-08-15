@@ -22,7 +22,11 @@ abstract class Manager {
 
     abstract fun getEntity(id: String): List<EntityInstance>
 
-    open fun onLoad() {
+    open fun onEnable() {
+
+    }
+
+    open fun onDisable() {
 
     }
 

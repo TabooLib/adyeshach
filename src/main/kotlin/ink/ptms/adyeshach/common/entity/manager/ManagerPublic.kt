@@ -18,7 +18,7 @@ class ManagerPublic : Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
-    override fun onLoad() {
+    override fun onEnable() {
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
             Files.read(file) {
                 val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n"), null) ?: return@read
@@ -26,15 +26,22 @@ class ManagerPublic : Manager() {
                     println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
                 } else {
                     entity.manager = this
+                    Bukkit.getOnlinePlayers().forEach { entity.addViewer(it) }
                     activeEntity.add(entity)
                 }
             }
         }
     }
 
+    override fun onDisable() {
+        activeEntity.forEach {
+            it.destroy()
+        }
+    }
+
     override fun onSave() {
         activeEntity.forEach { entity ->
-            Files.write(File(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json")) {
+            Files.write(Files.file(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json")) {
                 it.write(entity.toJson())
             }
         }

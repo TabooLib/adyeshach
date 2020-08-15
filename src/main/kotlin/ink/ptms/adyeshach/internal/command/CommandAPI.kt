@@ -34,7 +34,7 @@ class CommandAPI : BaseMainCommand(), Helper {
                         Files.write(File(Adyeshach.plugin.dataFolder, "skin/${args[0].split(".")[0]}")) {
                             it.write(GsonBuilder().setPrettyPrinting().create().toJson(repose))
                         }
-                        sender.info("Successfully uploaded skin and saved as \"§f${args[0].split(".")[0]}§77\".")
+                        sender.info("Successfully uploaded skin and saved as &f\"${args[0].split(".")[0]}\"&7.")
                     }
                 }
             } else {

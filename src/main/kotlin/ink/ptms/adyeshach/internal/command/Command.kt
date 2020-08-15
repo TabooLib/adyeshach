@@ -39,19 +39,19 @@ class Command : BaseMainCommand(), Helper {
                 "PRIVATE" -> {
                     player = Bukkit.getPlayerExact(args.getOrElse(3) { "CONSOLE" })
                     if (player == null) {
-                        sender.error("Player \"${args.getOrElse(3) { "CONSOLE" }}\" not found.")
+                        sender.error("Player &f\"${args.getOrElse(3) { "CONSOLE" }}\" &7not found.")
                         return
                     }
                     AdyeshachAPI.getEntityManager(player)
                 }
                 else -> {
-                    sender.error("Entity Manager \"${args[0]}\" not supported.")
+                    sender.error("Entity Manager &f\"${args[0]}\" &7not supported.")
                     return
                 }
             }
             val entityType = Enums.getIfPresent(EntityTypes::class.java, args[2]).orNull()
             if (entityType == null) {
-                sender.error("Entity \"${args[2]}\" not supported.")
+                sender.error("Entity &f\"${args[2]}\" &7not supported.")
                 return
             }
             val entity = try {
@@ -78,17 +78,17 @@ class Command : BaseMainCommand(), Helper {
                 "PRIVATE" -> {
                     val player = Bukkit.getPlayerExact(args.getOrElse(2) { "CONSOLE" })
                     if (player == null) {
-                        sender.error("Player \"${args.getOrElse(2) { "CONSOLE" }}\" not found.")
+                        sender.error("Player &f\"${args.getOrElse(2) { "CONSOLE" }}\" &7not found.")
                         return
                     }
                     AdyeshachAPI.getEntityManager(player)
                 }
                 else -> {
-                    sender.error("Entity Manager \"${args[0]}\" not supported.")
+                    sender.error("Entity Manager &f\"${args[0]}\" &7not supported.")
                     return
                 }
             }
-            val entity = manager.getEntity(args[0])
+            val entity = manager.getEntity(args[1])
             if (entity.isEmpty()) {
                 sender.info("Adyeshach NPC not found.")
                 return
@@ -106,14 +106,10 @@ class Command : BaseMainCommand(), Helper {
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             Tasks.task(true) {
-                Mirror.get("ManagerPublic:onSave").eval {
-                    AdyeshachAPI.getEntityManager().onSave()
-                }
                 Bukkit.getOnlinePlayers().forEach {
-                    Mirror.get("ManagerPrivate:onSave").eval {
-                        AdyeshachAPI.getEntityManager(it).onSave()
-                    }
+                    AdyeshachAPI.getEntityManager(it).onSave()
                 }
+                AdyeshachAPI.getEntityManager().onSave()
                 sender.info("Adyeshach NPC has been saved.")
             }
         }

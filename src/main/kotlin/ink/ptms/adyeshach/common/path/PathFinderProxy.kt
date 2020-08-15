@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.Throws
 
 /**
  * @Author sky
@@ -55,7 +56,7 @@ object PathFinderProxy {
     @TSchedule(period = 20)
     private fun check() {
         Bukkit.getWorlds().forEach {
-            Mirror.get("PathFinderProxy:check_20:world_${it.name}").eval {
+            Mirror.get("PathFinderProxy:onCheck:${it.name}").eval {
                 val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
                 pathEntity.entity.values.removeIf { entity -> !entity.isValid }
                 PathType.values().filterNot { pathType -> pathEntity.entity.containsKey(pathType) }.forEach { pathType ->
@@ -76,7 +77,7 @@ object PathFinderProxy {
             if (pathEntity.schedule.isEmpty()) {
                 return@forEach
             }
-            Mirror.get("PathFinderProxy:schedule_5:world_$world").eval {
+            Mirror.get("PathFinderProxy:onSchedule:$world").eval {
                 pathEntity.schedule.forEach { schedule ->
                     val entity = pathEntity.entity[schedule.pathType]
                     if (entity != null) {

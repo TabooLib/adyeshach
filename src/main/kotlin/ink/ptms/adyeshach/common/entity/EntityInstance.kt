@@ -37,9 +37,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     val viewPlayers = ViewPlayers()
 
     init {
-        if (isPublic()) {
-            Bukkit.getOnlinePlayers().forEach { addViewer(it) }
-        }
         registerMetaByteMask(0, "onFire", 0x01)
         registerMetaByteMask(0, "isCrouched", 0x02)
         registerMetaByteMask(0, "unUsedRiding", 0x04)
@@ -270,7 +267,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     /**
-     * 实体计算
+     * 实体计算（async）
      */
     fun onTick() {
         // 确保客户端显示实体正常
