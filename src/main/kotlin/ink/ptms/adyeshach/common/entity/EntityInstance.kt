@@ -146,7 +146,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 修改实体位置
      */
-    open fun teleport(location: Location) {
+    fun teleport(location: Location) {
         this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
         forViewers {
@@ -157,7 +157,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 修改实体视角
      */
-    open fun setHeadRotation(yaw: Float, pitch: Float) {
+    fun setHeadRotation(yaw: Float, pitch: Float) {
         position = position.run {
             this.yaw = yaw
             this.pitch = pitch
@@ -171,7 +171,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体看向某个方向
      */
-    open fun controllerLook(location: Location) {
+    fun controllerLook(location: Location) {
         position.toLocation(location.world!!).add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
             setHeadRotation(entityLocation.yaw, entityLocation.pitch)

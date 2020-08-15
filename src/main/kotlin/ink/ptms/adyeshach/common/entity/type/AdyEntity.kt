@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import net.minecraft.server.v1_16_R1.EntityFireball
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftDragonFireball
 import org.bukkit.entity.Player
@@ -31,5 +32,13 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
                 NMS.INSTANCE.destroyEntity(viewer, index)
             }
         }
+    }
+
+    fun teleport(world: String, x: Double, y: Double, z: Double) {
+        teleport(Location(Bukkit.getWorld(world), x, y, z))
+    }
+
+    fun teleport(world: String, x: Double, y: Double, z: Double, yaw: Double, pitch: Double) {
+        teleport(Location(Bukkit.getWorld(world), x, y, z, yaw.toFloat(), pitch.toFloat()))
     }
 }
