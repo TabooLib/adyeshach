@@ -3,6 +3,8 @@ package ink.ptms.adyeshach.internal.command
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -16,7 +18,7 @@ import org.bukkit.entity.Player
 @BaseCommand(name = "adyeshach", aliases = ["anpc", "npc"], permission = "adyeshach.command")
 class Command : BaseMainCommand(), Helper {
 
-    @SubCommand(description = "create adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "create adyeshach npc.")
     val create = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
@@ -24,12 +26,20 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val player: Player?
             val manager = when (args[0].toUpperCase()) {
-                "PUBLIC" -> AdyeshachAPI.getEntityManager()
+                "PUBLIC" -> {
+                    if (sender !is Player) {
+                        sender.error("The console cannot use this command.")
+                        return
+                    }
+                    player = sender
+                    AdyeshachAPI.getEntityManager()
+                }
                 "PRIVATE" -> {
-                    val player = Bukkit.getPlayerExact(args.getOrElse(3) { "CONSOLE" })
+                    player = Bukkit.getPlayerExact(args.getOrElse(3) { "CONSOLE" })
                     if (player == null) {
-                        sender.error("Player \"${args[3]}\" not found.")
+                        sender.error("Player \"${args.getOrElse(3) { "CONSOLE" }}\" not found.")
                         return
                     }
                     AdyeshachAPI.getEntityManager(player)
@@ -45,30 +55,66 @@ class Command : BaseMainCommand(), Helper {
                 return
             }
             val entity = try {
-                manager.create(entityType, (sender as Player).location)
+                manager.create(entityType, player.location)
             } catch (t: Throwable) {
                 sender.error("Error: &8${t.message}")
                 return
             }
             entity.id = args[1]
+            sender.info("Adyeshach NPC has been created.")
         }
     }
 
-    @SubCommand(description = "remove adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "remove adyeshach npc.")
     val remove = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("manager") { listOf("PUBLIC", "PRIVATE") }, Argument("id"), Argument("viewer", false))
+            return arrayOf(Argument("manager") { listOf("PUBLIC", "PRIVATE") }, Argument("id") { AdyeshachAPI.getEntityManager().getEntities().map { it.id } }, Argument("viewer", false))
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val manager = when (args[0].toUpperCase()) {
                 "PUBLIC" -> AdyeshachAPI.getEntityManager()
-                "PRIVATE" -> AdyeshachAPI.getEntityManager(sender as Player)
+                "PRIVATE" -> {
+                    val player = Bukkit.getPlayerExact(args.getOrElse(2) { "CONSOLE" })
+                    if (player == null) {
+                        sender.error("Player \"${args.getOrElse(2) { "CONSOLE" }}\" not found.")
+                        return
+                    }
+                    AdyeshachAPI.getEntityManager(player)
+                }
                 else -> {
                     sender.error("Entity Manager \"${args[0]}\" not supported.")
                     return
                 }
+            }
+            val entity = manager.getEntity(args[0])
+            if (entity.isEmpty()) {
+                sender.info("Adyeshach NPC not found.")
+                return
+            }
+            entity.forEach {
+                it.destroy()
+                it.remove()
+            }
+            sender.info("Adyeshach NPC has been removed.")
+        }
+    }
+
+    @SubCommand(description = "save adyeshach npc.")
+    val save = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            Tasks.task(true) {
+                Mirror.get("ManagerPublic:onSave").eval {
+                    AdyeshachAPI.getEntityManager().onSave()
+                }
+                Bukkit.getOnlinePlayers().forEach {
+                    Mirror.get("ManagerPrivate:onSave").eval {
+                        AdyeshachAPI.getEntityManager(it).onSave()
+                    }
+                }
+                sender.info("Adyeshach NPC has been saved.")
             }
         }
     }

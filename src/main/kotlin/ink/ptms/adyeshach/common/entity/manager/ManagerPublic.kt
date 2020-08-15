@@ -8,12 +8,15 @@ import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.io.File
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
  * @Since 2020-08-14 19:08
  */
 class ManagerPublic : Manager() {
+
+    val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
     override fun onLoad() {
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
@@ -23,16 +26,15 @@ class ManagerPublic : Manager() {
                     println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
                 } else {
                     entity.manager = this
-                    entity.viewPlayers
-                    AdyeshachAPI.activeEntity.add(entity)
+                    activeEntity.add(entity)
                 }
             }
         }
     }
 
     override fun onSave() {
-        AdyeshachAPI.activeEntity.forEach { entity ->
-            Files.write(File(File(Adyeshach.plugin.dataFolder, "npc"), "${entity.uniqueId}.json")) {
+        activeEntity.forEach { entity ->
+            Files.write(File(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json")) {
                 it.write(entity.toJson())
             }
         }
@@ -40,12 +42,25 @@ class ManagerPublic : Manager() {
 
     override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> Unit): EntityInstance {
         return create(entityTypes, location, location.world!!.players, function).run {
-            AdyeshachAPI.activeEntity.add(this)
+            activeEntity.add(this)
             this
         }
     }
 
     override fun remove(entityInstance: EntityInstance) {
-        File(File(Adyeshach.plugin.dataFolder, "npc"), "${entityInstance.uniqueId}.json").delete()
+        val file = File(Adyeshach.plugin.dataFolder, "npc/${entityInstance.uniqueId}.json")
+        if (file.exists()) {
+            Files.copy(file, Files.file(Adyeshach.plugin.dataFolder, "npc/trash/${entityInstance.uniqueId}.json"))
+            file.delete()
+        }
+        activeEntity.remove(entityInstance)
+    }
+
+    override fun getEntities(): List<EntityInstance> {
+        return activeEntity
+    }
+
+    override fun getEntity(id: String): List<EntityInstance> {
+        return activeEntity.filter { it.id == id }
     }
 }

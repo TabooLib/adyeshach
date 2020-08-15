@@ -18,6 +18,10 @@ abstract class Manager {
 
     abstract fun remove(entityInstance: EntityInstance)
 
+    abstract fun getEntities(): List<EntityInstance>
+
+    abstract fun getEntity(id: String): List<EntityInstance>
+
     open fun onLoad() {
 
     }
@@ -27,7 +31,7 @@ abstract class Manager {
     }
 
     open fun onTick() {
-        AdyeshachAPI.activeEntity.forEach { it.onTick() }
+        getEntities().forEach { it.onTick() }
     }
 
     open fun create(entityTypes: EntityTypes, location: Location): EntityInstance {

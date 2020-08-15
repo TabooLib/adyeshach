@@ -1,3 +1,12 @@
+
+
+#         Powered by TabooLib 5.0         #
+
+
+Language:
+  - en_US
+  - zh_CN
+
 Database:
   # LOCAL (using taboolib player database), MONGODB (will not support mysql storage)
   method: LOCAL

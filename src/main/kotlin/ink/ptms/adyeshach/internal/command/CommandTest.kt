@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.internal.command
 
+import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.tellraw.TellrawJson
@@ -17,7 +19,22 @@ import org.bukkit.entity.Player
 @BaseCommand(name = "adyeshachtest", aliases = ["atest"], permission = "adyeshach.command")
 class CommandTest : BaseMainCommand(), Helper {
 
-    @SubCommand(description = "print performance monitoring", type = CommandType.PLAYER)
+    @SubCommand(description = "verify the entity type.")
+    var verify: BaseSubCommand = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
+            EntityTypes.values().forEach {
+                try {
+                    NMS.INSTANCE.getEntityTypeNMS(it)
+                } catch (t: Throwable) {
+                    sender.info("Error: ${it}")
+                }
+            }
+            sender.info("Done.")
+        }
+    }
+
+    @SubCommand(description = "print performance monitoring.", type = CommandType.PLAYER)
     var mirror: BaseSubCommand = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {

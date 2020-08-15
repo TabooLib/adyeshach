@@ -67,7 +67,7 @@ private class ManagerEvents : Listener {
 
     @EventHandler
     fun e(e: PlayerJoinEvent) {
-        AdyeshachAPI.activeEntity.filter { it.isPublic() }.forEach {
+        AdyeshachAPI.getEntityManager().getEntities().filter { it.isPublic() }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
         Tasks.delay(100, true) {
@@ -79,14 +79,12 @@ private class ManagerEvents : Listener {
 
     @EventHandler
     fun e(e: PlayerQuitEvent) {
-        AdyeshachAPI.activeEntity.forEach {
+        AdyeshachAPI.getEntityManager().getEntities().forEach {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }
-        Tasks.task(true) {
-            Mirror.get("ManagerPrivate:onSave").eval {
-                AdyeshachAPI.getEntityManager(e.player).onSave()
-            }
+        Mirror.get("ManagerPrivate:onSave").eval {
+            AdyeshachAPI.getEntityManager(e.player).onSave()
         }
     }
 }

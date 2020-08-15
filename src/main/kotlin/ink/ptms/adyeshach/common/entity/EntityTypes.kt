@@ -13,7 +13,8 @@ enum class EntityTypes(
         val bukkitType: EntityType?,
         val bukkitId: Int,
         val entitySize: EntitySize,
-        val entityBase: Class<out EntityInstance>
+        val entityBase: Class<out EntityInstance>,
+        val internalName: String? = null
 ) {
 
     AREA_EFFECT_CLOUD(
@@ -142,7 +143,7 @@ enum class EntityTypes(
             AdyElderGuardian::class.java
     ),
 
-    ENDER_CRYSTAL(
+    END_CRYSTAL(
             Enums.getIfPresent(EntityType::class.java, "ENDER_CRYSTAL").orNull(),
             51,
             EntitySize(2.0, 2.0),
@@ -156,14 +157,14 @@ enum class EntityTypes(
             AdyEndDragon::class.java
     ),
 
-    ENDER_MAN(
+    ENDERMAN(
             Enums.getIfPresent(EntityType::class.java, "ENDERMAN").orNull(),
             58,
             EntitySize(16.0, 8.0),
             AdyEnderman::class.java
     ),
 
-    ENDER_MITE(
+    ENDERMITE(
             Enums.getIfPresent(EntityType::class.java, "ENDERMITE").orNull(),
             67,
             EntitySize(0.4, 0.3),
@@ -337,42 +338,48 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "MINECART_CHEST").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartChest::class.java
+            AdyMinecartChest::class.java,
+            "CHEST_MINECART"
     ),
 
     MINECART_COMMAND(
             Enums.getIfPresent(EntityType::class.java, "MINECART_COMMAND").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartCommandBlock::class.java
+            AdyMinecartCommandBlock::class.java,
+            "COMMAND_BLOCK_MINECART"
     ),
 
     MINECART_FURNACE(
             Enums.getIfPresent(EntityType::class.java, "MINECART_FURNACE").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartFurnace::class.java
+            AdyMinecartFurnace::class.java,
+            "FURNACE_MINECART"
     ),
 
     MINECART_HOPPER(
             Enums.getIfPresent(EntityType::class.java, "MINECART_HOPPER").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartHopper::class.java
+            AdyMinecartHopper::class.java,
+            "HOPPER_MINECART"
     ),
 
     MINECART_MOB_SPAWNER(
             Enums.getIfPresent(EntityType::class.java, "MINECART_MOB_SPAWNER").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartSpawner::class.java
+            AdyMinecartSpawner::class.java,
+            "SPAWNER_MINECART"
     ),
 
     MINECART_TNT(
             Enums.getIfPresent(EntityType::class.java, "MINECART_TNT").orNull(),
             10,
             EntitySize(0.98, 0.7),
-            AdyMinecartTNT::class.java
+            AdyMinecartTNT::class.java,
+            "TNT_MINECART"
     ),
 
     MULE(
@@ -386,7 +393,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "MUSHROOM_COW").orNull(),
             96,
             EntitySize(0.9, 1.4),
-            AdyMushroom::class.java
+            AdyMushroom::class.java,
+            "MOOSHROOM"
     ),
 
     OCELOT(
@@ -441,7 +449,7 @@ enum class EntityTypes(
     ),
 
     PIGLIN_BRUTE(
-            Enums.getIfPresent(EntityType::class.java, "PIGLIN").orNull(),
+            Enums.getIfPresent(EntityType::class.java, "PIGLIN_BRUTE").orNull(),
             -1,
             EntitySize(0.6, 1.95),
             AdyPiglinBrute::class.java
@@ -466,7 +474,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "PRIMED_TNT").orNull(),
             50,
             EntitySize(0.98, 0.98),
-            AdyPrimedTNT::class.java
+            AdyPrimedTNT::class.java,
+            "TNT"
     ),
 
     PUFFERFISH(
@@ -607,35 +616,40 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "EGG").orNull(),
             62,
             EntitySize(0.25, 0.25),
-            AdyThrownEgg::class.java
+            AdyThrownEgg::class.java,
+            "EGG"
     ),
 
     THROWN_ENDER_PEARL(
             Enums.getIfPresent(EntityType::class.java, "ENDER_PEARL").orNull(),
             65,
             EntitySize(0.25, 0.25),
-            AdyThrownEnderPearl::class.java
+            AdyThrownEnderPearl::class.java,
+            "ENDER_PEARL"
     ),
 
     THROWN_EXPERIENCE_BOTTLE(
             Enums.getIfPresent(EntityType::class.java, "THROWN_EXP_BOTTLE").orNull(),
             75,
             EntitySize(0.25, 0.25),
-            AdyThrownExperienceBottle::class.java
+            AdyThrownExperienceBottle::class.java,
+            "EXPERIENCE_BOTTLE"
     ),
 
     THROWN_POTION(
             Enums.getIfPresent(EntityType::class.java, "SPLASH_POTION").orNull(),
             73,
             EntitySize(0.25, 0.25),
-            AdyThrownPotion::class.java
+            AdyThrownPotion::class.java,
+            "POTION"
     ),
 
     THROWN_TRIDENT(
             Enums.getIfPresent(EntityType::class.java, "TRIDENT").orNull(),
             73,
             EntitySize(0.5, 0.5),
-            AdyThrownTrident::class.java
+            AdyThrownTrident::class.java,
+            "TRIDENT"
     ),
 
     TRADER_LLAMA(
@@ -768,7 +782,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "FISHING_HOOK").orNull(),
             90,
             EntitySize(0.25, 0.25),
-            AdyFishingHook::class.java
+            AdyFishingHook::class.java,
+            "FISHING_BOBBER"
     );
 
     fun getEntityTypeNMS(): Any {

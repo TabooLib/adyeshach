@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-14 21:57
  */
-class ViewPlayers(val entityInstance: EntityInstance) {
+class ViewPlayers {
 
     /**
      * 允许看到这个实体的玩家
@@ -22,12 +22,6 @@ class ViewPlayers(val entityInstance: EntityInstance) {
     val visible = ConcurrentSet<String>()
 
     val visibleLock = SimpleCounter(20)
-
-    init {
-        if (entityInstance.isPublic()) {
-            Bukkit.getOnlinePlayers().forEach { entityInstance.addViewer(it) }
-        }
-    }
 
     /**
      * 获取允许看到且在可视范围内的所有玩家

@@ -3,15 +3,19 @@ package ink.ptms.adyeshach.common.entity.manager
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
  * @Since 2020-08-14 14:25
  */
 class ManagerPrivate(val player: String, val database: Database): Manager() {
+
+    val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
     override fun onLoad() {
         val player = Bukkit.getPlayerExact(player)!!
@@ -24,7 +28,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
             } else {
                 entity.manager = this
                 entity.addViewer(player)
-                AdyeshachAPI.activeEntity.add(entity)
+                activeEntity.add(entity)
             }
         }
     }
@@ -32,7 +36,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
     override fun onSave() {
         val player = Bukkit.getPlayerExact(player)!!
         val file = database.download(player)
-        AdyeshachAPI.activeEntity.forEach {
+        activeEntity.forEach {
             it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
         }
         database.upload(player)
@@ -40,7 +44,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
 
     override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> (Unit)): EntityInstance {
         return create(entityTypes, location, listOf(Bukkit.getPlayerExact(player)!!), function).run {
-            AdyeshachAPI.activeEntity.add(this)
+            activeEntity.add(this)
             this
         }
     }
@@ -49,6 +53,14 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val player = Bukkit.getPlayerExact(player)!!
         val file = database.download(player)
         file.set("AdyeshachNPC.${entityInstance.uniqueId}", null)
-        AdyeshachAPI.activeEntity.remove(entityInstance)
+        activeEntity.remove(entityInstance)
+    }
+
+    override fun getEntities(): List<EntityInstance> {
+        return activeEntity
+    }
+
+    override fun getEntity(id: String): List<EntityInstance> {
+        return activeEntity.filter { it.id == id }
     }
 }

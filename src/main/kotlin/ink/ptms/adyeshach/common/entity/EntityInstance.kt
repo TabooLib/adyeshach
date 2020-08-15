@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
 import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -33,14 +34,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      *  玩家管理
      */
-    val viewPlayers by lazy { ViewPlayers(this) }
+    val viewPlayers = ViewPlayers()
 
     init {
-        /**
-         * 1.13 -> 无 Index=6
-         * 1.12 -> 无 0x04
-         * 1.9 -> 同 1.12, 删去 Index=5
-         */
+        if (isPublic()) {
+            Bukkit.getOnlinePlayers().forEach { addViewer(it) }
+        }
         registerMetaByteMask(0, "onFire", 0x01)
         registerMetaByteMask(0, "isCrouched", 0x02)
         registerMetaByteMask(0, "unUsedRiding", 0x04)
@@ -54,10 +53,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
     }
 
-    fun forViewers(viewer: (Player) -> (Unit)) {
-        viewPlayers.getViewers().forEach { viewer.invoke(it) }
-    }
-
+    /**
+     * 内部调用方法，用于第三方事件处理
+     */
     protected fun spawn(viewer: Player, spawn: () -> (Unit)) {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call().nonCancelled()) {
             spawn.invoke()
@@ -66,10 +64,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
+    /**
+     * 内部调用方法
+     */
     protected fun destroy(viewer: Player, destroy: () -> (Unit)) {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call().nonCancelled()) {
             destroy.invoke()
         }
+    }
+
+    fun forViewers(viewer: (Player) -> (Unit)) {
+        viewPlayers.getViewers().forEach { viewer.invoke(it) }
     }
 
     /**

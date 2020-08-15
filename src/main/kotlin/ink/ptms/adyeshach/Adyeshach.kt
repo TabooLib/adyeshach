@@ -8,7 +8,7 @@ import io.izzel.taboolib.module.inject.TInject
 @Plugin.Version(5.34) // The TabooLib dependency version (required)
 object Adyeshach : PluginRedefine() {
 
-    @TInject
+    @TInject(locale = "Language")
     lateinit var conf: TConfig
         private set
 

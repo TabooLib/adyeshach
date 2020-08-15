@@ -316,7 +316,7 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.name, true)
+            SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.internalName ?: entityTypes.name, true)
         } else {
             entityTypes.bukkitId
         }

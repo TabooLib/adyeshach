@@ -25,7 +25,7 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
      * 用作储存，且不可重复的序列号
      */
     @Expose
-    val uniqueId = UUID.randomUUID().toString()
+    val uniqueId = UUID.randomUUID().toString().replace("-", "")
 
     @Expose
     var world: String? = null
@@ -51,5 +51,16 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
 
     fun getLatestLocation(): Location {
         return Location(Bukkit.getWorld(world ?: "world"), position.x, position.y, position.z, position.yaw, position.pitch)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is EntityBase) return false
+        if (uniqueId != other.uniqueId) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return uniqueId.hashCode()
     }
 }

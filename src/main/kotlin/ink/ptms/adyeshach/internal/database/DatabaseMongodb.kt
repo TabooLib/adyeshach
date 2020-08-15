@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.internal.database
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.cronus.bridge.CronusBridge
 import io.izzel.taboolib.cronus.bridge.database.IndexType
+import io.izzel.taboolib.module.nms.NMS
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 
@@ -24,6 +26,12 @@ class DatabaseMongodb : Database() {
     }
 
     override fun upload(player: Player) {
-        return collection.update(player.uniqueId.toString())
+        if (NMS.handle().isRunning) {
+            Tasks.task(true) {
+                collection.update(player.uniqueId.toString())
+            }
+        } else {
+            collection.update(player.uniqueId.toString())
+        }
     }
  }
