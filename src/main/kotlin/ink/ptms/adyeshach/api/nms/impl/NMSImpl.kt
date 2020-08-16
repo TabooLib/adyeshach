@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import ink.ptms.adyeshach.common.entity.element.NullPosition
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
@@ -18,10 +19,12 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import java.util.*
@@ -234,7 +237,7 @@ class NMSImpl : NMS() {
 
     override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
         if (version >= 11400) {
-            sendPacket(player, net.minecraft.server.v1_16_R1.PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
+            sendPacket(player, PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
         } else {
             sendPacket(player, net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
         }
@@ -306,21 +309,44 @@ class NMSImpl : NMS() {
         }
     }
 
+    override fun getMetaEntityPosition(index: Int, value: Position?): Any {
+        return if (version >= 11300) {
+            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.m), Optional.ofNullable(if (value == null || value is NullPosition) null else BlockPosition(value.x, value.y, value.z)))
+        } else {
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
+                    com.google.common.base.Optional.fromNullable(if (value == null || value is NullPosition) null else net.minecraft.server.v1_12_R1.BlockPosition(value.x, value.y, value.z)))
+        }
+    }
+
+    override fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any {
+        return if (version >= 11300) {
+            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.h), Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value)))
+        } else {
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.g),
+                    com.google.common.base.Optional.fromNullable(if (value == null) null else org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())))
+        }
+    }
+
     override fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any {
         return if (version >= 11300) {
             DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.ofNullable(if (name == null) null else ChatComponentText(name)))
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.e), net.minecraft.server.v1_12_R1.ChatComponentText(name))
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.e),
+                    net.minecraft.server.v1_12_R1.ChatComponentText(name))
         }
     }
 
     override fun getMetaItem(index: Int, itemStack: ItemStack): Any {
-        return if (version >= 11300) {
-            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.g), CraftItemStack.asNMSCopy(itemStack))
-        } else if (version >= 11200) {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(6, net.minecraft.server.v1_12_R1.DataWatcherRegistry.f), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack))
-        } else {
-            return net.minecraft.server.v1_9_R2.DataWatcher.Item(net.minecraft.server.v1_9_R2.DataWatcherObject(6, net.minecraft.server.v1_9_R2.DataWatcherRegistry.f), com.google.common.base.Optional.of(org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(itemStack)))
+        return when {
+            version >= 11300 -> {
+                DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.g), CraftItemStack.asNMSCopy(itemStack))
+            }
+            version >= 11200 -> {
+                net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(6, net.minecraft.server.v1_12_R1.DataWatcherRegistry.f), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack))
+            }
+            else -> {
+                return net.minecraft.server.v1_9_R2.DataWatcher.Item(net.minecraft.server.v1_9_R2.DataWatcherObject(6, net.minecraft.server.v1_9_R2.DataWatcherRegistry.f), com.google.common.base.Optional.fromNullable(org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(itemStack)))
+            }
         }
     }
 
@@ -345,15 +371,20 @@ class NMSImpl : NMS() {
     }
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
-        return if (version == 11300) {
-            IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
-        } else if (version >= 11400) {
-            SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
-        } else {
-            0
+        return when {
+            version == 11300 -> {
+                IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
+            }
+            version >= 11400 -> {
+                SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
+            }
+            else -> {
+                0
+            }
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position> {
         val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return ArrayList()
         val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>

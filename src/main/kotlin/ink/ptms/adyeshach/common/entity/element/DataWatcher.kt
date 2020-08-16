@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.element
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -50,10 +51,21 @@ abstract class DataWatcher {
     class DataVector : DataWatcher() {
 
         override fun getMetadata(index: Int, value: Any): Any {
-            if (value is Map<*, *>) {
-                return NMS.INSTANCE.getMetaEntityVector(index, EulerAngle((value["x"] ?: 0.0) as Double, (value["y"] ?: 0.0) as Double, (value["z"] ?: 0.0) as Double))
+            return if (value is Map<*, *>) {
+                NMS.INSTANCE.getMetaEntityVector(index, EulerAngle((value["x"] ?: 0.0) as Double, (value["y"] ?: 0.0) as Double, (value["z"] ?: 0.0) as Double))
             } else {
-                return NMS.INSTANCE.getMetaEntityVector(index, value as EulerAngle)
+                NMS.INSTANCE.getMetaEntityVector(index, value as EulerAngle)
+            }
+        }
+    }
+
+    class DataPosition : DataWatcher() {
+
+        override fun getMetadata(index: Int, value: Any): Any {
+            return if (value is Map<*, *>) {
+                NMS.INSTANCE.getMetaEntityPosition(index, Position((value["x"] ?: 0.0) as Int, (value["y"] ?: 0.0) as Int, (value["z"] ?: 0.0) as Int))
+            } else {
+                NMS.INSTANCE.getMetaEntityPosition(index, value as Position)
             }
         }
     }
@@ -80,5 +92,4 @@ abstract class DataWatcher {
             return NMS.INSTANCE.getMetaItem(index, item)
         }
     }
-
 }

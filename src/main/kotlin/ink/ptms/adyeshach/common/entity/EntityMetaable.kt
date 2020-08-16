@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.inventory.ItemStack
@@ -25,6 +26,7 @@ abstract class EntityMetaable {
     @Expose
     protected val metadataMask = HashMap<String, HashMap<String, Boolean>>()
 
+    @Suppress("UNCHECKED_CAST")
     protected fun <T> at(vararg index: Pair<Int, T>): T {
         return (index.firstOrNull { version >= it.first }?.second ?: -1) as T
     }
@@ -126,10 +128,11 @@ abstract class EntityMetaable {
                 is Float -> DataWatcher.DataFloat()
                 is String -> DataWatcher.DataString()
                 is Boolean -> DataWatcher.DataBoolean()
-                is BukkitParticles -> DataWatcher.DataParticle()
+                is Position -> DataWatcher.DataPosition()
+                is ItemStack -> DataWatcher.DataItemStack()
                 is EulerAngle -> DataWatcher.DataVector()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
-                is ItemStack -> DataWatcher.DataItemStack()
+                is BukkitParticles -> DataWatcher.DataParticle()
                 else -> null
             }
         }

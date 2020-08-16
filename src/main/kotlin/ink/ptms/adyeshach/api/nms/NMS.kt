@@ -11,10 +11,12 @@ import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.data.BlockData
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import java.util.*
@@ -68,6 +70,10 @@ abstract class NMS {
     abstract fun getMetaEntityByte(index: Int, value: Byte): Any
 
     abstract fun getMetaEntityVector(index: Int, value: EulerAngle): Any
+
+    abstract fun getMetaEntityPosition(index: Int, value: Position?): Any
+
+    abstract fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any
 
     abstract fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any
 
