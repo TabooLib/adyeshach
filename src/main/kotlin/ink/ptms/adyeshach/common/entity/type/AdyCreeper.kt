@@ -7,7 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyCreeper() : AdyEntityLiving(EntityTypes.CREEPER) {
+class AdyCreeper() : AdyMob(EntityTypes.CREEPER) {
 
     init {
         /**

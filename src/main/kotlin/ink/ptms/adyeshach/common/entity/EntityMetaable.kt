@@ -7,6 +7,7 @@ import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 
 /**
@@ -24,8 +25,8 @@ abstract class EntityMetaable {
     @Expose
     protected val metadataMask = HashMap<String, HashMap<String, Boolean>>()
 
-    protected fun at(vararg index: Pair<Int, Int>): Int {
-        return index.firstOrNull { version >= it.first }?.second ?: -1
+    protected fun <T> at(vararg index: Pair<Int, T>): T {
+        return (index.firstOrNull { version >= it.first }?.second ?: -1) as T
     }
 
     protected fun Int.to(index: Int): Pair<Int, Int> {
@@ -128,6 +129,7 @@ abstract class EntityMetaable {
                 is BukkitParticles -> DataWatcher.DataParticle()
                 is EulerAngle -> DataWatcher.DataVector()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
+                is ItemStack -> DataWatcher.DataItemStack()
                 else -> null
             }
         }

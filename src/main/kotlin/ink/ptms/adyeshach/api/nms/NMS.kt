@@ -71,6 +71,8 @@ abstract class NMS {
 
     abstract fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any
 
+    abstract fun getMetaItem(index: Int, itemStack: ItemStack): Any
+
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 
     abstract fun getBlockPositionNMS(location: Location): Any

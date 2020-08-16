@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach
 
-import ink.ptms.adyeshach.common.path.PathFinderProxy
+import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.type.AdyItemFrame
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.util.lite.Effects
-import org.bukkit.Location
-import org.bukkit.Particle
 import org.bukkit.entity.Player
 
 /**
@@ -17,17 +17,26 @@ object TestV {
 
     @TInject
     val testV: CommandBuilder = CommandBuilder
-            .create("test", Adyeshach.plugin)
-            .execute { sender, _ ->
-                if (sender is Player) {
-                    PathFinderProxy.request(sender.location, sender.getTargetBlockExact(50)!!.location) {
-                        it.pointList.forEach { point ->
-                            Effects.create(Particle.VILLAGER_HAPPY, Location(sender.world, point.x + 0.5, point.y + 0.5, point.z + 0.5)).count(10).range(100.0).play()
-                        }
-                        sender.sendMessage(" wait: ${it.waitTime} ms, cost: ${it.costTime} ms")
+        .create("test-v", Adyeshach.plugin)
+        .execute { sender, _ ->
+            val v = AdyeshachAPI.getEntityManager().create(EntityTypes.ITEM_FRAME, (sender as Player).location) as AdyItemFrame
+            v.setItem(sender.inventory.itemInMainHand)
+            v.addViewer(sender)
+            v.spawn(sender.location)
+
+            Tasks.delay(20, true) {
+                var delay = 0L
+                (0..25).forEach { _ ->
+                    Tasks.delay(delay, true) {
+                        v.setRotation(v.getRotation() + 10)
                     }
-                    sender.sendMessage("requested.")
+                    delay += 10
                 }
             }
+
+            Tasks.delay(100, true) {
+                v.destroy()
+            }
+        }
 
 }

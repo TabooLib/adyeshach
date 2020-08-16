@@ -3,6 +3,8 @@ package ink.ptms.adyeshach.common.entity.element
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import io.izzel.taboolib.util.chat.TextComponent
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.NumberConversions
 
@@ -70,4 +72,13 @@ abstract class DataWatcher {
             return NMS.INSTANCE.getMetaEntityChatBaseComponent(index, if (text.isEmpty()) null else text)
         }
     }
+
+    class DataItemStack : DataWatcher() {
+
+        override fun getMetadata(index: Int, value: Any): Any {
+            val item = if (value is ItemStack) value else ItemStack(Material.BEDROCK)
+            return NMS.INSTANCE.getMetaItem(index, item)
+        }
+    }
+
 }

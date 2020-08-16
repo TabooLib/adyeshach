@@ -40,7 +40,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
     }
 
     override fun onSave() {
-        val player = Bukkit.getPlayerExact(player)!!
+        val player = Bukkit.getPlayerExact(player) ?: return
         val file = database.download(player)
         activeEntity.forEach {
             it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))

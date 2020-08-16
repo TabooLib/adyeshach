@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author Arasple
  * @date 2020/8/5 22:35
  */
-abstract class AdySpider(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
+abstract class AdySpider(entityTypes: EntityTypes) : AdyMob(entityTypes) {
 
     init {
         /**
@@ -25,4 +25,5 @@ abstract class AdySpider(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes
     fun isClibmbing(): Boolean {
         return getMetadata("isClimbing")
     }
+
 }

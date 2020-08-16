@@ -6,9 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-open class AdyZombie(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
-
-    constructor(): this(EntityTypes.ZOMBIE)
+open class AdyZombie(entityTypes: EntityTypes = EntityTypes.ZOMBIE) : AdyMob(entityTypes) {
 
     init {
         /**
@@ -20,10 +18,19 @@ open class AdyZombie(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
          *
          * 1.9, 1.10 -> no zombie villager
          */
+        registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
         registerMeta(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
         registerMeta(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
         registerMeta(at(11400 to -1, 11200 to 14, 11000 to 15, 10900 to 14), "isHandsHeldUp", false)
         registerMeta(at(11100 to -1, 11000 to 13, 10900 to 12), "zombieType", 0)
+    }
+
+    fun setBaby(value: Boolean) {
+        setMetadata("isBaby", value)
+    }
+
+    fun isBaby(): Boolean {
+        return getMetadata("isBaby")
     }
 
     fun setDrowning(value: Boolean) {
