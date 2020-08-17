@@ -7,6 +7,8 @@ name: ${name}
 main: ${main}
 main-transfer: ${mainTransfer}
 version: ${version}
-authors: [${author}]
+authors:
+  - 黑
+  - Arasple
 
 api-version: 1.13

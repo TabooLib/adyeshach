@@ -14,10 +14,10 @@ class AdyAreaEffectCloud : AdyEntity(EntityTypes.AREA_EFFECT_CLOUD) {
         /**
          * 仅 1.16 有属性
          */
-        registerMeta(at(11600.to(7)), "radius", 0.5f)
-        registerMeta(at(11600.to(8)), "color", 0)
-        registerMeta(at(11600.to(9)), "ignoreRadius", false)
-        registerMeta(at(11600.to(10)), "particle", BukkitParticles.EFFECT)
+        registerMeta(at(11600 to 7), "radius", 0.5f)
+        registerMeta(at(11600 to 8), "color", 0)
+        registerMeta(at(11600 to 9), "ignoreRadius", false)
+        registerMeta(at(11600 to 10), "particle", BukkitParticles.EFFECT)
     }
 
     fun setRadius(radius: Float) {
