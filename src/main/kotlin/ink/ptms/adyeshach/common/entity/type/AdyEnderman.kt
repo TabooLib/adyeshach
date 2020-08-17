@@ -31,4 +31,28 @@ class AdyEnderman() : AdyEntityLiving(EntityTypes.ENDERMAN) {
         registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isScreaming", false)
         registerMeta(at(11500 to 17), "isStaring", false)
     }
+
+    fun setCarriedBlock(materialData: MaterialData) {
+        setMetadata("carriedBlock", materialData)
+    }
+
+    fun getCarriedBlock(): MaterialData {
+        return getMetadata("carriedBlock")
+    }
+
+    fun isScreaming(): Boolean {
+        return getMetadata("isScreaming")
+    }
+
+    fun setScreaming(screaming: Boolean) {
+        setMetadata("isScreaming", screaming)
+    }
+
+    fun isStaring(): Boolean {
+        return getMetadata("isStaring")
+    }
+
+    fun setStaring(staring: Boolean) {
+        setMetadata("isStaring", staring)
+    }
 }
