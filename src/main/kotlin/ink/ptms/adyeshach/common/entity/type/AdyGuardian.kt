@@ -24,15 +24,13 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
              0x04 iselderly
         13 ->Targer EID
          */
-        if (version > 11000) {
-            registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isRetractingSpikes", false)
-            registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", false)
+        if (version >= 11100) {
+            registerMeta(at(11500 to 15, 11400 to 14, 11100 to 13), "isRetractingSpikes", false)
         } else {
+            registerMetaByteMask(at(11000 to 12, 10900 to 11), "isRetractingSpikes", 0x02)
+            registerMetaByteMask(at(11000 to 12, 10900 to 11), "isElderly", 0x04)
         }
-        val index = at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11)
-        registerMeta(index, "isRetractingSpikes", at(11100 to false, 0 to 0x02))
-        registerMeta(at(11100 to -1, 0 to index), "isElderly", 0x04)
-        registerMeta(index + 1, "targetEntityId", -1)
+        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", false)
     }
 
     fun setRetractingSpikes(value: Boolean) {
@@ -41,6 +39,14 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
 
     fun isRetractingSpikes(): Boolean {
         return getMetadata("isRetractingSpikes")
+    }
+
+    fun setTargetEntityId(id: Int) {
+        setMetadata("targetEntityId", id)
+    }
+
+    fun getTargetEntityId(): Int {
+        return getMetadata("targetEntityId")
     }
 
     fun setElderly(value: Boolean) {
@@ -55,13 +61,5 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
             throw RuntimeException("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
         }
         return getMetadata("isElderly")
-    }
-
-    fun setTargetEntityId(id: Int) {
-        setMetadata("targetEntityId", id)
-    }
-
-    fun getTargetEntityId(): Int {
-        return getMetadata("targetEntityId")
     }
 }

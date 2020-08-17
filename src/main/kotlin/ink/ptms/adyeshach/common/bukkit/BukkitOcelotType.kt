@@ -2,17 +2,18 @@ package ink.ptms.adyeshach.common.bukkit
 
 /**
  * @Author sky
- * @Since 2020-08-17 15:39
+ * @Since 2020-08-17 17:28
  */
-enum class BukkitFoxType {
+enum class BukkitOcelotType {
 
-    RED,
-
-    SNOW;
+    UNTAMED,
+    TUXEDO,
+    TABBY,
+    SIAMESE;
 
     companion object {
 
-        fun of(index: Int): BukkitFoxType {
+        fun of(index: Int): BukkitOcelotType {
             return values().first { it.ordinal == index }
         }
     }

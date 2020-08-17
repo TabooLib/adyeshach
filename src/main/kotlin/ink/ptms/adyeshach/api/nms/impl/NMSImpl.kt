@@ -108,7 +108,6 @@ class NMSImpl : NMS() {
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (version >= 11300) {
             val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, material.name, true)
-            val id = Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
@@ -120,7 +119,7 @@ class NMSImpl : NMS() {
                 Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
                 Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
                 Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK)),
-                Pair("l", id)
+                Pair("l", Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData))
             )
         } else {
             sendPacket(
@@ -389,5 +388,14 @@ class NMSImpl : NMS() {
         val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return ArrayList()
         val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
         return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
+    }
+
+    override fun toBlockId(materialData: MaterialData): Int {
+        return if (version >= 11300) {
+            val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, materialData.itemType.name, true)
+            Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
+        } else {
+            materialData.itemType.id + (materialData.data.toInt() shl 12)
+        }
     }
 }

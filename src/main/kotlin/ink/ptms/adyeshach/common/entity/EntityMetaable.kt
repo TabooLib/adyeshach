@@ -9,6 +9,7 @@ import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 
 /**
@@ -80,7 +81,7 @@ abstract class EntityMetaable {
         return if (registerMeta is MetaMasked) {
             metadataMask[getByteMaskKey(registerMeta.index)]!![key] as T
         } else {
-            metadata[key] as T
+            registerMeta.dataWatcher!!.parse(metadata[key]!!) as T
         }
     }
 
@@ -127,6 +128,7 @@ abstract class EntityMetaable {
                 is Position -> DataWatcher.DataPosition()
                 is ItemStack -> DataWatcher.DataItemStack()
                 is EulerAngle -> DataWatcher.DataVector()
+                is MaterialData -> DataWatcher.DataBlockData()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
                 is BukkitParticles -> DataWatcher.DataParticle()
                 else -> null

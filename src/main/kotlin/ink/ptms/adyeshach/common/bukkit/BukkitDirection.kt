@@ -11,6 +11,12 @@ enum class BukkitDirection {
     NORTH,
     SOUTH,
     WEST,
-    EAST
+    EAST;
 
+    companion object {
+
+        fun of(index: Int): BukkitDirection {
+            return values().first { it.ordinal == index }
+        }
+    }
 }

@@ -45,7 +45,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMetaByteMask(0, "isInvisible", 0x20)
         registerMetaByteMask(0, "isGlowing", 0x40)
         registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
-        registerMeta(2, "customName", if (version > 11200) TextComponent("") else "")
+        registerMeta(2, "customName", TextComponent(""))
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
     }
@@ -251,19 +251,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun setCustomName(value: String) {
-        if (version > 11200) {
-            setMetadata("customName", TextComponent(value))
-        } else {
-            setMetadata("customName", value)
-        }
+        setMetadata("customName", value)
     }
 
     fun getCustomName(): String {
-        return if (version > 11200) {
-            getMetadata<TextComponent>("customName").text
-        } else {
-            getMetadata("customName")
-        }
+        return getMetadata("customName")
     }
 
     /**

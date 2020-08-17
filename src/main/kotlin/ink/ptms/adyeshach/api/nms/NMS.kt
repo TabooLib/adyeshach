@@ -89,6 +89,8 @@ abstract class NMS {
 
     abstract fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position>
 
+    abstract fun toBlockId(materialData: MaterialData): Int
+
     companion object {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")
