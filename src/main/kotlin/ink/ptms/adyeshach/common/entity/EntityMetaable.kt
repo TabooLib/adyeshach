@@ -31,10 +31,6 @@ abstract class EntityMetaable {
         return (index.firstOrNull { version >= it.first }?.second ?: -1) as T
     }
 
-    protected fun Int.to(index: Int): Pair<Int, Int> {
-        return this to index
-    }
-
     protected fun registerMeta(index: Int, key: String, def: Any) {
         meta.add(MetaNatural(index, key, def))
         metadata[key] = def

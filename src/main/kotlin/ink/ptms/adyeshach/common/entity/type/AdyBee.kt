@@ -12,11 +12,11 @@ class AdyBee() : AdyEntityLiving(EntityTypes.BEE) {
      * 1.15+ 一致
      */
     init {
-        registerMetaByteMask(at(11500.to(16)), "unUsed", 0x01)
-        registerMetaByteMask(at(11500.to(16)), "isFlip", 0x02)
-        registerMetaByteMask(at(11500.to(16)), "hasStung", 0x04)
-        registerMetaByteMask(at(11500.to(16)), "hasNectar", 0x08)
-        registerMetaByteMask(at(11500.to(17)), "angerTicks", 0)
+        registerMetaByteMask(at(11500 to 16), "unUsed", 0x01)
+        registerMetaByteMask(at(11500 to 16), "isFlip", 0x02)
+        registerMetaByteMask(at(11500 to 16), "hasStung", 0x04)
+        registerMetaByteMask(at(11500 to 16), "hasNectar", 0x08)
+        registerMetaByteMask(at(11500 to 17), "angerTicks", 0)
     }
 
     fun setUnUsed(unused: Boolean) {

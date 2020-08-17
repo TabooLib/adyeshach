@@ -15,8 +15,8 @@ class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
      * 仅 1.16, 1.15 有属性
      */
     init {
-        registerMeta(at(11500.to(18), 0.to(-1)), "type", Cat.Type.TABBY.ordinal)
-        registerMeta(at(11500.to(21), 0.to(-1)), "color", DyeColor.RED.ordinal)
+        registerMeta(at(11500 to 18), "type", Cat.Type.TABBY.ordinal)
+        registerMeta(at(11500 to 21), "color", DyeColor.RED.ordinal)
     }
 
     fun setType(value: Cat.Type) {

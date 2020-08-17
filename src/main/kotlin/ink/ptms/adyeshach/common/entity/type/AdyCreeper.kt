@@ -16,9 +16,9 @@ class AdyCreeper() : AdyMob(EntityTypes.CREEPER) {
          * 1.10 -> 12,13,14
          * 1.9 -> 11,12,13
          */
-        registerMeta(at(11500.to(15), 11400.to(14), 11000.to(12), 10900.to(11)), "state", BukkitCreeperState.IDLE.ordinal)
-        registerMeta(at(11500.to(16), 11400.to(15), 11000.to(13), 10900.to(12)), "isCharged", false)
-        registerMeta(at(11500.to(17), 11400.to(16), 11000.to(14), 10900.to(13)), "isIgnited", false)
+        registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "state", BukkitCreeperState.IDLE.ordinal)
+        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isCharged", false)
+        registerMeta(at(11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
     }
 
     fun setState(value: BukkitCreeperState) {
