@@ -28,4 +28,14 @@ class AdyEndCrystal() : AdyEntity(EntityTypes.END_CRYSTAL) {
         registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", NullPosition())
         registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
     }
+
+    //TODO beamTarget getter & setter
+
+    fun isShowBottom(): Boolean {
+        return getMetadata("showBottom")
+    }
+
+    fun setShowBottom(showBottom: Boolean) {
+        setMetadata("showBottom", showBottom)
+    }
 }
