@@ -29,5 +29,4 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
         // TODO
         return setMetadata("variant", 0)
     }
-
 }
