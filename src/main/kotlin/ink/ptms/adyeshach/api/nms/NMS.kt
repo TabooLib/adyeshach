@@ -11,7 +11,6 @@ import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.block.data.BlockData
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot

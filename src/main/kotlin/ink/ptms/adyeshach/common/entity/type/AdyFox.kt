@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.bukkit.BukkitFoxType
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.entity.Fox
 
 /**
  * @author sky
@@ -38,7 +38,7 @@ class AdyFox() : AdyEntityAgeable(EntityTypes.FOX) {
         1.13,1.12,1.11,1.10,1.9
         null
          */
-        registerMeta(at(11500 to 16, 11400 to 15), "type", BukkitFoxType.RED.ordinal)
+        registerMeta(at(11500 to 16, 11400 to 15), "type", Fox.Type.RED.ordinal)
         registerMetaByteMask(at(11500 to 17, 11400 to 16), "isSitting", 0x01, false)
         registerMetaByteMask(at(11500 to 17, 11400 to 16), "isCrouching", 0x04, false)
         registerMetaByteMask(at(11500 to 17), "isInterested", 0x08, false)

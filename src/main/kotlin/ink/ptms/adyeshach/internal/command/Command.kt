@@ -4,7 +4,6 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
-import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

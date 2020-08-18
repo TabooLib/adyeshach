@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.internal.database
 
-import ink.ptms.adyeshach.internal.database.Database
 import io.izzel.taboolib.module.db.local.LocalPlayer
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player

@@ -9,9 +9,7 @@ import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
 import ink.ptms.adyeshach.common.util.Indexs
-import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 

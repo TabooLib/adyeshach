@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
+abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyMob(entityTypes) {
 
     init {
         /**

@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author Arasple
  * @date 2020/8/4 22:18
  */
-class AdyBee() : AdyEntityLiving(EntityTypes.BEE) {
+class AdyBee() : AdyEntityAgeable(EntityTypes.BEE) {
 
     /**
      * 1.15+ 一致

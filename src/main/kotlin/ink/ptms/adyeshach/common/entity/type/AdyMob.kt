@@ -10,17 +10,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 abstract class AdyMob(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
 
     init {
-        registerMeta(at(11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "noAI", 0x01)
-        registerMeta(at(11500 to 14, 11400 to 13, 11000 to 11, 10900 to -1), "isLeftHanded", 0x02)
-        registerMeta(at(11600 to 14, 0 to -1), "isAgressive", 0x04)
-    }
-
-    fun setAI(ai: Boolean) {
-        setMetadata("noAI", !ai)
-    }
-
-    fun hasAI(): Boolean {
-        return !(getMetadata("noAI") as Boolean)
+        registerMeta(at(11500 to 14, 11400 to 13, 11000 to 11), "isLeftHanded", 0x02)
+        registerMeta(at(11600 to 14), "isAgressive", 0x04)
     }
 
     fun setLeftHanded(leftHanded: Boolean) {
@@ -38,6 +29,4 @@ abstract class AdyMob(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
     fun isAgressive(): Boolean {
         return getMetadata("isAgressive")
     }
-
-
 }

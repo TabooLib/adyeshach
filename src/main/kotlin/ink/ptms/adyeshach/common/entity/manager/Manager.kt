@@ -1,12 +1,10 @@
 package ink.ptms.adyeshach.common.entity.manager
 
-import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky

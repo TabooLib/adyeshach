@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.util
 
 import io.izzel.taboolib.module.inject.PlayerContainer
-import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 
 /**

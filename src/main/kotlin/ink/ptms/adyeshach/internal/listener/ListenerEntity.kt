@@ -1,9 +1,7 @@
 package ink.ptms.adyeshach.internal.listener
 
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.common.entity.EntityThrowable
-import ink.ptms.adyeshach.common.entity.type.*
 import io.izzel.taboolib.module.inject.TListener
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

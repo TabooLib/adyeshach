@@ -1,12 +1,15 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.java.JavaUtil
+import org.bukkit.DyeColor
+import org.bukkit.entity.Llama
 
 /**
  * @author sky
  * @date 2020/8/4 23:15
  */
-open class AdyLlama(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
+open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
 
     constructor(): this(EntityTypes.LLAMA)
 
@@ -28,6 +31,23 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
         null
          */
         registerMeta(at(11500 to 20, 11400 to 19, 11100 to 17), "carpetColor", -1)
-        registerMeta(at(11500 to 21, 11400 to 20, 11100 to 18), "color", 0)
+        registerMeta(at(11500 to 21, 11400 to 20, 11100 to 18), "color", Llama.Color.CREAMY.ordinal)
+    }
+
+    fun setCarpetColor(dyeColor: DyeColor?) {
+        setMetadata("carpetColor", dyeColor?.ordinal ?: -1)
+    }
+
+    fun setCarpetColor(): DyeColor? {
+        val color = getMetadata<Int>("carpetColor")
+        return if (color == -1) null else JavaUtil.valuesDyeColor().first { it.ordinal == color }
+    }
+
+    fun setType(type: Llama.Color) {
+        setMetadata("carpetColor", type.ordinal)
+    }
+
+    fun getType(): Llama.Color {
+        return JavaUtil.valuesLlamaColor().first { it.ordinal == getMetadata("color") }
     }
 }

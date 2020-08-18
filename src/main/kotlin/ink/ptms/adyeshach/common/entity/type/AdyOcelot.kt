@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitOcelotType
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.entity.Ocelot
 
 /**
  * @author sky
@@ -47,7 +48,7 @@ class AdyOcelot() : AdyEntityAgeable(EntityTypes.OCELOT) {
         return getMetadata("isTrusting")
     }
 
-    fun setType(type: BukkitOcelotType) {
+    fun setType(type: Ocelot.Type) {
         if (version >= 11400) {
             throw RuntimeException("Metadata \"type\" not supported this minecraft version.")
         }

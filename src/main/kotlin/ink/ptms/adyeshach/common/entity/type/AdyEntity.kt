@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import net.minecraft.server.v1_16_R1.EntityFireball
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftDragonFireball
 import org.bukkit.entity.Player
 import java.util.*
 

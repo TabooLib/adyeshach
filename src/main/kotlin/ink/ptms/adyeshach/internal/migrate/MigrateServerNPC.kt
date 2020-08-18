@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.internal.migrate
 
-import ink.ptms.adyeshach.internal.migrate.Migrate
-
 /**
  * @Author sky
  * @Since 2020-08-14 18:18

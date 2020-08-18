@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.java;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
+import org.bukkit.entity.Llama;
 
 /**
  * @Author sky
@@ -9,11 +10,15 @@ import org.bukkit.entity.Cat;
  */
 public class JavaUtil {
 
+    public static DyeColor[] valuesDyeColor() {
+        return DyeColor.values();
+    }
+
     public static Cat.Type[] valuesCatType() {
         return Cat.Type.values();
     }
 
-    public static DyeColor[] valuesDyeColor() {
-        return DyeColor.values();
+    public static Llama.Color[] valuesLlamaColor() {
+        return Llama.Color.values();
     }
 }
