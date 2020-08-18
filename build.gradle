@@ -12,9 +12,11 @@ targetCompatibility = 1.8
 
 taboolib {
     tabooLibVersion = '5.35'
-    loaderVersion = '2.4'
+    loaderVersion = '2.5'
     classifier = null
 }
+
+task buildJar(dependsOn: [clean, jar])
 
 repositories {
     mavenCentral()
