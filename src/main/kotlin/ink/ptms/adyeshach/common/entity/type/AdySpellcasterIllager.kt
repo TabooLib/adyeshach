@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.JavaUtil
+import ink.ptms.adyeshach.java.BukkitUtils
 import org.bukkit.entity.Spellcaster
 
 /**
@@ -22,6 +22,6 @@ open class AdySpellcasterIllager(entityTypes: EntityTypes) : AdyRaider(entityTyp
     }
 
     fun getSpell(): Spellcaster.Spell {
-        return JavaUtil.valueIllagerSpell()[getMetadata("spell")]
+        return BukkitUtils.valueIllagerSpell()[getMetadata("spell")]
     }
 }

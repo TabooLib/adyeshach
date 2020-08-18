@@ -10,7 +10,7 @@ import org.bukkit.entity.Spellcaster;
  * @Author sky
  * @Since 2020-08-05 16:53
  */
-public class JavaUtil {
+public class BukkitUtils {
 
     public static DyeColor[] valuesDyeColor() {
         return DyeColor.values();

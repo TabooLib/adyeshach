@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.JavaUtil
+import ink.ptms.adyeshach.java.BukkitUtils
 import org.bukkit.DyeColor
 import org.bukkit.entity.Cat
 
@@ -24,7 +24,7 @@ class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
     }
 
     fun getType(): Cat.Type {
-        return JavaUtil.valuesCatType()[getMetadata("type")]
+        return BukkitUtils.valuesCatType()[getMetadata("type")]
     }
 
     fun setCollarColor(value: DyeColor) {
@@ -32,6 +32,6 @@ class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
     }
 
     fun getCollarColor(): DyeColor {
-        return JavaUtil.valuesDyeColor()[getMetadata("color")]
+        return BukkitUtils.valuesDyeColor()[getMetadata("color")]
     }
 }

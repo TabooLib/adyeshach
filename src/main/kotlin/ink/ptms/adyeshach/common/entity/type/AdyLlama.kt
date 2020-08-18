@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.JavaUtil
+import ink.ptms.adyeshach.java.BukkitUtils
 import org.bukkit.DyeColor
 import org.bukkit.entity.Llama
 
@@ -40,7 +40,7 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
 
     fun setCarpetColor(): DyeColor? {
         val color = getMetadata<Int>("carpetColor")
-        return if (color == -1) null else JavaUtil.valuesDyeColor()[color]
+        return if (color == -1) null else BukkitUtils.valuesDyeColor()[color]
     }
 
     fun setType(type: Llama.Color) {
@@ -48,6 +48,6 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
     }
 
     fun getType(): Llama.Color {
-        return JavaUtil.valuesLlamaColor()[getMetadata("color")]
+        return BukkitUtils.valuesLlamaColor()[getMetadata("color")]
     }
 }
