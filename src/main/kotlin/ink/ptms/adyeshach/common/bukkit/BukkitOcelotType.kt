@@ -14,7 +14,7 @@ enum class BukkitOcelotType {
     companion object {
 
         fun of(index: Int): BukkitOcelotType {
-            return values().first { it.ordinal == index }
+            return values()[index]
         }
     }
 }

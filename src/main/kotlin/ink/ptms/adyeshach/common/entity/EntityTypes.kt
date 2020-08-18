@@ -705,7 +705,7 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "WITCH").orNull(),
             -1,
             EntitySize(0.6, 1.95),
-            AdyWither::class.java
+            AdyWitch::class.java
     ),
 
     WITHER(
@@ -762,6 +762,13 @@ enum class EntityTypes(
             27,
             EntitySize(0.6, 1.95),
             AdyZombieVillager::class.java
+    ),
+
+    ZOMBIE_PIGMAN(
+            Enums.getIfPresent(EntityType::class.java, "PIG_ZOMBIE").orNull(),
+            57,
+            EntitySize(0.6, 1.95),
+            AdyZombiePigman::class.java
     ),
 
     ZOMBIFIED_PIGLIN(

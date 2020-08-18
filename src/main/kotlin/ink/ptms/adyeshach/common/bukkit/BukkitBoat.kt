@@ -16,7 +16,7 @@ enum class BukkitBoat {
     companion object {
 
         fun of(index: Int): BukkitBoat {
-            return values().first { it.ordinal == index }
+            return values()[index]
         }
     }
 }

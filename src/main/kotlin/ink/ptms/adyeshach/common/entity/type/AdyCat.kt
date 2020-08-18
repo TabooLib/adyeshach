@@ -24,7 +24,7 @@ class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
     }
 
     fun getType(): Cat.Type {
-        return JavaUtil.valuesCatType().first { it.ordinal == getMetadata("type") }
+        return JavaUtil.valuesCatType()[getMetadata("type")]
     }
 
     fun setCollarColor(value: DyeColor) {
@@ -32,6 +32,6 @@ class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
     }
 
     fun getCollarColor(): DyeColor {
-        return JavaUtil.valuesDyeColor().first { it.ordinal == getMetadata("color") }
+        return JavaUtil.valuesDyeColor()[getMetadata("color")]
     }
 }

@@ -40,7 +40,7 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
 
     fun setCarpetColor(): DyeColor? {
         val color = getMetadata<Int>("carpetColor")
-        return if (color == -1) null else JavaUtil.valuesDyeColor().first { it.ordinal == color }
+        return if (color == -1) null else JavaUtil.valuesDyeColor()[color]
     }
 
     fun setType(type: Llama.Color) {
@@ -48,6 +48,6 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
     }
 
     fun getType(): Llama.Color {
-        return JavaUtil.valuesLlamaColor().first { it.ordinal == getMetadata("color") }
+        return JavaUtil.valuesLlamaColor()[getMetadata("color")]
     }
 }

@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
+import io.izzel.taboolib.util.item.Items
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -130,7 +131,7 @@ abstract class DataWatcher {
     class DataBlockData : DataWatcher() {
 
         override fun parse(value: Any): Any {
-            return if (value is Map<*, *>) MaterialData(Material.getMaterial(value["type"].toString()), value["data"]!!.toByte()) else value as MaterialData
+            return if (value is Map<*, *>) MaterialData(Items.asMaterial(value["type"].toString()), value["data"]!!.toByte()) else value as MaterialData
         }
 
         override fun getMetadata(index: Int, value: Any): Any {

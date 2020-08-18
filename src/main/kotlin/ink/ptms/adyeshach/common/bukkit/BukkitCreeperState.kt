@@ -7,13 +7,12 @@ package ink.ptms.adyeshach.common.bukkit
 enum class BukkitCreeperState(val value: Int) {
 
     IDLE(-1),
-
     FUSE(1);
 
     companion object {
 
         fun of(index: Int): BukkitCreeperState {
-            return values().first { it.ordinal == index }
+            return values()[index]
         }
     }
 }

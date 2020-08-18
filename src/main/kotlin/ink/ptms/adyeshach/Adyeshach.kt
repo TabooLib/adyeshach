@@ -10,5 +10,4 @@ object Adyeshach : Plugin() {
     lateinit var conf: TConfig
         private set
 
-    override fun getTabooLibVersion(): Double = 5.35
 }

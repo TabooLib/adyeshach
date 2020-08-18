@@ -16,7 +16,7 @@ enum class BukkitDirection {
     companion object {
 
         fun of(index: Int): BukkitDirection {
-            return values().first { it.ordinal == index }
+            return values()[index]
         }
     }
 }

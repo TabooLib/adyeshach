@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.java;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Llama;
+import org.bukkit.entity.Spellcaster;
 
 /**
  * @Author sky
@@ -20,5 +21,9 @@ public class JavaUtil {
 
     public static Llama.Color[] valuesLlamaColor() {
         return Llama.Color.values();
+    }
+
+    public static Spellcaster.Spell[] valueIllagerSpell() {
+        return Spellcaster.Spell.values();
     }
 }
