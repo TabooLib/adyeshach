@@ -38,6 +38,11 @@ dependencies {
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
-        expand name: rootProject.name, main: project.group + ".boot.PluginBoot", version: project.version
+        expand(
+                'name': project.name,
+                'main': project.group + ".boot.PluginBoot",
+                'version': project.version,
+                'lib': taboolib.tabooLibVersion
+        )
     }
 }
