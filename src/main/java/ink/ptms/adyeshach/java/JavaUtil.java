@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.java;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Llama;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Spellcaster;
 
 /**
@@ -21,6 +22,10 @@ public class JavaUtil {
 
     public static Llama.Color[] valuesLlamaColor() {
         return Llama.Color.values();
+    }
+
+    public static Parrot.Variant[] valueParrotVariant() {
+        return Parrot.Variant.values();
     }
 
     public static Spellcaster.Spell[] valueIllagerSpell() {

@@ -16,6 +16,8 @@ taboolib {
     classifier = null
 }
 
+task buildJar(dependsOn: [clean, jar])
+
 repositories {
     mavenCentral()
 }
