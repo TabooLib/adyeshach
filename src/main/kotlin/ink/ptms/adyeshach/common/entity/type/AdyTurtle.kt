@@ -13,7 +13,6 @@ class AdyTurtle() : AdyEntityAgeable(EntityTypes.TURTLE) {
         val index = at(11500 to 18, 11400 to 17, 11300 to 15)
         registerMeta(index + 0, "hsaEgg", false)
         registerMeta(index + 1, "layingEgg", false)
-        registerMeta(index + 2, "travelPos", Position(0, 0, 0))
         registerMeta(index + 3, "isGoingHome", false)
         registerMeta(index + 4, "isTraveling", false)
     }

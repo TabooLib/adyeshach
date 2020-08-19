@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.element
 
+import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.util.serializer.Serializer
@@ -7,6 +8,7 @@ import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Material
+import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -137,6 +139,21 @@ abstract class DataWatcher {
         override fun getMetadata(index: Int, value: Any): Any {
             val material = parse(value) as MaterialData
             return NMS.INSTANCE.getMetaEntityBlockData(index, if (material.itemType == Material.AIR) null else material)
+        }
+    }
+
+    class DataVillagerData : DataWatcher() {
+
+        override fun parse(value: Any): Any {
+            return if (value is Map<*, *>) {
+                VillagerData(Enums.getIfPresent(Villager.Type::class.java, value["type"]!!.toString()).get(), Enums.getIfPresent(Villager.Profession::class.java, value["profession"]!!.toString()).get())
+            } else {
+                value as VillagerData
+            }
+        }
+
+        override fun getMetadata(index: Int, value: Any): Any {
+            return NMS.INSTANCE.getMetaVillagerData(index, parse(value) as VillagerData)
         }
     }
 

@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
@@ -77,6 +78,8 @@ abstract class NMS {
     abstract fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any
 
     abstract fun getMetaItem(index: Int, itemStack: ItemStack): Any
+
+    abstract fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any
 
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 

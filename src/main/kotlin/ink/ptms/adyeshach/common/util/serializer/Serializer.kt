@@ -1,12 +1,15 @@
 package ink.ptms.adyeshach.common.util.serializer
 
+import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.element.NullPosition
+import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.internal.gson.*
 import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Material
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -28,6 +31,16 @@ object Serializer {
             .registerTypeAdapter(TextComponent::class.java, JsonDeserializer { a, _, _ -> TextComponent(a.asString) })
             .registerTypeAdapter(ItemStack::class.java, JsonSerializer<ItemStack> { a, _, _ -> JsonPrimitive(fromItemStack(a)) })
             .registerTypeAdapter(ItemStack::class.java, JsonDeserializer { a, _, _ -> toItemStack(a.asString) })
+            .registerTypeAdapter(VillagerData::class.java, JsonSerializer<VillagerData> { a, _, _ ->
+                JsonObject().run {
+                    addProperty("type", a.type.name)
+                    addProperty("profession", a.profession.name)
+                    this
+                }
+            })
+            .registerTypeAdapter(VillagerData::class.java, JsonDeserializer { a, _, _ ->
+                VillagerData(Enums.getIfPresent(Villager.Type::class.java, a.asJsonObject.get("type").asString).get(), Enums.getIfPresent(Villager.Profession::class.java, a.asJsonObject.get("profession").asString).get())
+            })
             .registerTypeAdapter(MaterialData::class.java, JsonSerializer<MaterialData> { a, _, _ ->
                 JsonObject().run {
                     addProperty("type", a.itemType.name)
