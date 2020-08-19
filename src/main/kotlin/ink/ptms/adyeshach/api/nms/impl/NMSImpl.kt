@@ -18,9 +18,11 @@ import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.entity.Villager
@@ -431,5 +433,9 @@ class NMSImpl : NMS() {
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)
         }
+    }
+
+    override fun getEntity(world: World, id: Int): Entity? {
+        return (world as CraftWorld).handle.getEntity(id)
     }
 }

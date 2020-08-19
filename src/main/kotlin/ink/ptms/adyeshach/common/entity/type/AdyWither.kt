@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 
 /**
@@ -18,21 +18,34 @@ class AdyWither() : AdyMob(EntityTypes.WITHER) {
     }
 
     fun getFirstHeadTarget(): Entity? {
-        return Bukkit.getEntity(getMetadata("firstHeadTarget"))
+        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("firstHeadTarget"))
     }
 
-    fun setFirstHeadTarget(firstHeadTarget: Entity) {
-        setMetadata("firstHeadTarget", firstHeadTarget.entityId)
+    fun setFirstHeadTarget(value: Entity) {
+        setMetadata("firstHeadTarget", value.entityId)
     }
 
     fun getSecondHeadTarget(): Entity? {
-        //TODO get entity from entityId
-        return Bukkit.getEntity(getMetadata("secondHeadTarget"))
+        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("secondHeadTarget"))
     }
 
-    fun setSecondHeadTarget(secondHeadTarget: Entity) {
-        setMetadata("secondHeadTarget", secondHeadTarget.entityId)
+    fun setSecondHeadTarget(value: Entity) {
+        setMetadata("secondHeadTarget", value.entityId)
     }
 
-    //TODO more setter & getter
+    fun getThirdHeadTarget(): Entity? {
+        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("thirdHeadTarget"))
+    }
+
+    fun setThirdHeadTarget(value: Entity) {
+        setMetadata("thirdHeadTarget", value.entityId)
+    }
+
+    fun getInvulnerableTime(): Int {
+        return getMetadata("invulnerableTime")
+    }
+
+    fun setInvulnerableTime(value: Int) {
+        setMetadata("invulnerableTime", value)
+    }
 }

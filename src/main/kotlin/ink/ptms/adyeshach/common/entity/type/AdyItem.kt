@@ -26,5 +26,4 @@ class AdyItem() : AdyEntity(EntityTypes.ITEM) {
     fun getItem(): ItemStack {
         return getMetadata("item")
     }
-
 }

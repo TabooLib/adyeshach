@@ -12,6 +12,8 @@ import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.World
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -92,6 +94,8 @@ abstract class NMS {
     abstract fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position>
 
     abstract fun toBlockId(materialData: MaterialData): Int
+
+    abstract fun getEntity(world: World, id: Int): Entity?
 
     companion object {
 

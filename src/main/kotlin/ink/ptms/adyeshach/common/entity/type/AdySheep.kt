@@ -11,7 +11,7 @@ class AdySheep() : AdyEntityAgeable(EntityTypes.SHEEP) {
 
     init {
         val index = at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
-        registerMeta(index, "dyeColor", 15.toByte())
+        registerMeta(index, "dyeColor", DyeColor.WHITE.dyeData)
         registerMetaByteMask(index, "isSheared", 0x10)
     }
 
@@ -32,5 +32,4 @@ class AdySheep() : AdyEntityAgeable(EntityTypes.SHEEP) {
     fun setSheared(value: Boolean) {
         setMetadata("isSheared", value)
     }
-
 }

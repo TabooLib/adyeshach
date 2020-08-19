@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.Sound
 
 /**
  * @author sky
