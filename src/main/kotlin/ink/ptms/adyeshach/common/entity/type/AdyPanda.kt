@@ -28,7 +28,6 @@ class AdyPanda() : AdyEntityAgeable(EntityTypes.PANDA) {
         0x10	Is on back [1.16 only]
          */
         val index = at(11500 to 21, 11400 to 20)
-
         registerMetaByteMask(index, "isSneezing", 0x02)
         registerMetaByteMask(index, "isEating", 0x04)
         registerMetaByteMask(index, "isSitting", 0x08)
@@ -40,7 +39,6 @@ class AdyPanda() : AdyEntityAgeable(EntityTypes.PANDA) {
     }
 
     fun setSneezing(value: Boolean) {
-
         setMetadata("isSneezing", value)
     }
 

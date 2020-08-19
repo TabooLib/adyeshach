@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.java;
 
 import org.bukkit.DyeColor;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.Parrot;
-import org.bukkit.entity.Spellcaster;
+import org.bukkit.entity.*;
 
 /**
  * @Author sky
@@ -22,6 +19,10 @@ public class BukkitUtils {
 
     public static Llama.Color[] valuesLlamaColor() {
         return Llama.Color.values();
+    }
+
+    public static Rabbit.Type[] valueRabbitType() {
+        return Rabbit.Type.values();
     }
 
     public static Parrot.Variant[] valueParrotVariant() {

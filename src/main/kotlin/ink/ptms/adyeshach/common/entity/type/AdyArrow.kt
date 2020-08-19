@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Color
 
@@ -7,7 +8,7 @@ import org.bukkit.Color
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyArrow() : AdyEntity(EntityTypes.ARROW) {
+class AdyArrow() : AdyEntity(EntityTypes.ARROW), EntityThrowable {
 
     /**
      * 1.15 Index=7 一致

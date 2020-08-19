@@ -7,4 +7,9 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyWitherSkull() : AdyEntity(EntityTypes.WITHER_SKULL), EntityFireball
+class AdyWitherSkull() : AdyEntity(EntityTypes.WITHER_SKULL), EntityFireball {
+
+    init {
+        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "Invulnerable", false)
+    }
+}

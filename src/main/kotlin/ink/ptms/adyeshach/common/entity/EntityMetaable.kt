@@ -122,6 +122,7 @@ abstract class EntityMetaable {
         init {
             dataWatcher = when (def) {
                 is Int -> DataWatcher.DataInt()
+                is Byte -> DataWatcher.DataByte()
                 is Float -> DataWatcher.DataFloat()
                 is String -> DataWatcher.DataString()
                 is Boolean -> DataWatcher.DataBoolean()
