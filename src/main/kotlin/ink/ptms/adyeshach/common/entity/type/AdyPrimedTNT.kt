@@ -19,4 +19,12 @@ class AdyPrimedTNT() : AdyEntity(EntityTypes.PRIMED_TNT) {
          */
         registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "fuseTime", 80)
     }
+
+    fun setFuseTime(fuseTime: Int) {
+        setMetadata("fuseTime",fuseTime)
+    }
+
+    fun getFuseTime():Int{
+        return getMetadata("fuseTime")
+    }
 }

@@ -19,4 +19,12 @@ class AdyMinecartFurnace() : AdyMinecart(EntityTypes.MINECART_FURNACE) {
          */
         registerMeta(at(11400 to 13, 11000 to 12, 10900 to 11), "hasFuel", false)
     }
+
+    fun isHasFuel(): Boolean {
+        return getMetadata("hasFuel")
+    }
+
+    fun setFuel(hasFuel: Boolean) {
+        setMetadata("hasFuel", hasFuel)
+    }
 }

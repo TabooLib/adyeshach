@@ -22,7 +22,7 @@ abstract class AdySpider(entityTypes: EntityTypes) : AdyMob(entityTypes) {
         setMetadata("isClimbing", climbing)
     }
 
-    fun isClibmbing(): Boolean {
+    fun isClimbing(): Boolean {
         return getMetadata("isClimbing")
     }
 

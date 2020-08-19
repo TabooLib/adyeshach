@@ -10,14 +10,14 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyWitherSkull() : AdyEntity(EntityTypes.WITHER_SKULL), EntityFireball {
 
     init {
-        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "Invulnerable", false)
+        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "invulnerable", false)
     }
 
     fun isInvulnerable(): Boolean {
-        return getMetadata("Invulnerable")
+        return getMetadata("invulnerable")
     }
 
     fun setInvulnerable(invulnerable: Boolean) {
-        setMetadata("Invulnerable", invulnerable)
+        setMetadata("invulnerable", invulnerable)
     }
 }
