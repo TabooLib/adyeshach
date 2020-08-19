@@ -105,9 +105,9 @@ abstract class EntityMetaable {
             }
             var bits = 0
             val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return
-            entityInstance.meta.filter { it.index == index }.map { it as MetaMasked }.forEach {
+            entityInstance.meta.filter { it.index == index && it is MetaMasked }.forEach {
                 if (byteMask[it.key] == true) {
-                    bits += it.mask
+                    bits += (it as MetaMasked).mask
                 }
             }
             val metadata = dataWatcher?.getMetadata(index, bits.toByte()) ?: return

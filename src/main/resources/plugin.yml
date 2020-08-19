@@ -1,5 +1,3 @@
-
-
 #         Powered by TabooLib 5.0         #
 
 
@@ -9,6 +7,7 @@ version: ${version}
 authors:
   - 黑
   - Arasple
+  - Soldier233
 
 lib-version: ${libVersion}
 api-version: 1.13
