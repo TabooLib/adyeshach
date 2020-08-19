@@ -34,6 +34,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     val viewPlayers = ViewPlayers()
 
+    /**
+     * ai
+     */
+
     init {
         registerMetaByteMask(0, "onFire", 0x01)
         registerMetaByteMask(0, "isCrouched", 0x02)

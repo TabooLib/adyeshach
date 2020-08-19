@@ -435,7 +435,7 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun getEntity(world: World, id: Int): Entity? {
-        return (world as CraftWorld).handle.getEntity(id)
+    override fun getEntity(world: org.bukkit.World, id: Int): Entity? {
+        return (world as CraftWorld).handle.getEntity(id)?.bukkitEntity
     }
 }
