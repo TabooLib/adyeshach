@@ -12,4 +12,12 @@ class AdyWitherSkull() : AdyEntity(EntityTypes.WITHER_SKULL), EntityFireball {
     init {
         registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "Invulnerable", false)
     }
+
+    fun isInvulnerable(): Boolean {
+        return getMetadata("Invulnerable")
+    }
+
+    fun setInvulnerable(invulnerable: Boolean) {
+        setMetadata("Invulnerable", invulnerable)
+    }
 }

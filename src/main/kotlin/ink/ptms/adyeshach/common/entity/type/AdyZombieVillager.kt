@@ -18,4 +18,20 @@ class AdyZombieVillager() : AdyZombie(EntityTypes.ZOMBIE_VILLAGER) {
             registerMeta(at(11300 to 17, 11100 to 16), "profession", BukkitProfession.FARMER.ordinal)
         }
     }
+
+    fun setVillagerData(villagerData: VillagerData) {
+        setMetadata("villagerData", villagerData)
+    }
+
+    fun getVillagerData(): VillagerData {
+        return getMetadata("villagerData")
+    }
+
+    fun setProfession(profession: BukkitProfession) {
+        setMetadata("profession", profession)
+    }
+
+    fun getProfession(): BukkitProfession {
+        return getMetadata("profession")
+    }
 }

@@ -14,4 +14,12 @@ class AdyThrownPotion() : AdyEntity(EntityTypes.THROWN_POTION), EntityThrowable 
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
     }
+
+    fun getItem(): ItemStack {
+        return getMetadata("item");
+    }
+
+    fun setItem(item: ItemStack) {
+        setMetadata("item", item);
+    }
 }

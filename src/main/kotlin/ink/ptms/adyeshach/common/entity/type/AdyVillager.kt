@@ -20,4 +20,20 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
             registerMeta(at(11000 to 13, 10900 to 12), "profession", BukkitProfession.FARMER.ordinal)
         }
     }
+
+    fun setVillagerData(villagerData: VillagerData) {
+        setMetadata("villagerData", villagerData)
+    }
+
+    fun getVillagerData(): VillagerData {
+        return getMetadata("villagerData")
+    }
+
+    fun setProfession(profession: BukkitProfession) {
+        setMetadata("profession", profession)
+    }
+
+    fun getProfession(): BukkitProfession {
+        return getMetadata("profession")
+    }
 }

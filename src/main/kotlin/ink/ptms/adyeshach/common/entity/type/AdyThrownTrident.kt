@@ -13,4 +13,20 @@ class AdyThrownTrident() : AdyEntity(EntityTypes.THROWN_TRIDENT), EntityThrowabl
         registerMeta(at(11400 to 10, 11300 to 10), "loyaltyLevel", 0)
         registerMeta(at(11500 to 11), "hasEnchantmentGlint", false)
     }
+
+    fun setLoyaltyLevel(loyaltyLevel: Int) {
+        setMetadata("loyaltyLevel", loyaltyLevel)
+    }
+
+    fun getLoyaltyLevel(): Int {
+        return getMetadata("loyaltyLevel")
+    }
+
+    fun isHasEnchantmentGlint(): Boolean {
+        return getMetadata("hasEnchantmentGlint")
+    }
+
+    fun setHasEnchantmentGlint(hasEnchantmentGlint: Boolean) {
+        setMetadata("hasEnchantmentGlint", hasEnchantmentGlint)
+    }
 }
