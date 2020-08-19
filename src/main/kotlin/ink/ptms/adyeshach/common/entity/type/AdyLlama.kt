@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.BukkitUtils
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.DyeColor
 import org.bukkit.entity.Llama
 

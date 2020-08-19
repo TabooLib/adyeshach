@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.BukkitUtils
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Parrot
 
 /**
@@ -19,6 +19,6 @@ class AdyParrot() : AdyEntityTameable(EntityTypes.PARROT) {
     }
 
     fun getColor(): Parrot.Variant {
-        return BukkitUtils.valueParrotVariant()[getMetadata("color")]
+        return BukkitUtils.valuesParrotVariant()[getMetadata("color")]
     }
 }

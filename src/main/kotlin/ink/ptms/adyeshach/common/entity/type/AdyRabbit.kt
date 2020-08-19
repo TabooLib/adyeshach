@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.java.BukkitUtils
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Rabbit
 
 /**
@@ -29,6 +29,6 @@ class AdyRabbit() : AdyEntityAgeable(EntityTypes.RABBIT) {
     }
 
     fun getType(): Rabbit.Type {
-        return BukkitUtils.valueRabbitType()[getMetadata("type")]
+        return BukkitUtils.valuesRabbitType()[getMetadata("type")]
     }
 }

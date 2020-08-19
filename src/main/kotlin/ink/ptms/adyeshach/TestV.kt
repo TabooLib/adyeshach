@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach
 
-import ink.ptms.adyeshach.common.entity.type.AdySheep
+import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
-import org.bukkit.DyeColor
+import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 
 /**
@@ -20,16 +20,23 @@ object TestV {
         .execute { sender, _ ->
             sender as Player
 
-            val sheep = AdySheep()
-            sheep.addViewer(sender)
-            sheep.spawn(sender.location)
+            val horse = AdyHorse()
+            horse.addViewer(sender)
+            horse.spawn(sender.location)
 
-            Tasks.delay(20, true) { sheep.setDyeColor(DyeColor.PINK) }
-            Tasks.delay(40, true) { sheep.setDyeColor(DyeColor.GREEN) }
-            Tasks.delay(60, true) { sheep.setDyeColor(DyeColor.BLUE) }
-            Tasks.delay(80, true) { sheep.setDyeColor(DyeColor.RED) }
-            Tasks.delay(100, true) { sheep.setSheared(true) }
-            Tasks.delay(200, true) { sheep.destroy() }
+            Tasks.delay(20, true) {
+                horse.setColorAndStyle(Horse.Color.BLACK, Horse.Style.WHITE_DOTS)
+            }
+            Tasks.delay(40, true) {
+                horse.setColorAndStyle(Horse.Color.WHITE, Horse.Style.WHITE_DOTS)
+            }
+            Tasks.delay(60, true) {
+                horse.setColorAndStyle(Horse.Color.WHITE, Horse.Style.BLACK_DOTS)
+            }
+            Tasks.delay(80, true) {
+                horse.setColorAndStyle(Horse.Color.BROWN, Horse.Style.BLACK_DOTS)
+            }
+            Tasks.delay(200, true) { horse.destroy() }
         }
 
 }
