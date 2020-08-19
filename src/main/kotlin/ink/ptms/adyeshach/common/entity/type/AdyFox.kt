@@ -47,4 +47,12 @@ class AdyFox() : AdyEntityAgeable(EntityTypes.FOX) {
         registerMetaByteMask(at(11500 to 17), "isFaceplanted", 0x40, false)
         registerMetaByteMask(at(11500 to 17), "isDefending", 0x80.toByte(), false)
     }
+
+    fun getType(): Fox.Type {
+        return getMetadata("type")
+    }
+
+    fun setType(type: Fox.Type) {
+        setMetadata("type", type)
+    }
 }

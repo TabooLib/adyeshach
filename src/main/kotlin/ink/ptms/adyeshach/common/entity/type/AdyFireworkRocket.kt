@@ -26,4 +26,12 @@ class AdyFireworkRocket() : AdyEntity(EntityTypes.FIREWORK_ROCKET) {
          */
         registerMeta(at(11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
     }
+
+    fun getFireworkInfo(): ItemStack {
+        return getMetadata("fireworkInfo")
+    }
+
+    fun setFireworkInfo(fireworkInfo: ItemStack) {
+        setMetadata("fireworkInfo", fireworkInfo)
+    }
 }
