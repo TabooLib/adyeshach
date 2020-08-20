@@ -14,6 +14,7 @@ import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.lang.RuntimeException
 
 /**
  * @Author sky
@@ -30,6 +31,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 管理工具
      */
     var manager: Manager? = null
+        set(value) {
+            if (field != null) {
+                throw RuntimeException("Entity Manager has been initialized.")
+            }
+            field = value
+        }
 
     /**
      * 玩家管理

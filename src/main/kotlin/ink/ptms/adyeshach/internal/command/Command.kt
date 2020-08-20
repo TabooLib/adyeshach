@@ -31,7 +31,7 @@ class Command : BaseMainCommand(), Helper {
                 return
             }
             val entity = try {
-                AdyeshachAPI.getEntityManager().create(entityType, (sender as Player).location)
+                AdyeshachAPI.getEntityManagerPublic().create(entityType, (sender as Player).location)
             } catch (t: Throwable) {
                 sender.error("Error: &8${t.message}")
                 return
@@ -45,11 +45,11 @@ class Command : BaseMainCommand(), Helper {
     val remove = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManager().getEntities().map { it.id } })
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManager().getEntityById(args[1])
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[1])
             if (entity.isEmpty()) {
                 sender.info("Adyeshach NPC not found.")
                 return
@@ -66,11 +66,11 @@ class Command : BaseMainCommand(), Helper {
     val modify = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManager().getEntities().map { it.id } })
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManager().getEntityById(args[1])
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[1])
             if (entity.isEmpty()) {
                 sender.info("Adyeshach NPC not found.")
                 return
@@ -89,9 +89,9 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             Tasks.task(true) {
                 Bukkit.getOnlinePlayers().forEach {
-                    AdyeshachAPI.getEntityManager(it).onSave()
+                    AdyeshachAPI.getEntityManagerPrivate(it).onSave()
                 }
-                AdyeshachAPI.getEntityManager().onSave()
+                AdyeshachAPI.getEntityManagerPublic().onSave()
                 sender.info("Adyeshach NPC has been saved.")
             }
         }

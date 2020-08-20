@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPrivate
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
+import ink.ptms.adyeshach.common.entity.manager.ManagerTemp
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
@@ -26,6 +27,7 @@ object AdyeshachAPI {
     @PlayerContainer
     private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
     private val managerPublic = ManagerPublic()
+    private val managerTemp = ManagerTemp()
     private val database by lazy {
         when (Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
             "LOCAL" -> DatabaseLocal()
@@ -34,11 +36,15 @@ object AdyeshachAPI {
         }
     }
 
-    fun getEntityManager(): Manager {
+    fun getEntityManagerTemporary(): Manager {
+        return managerTemp
+    }
+
+    fun getEntityManagerPublic(): Manager {
         return managerPublic
     }
 
-    fun getEntityManager(player: Player): Manager {
+    fun getEntityManagerPrivate(player: Player): Manager {
         return managerPrivate.computeIfAbsent(player.name) { ManagerPrivate(player.name, database) }
     }
 
