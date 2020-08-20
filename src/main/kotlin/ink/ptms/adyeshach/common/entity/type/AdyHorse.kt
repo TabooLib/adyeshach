@@ -31,15 +31,15 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
             throw RuntimeException("Horse's color and style does not supported this minecraft version. Use \"setVariant\" instead")
         }
 
-        val colorIndex = BukkitUtils.valuesHorseColor().indexOf(color)
-        val styleIndex = BukkitUtils.valuesHorseStyle().indexOf(style)
+        val colorIndex = color.ordinal
+        val styleIndex = style.ordinal
 
         return setMetadata("variant", colorIndex and 255 or styleIndex shl 8 and '\uff00'.toInt())
     }
 
     @Suppress("DEPRECATION")
     fun setVariant(variant: Horse.Variant) {
-        setMetadata("variant", BukkitUtils.valuesHorseVariant().indexOf(variant))
+        setMetadata("variant", variant.ordinal)
     }
 
 }
