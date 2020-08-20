@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach
 
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
@@ -24,19 +25,12 @@ object TestV {
             horse.addViewer(sender)
             horse.spawn(sender.location)
 
-            Tasks.delay(20, true) {
-                horse.setColorAndStyle(Horse.Color.BLACK, Horse.Style.WHITE_DOTS)
-            }
-            Tasks.delay(40, true) {
-                horse.setColorAndStyle(Horse.Color.WHITE, Horse.Style.WHITE_DOTS)
-            }
-            Tasks.delay(60, true) {
-                horse.setColorAndStyle(Horse.Color.WHITE, Horse.Style.BLACK_DOTS)
-            }
-            Tasks.delay(80, true) {
-                horse.setColorAndStyle(Horse.Color.BROWN, Horse.Style.BLACK_DOTS)
-            }
-            Tasks.delay(200, true) { horse.destroy() }
-        }
+            horse.pathfinder.add(GeneralGravity(horse))
 
+            Tasks.delay(100, true) {
+                horse.destroy()
+            }
+
+            sender.sendMessage("done.")
+        }
 }

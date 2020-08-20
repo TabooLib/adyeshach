@@ -1,10 +1,12 @@
 package ink.ptms.adyeshach.common.entity
 
+import com.google.common.collect.Lists
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDestroyEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
@@ -30,9 +32,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     var manager: Manager? = null
 
     /**
-     *  玩家管理
+     * 玩家管理
      */
     val viewPlayers = ViewPlayers()
+
+    /**
+     * 实体逻辑
+     */
+    val pathfinder = ArrayList<Pathfinder>()
 
     /**
      * ai
@@ -105,7 +112,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 生成实体，会覆盖相同 index 的实体。
      */
     fun spawn(location: Location) {
-        world = location.world!!.name
         position = EntityPosition.fromLocation(location)
         forViewers {
             visible(it, true)
@@ -116,8 +122,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 重新生成实体
      */
-    fun respawn(){
-        spawn(getLatestLocation())
+    fun respawn() {
+        spawn(position.toLocation())
     }
 
     /**
@@ -149,7 +155,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置
      */
     fun teleport(location: Location) {
-        this.world = location.world!!.name
         this.position = EntityPosition.fromLocation(location)
         forViewers {
             NMS.INSTANCE.teleportEntity(it, index, location)
@@ -174,7 +179,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 使实体看向某个方向
      */
     fun controllerLook(location: Location) {
-        position.toLocation(location.world!!).add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
+        position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
             setHeadRotation(entityLocation.yaw, entityLocation.pitch)
         }
@@ -268,18 +273,20 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleLock.next()) {
             // 复活
             viewPlayers.getOutsider().forEach { player ->
-                if (player.world.name == world && player.location.distance(getLatestLocation()) < 127) {
+                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < 127) {
                     viewPlayers.visible.add(player.name)
                     visible(player, true)
                 }
             }
             // 销毁
             viewPlayers.getViewers().forEach { player ->
-                if (player.world.name != world || player.location.distance(getLatestLocation()) > 127) {
+                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > 127) {
                     viewPlayers.visible.remove(player.name)
                     visible(player, false)
                 }
             }
         }
+        // 实体逻辑处理
+        pathfinder.filter { it.shouldExecute() }.forEach { it.onTick() }
     }
 }

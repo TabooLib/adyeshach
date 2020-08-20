@@ -18,7 +18,7 @@ class AdyWither() : AdyMob(EntityTypes.WITHER) {
     }
 
     fun getFirstHeadTarget(): Entity? {
-        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("firstHeadTarget"))
+        return NMS.INSTANCE.getEntity(position.toLocation().world!!, getMetadata("firstHeadTarget"))
     }
 
     fun setFirstHeadTarget(value: Entity) {
@@ -26,7 +26,7 @@ class AdyWither() : AdyMob(EntityTypes.WITHER) {
     }
 
     fun getSecondHeadTarget(): Entity? {
-        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("secondHeadTarget"))
+        return NMS.INSTANCE.getEntity(position.toLocation().world!!, getMetadata("secondHeadTarget"))
     }
 
     fun setSecondHeadTarget(value: Entity) {
@@ -34,7 +34,7 @@ class AdyWither() : AdyMob(EntityTypes.WITHER) {
     }
 
     fun getThirdHeadTarget(): Entity? {
-        return NMS.INSTANCE.getEntity(getLatestLocation().world!!, getMetadata("thirdHeadTarget"))
+        return NMS.INSTANCE.getEntity(position.toLocation().world!!, getMetadata("thirdHeadTarget"))
     }
 
     fun setThirdHeadTarget(value: Entity) {

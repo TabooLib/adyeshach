@@ -50,7 +50,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
         if (visible) {
             addPlayerInfo(viewer)
             spawn(viewer) {
-                NMS.INSTANCE.spawnNamedEntity(viewer, EntityTypes.PLAYER.getEntityTypeNMS(), index, playerUUID, getLatestLocation())
+                NMS.INSTANCE.spawnNamedEntity(viewer, EntityTypes.PLAYER.getEntityTypeNMS(), index, playerUUID, position.toLocation())
             }
             // test
             if (hideFromTabList) {

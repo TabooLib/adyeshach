@@ -18,7 +18,7 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntity(viewer, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), getLatestLocation().run {
+                NMS.INSTANCE.spawnEntity(viewer, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), position.toLocation().run {
                     if (this is EntityFireball) {
                         yaw = 0f
                         pitch = 0f

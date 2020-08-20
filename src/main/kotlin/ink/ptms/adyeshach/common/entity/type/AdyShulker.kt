@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.NullPosition
+import ink.ptms.adyeshach.common.entity.element.PositionNull
 import ink.ptms.adyeshach.common.util.BukkitUtils
 import io.izzel.taboolib.module.nms.impl.Position
 import org.bukkit.DyeColor
@@ -40,7 +40,7 @@ class AdyShulker() : AdyMob(EntityTypes.SHULKER) {
         13 ->Shield height
          */
         registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "attachFace", BukkitDirection.DOWN.ordinal)
-        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", NullPosition())
+        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", PositionNull())
         registerMeta(at(11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "shieldHeight", 0.toByte())
         registerMeta(at(11500 to 18, 11400 to 17, 11100 to 15), "color", DyeColor.PURPLE.ordinal)
     }
@@ -54,12 +54,12 @@ class AdyShulker() : AdyMob(EntityTypes.SHULKER) {
     }
 
     fun setAttachPosition(position: Position?) {
-        setMetadata("attachPosition", position ?: NullPosition())
+        setMetadata("attachPosition", position ?: PositionNull())
     }
 
     fun getAttachPosition(): Position? {
         val position = getMetadata<Position>("attachPosition")
-        return if (position is NullPosition) null else position
+        return if (position is PositionNull) null else position
     }
 
     fun setShieldHeight(value: Byte) {

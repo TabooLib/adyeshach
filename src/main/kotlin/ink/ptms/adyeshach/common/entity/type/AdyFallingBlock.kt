@@ -22,7 +22,7 @@ class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityFallingBlock(viewer, index, UUID.randomUUID(), getLatestLocation(), material, data)
+                NMS.INSTANCE.spawnEntityFallingBlock(viewer, index, UUID.randomUUID(), position.toLocation(), material, data)
             }
         } else {
             destroy(viewer) {

@@ -65,7 +65,11 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         return activeEntity
     }
 
-    override fun getEntity(id: String): List<EntityInstance> {
+    override fun getEntityById(id: String): List<EntityInstance> {
         return activeEntity.filter { it.id == id }
+    }
+
+    override fun getEntityByUniqueId(id: String): List<EntityInstance> {
+        return activeEntity.filter { it.uniqueId == id }
     }
 }

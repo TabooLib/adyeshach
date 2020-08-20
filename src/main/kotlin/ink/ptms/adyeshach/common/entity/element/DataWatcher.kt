@@ -162,7 +162,7 @@ abstract class DataWatcher {
         override fun parse(value: Any): Any {
             return if (value is Map<*, *>) {
                 if (value["empty"] as Boolean) {
-                    NullPosition()
+                    PositionNull()
                 } else {
                     Position(value["x"]!!.toInt(), value["y"]!!.toInt(), value["z"]!!.toInt())
                 }

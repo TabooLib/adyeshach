@@ -18,7 +18,9 @@ abstract class Manager {
 
     abstract fun getEntities(): List<EntityInstance>
 
-    abstract fun getEntity(id: String): List<EntityInstance>
+    abstract fun getEntityById(id: String): List<EntityInstance>
+
+    abstract fun getEntityByUniqueId(id: String): List<EntityInstance>
 
     open fun onEnable() {
 

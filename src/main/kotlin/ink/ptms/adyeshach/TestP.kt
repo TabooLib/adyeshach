@@ -16,26 +16,11 @@ import org.bukkit.util.Vector
 @Suppress("UNCHECKED_CAST")
 object TestP {
 
-    var entityId = -1
-
-    @TPacket(type = TPacket.Type.SEND)
-    fun e(player: Player, packet: Packet): Boolean {
-        if (packet.read("a") == entityId) {
-            println(packet.get().javaClass.simpleName)
-        }
-        return true
-    }
-
     @TInject
     val testV: CommandBuilder = CommandBuilder
             .create("test-p", Adyeshach.plugin)
             .execute { sender, _ ->
                 if (sender is Player) {
-                    val e = sender.world.spawn(sender.location, Villager::class.java)
-                    entityId = e.entityId
-                    e.velocity = Vector(0, 10, 0)
-
-
                     sender.sendMessage("§c[System] §7Done.")
                 }
             }

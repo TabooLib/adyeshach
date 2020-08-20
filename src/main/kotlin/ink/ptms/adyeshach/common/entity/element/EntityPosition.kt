@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.element
 
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 
@@ -9,6 +10,8 @@ import org.bukkit.World
  * @Since 2020-08-04 13:09
  */
 class EntityPosition(
+        @Expose
+        val world: World,
         @Expose
         var x: Double = 0.0,
         @Expose
@@ -21,12 +24,12 @@ class EntityPosition(
         var pitch: Float = 0f
 ) {
 
-    fun toLocation(world: World): Location {
+    fun toLocation(): Location {
         return Location(world, x, y, z, yaw, pitch)
     }
 
     fun clone(): EntityPosition {
-        return EntityPosition(x, y, z, yaw, pitch)
+        return EntityPosition(world, x, y, z, yaw, pitch)
     }
 
     fun reset(): EntityPosition {
@@ -41,11 +44,11 @@ class EntityPosition(
     companion object {
 
         fun empty(): EntityPosition {
-            return EntityPosition(0.0, 0.0, 0.0, 0f, 0f)
+            return EntityPosition(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0, 0f, 0f)
         }
 
         fun fromLocation(location: Location): EntityPosition {
-            return EntityPosition(location.x, location.y, location.z, location.yaw, location.pitch)
+            return EntityPosition(location.world!!, location.x, location.y, location.z, location.yaw, location.pitch)
         }
     }
 }

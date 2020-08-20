@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
+import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Horse
 
 /**
@@ -9,6 +9,12 @@ import org.bukkit.entity.Horse
  * @date 2020/8/4 23:15
  */
 class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
+
+    @Expose
+    private var color: Horse.Color = Horse.Color.WHITE
+
+    @Expose
+    private var style: Horse.Style = Horse.Style.NONE
 
     init {
         /**
@@ -22,24 +28,29 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
         registerMeta(at(11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
     }
 
-    fun getVariant(): Int {
-        return getMetadata("variant")
+    fun getColor(): Horse.Color {
+        return color
+    }
+
+    fun getStyle(): Horse.Color {
+        return color
+    }
+
+    fun setColor(color: Horse.Color) {
+        this.color = color
+        setColorAndStyle(this.color, this.style)
+    }
+
+    fun setStyle(style: Horse.Style) {
+        this.style = style
+        setColorAndStyle(this.color, this.style)
     }
 
     fun setColorAndStyle(color: Horse.Color, style: Horse.Style) {
         if (version < 11600) {
-            throw RuntimeException("Horse's color and style does not supported this minecraft version. Use \"setVariant\" instead")
+            setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8)
+        } else {
+            setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8 and '\uff00'.toInt())
         }
-
-        val colorIndex = color.ordinal
-        val styleIndex = style.ordinal
-
-        return setMetadata("variant", colorIndex and 255 or styleIndex shl 8 and '\uff00'.toInt())
     }
-
-    @Suppress("DEPRECATION")
-    fun setVariant(variant: Horse.Variant) {
-        setMetadata("variant", variant.ordinal)
-    }
-
 }
