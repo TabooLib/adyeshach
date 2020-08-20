@@ -22,6 +22,10 @@ abstract class Manager {
 
     abstract fun getEntityByUniqueId(id: String): List<EntityInstance>
 
+    open fun isPublic(): Boolean {
+        return false
+    }
+
     open fun onEnable() {
 
     }

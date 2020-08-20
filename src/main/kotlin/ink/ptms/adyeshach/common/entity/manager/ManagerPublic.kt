@@ -18,10 +18,14 @@ class ManagerPublic : Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
+    override fun isPublic(): Boolean {
+        return true
+    }
+
     override fun onEnable() {
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
             Files.read(file) {
-                val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n"), null) ?: return@read
+                val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n")) ?: return@read
                 if (entity.entityType.bukkitType == null) {
                     println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
                 } else {

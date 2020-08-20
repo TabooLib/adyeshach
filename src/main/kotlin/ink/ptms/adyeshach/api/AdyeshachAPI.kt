@@ -4,10 +4,7 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.manager.ManagerPrivate
-import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
-import ink.ptms.adyeshach.common.entity.manager.ManagerTemp
+import ink.ptms.adyeshach.common.entity.manager.*
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
@@ -26,8 +23,9 @@ object AdyeshachAPI {
 
     @PlayerContainer
     private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
+    private val managerPrivateTemp = ConcurrentHashMap<String, ManagerPrivateTemp>()
     private val managerPublic = ManagerPublic()
-    private val managerTemp = ManagerTemp()
+    private val managerPublicTemp = ManagerPublicTemp()
     private val database by lazy {
         when (Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
             "LOCAL" -> DatabaseLocal()
@@ -36,43 +34,47 @@ object AdyeshachAPI {
         }
     }
 
-    fun getEntityManagerTemporary(): Manager {
-        return managerTemp
-    }
-
     fun getEntityManagerPublic(): Manager {
         return managerPublic
+    }
+
+    fun getEntityManagerPublicTemporary(): Manager {
+        return managerPublicTemp
     }
 
     fun getEntityManagerPrivate(player: Player): Manager {
         return managerPrivate.computeIfAbsent(player.name) { ManagerPrivate(player.name, database) }
     }
 
-    fun fromYaml(section: ConfigurationSection, player: Player?): EntityInstance? {
-        return fromJson(Converter.yamlToJson(section).toString(), player)
+    fun getEntityManagerPrivateTemporary(player: Player): Manager {
+        return managerPrivateTemp.computeIfAbsent(player.name) { ManagerPrivateTemp(player.name) }
     }
 
-    fun fromYaml(source: String, player: Player?): EntityInstance? {
-        return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString(), player)
+    fun fromYaml(section: ConfigurationSection): EntityInstance? {
+        return fromJson(Converter.yamlToJson(section).toString())
     }
 
-    fun fromJson(inputStream: InputStream, player: Player?): EntityInstance? {
+    fun fromYaml(source: String): EntityInstance? {
+        return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString())
+    }
+
+    fun fromJson(inputStream: InputStream): EntityInstance? {
         var entityInstance: EntityInstance? = null
         Files.read(inputStream) {
-            entityInstance = fromJson(it.readLines().joinToString(""), player)
+            entityInstance = fromJson(it.readLines().joinToString(""))
         }
         return entityInstance
     }
 
-    fun fromJson(file: File, player: Player?): EntityInstance? {
+    fun fromJson(file: File): EntityInstance? {
         var entityInstance: EntityInstance? = null
         Files.read(file) {
-            entityInstance = fromJson(it.readLines().joinToString(""), player)
+            entityInstance = fromJson(it.readLines().joinToString(""))
         }
         return entityInstance
     }
 
-    fun fromJson(source: String, player: Player?): EntityInstance? {
+    fun fromJson(source: String): EntityInstance? {
         val entityType = try {
             EntityTypes.valueOf(JsonParser.parseString(source).asJsonObject.get("entityType").asString)
         } catch (t: Throwable) {

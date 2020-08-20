@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * @Author sky
@@ -42,6 +44,9 @@ private class ManagerEvents : Listener {
         Mirror.get("ManagerPublic:onTick(async)", false).eval {
             AdyeshachAPI.getEntityManagerPublic().onTick()
         }
+        Mirror.get("ManagerPublicTemporary:onTick(async)", false).eval {
+            AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
+        }
     }
 
     @TSchedule(period = 1, async = true)
@@ -49,6 +54,9 @@ private class ManagerEvents : Listener {
         Bukkit.getOnlinePlayers().forEach { player ->
             Mirror.get("ManagerPrivate:onTick(async)", false).eval {
                 AdyeshachAPI.getEntityManagerPrivate(player).onTick()
+            }
+            Mirror.get("ManagerPrivateTemporary:onTick(async)", false).eval {
+                AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
             }
         }
     }
@@ -74,6 +82,9 @@ private class ManagerEvents : Listener {
         AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
+        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() }.forEach {
+            it.viewPlayers.viewers.add(e.player.name)
+        }
         Tasks.delay(100, true) {
             if (!e.player.isOnline) {
                 return@delay
@@ -87,6 +98,10 @@ private class ManagerEvents : Listener {
     @EventHandler
     fun e(e: PlayerQuitEvent) {
         AdyeshachAPI.getEntityManagerPublic().getEntities().forEach {
+            it.viewPlayers.viewers.remove(e.player.name)
+            it.viewPlayers.visible.remove(e.player.name)
+        }
+        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().forEach {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }

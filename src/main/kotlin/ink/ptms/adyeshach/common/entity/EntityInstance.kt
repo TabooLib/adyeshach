@@ -94,7 +94,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 是否公开取决于 manager 是否为 ManagerPublic 即由谁管理，而非其他参数
      */
     fun isPublic(): Boolean {
-        return manager is ManagerPublic
+        return manager?.isPublic() == true
     }
 
     /**
@@ -151,6 +151,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             manager!!.remove(this)
             AdyeshachEntityRemoveEvent(this).call()
         }
+    }
+
+    /**
+     * 删除实体，并销毁
+     */
+    fun delete() {
+        remove()
+        destroy()
     }
 
     /**

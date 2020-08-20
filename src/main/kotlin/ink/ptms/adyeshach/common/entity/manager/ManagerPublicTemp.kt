@@ -14,9 +14,13 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @Author sky
  * @Since 2020-08-14 19:08
  */
-class ManagerTemp : Manager() {
+class ManagerPublicTemp : Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
+
+    override fun isPublic(): Boolean {
+        return true
+    }
 
     override fun onEnable() {
     }
