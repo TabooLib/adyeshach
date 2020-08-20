@@ -23,7 +23,7 @@ class AdyPainting() : AdyEntity(EntityTypes.PAINTING) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityPainting(viewer, index, UUID.randomUUID(), getLatestLocation(), direction, painting)
+                NMS.INSTANCE.spawnEntityPainting(viewer, index, UUID.randomUUID(), position.toLocation(), direction, painting)
             }
         } else {
             destroy(viewer) {
