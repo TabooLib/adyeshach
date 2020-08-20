@@ -273,23 +273,12 @@ class NMSImpl : NMS() {
     }
 
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
-        if (version >= 10900) {
-            sendPacket(
-                player,
-                PacketPlayOutMount(),
-                Pair("a", entityId),
-                Pair("b", passengers)
-            )
-        } else {
-            passengers.forEach {
-                sendPacket(
-                    player,
-                    PacketPlayOutAttachEntity(),
-                    Pair("a", entityId),
-                    Pair("b", it),
-                )
-            }
-        }
+        sendPacket(
+            player,
+            PacketPlayOutMount(),
+            Pair("a", entityId),
+            Pair("b", passengers)
+        )
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
