@@ -57,6 +57,8 @@ abstract class NMS {
 
     abstract fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack)
 
+    abstract fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int)
+
     abstract fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any)
 
     abstract fun getMetaEntityInt(index: Int, value: Int): Any
