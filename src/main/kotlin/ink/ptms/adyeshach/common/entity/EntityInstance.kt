@@ -7,9 +7,14 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
+import ink.ptms.adyeshach.common.path.PathFinderProxy
+import ink.ptms.adyeshach.common.path.PathType
 import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
@@ -157,8 +162,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 删除实体，并销毁
      */
     fun delete() {
-        remove()
         destroy()
+        remove()
     }
 
     /**
@@ -191,12 +196,43 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     /**
-     * 使实体看向某个方向
+     * 使实体看向某个坐标
      */
     fun controllerLook(location: Location) {
-        position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
-            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-            setHeadRotation(entityLocation.yaw, entityLocation.pitch)
+        if (pathfinder.any { it is GeneralSmoothLook }) {
+            val look = pathfinder.first { it is GeneralSmoothLook } as GeneralSmoothLook
+            position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
+                entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+                look.yaw = entityLocation.yaw
+                look.pitch = entityLocation.pitch
+                look.isLooking = true
+            }
+        } else {
+            position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
+                entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+                setHeadRotation(entityLocation.yaw, entityLocation.pitch)
+            }
+        }
+    }
+
+    /**
+     * 使实体移动到某个坐标
+     */
+    fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.1) {
+        if (pathType == PathType.FLY) {
+            if (pathfinder.none { it is GeneralMove }) {
+                throw RuntimeException("Entity flying movement requires GeneralMove.")
+            }
+        } else {
+            if (pathfinder.none { it is GeneralMove } || pathfinder.none { it is GeneralGravity }) {
+                throw RuntimeException("Entity walking movement requires GeneralMove and GeneralGravity.")
+            }
+        }
+        val move = pathfinder.first { it is GeneralMove } as GeneralMove
+        PathFinderProxy.request(position.toLocation(), location, pathType) {
+            move.speed = speed
+            move.pathType = pathType
+            move.pathResult = it
         }
     }
 

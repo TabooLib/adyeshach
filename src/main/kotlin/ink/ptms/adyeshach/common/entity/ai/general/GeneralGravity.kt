@@ -21,11 +21,12 @@ class GeneralGravity(entity: EntityInstance) : Pathfinder(entity) {
     private var by = 0.0
     private var c = SimpleCounter(5)
 
+    var isGravity = true
     var isOnGround = true
         private set
 
     override fun shouldExecute(): Boolean {
-        return true
+        return isGravity
     }
 
     override fun onTick() {
