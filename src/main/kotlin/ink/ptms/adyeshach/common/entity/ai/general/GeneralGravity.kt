@@ -2,9 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
-import io.izzel.taboolib.module.db.local.Local
 import io.izzel.taboolib.module.lite.SimpleCounter
-import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Location
 import org.bukkit.block.Block
 

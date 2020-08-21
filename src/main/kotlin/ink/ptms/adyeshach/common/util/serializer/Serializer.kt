@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.util.serializer
 
 import ink.ptms.adyeshach.Adyeshach
 import io.izzel.taboolib.TabooLibLoader
-import io.izzel.taboolib.internal.gson.*
+import io.izzel.taboolib.internal.gson.GsonBuilder
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream

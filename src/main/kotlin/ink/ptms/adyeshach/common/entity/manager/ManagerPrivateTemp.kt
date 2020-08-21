@@ -1,9 +1,7 @@
 package ink.ptms.adyeshach.common.entity.manager
 
-import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CopyOnWriteArrayList

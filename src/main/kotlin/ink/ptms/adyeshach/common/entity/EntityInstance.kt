@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity
 
-import com.google.common.collect.Lists
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDestroyEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
@@ -12,14 +11,12 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.manager.ManagerPublic
 import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.path.PathType
 import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import java.lang.RuntimeException
 
 /**
  * @Author sky
@@ -175,10 +172,19 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置
      */
     fun teleport(location: Location) {
-        this.position = EntityPosition.fromLocation(location)
+        position = EntityPosition.fromLocation(location)
         forViewers {
             NMS.INSTANCE.teleportEntity(it, index, location)
         }
+    }
+
+    fun teleport(x: Double, y: Double, z: Double) {
+        teleport(position.toLocation().run {
+            this.x = x
+            this.y = y
+            this.z = z
+            this
+        })
     }
 
     /**
@@ -218,7 +224,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体移动到某个坐标
      */
-    fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.1) {
+    fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.2) {
+        if (pathType.supportVersion < version) {
+            throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
+        }
         if (pathType == PathType.FLY) {
             if (pathfinder.none { it is GeneralMove }) {
                 throw RuntimeException("Entity flying movement requires GeneralMove.")

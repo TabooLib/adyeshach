@@ -2,11 +2,7 @@ package ink.ptms.adyeshach
 
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.module.packet.Packet
-import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.entity.Player
-import org.bukkit.entity.Villager
-import org.bukkit.util.Vector
 
 /**
  * @author Arasple

@@ -2,8 +2,6 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
-import ink.ptms.adyeshach.common.path.PathResult
-import ink.ptms.adyeshach.common.path.PathType
 
 /**
  * 实体平滑视角改变
