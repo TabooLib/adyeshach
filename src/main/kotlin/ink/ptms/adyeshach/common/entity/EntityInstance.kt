@@ -225,7 +225,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 使实体移动到某个坐标
      */
     fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.2) {
-        if (pathType.supportVersion < version) {
+        if (pathType.supportVersion > version) {
             throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
         }
         if (pathType == PathType.FLY) {

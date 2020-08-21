@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.jvm.Throws
 
 /**
  * @Author sky
@@ -27,9 +28,8 @@ object PathFinderProxy {
     private val version = Version.getCurrentVersionInt()
     private val proxyEntity = ConcurrentHashMap<String, PathEntity>()
 
-    @Throws(exceptionClasses = [PathException::class])
     fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, call: (PathResult) -> (Unit)) {
-        if (pathType.supportVersion < version) {
+        if (pathType.supportVersion > version) {
             throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
         }
         if (start.world!!.name != target.world!!.name) {
@@ -62,7 +62,7 @@ object PathFinderProxy {
             Mirror.get("PathFinderProxy:onCheck:${it.name}", false).eval {
                 val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
                 pathEntity.entity.values.removeIf { entity -> !entity.isValid }
-                PathType.values().filterNot { pathType -> pathEntity.entity.containsKey(pathType) && pathType.supportVersion >= version }.forEach e@{ pathType ->
+                PathType.values().filterNot { pathType -> pathEntity.entity.containsKey(pathType) && pathType.supportVersion <= version }.forEach e@{ pathType ->
                     val proxyEntity = it.spawn(Location(it, 0.0, 100.0, 0.0), pathType.entity) { entity -> pathEntity.entity[pathType] = entity }.silent()
                     if (proxyEntity.isValid) {
                         pathEntity.spawnFailed.remove(pathType)
