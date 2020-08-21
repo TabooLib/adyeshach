@@ -21,6 +21,7 @@ import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
@@ -343,10 +344,10 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any {
         return if (version >= 11300) {
-            DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.ofNullable(if (name == null) null else ChatComponentText(name)))
+            DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first()))
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.e),
-                    net.minecraft.server.v1_12_R1.ChatComponentText(name))
+                    org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage.fromString(name).first())
         }
     }
 
