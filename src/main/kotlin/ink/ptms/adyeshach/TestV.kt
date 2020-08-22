@@ -29,7 +29,7 @@ object TestV {
 
             entity.pathfinder.add(GeneralMove(entity))
             entity.pathfinder.add(GeneralGravity(entity))
-            entity.pathfinder.add(GeneralSmoothLook(entity))
+            entity.pathfinder.add(GeneralSmoothLook(entity).also { it.speed = 100 })
 
             Tasks.delay(40, true) {
                 entity.controllerMove(sender.location)
