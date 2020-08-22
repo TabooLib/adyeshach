@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.internal.command
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.base.*
@@ -25,9 +26,9 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entityType = Enums.getIfPresent(EntityTypes::class.java, args[2]).orNull()
+            val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1]).orNull()
             if (entityType == null) {
-                sender.error("Entity &f\"${args[2]}\" &7not supported.")
+                sender.error("Entity &f\"${args[1]}\" &7not supported.")
                 return
             }
             val entity = try {
@@ -36,7 +37,7 @@ class Command : BaseMainCommand(), Helper {
                 sender.error("Error: &8${t.message}")
                 return
             }
-            entity.id = args[1]
+            entity.id = args[0]
             sender.info("Adyeshach NPC has been created.")
         }
     }
@@ -49,14 +50,13 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[1])
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.info("Adyeshach NPC not found.")
                 return
             }
             entity.forEach {
-                it.destroy()
-                it.remove()
+                it.delete()
             }
             sender.info("Adyeshach NPC has been removed.")
         }
@@ -70,16 +70,14 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[1])
-            if (entity.isEmpty()) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
                 sender.info("Adyeshach NPC not found.")
                 return
             }
-            entity.forEach {
-                it.destroy()
-                it.remove()
-            }
-            sender.info("Adyeshach NPC has been removed.")
+            sender.info("Opening...")
+            Editor.open(sender as Player, entity)
+            sender.info("Opened.")
         }
     }
 

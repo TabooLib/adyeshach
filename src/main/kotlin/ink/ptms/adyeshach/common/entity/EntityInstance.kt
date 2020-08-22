@@ -11,6 +11,8 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
+import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
 import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.path.PathType
 import ink.ptms.adyeshach.common.util.Indexs
@@ -97,6 +99,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     fun isPublic(): Boolean {
         return manager?.isPublic() == true
+    }
+
+    /**
+     * 是否为临时实体，即非持久化储存
+     */
+    fun isTemporary(): Boolean {
+        return manager is ManagerPublicTemp || manager is ManagerPrivateTemp
     }
 
     /**

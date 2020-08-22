@@ -99,6 +99,8 @@ abstract class NMS {
 
     abstract fun getEntity(world: World, id: Int): Entity?
 
+    abstract fun parseVec3d(obj: Any): Vector
+
     companion object {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")

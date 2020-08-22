@@ -450,4 +450,8 @@ class NMSImpl : NMS() {
     override fun getEntity(world: org.bukkit.World, id: Int): Entity? {
         return (world as CraftWorld).handle.getEntity(id)?.bukkitEntity
     }
+
+    override fun parseVec3d(obj: Any): Vector {
+        return Vector((obj as Vec3D).x, obj.y, obj.z)
+    }
 }

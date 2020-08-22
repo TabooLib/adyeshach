@@ -8,6 +8,7 @@ import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -32,15 +33,27 @@ abstract class EntityMetaable {
         return (index.firstOrNull { version >= it.first }?.second ?: -1) as T
     }
 
-    protected fun registerMeta(index: Int, key: String, def: Any) {
-        meta.add(MetaNatural(index, key, def))
-        metadata[key] = def
+    protected fun registerEditor(id: String): MetaEditor {
+        return MetaEditor(MetaNatural(-2, id, 0).run {
+            meta.add(this)
+            this
+        }, true)
     }
 
-    protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false) {
-        meta.add(MetaMasked(index, key, mask))
-        val byteMask = metadataMask.computeIfAbsent(getByteMaskKey(index)) { HashMap() }
-        byteMask[key] = def
+    protected fun registerMeta(index: Int, key: String, def: Any): MetaEditor {
+        return MetaEditor(MetaNatural(index, key, def).run {
+            meta.add(this)
+            metadata[key] = def
+            this
+        })
+    }
+
+    protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false): MetaEditor {
+        return MetaEditor(MetaMasked(index, key, mask).run {
+            meta.add(this)
+            metadataMask.computeIfAbsent(getByteMaskKey(index)) { HashMap() }[key] = def
+            this
+        })
     }
 
     protected fun getByteMaskKey(index: Int): String {
@@ -87,6 +100,7 @@ abstract class EntityMetaable {
 
     abstract class Meta(val index: Int, val key: String) {
 
+        var editor: MetaEditor? = null
         var dataWatcher: DataWatcher? = null
             protected set
 
@@ -144,6 +158,34 @@ abstract class EntityMetaable {
             val metadata = dataWatcher?.getMetadata(index, obj) ?: return
             entityInstance.forViewers {
                 NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
+            }
+        }
+    }
+
+    class MetaEditor(val meta: Meta? = null, val custom: Boolean = false) {
+
+        var canEdit = true
+        var onModify: ((Player, EntityInstance, Meta) -> (Unit))? = null
+        var onDisplay: ((Player, EntityInstance, Meta) -> (Unit))? = null
+
+        fun edit(canEdit: Boolean): MetaEditor {
+            this.canEdit = canEdit
+            return this
+        }
+
+        fun onModify(onModify: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
+            this.onModify = onModify
+            return this
+        }
+
+        fun onDisplay(onDisplay: (Player, EntityInstance, Meta) -> (Unit)): MetaEditor {
+            this.onDisplay = onDisplay
+            return this
+        }
+
+        fun build() {
+            if (onModify != null || onDisplay != null) {
+                meta?.editor = this
             }
         }
     }

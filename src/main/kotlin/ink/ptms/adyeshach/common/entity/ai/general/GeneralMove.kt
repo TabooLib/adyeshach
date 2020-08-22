@@ -16,7 +16,7 @@ import org.bukkit.Location
 class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
 
     private var i = 0
-    private var counterLook = SimpleCounter(2, true)
+    private var counterLook = SimpleCounter(2)
     private var counterJump = SimpleCounter(5, true)
 
     var speed = 0.0
@@ -50,7 +50,10 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
             i = 0
             pathType = null
             pathResult = null
+            isMoving = false
             return
+        } else {
+            isMoving = true
         }
         val positionEntity = entity.position.toLocation()
         val positionNext = pathResult!!.pointList[i].run {
