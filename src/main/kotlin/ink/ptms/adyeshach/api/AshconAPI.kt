@@ -34,7 +34,10 @@ object AshconAPI {
         @EventHandler(priority = EventPriority.HIGHEST)
         fun onJoin(e: PlayerJoinEvent) {
             Tasks.task(true) {
-                getProfile(e.player.name)
+                try {
+                    getProfile(e.player.name)
+                } catch (ignore: NullPointerException) {
+                }
             }
         }
     }

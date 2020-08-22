@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.NumberConversions
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
 
 abstract class DataWatcher {
 

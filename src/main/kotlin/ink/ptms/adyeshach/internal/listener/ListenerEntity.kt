@@ -27,23 +27,7 @@ class ListenerEntity : Listener {
     @TPacket(type = TPacket.Type.RECEIVE)
     fun e(player: Player, packet: Packet): Boolean {
         if (packet.`is`("PacketPlayInUseEntity")) {
-            val a = packet.read("a", Int::class.java)
-            var entity: EntityInstance? = null
-            if (entity == null) {
-                entity = AdyeshachAPI.getEntityManagerPublic().getEntities().firstOrNull { it.index == a }
-            }
-            if (entity == null) {
-                entity = AdyeshachAPI.getEntityManagerPrivate(player).getEntities().firstOrNull { it.index == a }
-            }
-            if (entity == null) {
-                entity = AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().firstOrNull { it.index == a }
-            }
-            if (entity == null) {
-                entity = AdyeshachAPI.getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.index == a }
-            }
-            if (entity == null) {
-                return true
-            }
+            val entity = AdyeshachAPI.getEntityFromEntityId(packet.read("a", Int::class.java), player) ?: return true
             if (packet.read("action").toString() == "ATTACK") {
                 AdyeshachEntityDamageEvent(entity, player).call()
             } else {

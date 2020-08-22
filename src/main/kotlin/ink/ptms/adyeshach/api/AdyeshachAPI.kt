@@ -83,4 +83,38 @@ object AdyeshachAPI {
         }
         return Serializer.gson.fromJson(source, entityType.entityBase)
     }
+
+    fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance? {
+        var entity: EntityInstance? = null
+        if (entity == null) {
+            entity = getEntityManagerPublic().getEntities().firstOrNull { it.index == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.index == id }
+        }
+        if (entity == null) {
+            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.index == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.index == id }
+        }
+        return entity
+    }
+
+    fun getEntityFromUniqueId(id: String, player: Player? = null): EntityInstance? {
+        var entity: EntityInstance? = null
+        if (entity == null) {
+            entity = getEntityManagerPublic().getEntities().firstOrNull { it.uniqueId == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.uniqueId == id }
+        }
+        if (entity == null) {
+            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.uniqueId == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.uniqueId == id }
+        }
+        return entity
+    }
 }

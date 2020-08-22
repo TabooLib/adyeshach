@@ -417,12 +417,20 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             version == 11300 -> {
-                IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase()))
-                        ?: net.minecraft.server.v1_13_R2.Particles.y
+                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
+                if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
+                    p.f()
+                } else {
+                    p
+                }
             }
             version >= 11400 -> {
-                SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true)
-                        ?: Particles.FLAME
+                val p = SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
+                if (p is Particle<*>) {
+                    p.d()
+                } else {
+                    p
+                }
             }
             else -> {
                 0

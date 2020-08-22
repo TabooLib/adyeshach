@@ -1,13 +1,10 @@
 package ink.ptms.adyeshach
 
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.util.lite.Materials
+import io.izzel.taboolib.util.lite.Signs
+import org.bukkit.Location
 import org.bukkit.entity.Player
 
 /**
@@ -23,22 +20,6 @@ object TestV {
         .execute { sender, _ ->
             sender as Player
 
-            val time = System.currentTimeMillis()
-
-            val entity = AdyeshachAPI.getEntityManagerPublicTemporary().create(EntityTypes.VILLAGER, sender.location)
-
-            entity.pathfinder.add(GeneralMove(entity))
-            entity.pathfinder.add(GeneralGravity(entity))
-            entity.pathfinder.add(GeneralSmoothLook(entity).also { it.speed = 100 })
-
-            Tasks.delay(40, true) {
-                entity.controllerMove(sender.location)
-                entity.controllerLook(sender.location)
-            }
-
-            Tasks.delay(300, true) {
-                entity.delete()
-            }
-            sender.sendMessage("done. ${System.currentTimeMillis() - time}")
+            sender.sendMessage("done. ${System.currentTimeMillis() - 1}")
         }
 }

@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
+import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.nms.impl.Position
@@ -49,7 +50,7 @@ abstract class EntityMetaable {
     }
 
     protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false): MetaEditor {
-        return MetaEditor(MetaMasked(index, key, mask).run {
+        return MetaEditor(MetaMasked(index, key, mask, def).run {
             meta.add(this)
             metadataMask.computeIfAbsent(getByteMaskKey(index)) { HashMap() }[key] = def
             this
@@ -60,8 +61,8 @@ abstract class EntityMetaable {
         return "\$${Strings.hashKeyForDisk(meta.firstOrNull { it.index == index }!!.key).substring(0, 8)}"
     }
 
-    fun listMetadata(): List<String> {
-        return meta.map { it.key }
+    fun listMetadata(): List<Meta> {
+        return meta.filter { it.index != -1 }.toList()
     }
 
     fun updateMetadata() {
@@ -98,7 +99,7 @@ abstract class EntityMetaable {
         }
     }
 
-    abstract class Meta(val index: Int, val key: String) {
+    abstract class Meta(val index: Int, val key: String, val def: Any) {
 
         var editor: MetaEditor? = null
         var dataWatcher: DataWatcher? = null
@@ -107,7 +108,7 @@ abstract class EntityMetaable {
         abstract fun update(entityInstance: EntityInstance)
     }
 
-    open class MetaMasked(index: Int, key: String, val mask: Byte) : Meta(index, key) {
+    open class MetaMasked(index: Int, key: String, val mask: Byte, def: Boolean) : Meta(index, key, def) {
 
         init {
             dataWatcher = DataWatcher.DataByte()
@@ -131,7 +132,7 @@ abstract class EntityMetaable {
         }
     }
 
-    open class MetaNatural<T>(index: Int, key: String, val def: T) : Meta(index, key) {
+    open class MetaNatural<T>(index: Int, key: String, def: T) : Meta(index, key, def!!) {
 
         init {
             dataWatcher = when (def) {
@@ -144,6 +145,7 @@ abstract class EntityMetaable {
                 is ItemStack -> DataWatcher.DataItemStack()
                 is EulerAngle -> DataWatcher.DataVector()
                 is MaterialData -> DataWatcher.DataBlockData()
+                is VillagerData -> DataWatcher.DataVillagerData()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
                 is BukkitParticles -> DataWatcher.DataParticle()
                 else -> null
@@ -164,22 +166,22 @@ abstract class EntityMetaable {
 
     class MetaEditor(val meta: Meta? = null, val custom: Boolean = false) {
 
-        var canEdit = true
         var onModify: ((Player, EntityInstance, Meta) -> (Unit))? = null
-        var onDisplay: ((Player, EntityInstance, Meta) -> (Unit))? = null
-
-        fun edit(canEdit: Boolean): MetaEditor {
-            this.canEdit = canEdit
-            return this
-        }
+        var onDisplay: ((Player, EntityInstance, Meta) -> (String))? = null
 
         fun onModify(onModify: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
             this.onModify = onModify
             return this
         }
 
-        fun onDisplay(onDisplay: (Player, EntityInstance, Meta) -> (Unit)): MetaEditor {
+        fun onDisplay(onDisplay: (Player, EntityInstance, Meta) -> (String)): MetaEditor {
             this.onDisplay = onDisplay
+            return this
+        }
+
+        fun clone(editor: MetaEditor): MetaEditor {
+            onModify = editor.onModify
+            onDisplay = editor.onDisplay
             return this
         }
 

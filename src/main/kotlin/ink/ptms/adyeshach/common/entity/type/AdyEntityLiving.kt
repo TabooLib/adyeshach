@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
@@ -21,6 +23,8 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     init {
         registerMeta(at(11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
+                .clone(Editors.COLOR)
+                .build()
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
