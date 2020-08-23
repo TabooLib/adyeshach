@@ -8,13 +8,12 @@ import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Material
+import org.bukkit.entity.Pose
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.NumberConversions
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 abstract class DataWatcher {
 
@@ -176,5 +175,20 @@ abstract class DataWatcher {
         override fun getMetadata(index: Int, value: Any): Any {
             return NMS.INSTANCE.getMetaEntityPosition(index, parse(value) as Position)
         }
+    }
+
+    class DataPose : DataWatcher() {
+
+        override fun parse(value: Any): Any {
+            return when (value) {
+                is Pose -> value
+                else -> Pose.STANDING
+            }
+        }
+
+        override fun getMetadata(index: Int, value: Any): Any {
+            return NMS.INSTANCE.getMetaEntityPose(index, parse(value) as Pose)
+        }
+
     }
 }

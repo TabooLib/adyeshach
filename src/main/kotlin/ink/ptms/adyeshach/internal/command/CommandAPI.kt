@@ -13,7 +13,6 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
-import ink.ptms.adyeshach.common.entity.type.AdyVillager
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.module.command.base.*
@@ -21,6 +20,7 @@ import io.izzel.taboolib.util.Files
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.entity.Pose
 import org.bukkit.entity.Villager
 import org.bukkit.util.NumberConversions
 import java.io.File
@@ -74,6 +74,11 @@ class CommandAPI : BaseMainCommand(), Helper {
                         } else {
                             entity.setMetadata(meta.key, meta.def)
                         }
+                        Editor.open(sender, entity)
+                    }
+                    "pose" -> {
+                        val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
+                        entity.setPose(Enums.getIfPresent(Pose::class.java, args[3]).get())
                         Editor.open(sender, entity)
                     }
                     "particle" -> {

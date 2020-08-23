@@ -16,6 +16,7 @@ import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
+import org.bukkit.entity.Pose
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -84,6 +85,8 @@ abstract class NMS {
     abstract fun getMetaItem(index: Int, itemStack: ItemStack): Any
 
     abstract fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any
+
+    abstract fun getMetaEntityPose(index: Int, pose: Pose): Any
 
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 

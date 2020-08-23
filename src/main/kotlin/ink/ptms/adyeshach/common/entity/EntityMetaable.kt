@@ -10,6 +10,7 @@ import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.entity.Player
+import org.bukkit.entity.Pose
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -151,6 +152,7 @@ abstract class EntityMetaable {
                 is VillagerData -> DataWatcher.DataVillagerData()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
                 is BukkitParticles -> DataWatcher.DataParticle()
+                is Pose -> DataWatcher.DataPose()
                 else -> null
             }
         }

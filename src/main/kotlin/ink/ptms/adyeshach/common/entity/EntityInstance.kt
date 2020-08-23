@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
@@ -19,6 +20,7 @@ import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.entity.Pose
 
 /**
  * @Author sky
@@ -68,6 +70,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(2, "customName", TextComponent(""))
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
+        registerMeta(at(11400 to 6), "pose", Pose.STANDING)
+        registerEditor("entityPose")
+                .reset { _, entity, _ -> entity.setPose(Pose.STANDING) }
+                .from(Editors.enums(Pose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
+                .display { _, entity, _ -> entity.getPose().name }
     }
 
     /**
@@ -332,6 +339,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun getCustomName(): String {
         return getMetadata("customName")
+    }
+
+    fun setPose(pose: Pose) {
+        setMetadata("pose", pose)
+    }
+
+    fun getPose(): Pose {
+        return getMetadata("pose")
     }
 
     /**

@@ -23,10 +23,8 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
+import org.bukkit.entity.*
 import org.bukkit.entity.Entity
-import org.bukkit.entity.Mob
-import org.bukkit.entity.Player
-import org.bukkit.entity.Villager
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -391,6 +389,11 @@ class NMSImpl : NMS() {
             Villager.Profession.TOOLSMITH -> VillagerProfession.TOOLSMITH
             Villager.Profession.WEAPONSMITH -> VillagerProfession.WEAPONSMITH
         }, 1))
+    }
+
+    override fun getMetaEntityPose(index: Int, pose: Pose): Any {
+        val entityPose = if (pose == Pose.SNEAKING) EntityPose.CROUCHING else EntityPose.valueOf(pose.name)
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), entityPose)
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
