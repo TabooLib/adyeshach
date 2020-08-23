@@ -3,9 +3,9 @@ package ink.ptms.adyeshach.api
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.common.util.Tasks
-import io.izzel.taboolib.loader.internal.IO
 import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TListener
+import io.izzel.taboolib.util.Files
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -22,7 +22,7 @@ object AshconAPI {
     @PlayerContainer
     private val CACHED_PROFILES = mutableMapOf<String, JsonObject>()
 
-    fun getProfile(name: String) = CACHED_PROFILES.computeIfAbsent(name) { JsonParser().parse(IO.readFromURL("${ASHCON_API[0]}$name")) as JsonObject }
+    fun getProfile(name: String) = CACHED_PROFILES.computeIfAbsent(name) { JsonParser().parse(Files.readFromURL("${ASHCON_API[0]}$name")) as JsonObject }
 
     fun getTextureValue(name: String): String = getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("value").asString
 

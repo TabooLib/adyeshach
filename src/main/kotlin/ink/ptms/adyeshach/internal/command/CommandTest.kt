@@ -27,7 +27,7 @@ class CommandTest : BaseMainCommand(), Helper {
                 try {
                     NMS.INSTANCE.getEntityTypeNMS(it)
                 } catch (t: Throwable) {
-                    sender.info("Error: ${it}")
+                    sender.info("Error: §f$it")
                 }
             }
             sender.info("Done.")

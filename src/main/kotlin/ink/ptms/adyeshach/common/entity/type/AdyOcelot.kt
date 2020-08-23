@@ -1,7 +1,10 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitOcelotType
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.BukkitUtils
+import org.bukkit.entity.Llama
 import org.bukkit.entity.Ocelot
 
 /**
@@ -31,6 +34,10 @@ class AdyOcelot() : AdyEntityAgeable(EntityTypes.OCELOT) {
             registerMeta(at(11500 to 16, 11400 to 15), "isTrusting", false)
         } else {
             registerMeta(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
+                    .from(Editors.enums(BukkitOcelotType::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+                    .display { _, entity, _ ->
+                        BukkitOcelotType.values()[entity.getMetadata("type")].name
+                    }.build()
         }
     }
 

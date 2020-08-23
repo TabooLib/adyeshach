@@ -27,5 +27,8 @@ class GameProfile {
     var texture = arrayOf("")
 
     @Expose
+    var textureName = ""
+
+    @Expose
     var gameMode = GameMode.SURVIVAL
 }

@@ -1,55 +1,54 @@
-package ink.ptms.adyeshach.common.entity.type
+package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.common.bukkit.BukkitProfession
+import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import org.bukkit.entity.Villager
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 
 /**
- * @author sky
- * @date 2020/8/4 23:15
+ * @Author sky
+ * @Since 2020-08-04 15:30
  */
-class AdyZombieVillager() : AdyZombie(EntityTypes.ZOMBIE_VILLAGER), EntityVillager {
+interface EntityVillager {
 
-    init {
-        if (version >= 11400) {
-            registerMeta(at(11500 to 19, 11400 to 18), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
-            registerEditor("villagerType")
+    fun setVillagerData(villagerData: VillagerData)
+
+    fun getVillagerData(): VillagerData
+
+    fun setLegacyProfession(profession: BukkitProfession)
+
+    fun getLegacyProfession(): BukkitProfession
+
+    fun registerEditor(entityInstance: EntityInstance) {
+        if (Editor.version >= 11400) {
+            entityInstance.registerEditor("villagerType")
                     .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_type ${entity.uniqueId} ${meta.key} $e" })
+                    .reset { player, entity, meta ->
+                        setVillagerData(VillagerData(Villager.Type.PLAINS, getVillagerData().profession))
+                    }
                     .display { _, entity, _ ->
                         entity.getMetadata<VillagerData>("villagerData").type.name
                     }.build()
-            registerEditor("villagerProfession")
+            entityInstance.registerEditor("villagerProfession")
                     .from(Editors.enums(Villager.Profession::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession ${entity.uniqueId} ${meta.key} $e" })
+                    .reset { player, entity, meta ->
+                        setVillagerData(VillagerData(getVillagerData().type, Villager.Profession.NONE))
+                    }
                     .display { _, entity, _ ->
                         entity.getMetadata<VillagerData>("villagerData").profession.name
                     }.build()
         } else {
-            registerMeta(at(11300 to 17, 11100 to 16), "profession", BukkitProfession.FARMER.ordinal)
-            registerEditor("villagerProfession")
+            entityInstance.registerEditor("villagerProfession")
                     .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession_legacy ${entity.uniqueId} ${meta.key} $e" })
+                    .reset { player, entity, meta ->
+                        setLegacyProfession(BukkitProfession.FARMER)
+                    }
                     .display { _, entity, _ ->
                         BukkitProfession.values()[entity.getMetadata("profession")].name
                     }.build()
         }
-        registerEditor(this)
-    }
-
-    override fun setVillagerData(villagerData: VillagerData) {
-        setMetadata("villagerData", villagerData)
-    }
-
-    override fun getVillagerData(): VillagerData {
-        return getMetadata("villagerData")
-    }
-
-    override fun setLegacyProfession(profession: BukkitProfession) {
-        setMetadata("profession", profession)
-    }
-
-    override fun getLegacyProfession(): BukkitProfession {
-        return getMetadata("profession")
     }
 }

@@ -1,8 +1,12 @@
 package ink.ptms.adyeshach.common.util.mojang
 
+import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AshconAPI
+import ink.ptms.adyeshach.common.util.serializer.Serializer
 import io.izzel.taboolib.internal.gson.Gson
 import io.izzel.taboolib.internal.gson.JsonObject
 import io.izzel.taboolib.internal.gson.JsonParser
+import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import java.io.*
@@ -20,6 +24,34 @@ import java.util.stream.Collectors
 object MojangAPI {
 
     const val CRLF = "\r\n"
+
+    fun get(name: String): Texture? {
+        val file = File(Adyeshach.plugin.dataFolder, "skin/$name")
+        if (file.exists()) {
+            val json = JsonParser.parseString(io.izzel.taboolib.util.Files.readFromFile(file)) as JsonObject
+            return if (json.has("network")) {
+                Texture(json.get("value").asString, json.get("signature").asString)
+            } else {
+                val texture = json.getAsJsonObject("members")
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("members")
+                        .getAsJsonObject("texture")
+                        .getAsJsonObject("members")
+                Texture(texture.getAsJsonObject("value").get("value").asString, texture.getAsJsonObject("signature").get("value").asString)
+            }
+        } else {
+            val json = AshconAPI.getProfile(name)
+            return if (json.has("uuid")) {
+                val texture = Texture(AshconAPI.getTextureValue(name), AshconAPI.getTextureSignature(name))
+                io.izzel.taboolib.util.Files.write(file) {
+                    it.write(Serializer.gson.toJson(texture))
+                }
+                texture
+            } else {
+                null
+            }
+        }
+    }
 
     fun upload(file: File, sender: CommandSender = Bukkit.getConsoleSender()): JsonObject? {
         try {
@@ -89,4 +121,13 @@ object MojangAPI {
     }
 
     class Error(val code: Int, val error: String)
+
+    class Texture(
+            @Expose
+            val value: String,
+            @Expose
+            val signature: String,
+            @Expose
+            val network: Boolean = true
+    )
 }

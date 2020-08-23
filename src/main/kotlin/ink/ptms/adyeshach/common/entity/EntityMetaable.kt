@@ -34,14 +34,18 @@ abstract class EntityMetaable {
         return (index.firstOrNull { version >= it.first }?.second ?: -1) as T
     }
 
-    protected fun registerEditor(id: String): MetaEditor {
+    protected fun getByteMaskKey(index: Int): String {
+        return "\$${Strings.hashKeyForDisk(meta.firstOrNull { it.index == index }!!.key).substring(0, 8)}"
+    }
+
+    fun registerEditor(id: String): MetaEditor {
         return MetaEditor(MetaNatural(-2, id, 0).run {
             meta.add(this)
             this
-        }, true)
+        }, true).build()
     }
 
-    protected fun registerMeta(index: Int, key: String, def: Any): MetaEditor {
+    fun registerMeta(index: Int, key: String, def: Any): MetaEditor {
         return MetaEditor(MetaNatural(index, key, def).run {
             meta.add(this)
             metadata[key] = def
@@ -49,16 +53,12 @@ abstract class EntityMetaable {
         })
     }
 
-    protected fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false): MetaEditor {
+    fun registerMetaByteMask(index: Int, key: String, mask: Byte, def: Boolean = false): MetaEditor {
         return MetaEditor(MetaMasked(index, key, mask, def).run {
             meta.add(this)
             metadataMask.computeIfAbsent(getByteMaskKey(index)) { HashMap() }[key] = def
             this
         })
-    }
-
-    protected fun getByteMaskKey(index: Int): String {
-        return "\$${Strings.hashKeyForDisk(meta.firstOrNull { it.index == index }!!.key).substring(0, 8)}"
     }
 
     fun listMetadata(): List<Meta> {
@@ -75,6 +75,9 @@ abstract class EntityMetaable {
         val registerMeta = meta.firstOrNull { it.key == key } ?: throw RuntimeException("Metadata \"$key\" not registered.")
         if (registerMeta.index == -1) {
             throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
+        }
+        if (registerMeta.index == -2) {
+            throw RuntimeException("Metadata \"$key\" not allowed.")
         }
         if (registerMeta is MetaMasked) {
             metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = value as Boolean
@@ -166,29 +169,41 @@ abstract class EntityMetaable {
 
     class MetaEditor(val meta: Meta? = null, val custom: Boolean = false) {
 
+        var edit = true
+        var onReset: ((Player, EntityInstance, Meta) -> (Unit))? = null
         var onModify: ((Player, EntityInstance, Meta) -> (Unit))? = null
         var onDisplay: ((Player, EntityInstance, Meta) -> (String))? = null
 
-        fun onModify(onModify: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
+        fun canEdit(edit: Boolean): MetaEditor {
+            this.edit = edit
+            return this
+        }
+
+        fun reset(onReset: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
+            this.onReset = onReset
+            return this
+        }
+
+        fun modify(onModify: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
             this.onModify = onModify
             return this
         }
 
-        fun onDisplay(onDisplay: (Player, EntityInstance, Meta) -> (String)): MetaEditor {
+        fun display(onDisplay: (Player, EntityInstance, Meta) -> (String)): MetaEditor {
             this.onDisplay = onDisplay
             return this
         }
 
-        fun clone(editor: MetaEditor): MetaEditor {
+        fun from(editor: MetaEditor): MetaEditor {
+            onReset = editor.onReset
             onModify = editor.onModify
             onDisplay = editor.onDisplay
             return this
         }
 
-        fun build() {
-            if (onModify != null || onDisplay != null) {
-                meta?.editor = this
-            }
+        fun build(): MetaEditor {
+            meta?.editor = this
+            return this
         }
     }
 }

@@ -1,7 +1,10 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitCreeperState
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.BukkitUtils
+import org.bukkit.entity.Cat
 
 /**
  * @Author sky
@@ -17,6 +20,10 @@ class AdyCreeper() : AdyMob(EntityTypes.CREEPER) {
          * 1.9 -> 11,12,13
          */
         registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "state", BukkitCreeperState.IDLE.ordinal)
+                .from(Editors.enums(BukkitCreeperState::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+                .display { _, entity, _ ->
+                    BukkitCreeperState.values()[entity.getMetadata("state")].name
+                }.build()
         registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isCharged", false)
         registerMeta(at(11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
     }

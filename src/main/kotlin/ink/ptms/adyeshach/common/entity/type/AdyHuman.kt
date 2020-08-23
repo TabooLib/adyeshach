@@ -1,11 +1,17 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.GameProfile
+import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import org.bukkit.util.NumberConversions
 import java.util.*
 
 /**
@@ -44,6 +50,62 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPantsEnabled", 0x10, true)
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPantsEnabled", 0x20, true)
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHatEnabled", 0x40, true)
+        registerEditor("isHideFromTabList")
+                .reset { player, entity, meta ->
+                    hideFromTabList = true
+                }
+                .modify { player, entity, meta ->
+                    hideFromTabList = !hideFromTabList
+                    Editor.open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    hideFromTabList.toDisplay()
+                }
+        registerEditor("playerName")
+                .reset { player, entity, meta ->
+                    setName("AdyHuman")
+                }
+                .modify { player, entity, meta ->
+                    Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
+                        if (it[0].isNotEmpty()) {
+                            setName(if (it[0].length > 16) it[0].substring(0, 16) else it[0])
+                        }
+                        Editor.open(player, entity)
+                    }
+                }
+                .display { _, entity, meta ->
+                    if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
+                }
+        registerEditor("playerPing")
+                .reset { player, entity, meta ->
+                    setPing(60)
+                }
+                .modify { player, entity, meta ->
+                    Signs.fakeSign(player, arrayOf("${getPing()}", "", "请在第一行输入内容")) {
+                        if (it[0].isNotEmpty()) {
+                            setPing(NumberConversions.toInt(it[0]))
+                        }
+                        Editor.open(player, entity)
+                    }
+                }
+                .display { _, entity, meta ->
+                    getPing().toString()
+                }
+        registerEditor("playerTexture")
+                .reset { player, entity, meta ->
+                    resetTexture()
+                }
+                .modify { player, entity, meta ->
+                    Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
+                        if (it[0].isNotEmpty()) {
+                            setTexture(it[0])
+                        }
+                        Editor.open(player, entity)
+                    }
+                }
+                .display { _, entity, meta ->
+                    if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
+                }
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
@@ -91,6 +153,18 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
         return gameProfile.gameMode
     }
 
+    fun setTexture(name: String) {
+        gameProfile.textureName = name
+        Tasks.task(true) {
+            try {
+                MojangAPI.get(name)?.run {
+                    setTexture(value, signature)
+                }
+            } catch (t: Throwable) {
+            }
+        }
+    }
+
     fun setTexture(texture: String, signature: String) {
         gameProfile.texture = arrayOf(texture, signature)
         respawn()
@@ -98,6 +172,15 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
 
     fun getTexture(): Array<String> {
         return gameProfile.texture
+    }
+
+    fun getTextureName(): String {
+        return gameProfile.textureName
+    }
+
+    fun resetTexture() {
+        gameProfile.texture = arrayOf("")
+        respawn()
     }
 
     fun setSkinCapeEnabled(value: Boolean) {

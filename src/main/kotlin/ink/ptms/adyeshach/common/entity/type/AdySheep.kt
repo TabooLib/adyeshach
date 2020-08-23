@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.DyeColor
 
 /**
@@ -12,6 +14,10 @@ class AdySheep() : AdyEntityAgeable(EntityTypes.SHEEP) {
     init {
         val index = at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
         registerMeta(index, "dyeColor", DyeColor.WHITE.dyeData)
+                .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit byte ${entity.uniqueId} ${meta.key} ${(e as DyeColor).dyeData}" })
+                .display { _, entity, _ ->
+                    DyeColor.getByDyeData(entity.getMetadata("dyeColor"))!!.name
+                }.build()
         registerMetaByteMask(index, "isSheared", 0x10)
     }
 

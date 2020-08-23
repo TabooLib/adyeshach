@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.common.editor
 
+import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import io.izzel.taboolib.Version
@@ -7,13 +9,9 @@ import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.chat.ComponentSerializer
 import io.izzel.taboolib.util.chat.TextComponent
-import io.izzel.taboolib.util.lite.Numbers
-import io.izzel.taboolib.util.lite.Signs
-import org.bukkit.ChatColor
-import org.bukkit.Color
 import org.bukkit.entity.Player
-import org.bukkit.util.NumberConversions
-import java.util.concurrent.ConcurrentHashMap
+import org.bukkit.inventory.ItemStack
+import org.bukkit.material.MaterialData
 import kotlin.reflect.KClass
 
 object Editor {
@@ -23,18 +21,29 @@ object Editor {
 
     init {
         editMethod[Boolean::class] = EntityMetaable.MetaEditor()
-                .onModify { player, entity, meta ->
+                .modify { player, entity, meta ->
                     entity.setMetadata(meta.key, !entity.getMetadata<Boolean>(meta.key))
                     open(player, entity)
                 }
-                .onDisplay { _, entity, meta ->
+                .display { _, entity, meta ->
                     entity.getMetadata<Boolean>(meta.key).toDisplay()
                 }
         editMethod[Int::class] = Editors.TEXT
+        editMethod[Byte::class] = Editors.TEXT
         editMethod[Float::class] = Editors.TEXT
         editMethod[Double::class] = Editors.TEXT
         editMethod[String::class] = Editors.TEXT
+        editMethod[ItemStack::class] = Editors.ITEM
+        editMethod[MaterialData::class] = Editors.MATERIAL_DATA
         editMethod[TextComponent::class] = Editors.TEXT
+    }
+
+    fun getEditorMode(): EditorMode {
+        return try {
+            EditorMode.valueOf(Adyeshach.conf.getString("Settings.editor-mode", "BOOK")!!.toUpperCase())
+        } catch (t: Throwable) {
+            EditorMode.BOOK
+        }
     }
 
     fun getEditor(meta: EntityMetaable.Meta): EntityMetaable.MetaEditor? {
@@ -71,7 +80,7 @@ object Editor {
         var i = 0
         entity.listMetadata().sortedBy { it.key }.forEach {
             val editor = getEditor(it)
-            if (editor != null) {
+            if (editor != null && editor.edit) {
                 page.append("  §n${it.key.toDisplay()}").hoverText("Index ${it.index}").newLine()
                 try {
                     page.append("   §c✘")
@@ -82,19 +91,34 @@ object Editor {
                             .hoverText("§nClick To Edit")
                             .newLine()
                 } catch (t: Throwable) {
-                    page.append("   §c§o<ERROR>").hoverText(t.message).newLine()
+                    t.printStackTrace()
+                    page.append(" §c§o<ERROR:${t.message}>").newLine()
                 }
                 if (++i == 6) {
                     i = 0
-                    book.addPages(ComponentSerializer.parse(page.toRawMessage(player)))
+                    try {
+                        book.addPage(page)
+                    } catch (t: Throwable) {
+                        book.addPage(TellrawJson.create().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
+                    }
                     page = TellrawJson.create()
                 }
             }
         }
         if (i > 0) {
-            book.addPages(ComponentSerializer.parse(page.toRawMessage(player)))
+            try {
+                book.addPage(page)
+            } catch (t: Throwable) {
+                book.addPage(TellrawJson.create().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
+            }
         }
-        book.open(player)
+        if (getEditorMode() == EditorMode.BOOK) {
+            book.open(player)
+        } else {
+            book.meta.pages.forEach {
+                player.sendRawMessage(it)
+            }
+        }
     }
 
     fun Boolean.toDisplay(): String {

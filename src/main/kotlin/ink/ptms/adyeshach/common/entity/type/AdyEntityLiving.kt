@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Color
 import org.bukkit.entity.Player
@@ -23,7 +23,25 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     init {
         registerMeta(at(11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
-                .clone(Editors.COLOR)
+                .from(Editors.COLOR)
+                .build()
+        registerEditor("equipmentHelmet")
+                .from(Editors.equip(EquipmentSlot.HEAD))
+                .build()
+        registerEditor("equipmentChestplate")
+                .from(Editors.equip(EquipmentSlot.CHEST))
+                .build()
+        registerEditor("equipmentLeggings")
+                .from(Editors.equip(EquipmentSlot.LEGS))
+                .build()
+        registerEditor("equipmentBoots")
+                .from(Editors.equip(EquipmentSlot.FEET))
+                .build()
+        registerEditor("equipmentHand")
+                .from(Editors.equip(EquipmentSlot.HAND))
+                .build()
+        registerEditor("equipmentOffhand")
+                .from(Editors.equip(EquipmentSlot.OFF_HAND))
                 .build()
     }
 
@@ -119,5 +137,35 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     fun getPotionEffectColor(): Color {
         return Color.fromRGB(getMetadata("potionEffectColor"))
+    }
+
+    fun updateEquipment() {
+        forViewers {
+            BukkitUtils.valuesEquipmentSlot().forEach { equipment ->
+                NMS.INSTANCE.updateEquipment(it, index, equipment, getEquipment(equipment) ?: return@forEach)
+            }
+        }
+    }
+
+    fun setEquipment(equipmentSlot: EquipmentSlot, itemStack: ItemStack) {
+        when (equipmentSlot) {
+            EquipmentSlot.HAND -> setItemInMainHand(itemStack)
+            EquipmentSlot.OFF_HAND -> setItemInOffHand(itemStack)
+            EquipmentSlot.FEET -> setBoots(itemStack)
+            EquipmentSlot.LEGS -> setLeggings(itemStack)
+            EquipmentSlot.CHEST -> setChestplate(itemStack)
+            EquipmentSlot.HEAD -> setHelmet(itemStack)
+        }
+    }
+
+    fun getEquipment(equipmentSlot: EquipmentSlot): ItemStack? {
+        return when (equipmentSlot) {
+            EquipmentSlot.HAND -> getItemInMainHand()
+            EquipmentSlot.OFF_HAND -> getItemInOffHand()
+            EquipmentSlot.FEET -> getBoots()
+            EquipmentSlot.LEGS -> getLeggings()
+            EquipmentSlot.CHEST -> getChestplate()
+            EquipmentSlot.HEAD -> getHelmet()
+        }
     }
 }

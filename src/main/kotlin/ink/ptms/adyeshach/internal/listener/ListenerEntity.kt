@@ -5,9 +5,12 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityThrowable
+import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
@@ -42,6 +45,15 @@ class ListenerEntity : Listener {
     fun e(e: AdyeshachEntitySpawnEvent) {
         if (e.entity is EntityThrowable) {
             e.entity.setNoGravity(true)
+        }
+    }
+
+    @EventHandler
+    fun e(e: AdyeshachEntityVisibleEvent) {
+        if (e.visible && e.entity is AdyEntityLiving) {
+            Tasks.task {
+                e.entity.updateEquipment()
+            }
         }
     }
 }

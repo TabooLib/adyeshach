@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
@@ -16,7 +18,21 @@ class AdyBee() : AdyEntityAgeable(EntityTypes.BEE) {
         registerMetaByteMask(at(11500 to 16), "isFlip", 0x02)
         registerMetaByteMask(at(11500 to 16), "hasStung", 0x04)
         registerMetaByteMask(at(11500 to 16), "hasNectar", 0x08)
-        registerMetaByteMask(at(11500 to 17), "angerTicks", 0)
+        registerMeta(at(11500 to 17), "angerTicks", 0)
+                .canEdit(false)
+                .build()
+        registerEditor("isAngered")
+                .reset { player, entity, meta ->
+                    (entity as AdyBee).setAngered(false)
+                    Editor.open(player, entity)
+                }
+                .modify { player, entity, _ ->
+                    (entity as AdyBee).setAngered(!entity.isAngered())
+                    Editor.open(player, entity)
+                }
+                .display { _, entity, _ ->
+                    (entity as AdyBee).isAngered().toDisplay()
+                }
     }
 
     fun setUnUsed(unused: Boolean) {

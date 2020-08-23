@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.util;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * 求你们不要改这个类，用 java 写是有原因的。
@@ -19,6 +20,10 @@ public class BukkitUtils {
         return Cat.Type.values();
     }
 
+    public static Fox.Type[] valuesFoxType() {
+        return Fox.Type.values();
+    }
+
     public static Llama.Color[] valuesLlamaColor() {
         return Llama.Color.values();
     }
@@ -33,5 +38,9 @@ public class BukkitUtils {
 
     public static Spellcaster.Spell[] valuesIllagerSpell() {
         return Spellcaster.Spell.values();
+    }
+
+    public static EquipmentSlot[] valuesEquipmentSlot() {
+        return EquipmentSlot.values();
     }
 }

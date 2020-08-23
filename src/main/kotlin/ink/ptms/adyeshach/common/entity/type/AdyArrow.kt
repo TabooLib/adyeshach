@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Color
@@ -29,6 +30,8 @@ class AdyArrow() : AdyEntity(EntityTypes.ARROW), EntityThrowable {
         registerMetaByteMask(at(11400 to 7), "noclip", 0x02)
         registerMeta(at(11600 to 8, 11500 to 9), "piercingLevel", 0.toByte())
         registerMeta(at(11600 to 9), "color", -1)
+                .from(Editors.COLOR)
+                .build()
     }
 
     fun setCritical(value: Boolean) {
