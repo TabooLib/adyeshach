@@ -54,10 +54,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     val pathfinder = ArrayList<Pathfinder>()
 
-    /**
-     * ai
-     */
-
     init {
         registerMetaByteMask(0, "onFire", 0x01)
         registerMetaByteMask(0, "isCrouched", 0x02)
@@ -72,9 +68,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
         registerMeta(at(11400 to 6), "pose", Pose.STANDING)
         registerEditor("entityPose")
-                .reset { _, entity, _ -> entity.setPose(Pose.STANDING) }
                 .from(Editors.enums(Pose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
-                .display { _, entity, _ -> entity.getPose().name }
+                .reset { _, entity, _ ->
+                    entity.setPose(Pose.STANDING)
+                }
+                .display { _, entity, _ ->
+                    entity.getPose().name
+                }
     }
 
     /**

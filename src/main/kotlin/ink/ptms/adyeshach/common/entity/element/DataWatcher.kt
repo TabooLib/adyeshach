@@ -82,6 +82,17 @@ abstract class DataWatcher {
         }
     }
 
+    class DataPose : DataWatcher() {
+
+        override fun parse(value: Any): Any {
+            return if (value is String) Enums.getIfPresent(Pose::class.java, value).or(Pose.STANDING) else value as Pose
+        }
+
+        override fun getMetadata(index: Int, value: Any): Any {
+            return NMS.INSTANCE.getMetaEntityPose(index, parse(value) as Pose)
+        }
+    }
+
     class DataVector : DataWatcher() {
 
         override fun parse(value: Any): Any {
@@ -175,20 +186,5 @@ abstract class DataWatcher {
         override fun getMetadata(index: Int, value: Any): Any {
             return NMS.INSTANCE.getMetaEntityPosition(index, parse(value) as Position)
         }
-    }
-
-    class DataPose : DataWatcher() {
-
-        override fun parse(value: Any): Any {
-            return when (value) {
-                is Pose -> value
-                else -> Pose.STANDING
-            }
-        }
-
-        override fun getMetadata(index: Int, value: Any): Any {
-            return NMS.INSTANCE.getMetaEntityPose(index, parse(value) as Pose)
-        }
-
     }
 }

@@ -60,6 +60,11 @@ class CommandAPI : BaseMainCommand(), Helper {
                         entity.setMetadata(meta.key, args[3])
                         Editor.open(sender, entity)
                     }
+                    "pose" -> {
+                        val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
+                        entity.setPose(Enums.getIfPresent(Pose::class.java, args[3]).get())
+                        Editor.open(sender, entity)
+                    }
                     "meta" -> {
                         val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
                         val meta = entity.listMetadata().firstOrNull { it.key == args[2] } ?: return
@@ -74,11 +79,6 @@ class CommandAPI : BaseMainCommand(), Helper {
                         } else {
                             entity.setMetadata(meta.key, meta.def)
                         }
-                        Editor.open(sender, entity)
-                    }
-                    "pose" -> {
-                        val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
-                        entity.setPose(Enums.getIfPresent(Pose::class.java, args[3]).get())
                         Editor.open(sender, entity)
                     }
                     "particle" -> {
