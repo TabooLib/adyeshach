@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.element
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.chat.TextComponent
@@ -89,7 +90,7 @@ abstract class DataWatcher {
         }
 
         override fun getMetadata(index: Int, value: Any): Any {
-            return NMS.INSTANCE.getMetaEntityPose(index, parse(value) as Pose)
+            return NMS.INSTANCE.getMetaEntityPose(index, parse(value) as BukkitPose)
         }
     }
 

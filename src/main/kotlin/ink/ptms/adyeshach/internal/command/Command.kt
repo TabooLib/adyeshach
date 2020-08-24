@@ -35,6 +35,7 @@ class Command : BaseMainCommand(), Helper {
             val entity = try {
                 AdyeshachAPI.getEntityManagerPublic().create(entityType, (sender as Player).location)
             } catch (t: Throwable) {
+                t.printStackTrace()
                 sender.error("Error: &8${t.message}")
                 return
             }
@@ -43,7 +44,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "remove adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "remove adyeshach npc.", type = CommandType.ALL)
     val remove = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {

@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
@@ -75,11 +76,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
         if (version >= 11400) {
-            registerMeta(at(11400 to 6), "pose", Pose.STANDING)
+            registerMeta(at(11400 to 6), "pose", BukkitPose.STANDING)
             registerEditor("entityPose")
-                    .from(Editors.enums(Pose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
+                    .from(Editors.enums(BukkitPose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
                     .reset { _, entity, _ ->
-                        entity.setPose(Pose.STANDING)
+                        entity.setPose(BukkitPose.STANDING)
                     }
                     .display { _, entity, _ ->
                         entity.getPose().name
@@ -374,11 +375,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getMetadata("customName")
     }
 
-    fun setPose(pose: Pose) {
+    fun setPose(pose: BukkitPose) {
         setMetadata("pose", pose)
     }
 
-    fun getPose(): Pose {
+    fun getPose(): BukkitPose {
         return getMetadata("pose")
     }
 

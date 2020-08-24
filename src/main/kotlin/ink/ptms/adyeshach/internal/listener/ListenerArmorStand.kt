@@ -17,6 +17,7 @@ import io.izzel.taboolib.util.KV
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
+import io.izzel.taboolib.util.lite.Materials
 import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -87,7 +88,7 @@ class ListenerArmorStand : Listener, Helper {
             it.setHeadRotation(it.position.yaw + 2f, it.position.pitch)
         }, {
             it.setHeadRotation(it.position.yaw - 2f, it.position.pitch)
-        }, Material.GOLDEN_HELMET),
+        }, Materials.GOLDEN_HELMET.parseMaterial()!!),
 
         // 坐标
         BASE_X({ it.teleport(it.position.add(0.05, 0.0, 0.0)) }, { it.teleport(it.position.subtract(0.05, 0.0, 0.0)) }, Material.ARMOR_STAND),

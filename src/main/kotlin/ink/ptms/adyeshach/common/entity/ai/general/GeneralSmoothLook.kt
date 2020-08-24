@@ -44,13 +44,11 @@ class GeneralSmoothLook(entity: EntityInstance) : Pathfinder(entity) {
     }
 
     override fun onTick() {
-        if (shouldExecute()) {
-            if (counterSmoothLook.next()) {
-                isLooking = false
-                counterSmoothLook.reset()
-            } else {
-                entity.setHeadRotation(entity.position.yaw + deltaYaw, entity.position.pitch + deltaPitch)
-            }
+        if (counterSmoothLook.next()) {
+            isLooking = false
+            counterSmoothLook.reset()
+        } else {
+            entity.setHeadRotation(entity.position.yaw + deltaYaw, entity.position.pitch + deltaPitch)
         }
     }
 

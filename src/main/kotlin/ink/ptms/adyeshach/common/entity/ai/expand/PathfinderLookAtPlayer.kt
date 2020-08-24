@@ -17,6 +17,8 @@ class PathfinderLookAtPlayer(entity: EntityInstance) : Pathfinder(entity) {
     }
 
     override fun onTick() {
-        TODO("Not yet implemented")
+        entity.viewPlayers.getViewers().minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
+            entity.controllerLook(it.location)
+        }
     }
 }

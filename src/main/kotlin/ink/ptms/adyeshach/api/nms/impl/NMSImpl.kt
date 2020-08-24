@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.element.PositionNull
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.Version
@@ -23,8 +24,10 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
-import org.bukkit.entity.*
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Mob
+import org.bukkit.entity.Player
+import org.bukkit.entity.Villager
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -82,12 +85,12 @@ class NMSImpl : NMS() {
                 "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "m" to net.minecraft.server.v1_11_R1.DataWatcher(null),
-                "n" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
+//                "m" to DataWatcher(null),
+//                "n" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
         )
     }
 
-    override fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutNamedEntitySpawn(),
@@ -97,7 +100,9 @@ class NMSImpl : NMS() {
                 "d" to location.y,
                 "e" to location.z,
                 "f" to (location.yaw * 256 / 360).toInt().toByte(),
-                "g" to (location.pitch * 256 / 360).toInt().toByte()
+                "g" to (location.pitch * 256 / 360).toInt().toByte(),
+//                "h" to DataWatcher(null),
+//                "i" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
         )
     }
 
@@ -181,7 +186,7 @@ class NMSImpl : NMS() {
                     player,
                     infoData,
                     "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET), ChatComponentText(name)))
+                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET), CraftChatMessage.fromString(name).firstOrNull()))
             )
         } else {
             val infoData = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
@@ -189,7 +194,7 @@ class NMSImpl : NMS() {
                     player,
                     infoData,
                     "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(WorldSettings.EnumGamemode::class.java, gameMode.name).or(WorldSettings.EnumGamemode.NOT_SET), net.minecraft.server.v1_9_R2.ChatComponentText(name)))
+                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(WorldSettings.EnumGamemode::class.java, gameMode.name).or(WorldSettings.EnumGamemode.NOT_SET), org.bukkit.craftbukkit.v1_9_R2.util.CraftChatMessage.fromString(name).firstOrNull()))
             )
         }
     }
@@ -271,7 +276,8 @@ class NMSImpl : NMS() {
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to objects.map { it as DataWatcher.Item<*> }.toList())
+        val metadata = objects.flatMap { if (it is List<*>) it else listOf(it) }.ifEmpty { return }
+        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to metadata)
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
@@ -315,8 +321,8 @@ class NMSImpl : NMS() {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.m), Optional.ofNullable(if (value == null || value is PositionNull) null else BlockPosition(value.x, value.y, value.z)))
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(
-                net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
-                com.google.common.base.Optional.fromNullable(if (value == null || value is PositionNull) null else net.minecraft.server.v1_12_R1.BlockPosition(value.x, value.y, value.z))
+                    net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
+                    com.google.common.base.Optional.fromNullable(if (value == null || value is PositionNull) null else net.minecraft.server.v1_12_R1.BlockPosition(value.x, value.y, value.z))
             )
         }
     }
@@ -325,8 +331,7 @@ class NMSImpl : NMS() {
         return if (version >= 11300) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.h), Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value)))
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.g),
-                    com.google.common.base.Optional.fromNullable(if (value == null) null else org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())))
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.g), com.google.common.base.Optional.fromNullable(if (value == null) null else org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())))
         }
     }
 
@@ -380,9 +385,8 @@ class NMSImpl : NMS() {
         }, 1))
     }
 
-    override fun getMetaEntityPose(index: Int, pose: Pose): Any {
-        val entityPose = if (pose == Pose.SNEAKING) EntityPose.CROUCHING else Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING)
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), entityPose)
+    override fun getMetaEntityPose(index: Int, pose: BukkitPose): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING))
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
@@ -423,16 +427,13 @@ class NMSImpl : NMS() {
                     p
                 }
             }
-            else -> {
-                0
-            }
+            else -> 0
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position> {
-        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1)
-                ?: return ArrayList()
+        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return ArrayList()
         val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
         return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
     }

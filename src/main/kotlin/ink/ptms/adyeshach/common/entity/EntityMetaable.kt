@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.Version
@@ -10,7 +11,6 @@ import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Strings
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.entity.Player
-import org.bukkit.entity.Pose
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -68,8 +68,18 @@ abstract class EntityMetaable {
 
     fun updateMetadata() {
         if (this is EntityInstance) {
-            meta.forEach { it.update(this) }
+            val metadata = getMetadata()
+            this.forViewers {
+                NMS.INSTANCE.updateEntityMetadata(it, this.index, metadata)
+            }
         }
+    }
+
+    fun getMetadata(): List<Any> {
+        if (this is EntityInstance) {
+            return meta.mapNotNull { it.getMetadata(this) }
+        }
+        return emptyList()
     }
 
     fun setMetadata(key: String, value: Any) {
@@ -85,6 +95,7 @@ abstract class EntityMetaable {
         } else {
             metadata[key] = value
         }
+
         if (this is EntityInstance) {
             registerMeta.update(this)
         }
@@ -109,7 +120,18 @@ abstract class EntityMetaable {
         var dataWatcher: DataWatcher? = null
             protected set
 
-        abstract fun update(entityInstance: EntityInstance)
+        abstract fun getMetadata(entityInstance: EntityInstance): Any?
+
+        fun update(entityInstance: EntityInstance, player: Player) {
+            val metadata = getMetadata(entityInstance) ?: return
+            NMS.INSTANCE.updateEntityMetadata(player, this.index, metadata)
+        }
+
+        fun update(entityInstance: EntityInstance) {
+            val metadata = getMetadata(entityInstance) ?: return
+            entityInstance.forViewers { NMS.INSTANCE.updateEntityMetadata(it, this.index, metadata) }
+        }
+
     }
 
     open class MetaMasked(index: Int, key: String, val mask: Byte, def: Boolean) : Meta(index, key, def) {
@@ -118,21 +140,18 @@ abstract class EntityMetaable {
             dataWatcher = DataWatcher.DataByte()
         }
 
-        override fun update(entityInstance: EntityInstance) {
+        override fun getMetadata(entityInstance: EntityInstance): Any? {
             if (index == -1) {
-                return
+                return null
             }
             var bits = 0
-            val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return
+            val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return null
             entityInstance.meta.filter { it.index == index && it is MetaMasked }.forEach {
                 if (byteMask[it.key] == true) {
                     bits += (it as MetaMasked).mask
                 }
             }
-            val metadata = dataWatcher?.getMetadata(index, bits.toByte()) ?: return
-            entityInstance.forViewers {
-                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
-            }
+            return dataWatcher?.getMetadata(index, bits.toByte())
         }
     }
 
@@ -152,20 +171,17 @@ abstract class EntityMetaable {
                 is VillagerData -> DataWatcher.DataVillagerData()
                 is TextComponent -> DataWatcher.DataIChatBaseComponent()
                 is BukkitParticles -> DataWatcher.DataParticle()
-                is Pose -> DataWatcher.DataPose()
+                is BukkitPose -> DataWatcher.DataPose()
                 else -> null
             }
         }
 
-        override fun update(entityInstance: EntityInstance) {
+        override fun getMetadata(entityInstance: EntityInstance): Any? {
             if (index == -1) {
-                return
+                return null
             }
-            val obj = entityInstance.metadata[key] ?: return
-            val metadata = dataWatcher?.getMetadata(index, obj) ?: return
-            entityInstance.forViewers {
-                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
-            }
+            val obj = entityInstance.metadata[key] ?: return null
+            return dataWatcher?.getMetadata(index, obj)
         }
     }
 

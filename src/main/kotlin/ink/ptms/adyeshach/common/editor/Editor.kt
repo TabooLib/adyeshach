@@ -16,6 +16,7 @@ import io.izzel.taboolib.util.chat.ComponentSerializer
 import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
+import io.izzel.taboolib.util.lite.Materials
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -56,7 +57,7 @@ object Editor {
                 .modify { player, entity, meta ->
                     editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
                     Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
-                    player.inventory.addItem(ItemBuilder(Material.REDSTONE_TORCH).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
+                    player.inventory.addItem(ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
                     player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
                     player.closeInventory()
                 }

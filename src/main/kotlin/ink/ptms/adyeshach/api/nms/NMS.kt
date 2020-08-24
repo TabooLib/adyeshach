@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.api.nms
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.module.inject.TInject
@@ -16,7 +17,6 @@ import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
-import org.bukkit.entity.Pose
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -34,7 +34,7 @@ abstract class NMS {
 
     abstract fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location)
 
-    abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+    abstract fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte)
 
@@ -86,7 +86,7 @@ abstract class NMS {
 
     abstract fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any
 
-    abstract fun getMetaEntityPose(index: Int, pose: Pose): Any
+    abstract fun getMetaEntityPose(index: Int, pose: BukkitPose): Any
 
     abstract fun getEntityTypeNMS(entityTypes: EntityTypes): Any
 

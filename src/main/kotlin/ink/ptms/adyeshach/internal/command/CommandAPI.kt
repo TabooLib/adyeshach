@@ -4,10 +4,7 @@ import com.google.common.base.Enums
 import com.google.gson.GsonBuilder
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.bukkit.BukkitDirection
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.bukkit.BukkitParticles
-import ink.ptms.adyeshach.common.bukkit.BukkitProfession
+import ink.ptms.adyeshach.common.bukkit.*
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
@@ -62,7 +59,7 @@ class CommandAPI : BaseMainCommand(), Helper {
                     }
                     "pose" -> {
                         val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
-                        entity.setPose(Enums.getIfPresent(Pose::class.java, args[3]).get())
+                        entity.setPose(Enums.getIfPresent(BukkitPose::class.java, args[3]).get())
                         Editor.open(sender, entity)
                     }
                     "meta" -> {
