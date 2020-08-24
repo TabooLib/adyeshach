@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
-import ink.ptms.adyeshach.common.bukkit.BukkitOcelotType
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.internal.command
 
 import com.google.common.base.Enums
+import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -75,9 +76,8 @@ class Command : BaseMainCommand(), Helper {
                 sender.info("Adyeshach NPC not found.")
                 return
             }
-            sender.info("Opening...")
+            sender.info("Creating...")
             Editor.open(sender as Player, entity)
-            sender.info("Opened.")
         }
     }
 
@@ -92,6 +92,15 @@ class Command : BaseMainCommand(), Helper {
                 AdyeshachAPI.getEntityManagerPublic().onSave()
                 sender.info("Adyeshach NPC has been saved.")
             }
+        }
+    }
+
+    @SubCommand(description = "reload adyeshach settings.")
+    val reload = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            Adyeshach.reload()
+            sender.info("Adyeshach Settings has been reloaded.")
         }
     }
 }

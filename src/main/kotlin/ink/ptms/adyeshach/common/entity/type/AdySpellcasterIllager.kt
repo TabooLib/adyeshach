@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.BukkitUtils

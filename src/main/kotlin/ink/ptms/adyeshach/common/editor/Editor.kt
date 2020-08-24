@@ -1,10 +1,11 @@
 package ink.ptms.adyeshach.common.editor
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
+import ink.ptms.adyeshach.common.entity.element.PositionNull
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.chat.ComponentSerializer
@@ -28,6 +29,16 @@ object Editor {
                 .display { _, entity, meta ->
                     entity.getMetadata<Boolean>(meta.key).toDisplay()
                 }
+        editMethod[Position::class] = EntityMetaable.MetaEditor()
+                .modify { player, entity, meta ->
+                    entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
+                    open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    entity.getMetadata<Position>(meta.key).run {
+                        if (this is PositionNull) "_" else "$x $y $z"
+                    }
+                }
         editMethod[Int::class] = Editors.TEXT
         editMethod[Byte::class] = Editors.TEXT
         editMethod[Float::class] = Editors.TEXT
@@ -36,14 +47,6 @@ object Editor {
         editMethod[ItemStack::class] = Editors.ITEM
         editMethod[MaterialData::class] = Editors.MATERIAL_DATA
         editMethod[TextComponent::class] = Editors.TEXT
-    }
-
-    fun getEditorMode(): EditorMode {
-        return try {
-            EditorMode.valueOf(Adyeshach.conf.getString("Settings.editor-mode", "BOOK")!!.toUpperCase())
-        } catch (t: Throwable) {
-            EditorMode.BOOK
-        }
     }
 
     fun getEditor(meta: EntityMetaable.Meta): EntityMetaable.MetaEditor? {
@@ -61,6 +64,13 @@ object Editor {
     }
 
     fun open(player: Player, entity: EntityInstance) {
+        when (Adyeshach.settings.editorMode) {
+            EditorMode.BOOK -> openByBook(player, entity)
+            EditorMode.CHAT -> openByChat(player, entity)
+        }
+    }
+
+    fun openByBook(player: Player, entity: EntityInstance) {
         val book = BookFormatter.writtenBook()
         book.addPages(ComponentSerializer.parse(TellrawJson.create()
                 .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
@@ -81,7 +91,7 @@ object Editor {
         entity.listMetadata().sortedBy { it.key }.forEach {
             val editor = getEditor(it)
             if (editor != null && editor.edit) {
-                page.append("  §n${it.key.toDisplay()}").hoverText("Index ${it.index}").newLine()
+                page.append("  §n${it.key.toDisplay()}").newLine()
                 try {
                     page.append("   §c✘")
                             .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${it.key}")
@@ -112,13 +122,50 @@ object Editor {
                 book.addPage(TellrawJson.create().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
             }
         }
-        if (getEditorMode() == EditorMode.BOOK) {
-            book.open(player)
-        } else {
-            book.meta.pages.forEach {
-                player.sendRawMessage(it)
+        book.open(player)
+    }
+
+    fun openByChat(player: Player, entity: EntityInstance) {
+        TellrawJson.create().run {
+            repeat(127) { newLine() }
+            send(player)
+        }
+        val json = TellrawJson.create()
+                .newLine()
+                .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
+                .append("      §6${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
+                .newLine()
+                .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
+                .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
+                .append("      Pathfinder §7${entity.pathfinder.size} ").append("§c(?)").hoverText(entity.pathfinder.joinToString("\n") { it.javaClass.name }).newLine()
+                .newLine().append("      ")
+        var i = 0
+        entity.listMetadata().sortedBy { it.key }.forEach {
+            val editor = getEditor(it)
+            if (editor != null && editor.edit) {
+                json.append("§8[")
+                try {
+                    json.append("§7${it.key.toDisplay()}")
+                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${it.key}")
+                            .hoverText("§7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, it) else entity.getMetadata<Any>(it.key)}")
+                    json.append(" ")
+                    json.append("§c✘")
+                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${it.key}")
+                            .hoverText("§nClick To Reset")
+                } catch (t: Throwable) {
+                    json.append("§c§o<ERROR:${t.message}>")
+                    if (t is NullPointerException) {
+                        t.printStackTrace()
+                    }
+                }
+                json.append("§8] ")
+                if (++i == 3) {
+                    i = 0
+                    json.newLine().append("      ")
+                }
             }
         }
+        json.newLine().send(player)
     }
 
     fun Boolean.toDisplay(): String {
@@ -138,6 +185,6 @@ object Editor {
     }
 
     fun toSimple(source: String): String {
-        return if (source.length > 20) source.substring(0, source.length - (source.length - 10)) + "..." + source.substring(source.length - 7) else source
+        return if (source.length > 16) source.substring(0, source.length - (source.length - 10)) + "..." + source.substring(source.length - 7) else source
     }
 }

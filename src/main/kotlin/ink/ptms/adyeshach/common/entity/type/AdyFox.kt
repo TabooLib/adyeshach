@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.BukkitUtils
-import org.bukkit.entity.Cat
 import org.bukkit.entity.Fox
 
 /**

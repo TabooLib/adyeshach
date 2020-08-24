@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitProfession
-import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.element.VillagerData

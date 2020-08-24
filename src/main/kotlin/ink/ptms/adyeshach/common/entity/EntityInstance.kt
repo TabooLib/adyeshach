@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
+import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDestroyEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
@@ -359,14 +360,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleLock.next()) {
             // 复活
             viewPlayers.getOutsider().forEach { player ->
-                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < 127) {
+                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < Settings.get().visibleDistance) {
                     viewPlayers.visible.add(player.name)
                     visible(player, true)
                 }
             }
             // 销毁
             viewPlayers.getViewers().forEach { player ->
-                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > 127) {
+                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > Settings.get().visibleDistance) {
                     viewPlayers.visible.remove(player.name)
                     visible(player, false)
                 }

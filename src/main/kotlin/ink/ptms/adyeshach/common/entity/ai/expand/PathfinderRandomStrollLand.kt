@@ -2,10 +2,8 @@ package ink.ptms.adyeshach.common.entity.ai.expand
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import io.izzel.taboolib.util.lite.Numbers
-import net.minecraft.server.v1_16_R1.PathfinderGoalRandomStroll
 
 /**
  * 随机移动（以原点为基础的随机移动，确保实体不会走出活跃范围）

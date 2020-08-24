@@ -31,7 +31,7 @@ object Editors {
             .modify { player, entity, meta ->
                 Signs.fakeSign(player, arrayOf("${entity.getMetadata<Any>(meta.key)}", "", "请在第一行输入内容")) {
                     if (it[0].isNotEmpty()) {
-                        entity.setMetadata(meta.key, it.joinToString("").replace("&", "§"))
+                        entity.setMetadata(meta.key, "${it[0]}${it[1]}".replace("&", "§"))
                     }
                     Editor.open(player, entity)
                 }
@@ -66,7 +66,7 @@ object Editors {
                         .title("Adyeshach Editor : Input")
                         .rows(1)
                         .items("#####@#####")
-                        .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseMaterial()).name("§f").build())
+                        .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
                         .put('@', meta.def as ItemStack)
                         .event {
                             if (it.slot == '#') {
@@ -77,6 +77,9 @@ object Editors {
                             Editor.open(player, entity)
                         }.open(player)
             }
+            .display { player, entity, meta ->
+                I18n.get().getName(player, entity.getMetadata<ItemStack>(meta.key))
+            }
 
     val MATERIAL_DATA = EntityMetaable.MetaEditor()
             .modify { player, entity, meta ->
@@ -84,16 +87,23 @@ object Editors {
                         .title("Adyeshach Editor : Input")
                         .rows(1)
                         .items("#####@#####")
-                        .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseMaterial()).name("§f").build())
+                        .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
                         .put('@', (meta.def as MaterialData).toItemStack(1))
                         .event {
                             if (it.slot == '#') {
                                 it.isCancelled = true
                             }
                         }.close {
-                            entity.setMetadata(meta.key, (it.inventory.getItem(4) ?: ItemStack(Material.AIR)).data!!)
+                            try {
+                                entity.setMetadata(meta.key, (it.inventory.getItem(4) ?: ItemStack(Material.AIR)).data!!)
+                            } catch (t: Throwable) {
+                                t.printStackTrace()
+                            }
                             Editor.open(player, entity)
                         }.open(player)
+            }
+            .display { player, entity, meta ->
+                I18n.get().getName(player, entity.getMetadata<MaterialData>(meta.key).toItemStack(1))
             }
 
     fun enums(enum: KClass<*>, command: (Player, EntityInstance, EntityMetaable.Meta, Int, Any) -> (String)): EntityMetaable.MetaEditor {
@@ -124,29 +134,29 @@ object Editors {
 
     fun equip(equipmentSlot: EquipmentSlot): EntityMetaable.MetaEditor {
         return cacheEquipment.computeIfAbsent(equipmentSlot) {
-                    EntityMetaable.MetaEditor()
-                            .reset { player, entity, meta ->
-                                (entity as AdyEntityLiving).setEquipment(equipmentSlot, ItemStack(Material.AIR))
-                            }
-                            .modify { player, entity, meta ->
-                                MenuBuilder.builder(Adyeshach.plugin)
-                                        .title("Adyeshach Editor : Input")
-                                        .rows(1)
-                                        .items("####@####")
-                                        .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseMaterial()).name("§f").build())
-                                        .put('@', (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
-                                        .event {
-                                            if (it.slot == '#') {
-                                                it.isCancelled = true
-                                            }
-                                        }.close {
-                                            entity.setEquipment(equipmentSlot, it.inventory.getItem(4) ?: ItemStack(Material.AIR))
-                                            Editor.open(player, entity)
-                                        }.open(player)
-                            }
-                }
-                .display { player, entity, meta ->
-                    I18n.get().getName(player, (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
-                }
+            EntityMetaable.MetaEditor()
+                    .reset { player, entity, meta ->
+                        (entity as AdyEntityLiving).setEquipment(equipmentSlot, ItemStack(Material.AIR))
+                    }
+                    .modify { player, entity, meta ->
+                        MenuBuilder.builder(Adyeshach.plugin)
+                                .title("Adyeshach Editor : Input")
+                                .rows(1)
+                                .items("####@####")
+                                .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
+                                .put('@', (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
+                                .event {
+                                    if (it.slot == '#') {
+                                        it.isCancelled = true
+                                    }
+                                }.close {
+                                    entity.setEquipment(equipmentSlot, it.inventory.getItem(4) ?: ItemStack(Material.AIR))
+                                    Editor.open(player, entity)
+                                }.open(player)
+                    }
+                    .display { player, entity, meta ->
+                        I18n.get().getName(player, (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
+                    }
+        }
     }
 }

@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.DyeColor
-import org.bukkit.entity.Fox
 import org.bukkit.entity.Llama
 
 /**

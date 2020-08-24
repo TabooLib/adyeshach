@@ -4,8 +4,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDragonPhase
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
-import org.bukkit.entity.Cat
 
 /**
  * @author sky

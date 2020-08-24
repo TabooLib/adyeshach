@@ -5,8 +5,6 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import org.bukkit.entity.Villager
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 
 /**
  * @Author sky

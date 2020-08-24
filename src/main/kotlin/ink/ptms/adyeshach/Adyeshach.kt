@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach
 
+import ink.ptms.adyeshach.api.Settings
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.loader.PluginBase
@@ -12,10 +13,17 @@ object Adyeshach : Plugin() {
     lateinit var conf: TConfig
         private set
 
+    var settings = Settings()
+        private set
+
     override fun onLoad() {
         if (Version.isBefore(Version.v1_9)) {
             PluginBase.setDisabled(true)
             println("[Adyeshach] Sorry, The Adyeshach not supported this minecraft version.")
         }
+    }
+
+    fun reload() {
+        settings = Settings()
     }
 }

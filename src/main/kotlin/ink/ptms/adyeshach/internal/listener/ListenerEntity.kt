@@ -1,20 +1,17 @@
 package ink.ptms.adyeshach.internal.listener
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
-import net.minecraft.server.v1_16_R1.PacketPlayInUseEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

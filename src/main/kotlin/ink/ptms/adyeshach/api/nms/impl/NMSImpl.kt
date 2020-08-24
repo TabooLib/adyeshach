@@ -82,7 +82,8 @@ class NMSImpl : NMS() {
                 "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "m" to net.minecraft.server.v1_11_R1.DataWatcher(null)
+                "m" to net.minecraft.server.v1_11_R1.DataWatcher(null),
+                "n" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
         )
     }
 
@@ -258,18 +259,15 @@ class NMSImpl : NMS() {
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         if (version >= 11600) {
             sendPacket(player, PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))))
+        } else if (version >= 11300) {
+            sendPacket(player, net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(entityId, net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)))
         } else {
-            sendPacket(player, net.minecraft.server.v1_15_R1.PacketPlayOutEntityEquipment(entityId, net.minecraft.server.v1_15_R1.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack.asNMSCopy(itemStack)))
+            sendPacket(player, net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(entityId, net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)))
         }
     }
 
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
-        sendPacket(
-            player,
-            PacketPlayOutMount(),
-                "a" to entityId,
-                "b" to passengers
-        )
+        sendPacket(player, PacketPlayOutMount(), "a" to entityId, "b" to passengers)
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
@@ -336,8 +334,7 @@ class NMSImpl : NMS() {
         return if (version >= 11300) {
             DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first()))
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.e),
-                    org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage.fromString(name).first())
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.d), name ?: "")
         }
     }
 
