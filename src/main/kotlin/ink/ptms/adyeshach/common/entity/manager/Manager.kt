@@ -20,7 +20,7 @@ abstract class Manager {
 
     abstract fun getEntityById(id: String): List<EntityInstance>
 
-    abstract fun getEntityByUniqueId(id: String): List<EntityInstance>
+    abstract fun getEntityByUniqueId(id: String): EntityInstance?
 
     open fun isPublic(): Boolean {
         return false

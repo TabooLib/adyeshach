@@ -15,19 +15,26 @@ import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
+import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.path.PathType
 import ink.ptms.adyeshach.common.util.Indexs
+import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.Location
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Pose
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
  * @Since 2020-08-04 12:51
  */
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
+
+    @Expose
+    private var passengers = CopyOnWriteArrayList<String>()
 
     /**
      * 实体序号
@@ -266,6 +273,25 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             move.pathType = pathType
             move.pathResult = it
         }
+    }
+
+    fun getPassengers(): List<EntityInstance> {
+        if (manager == null) {
+            return emptyList()
+        }
+        return passengers.mapNotNull { manager!!.getEntityByUniqueId(it) }.toList()
+    }
+
+    fun addPassenger(var1: EntityInstance) {
+//        NMS.INSTANCE.updatePassengers()
+    }
+
+    fun removePassenger(var1: EntityInstance) {
+
+    }
+
+    fun getVehicle(): EntityInstance? {
+        return null
     }
 
     fun isFired(): Boolean {

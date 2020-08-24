@@ -45,7 +45,7 @@ class ManagerPrivateTemp(val player: String): Manager() {
         return activeEntity.filter { it.id == id }
     }
 
-    override fun getEntityByUniqueId(id: String): List<EntityInstance> {
-        return activeEntity.filter { it.uniqueId == id }
+    override fun getEntityByUniqueId(id: String): EntityInstance? {
+        return activeEntity.firstOrNull { it.uniqueId == id }
     }
 }
