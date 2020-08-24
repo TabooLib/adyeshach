@@ -69,17 +69,19 @@ abstract class EntityMetaable {
     fun updateMetadata() {
         if (this is EntityInstance) {
             val metadata = getMetadata()
-            this.forViewers {
-                NMS.INSTANCE.updateEntityMetadata(it, this.index, metadata)
+            if (metadata.isNotEmpty()) {
+                forViewers {
+                    NMS.INSTANCE.updateEntityMetadata(it, this.index, *metadata)
+                }
             }
         }
     }
 
-    fun getMetadata(): List<Any> {
+    fun getMetadata(): Array<Any> {
         if (this is EntityInstance) {
-            return meta.mapNotNull { it.getMetadata(this) }
+            return meta.mapNotNull { it.getMetadata(this) }.toTypedArray()
         }
-        return emptyList()
+        return arrayOf()
     }
 
     fun setMetadata(key: String, value: Any) {
@@ -122,14 +124,11 @@ abstract class EntityMetaable {
 
         abstract fun getMetadata(entityInstance: EntityInstance): Any?
 
-        fun update(entityInstance: EntityInstance, player: Player) {
-            val metadata = getMetadata(entityInstance) ?: return
-            NMS.INSTANCE.updateEntityMetadata(player, this.index, metadata)
-        }
-
         fun update(entityInstance: EntityInstance) {
             val metadata = getMetadata(entityInstance) ?: return
-            entityInstance.forViewers { NMS.INSTANCE.updateEntityMetadata(it, this.index, metadata) }
+            entityInstance.forViewers {
+                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
+            }
         }
 
     }

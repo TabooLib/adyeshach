@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.PositionNull
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.Version
@@ -19,7 +20,9 @@ import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.World
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
@@ -34,7 +37,6 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * @author Arasple
@@ -42,9 +44,7 @@ import kotlin.collections.ArrayList
  */
 class NMSImpl : NMS() {
 
-    val version = Version.getCurrentVersionInt()
-
-    override fun spawnEntity(player: Player, entityType: ink.ptms.adyeshach.common.entity.EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
@@ -59,22 +59,16 @@ class NMSImpl : NMS() {
         )
     }
 
-    override fun spawnEntityLiving(player: Player, entityType: ink.ptms.adyeshach.common.entity.EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntityLiving(),
                 "a" to entityId,
                 "b" to uuid,
                 "c" to when {
-                    version >= 11400 -> {
-                        IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as EntityTypes<*>)
-                    }
-                    version == 11300 -> {
-                        net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
-                    }
-                    else -> {
-                        entityType.bukkitId
-                    }
+                    version >= 11400 -> IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_16_R1.EntityTypes<*>)
+                    version == 11300 -> net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
+                    else -> entityType.bukkitId
                 },
                 "d" to location.x,
                 "e" to location.y,
@@ -85,8 +79,7 @@ class NMSImpl : NMS() {
                 "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-//                "m" to DataWatcher(null),
-//                "n" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
+                "m" to getDefaultDataWatcher(player.world, entityType)
         )
     }
 
@@ -101,8 +94,7 @@ class NMSImpl : NMS() {
                 "e" to location.z,
                 "f" to (location.yaw * 256 / 360).toInt().toByte(),
                 "g" to (location.pitch * 256 / 360).toInt().toByte(),
-//                "h" to DataWatcher(null),
-//                "i" to emptyList<net.minecraft.server.v1_12_R1.DataWatcher.Item<*>>()
+                "h" to getDefaultDataWatcher(player.world, EntityTypes.PLAYER)
         )
     }
 
@@ -119,7 +111,7 @@ class NMSImpl : NMS() {
                     "e" to location.z,
                     "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                     "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                    "k" to getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK),
+                    "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
                     "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             )
         } else {
@@ -133,7 +125,7 @@ class NMSImpl : NMS() {
                     "e" to location.z,
                     "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                     "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                    "k" to getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK),
+                    "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
                     "l" to material.id + (data.toInt() shl 12)
             )
         }
@@ -276,8 +268,7 @@ class NMSImpl : NMS() {
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-        val metadata = objects.flatMap { if (it is List<*>) it else listOf(it) }.ifEmpty { return }
-        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to metadata)
+        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to objects.map { it as DataWatcher.Item<*> }.toList())
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
@@ -358,7 +349,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.q), net.minecraft.server.v1_16_R1.VillagerData(when (villagerData.type) {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(when (villagerData.type) {
             Villager.Type.DESERT -> VillagerType.DESERT
             Villager.Type.JUNGLE -> VillagerType.JUNGLE
             Villager.Type.PLAINS -> VillagerType.PLAINS
@@ -389,9 +380,9 @@ class NMSImpl : NMS() {
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING))
     }
 
-    override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
+    override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.internalName ?: entityTypes.name, true)
+            SimpleReflection.getFieldValueChecked(net.minecraft.server.v1_16_R1.EntityTypes::class.java, null, entityTypes.internalName ?: entityTypes.name, true)
         } else {
             entityTypes.bukkitId
         }
@@ -433,9 +424,13 @@ class NMSImpl : NMS() {
 
     @Suppress("UNCHECKED_CAST")
     override fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position> {
-        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return ArrayList()
+        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
         val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
         return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
+    }
+
+    override fun getEntityDataWatcher(entity: Entity): Any {
+        return (entity as CraftEntity).handle.dataWatcher
     }
 
     override fun toBlockId(materialData: MaterialData): Int {
@@ -447,11 +442,12 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun getEntity(world: org.bukkit.World, id: Int): Entity? {
+    override fun getEntity(world: World, id: Int): Entity? {
         return (world as CraftWorld).handle.getEntity(id)?.bukkitEntity
     }
 
     override fun parseVec3d(obj: Any): Vector {
         return Vector((obj as Vec3D).x, obj.y, obj.z)
     }
+
 }

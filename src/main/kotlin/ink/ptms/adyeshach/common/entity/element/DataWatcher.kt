@@ -86,7 +86,7 @@ abstract class DataWatcher {
     class DataPose : DataWatcher() {
 
         override fun parse(value: Any): Any {
-            return if (value is String) Enums.getIfPresent(Pose::class.java, value).or(Pose.STANDING) else value as Pose
+            return if (value is String) Enums.getIfPresent(BukkitPose::class.java, value).or(BukkitPose.STANDING) else value as BukkitPose
         }
 
         override fun getMetadata(index: Int, value: Any): Any {

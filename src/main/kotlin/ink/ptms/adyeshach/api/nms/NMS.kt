@@ -6,14 +6,13 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.VillagerData
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.packet.TPacketHandler
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
@@ -98,6 +97,8 @@ abstract class NMS {
 
     abstract fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position>
 
+    abstract fun getEntityDataWatcher(entity: Entity): Any
+
     abstract fun toBlockId(materialData: MaterialData): Int
 
     abstract fun getEntity(world: World, id: Int): Entity?
@@ -108,16 +109,50 @@ abstract class NMS {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")
         lateinit var INSTANCE: NMS
+        private val defaultDataWatcher = mutableMapOf<EntityTypes, Any>()
+        val version = Version.getCurrentVersionInt()
 
-        fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any>) {
+        /**
+         * 快救救孩子
+         */
+        @TSchedule
+        fun init() {
+            if (version < 11500) {
+                val world = Bukkit.getWorlds().first()
+                EntityTypes.values().filterNot { it.bukkitType == null }.forEach {
+                    try {
+                        getDefaultDataWatcher(world, it)
+                    } catch (e: Throwable) {
+                        println("Unable to spawn ${it.name}")
+                    }
+                }
+                // Player 暂时还未解决 DataWatcher 问题
+            }
+        }
+
+        fun getDefaultDataWatcher(world: World, entityType: EntityTypes): Any? {
+            if (version >= 11500) {
+                return null
+            }
+
+            return defaultDataWatcher.computeIfAbsent(entityType) {
+                val type = entityType.bukkitType ?: throw RuntimeException("Unable to get the bukkit entity type of ${entityType.name}")
+                val spawn = world.spawnEntity(world.spawnLocation.also { it.y = 256.0 }, type)
+
+                INSTANCE.getEntityDataWatcher(spawn).also { spawn.remove() }
+            }
+        }
+
+        fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any?>) {
             TPacketHandler.sendPacket(player, setFields(packet, *fields))
         }
 
-        fun setFields(any: Any, vararg fields: Pair<String, Any>): Any {
+        fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
             fields.forEach { (key, value) ->
                 SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
             }
             return any
         }
+
     }
 }
