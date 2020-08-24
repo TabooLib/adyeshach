@@ -30,9 +30,9 @@ import java.util.*
  */
 abstract class NMS {
 
-    abstract fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+    abstract fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location)
 
-    abstract fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
+    abstract fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location)
 
     abstract fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location)
 

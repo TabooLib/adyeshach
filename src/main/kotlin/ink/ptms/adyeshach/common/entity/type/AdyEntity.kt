@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.entity.EntityFireball
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import net.minecraft.server.v1_16_R1.EntityFireball
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -18,7 +18,7 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntity(viewer, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), position.toLocation().run {
+                NMS.INSTANCE.spawnEntity(viewer, entityType, index, UUID.randomUUID(), position.toLocation().run {
                     if (this is EntityFireball) {
                         yaw = 0f
                         pitch = 0f

@@ -41,70 +41,62 @@ class NMSImpl : NMS() {
 
     val version = Version.getCurrentVersionInt()
 
-    override fun spawnEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntity(player: Player, entityType: ink.ptms.adyeshach.common.entity.EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
-                Pair("a", entityId),
-                Pair("b", uuid),
-                Pair("c", location.x),
-                Pair("d", location.y),
-                Pair("e", location.z),
-                Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                Pair("k", entityType)
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "k" to if (version <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
         )
     }
 
-    override fun spawnEntityLiving(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
-        if (version >= 11300) {
-            sendPacket(
-                    player,
-                    PacketPlayOutSpawnEntityLiving(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", IRegistry.ENTITY_TYPE.a(entityType as EntityTypes<*>)),
-                    Pair("d", location.x),
-                    Pair("e", location.y),
-                    Pair("f", location.z),
-                    Pair("g", 0),
-                    Pair("h", 0),
-                    Pair("i", 0),
-                    Pair("j", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("l", (location.yaw * 256.0f / 360.0f).toInt().toByte())
-            )
-        } else {
-            sendPacket(
-                    player,
-                    net.minecraft.server.v1_11_R1.PacketPlayOutSpawnEntityLiving(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", entityType),
-                    Pair("d", location.x),
-                    Pair("e", location.y),
-                    Pair("f", location.z),
-                    Pair("g", 0),
-                    Pair("h", 0),
-                    Pair("i", 0),
-                    Pair("j", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("l", (location.yaw * 256.0f / 360.0f).toInt().toByte())
-            )
-        }
+    override fun spawnEntityLiving(player: Player, entityType: ink.ptms.adyeshach.common.entity.EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+        sendPacket(
+                player,
+                PacketPlayOutSpawnEntityLiving(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to when {
+                    version >= 11400 -> {
+                        IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as EntityTypes<*>)
+                    }
+                    version == 11300 -> {
+                        net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
+                    }
+                    else -> {
+                        entityType.bukkitId
+                    }
+                },
+                "d" to location.x,
+                "e" to location.y,
+                "f" to location.z,
+                "g" to 0,
+                "h" to 0,
+                "i" to 0,
+                "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "m" to net.minecraft.server.v1_11_R1.DataWatcher(null)
+        )
     }
 
     override fun spawnNamedEntity(player: Player, entityType: Any, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
                 player,
                 PacketPlayOutNamedEntitySpawn(),
-                Pair("a", entityId),
-                Pair("b", uuid),
-                Pair("c", location.x),
-                Pair("d", location.y),
-                Pair("e", location.z),
-                Pair("f", (location.yaw * 256 / 360).toInt().toByte()),
-                Pair("g", (location.pitch * 256 / 360).toInt().toByte())
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to (location.yaw * 256 / 360).toInt().toByte(),
+                "g" to (location.pitch * 256 / 360).toInt().toByte()
         )
     }
 
@@ -114,29 +106,29 @@ class NMSImpl : NMS() {
             sendPacket(
                     player,
                     PacketPlayOutSpawnEntity(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", location.x),
-                    Pair("d", location.y),
-                    Pair("e", location.z),
-                    Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK)),
-                    Pair("l", Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData))
+                    "a" to entityId,
+                    "b" to uuid,
+                    "c" to location.x,
+                    "d" to location.y,
+                    "e" to location.z,
+                    "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                    "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                    "k" to getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK),
+                    "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             )
         } else {
             sendPacket(
                     player,
                     PacketPlayOutSpawnEntity(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", location.x),
-                    Pair("d", location.y),
-                    Pair("e", location.z),
-                    Pair("f", (location.yaw * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("g", (location.pitch * 256.0f / 360.0f).toInt().toByte()),
-                    Pair("k", getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK)),
-                    Pair("l", material.id + (data.toInt() shl 12))
+                    "a" to entityId,
+                    "b" to uuid,
+                    "c" to location.x,
+                    "d" to location.y,
+                    "e" to location.z,
+                    "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                    "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                    "k" to getEntityTypeNMS(ink.ptms.adyeshach.common.entity.EntityTypes.FALLING_BLOCK),
+                    "l" to material.id + (data.toInt() shl 12)
             )
         }
     }
@@ -145,11 +137,11 @@ class NMSImpl : NMS() {
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntityExperienceOrb(),
-                Pair("a", entityId),
-                Pair("b", location.x),
-                Pair("c", location.y),
-                Pair("d", location.z),
-                Pair("e", amount),
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to amount,
         )
     }
 
@@ -158,21 +150,21 @@ class NMSImpl : NMS() {
             sendPacket(
                     player,
                     PacketPlayOutSpawnEntityPainting(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", getBlockPositionNMS(location)),
-                    Pair("d", Enums.getIfPresent(EnumDirection::class.java, direction.name).get()),
-                    Pair("e", IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?))
+                    "a" to entityId,
+                    "b" to uuid,
+                    "c" to getBlockPositionNMS(location),
+                    "d" to Enums.getIfPresent(EnumDirection::class.java, direction.name).get(),
+                    "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else {
             sendPacket(
                     player,
                     net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting(),
-                    Pair("a", entityId),
-                    Pair("b", uuid),
-                    Pair("c", getBlockPositionNMS(location)),
-                    Pair("d", Enums.getIfPresent(net.minecraft.server.v1_9_R2.EnumDirection::class.java, direction.name).get()),
-                    Pair("e", getPaintingNMS(painting))
+                    "a" to entityId,
+                    "b" to uuid,
+                    "c" to getBlockPositionNMS(location),
+                    "d" to Enums.getIfPresent(net.minecraft.server.v1_9_R2.EnumDirection::class.java, direction.name).get(),
+                    "e" to getPaintingNMS(painting)
             )
         }
     }
@@ -206,8 +198,8 @@ class NMSImpl : NMS() {
         sendPacket(
                 player,
                 infoData,
-                Pair("a", PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER),
-                Pair("b", listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null)))
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
         )
     }
 
@@ -219,13 +211,13 @@ class NMSImpl : NMS() {
         sendPacket(
                 player,
                 PacketPlayOutEntityTeleport(),
-                Pair("a", entityId),
-                Pair("b", location.x),
-                Pair("c", location.y),
-                Pair("d", location.z),
-                Pair("e", (location.yaw * 256 / 360).toInt().toByte()),
-                Pair("f", (location.pitch * 256 / 360).toInt().toByte()),
-                Pair("g", false) // onGround
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to (location.yaw * 256 / 360).toInt().toByte(),
+                "f" to (location.pitch * 256 / 360).toInt().toByte(),
+                "g" to false // onGround
         )
     }
 
@@ -249,8 +241,8 @@ class NMSImpl : NMS() {
         sendPacket(
                 player,
                 PacketPlayOutEntityHeadRotation(),
-                Pair("a", entityId),
-                Pair("b", MathHelper.d(yaw * 256.0f / 360.0f).toByte())
+                "a" to entityId,
+                "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
         )
         sendPacket(
                 player,
@@ -275,13 +267,13 @@ class NMSImpl : NMS() {
         sendPacket(
             player,
             PacketPlayOutMount(),
-            Pair("a", entityId),
-            Pair("b", passengers)
+                "a" to entityId,
+                "b" to passengers
         )
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-        sendPacket(player, PacketPlayOutEntityMetadata(), Pair("a", entityId), Pair("b", objects.map { it as DataWatcher.Item<*> }.toList()))
+        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to objects.map { it as DataWatcher.Item<*> }.toList())
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
@@ -392,14 +384,13 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityPose(index: Int, pose: Pose): Any {
-        val entityPose = if (pose == Pose.SNEAKING) EntityPose.CROUCHING else EntityPose.valueOf(pose.name)
+        val entityPose = if (pose == Pose.SNEAKING) EntityPose.CROUCHING else Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING)
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), entityPose)
     }
 
     override fun getEntityTypeNMS(entityTypes: ink.ptms.adyeshach.common.entity.EntityTypes): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.internalName
-                    ?: entityTypes.name, true)
+            SimpleReflection.getFieldValueChecked(EntityTypes::class.java, null, entityTypes.internalName ?: entityTypes.name, true)
         } else {
             entityTypes.bukkitId
         }

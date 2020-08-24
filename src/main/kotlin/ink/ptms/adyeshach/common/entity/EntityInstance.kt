@@ -66,15 +66,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(2, "customName", TextComponent(""))
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
-        registerMeta(at(11400 to 6), "pose", Pose.STANDING)
-        registerEditor("entityPose")
-                .from(Editors.enums(Pose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
-                .reset { _, entity, _ ->
-                    entity.setPose(Pose.STANDING)
-                }
-                .display { _, entity, _ ->
-                    entity.getPose().name
-                }
+        if (version >= 11400) {
+            registerMeta(at(11400 to 6), "pose", Pose.STANDING)
+            registerEditor("entityPose")
+                    .from(Editors.enums(Pose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
+                    .reset { _, entity, _ ->
+                        entity.setPose(Pose.STANDING)
+                    }
+                    .display { _, entity, _ ->
+                        entity.getPose().name
+                    }
+        }
     }
 
     /**

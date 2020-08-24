@@ -48,7 +48,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityLiving(viewer, entityType.getEntityTypeNMS(), index, UUID.randomUUID(), position.toLocation())
+                NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, UUID.randomUUID(), position.toLocation())
             }
         } else {
             destroy(viewer) {

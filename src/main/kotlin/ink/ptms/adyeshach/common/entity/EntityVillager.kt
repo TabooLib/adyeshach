@@ -42,7 +42,7 @@ interface EntityVillager {
                     }.build()
         } else {
             entityInstance.registerEditor("villagerProfession")
-                    .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession_legacy ${entity.uniqueId} ${meta.key} $e" })
+                    .from(Editors.enums(BukkitProfession::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession_legacy ${entity.uniqueId} ${meta.key} $e" })
                     .reset { player, entity, meta ->
                         setLegacyProfession(BukkitProfession.FARMER)
                     }
