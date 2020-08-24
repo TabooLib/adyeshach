@@ -32,12 +32,4 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
             }
         }
     }
-
-    fun teleport(world: String, x: Double, y: Double, z: Double) {
-        teleport(Location(Bukkit.getWorld(world), x, y, z))
-    }
-
-    fun teleport(world: String, x: Double, y: Double, z: Double, yaw: Double, pitch: Double) {
-        teleport(Location(Bukkit.getWorld(world), x, y, z, yaw.toFloat(), pitch.toFloat()))
-    }
 }

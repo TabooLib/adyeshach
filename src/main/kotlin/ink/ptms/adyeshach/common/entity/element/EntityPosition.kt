@@ -24,6 +24,20 @@ class EntityPosition(
         var pitch: Float = 0f
 ) {
 
+    fun add(x: Double, y: Double, z: Double): EntityPosition {
+        this.x += x
+        this.y += y
+        this.z += z
+        return this
+    }
+
+    fun subtract(x: Double, y: Double, z: Double): EntityPosition {
+        this.x -= x
+        this.y -= y
+        this.z -= z
+        return this
+    }
+
     fun toLocation(): Location {
         return Location(world, x, y, z, yaw, pitch)
     }

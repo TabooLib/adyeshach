@@ -197,6 +197,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
+    fun teleport(entityPosition: EntityPosition) {
+        this.teleport(entityPosition.toLocation())
+    }
+
     fun teleport(x: Double, y: Double, z: Double) {
         teleport(position.toLocation().run {
             this.x = x

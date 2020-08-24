@@ -4,21 +4,34 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.element.PositionNull
+import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
+import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.tellraw.TellrawJson
+import io.izzel.taboolib.util.KV
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.chat.ComponentSerializer
 import io.izzel.taboolib.util.chat.TextComponent
+import io.izzel.taboolib.util.item.ItemBuilder
+import io.izzel.taboolib.util.item.Items
+import io.izzel.taboolib.util.lite.Numbers
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
+import org.bukkit.util.EulerAngle
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 object Editor {
 
     val version = Version.getCurrentVersionInt()
     val editMethod = HashMap<KClass<*>, EntityMetaable.MetaEditor>()
+
+    @PlayerContainer
+    val editArmorStand = ConcurrentHashMap<String, KV<AdyArmorStand, ListenerArmorStand.Angle?>>()
 
     init {
         editMethod[Boolean::class] = EntityMetaable.MetaEditor()
@@ -37,6 +50,19 @@ object Editor {
                 .display { _, entity, meta ->
                     entity.getMetadata<Position>(meta.key).run {
                         if (this is PositionNull) "_" else "$x $y $z"
+                    }
+                }
+        editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
+                .modify { player, entity, meta ->
+                    editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
+                    Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
+                    player.inventory.addItem(ItemBuilder(Material.REDSTONE_TORCH).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
+                    player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
+                    player.closeInventory()
+                }
+                .display { player, entity, meta ->
+                    entity.getMetadata<EulerAngle>(meta.key).run {
+                        "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
                     }
                 }
         editMethod[Int::class] = Editors.TEXT
