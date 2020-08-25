@@ -1,10 +1,13 @@
 package ink.ptms.adyeshach.common.entity
 
+import ink.ptms.adyeshach.api.event.AdyeshachMaskedMetaGenerateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.element.DataWatcher
 import ink.ptms.adyeshach.common.entity.element.VillagerData
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.nms.impl.Position
@@ -16,6 +19,7 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import javax.annotation.concurrent.ThreadSafe
 
 /**
  * @Author sky
@@ -71,20 +75,9 @@ abstract class EntityMetaable {
         return meta.filter { it.index != -1 }.toList()
     }
 
-    fun updateMetadata() {
+    fun getMetadata(player: Player): Array<Any> {
         if (this is EntityInstance) {
-            val metadata = getMetadata()
-            if (metadata.isNotEmpty()) {
-                forViewers {
-                    NMS.INSTANCE.updateEntityMetadata(it, this.index, *metadata)
-                }
-            }
-        }
-    }
-
-    fun getMetadata(): Array<Any> {
-        if (this is EntityInstance) {
-            return meta.mapNotNull { it.getMetadata(this) }.toTypedArray()
+            return meta.mapNotNull { it.getMetadata(player, this) }.toTypedArray()
         }
         return arrayOf()
     }
@@ -121,6 +114,17 @@ abstract class EntityMetaable {
         }
     }
 
+    fun updateMetadata() {
+        if (this is EntityInstance) {
+            forViewers {
+                val metadata = getMetadata(it)
+                if (metadata.isNotEmpty()) {
+                    NMS.INSTANCE.updateEntityMetadata(it, this.index, *metadata)
+                }
+            }
+        }
+    }
+
     fun getTags(): Set<Map.Entry<String, String>> {
         return tag.entries
     }
@@ -143,15 +147,13 @@ abstract class EntityMetaable {
         var dataWatcher: DataWatcher? = null
             protected set
 
-        abstract fun getMetadata(entityInstance: EntityInstance): Any?
+        abstract fun getMetadata(player: Player, entityInstance: EntityInstance): Any?
 
         fun update(entityInstance: EntityInstance) {
-            val metadata = getMetadata(entityInstance) ?: return
             entityInstance.forViewers {
-                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, metadata)
+                NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, getMetadata(it, entityInstance) ?: return@forViewers)
             }
         }
-
     }
 
     open class MetaMasked(index: Int, key: String, val mask: Byte, def: Boolean) : Meta(index, key, def) {
@@ -160,16 +162,19 @@ abstract class EntityMetaable {
             dataWatcher = DataWatcher.DataByte()
         }
 
-        override fun getMetadata(entityInstance: EntityInstance): Any? {
+        override fun getMetadata(player: Player, entityInstance: EntityInstance): Any? {
             if (index == -1) {
                 return null
             }
+            val event = AdyeshachMaskedMetaGenerateEvent(entityInstance, player, this, HashMap())
             var bits = 0
             val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return null
             entityInstance.meta.filter { it.index == index && it is MetaMasked }.forEach {
-                if (byteMask[it.key] == true) {
-                    bits += (it as MetaMasked).mask
-                }
+                event.byteMask[it as MetaMasked] = byteMask[it.key] == true
+            }
+            event.call()
+            event.byteMask.filter { it.value }.forEach { (k, _) ->
+                bits += k.mask
             }
             return dataWatcher?.getMetadata(index, bits.toByte())
         }
@@ -196,12 +201,13 @@ abstract class EntityMetaable {
             }
         }
 
-        override fun getMetadata(entityInstance: EntityInstance): Any? {
+        override fun getMetadata(player: Player, entityInstance: EntityInstance): Any? {
             if (index == -1) {
                 return null
             }
             val obj = entityInstance.metadata[key] ?: return null
-            return dataWatcher?.getMetadata(index, obj)
+            val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this, obj).call()
+            return dataWatcher?.getMetadata(index, event.value)
         }
     }
 
