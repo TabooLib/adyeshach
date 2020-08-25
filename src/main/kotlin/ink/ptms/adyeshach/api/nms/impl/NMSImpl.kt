@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.PositionNull
 import ink.ptms.adyeshach.common.entity.element.VillagerData
-import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
@@ -60,6 +59,9 @@ class NMSImpl : NMS() {
     }
 
     override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+        if (entityType == EntityTypes.ARMOR_STAND && version < 11300) {
+            return spawnEntity(player, entityType, entityId, uuid, location)
+        }
         sendPacket(
                 player,
                 PacketPlayOutSpawnEntityLiving(),
@@ -79,7 +81,7 @@ class NMSImpl : NMS() {
                 "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "m" to getDefaultDataWatcher(player.world, entityType)
+                "m" to DataWatcher(null)
         )
     }
 
@@ -94,7 +96,7 @@ class NMSImpl : NMS() {
                 "e" to location.z,
                 "f" to (location.yaw * 256 / 360).toInt().toByte(),
                 "g" to (location.pitch * 256 / 360).toInt().toByte(),
-                "h" to getDefaultDataWatcher(player.world, EntityTypes.PLAYER)
+                "h" to DataWatcher(null),
         )
     }
 

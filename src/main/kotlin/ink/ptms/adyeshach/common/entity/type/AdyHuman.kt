@@ -110,11 +110,10 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
 
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
+            addPlayerInfo(viewer)
             spawn(viewer) {
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
-                addPlayerInfo(viewer)
             }
-            // test
             if (hideFromTabList) {
                 removePlayerInfo(viewer)
             }
