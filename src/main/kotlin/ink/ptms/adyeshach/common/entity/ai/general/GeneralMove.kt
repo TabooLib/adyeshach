@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
-import ink.ptms.adyeshach.common.path.PathResult
+import ink.ptms.adyeshach.common.path.ResultNavigation
 import ink.ptms.adyeshach.common.path.PathType
 import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
@@ -25,38 +25,33 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
         }
 
     var pathType: PathType? = null
-    var pathResult: PathResult? = null
-
-    var isMoving = false
-        private set
-    var isJumping = false
-        private set
+    var resultNavigation: ResultNavigation? = null
 
     override fun shouldExecute(): Boolean {
-        return pathType != null && pathResult != null
+        return pathType != null && resultNavigation != null
     }
 
     override fun onTick() {
-        if (isJumping) {
+        if (entity.isPathfinderJumping()) {
             if (counterJump.next()) {
-                isJumping = false
+                entity.removeTag("isJumping")
                 getGravity().isGravity = true
             } else {
                 entity.teleport(entity.position.x, entity.position.y + 0.25, entity.position.z)
             }
             return
         }
-        if (i >= pathResult!!.pointList.size) {
+        if (i >= resultNavigation!!.pointList.size) {
             i = 0
             pathType = null
-            pathResult = null
-            isMoving = false
+            resultNavigation = null
+            entity.removeTag("isMoving")
             return
         } else {
-            isMoving = true
+            entity.setTag("isMoving", "true")
         }
         val positionEntity = entity.position.toLocation()
-        val positionNext = pathResult!!.pointList[i].run {
+        val positionNext = resultNavigation!!.pointList[i].run {
             Location(entity.position.world, x.toDouble() + 0.5, y.toDouble(), z.toDouble() + 0.5)
         }
         if (counterLook.next()) {
@@ -74,7 +69,7 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
         if (plan.block.isPassable) {
             entity.teleport(plan.x, plan.y, plan.z)
         } else if (pathType != PathType.FLY) {
-            isJumping = true
+            entity.setTag("isJumping", "true")
             getGravity().isGravity = false
         }
         if (entity.position.toLocation().distance(next) < speed) {

@@ -6,7 +6,7 @@ import org.bukkit.Location
  * 由寻路代理实体返回的路径参数
  * 理想延迟在 150 毫秒
  */
-class PathSchedule(val start: Location, val target: Location, val pathType: PathType, val call: (PathResult) -> (Unit)) {
+class PathSchedule(val start: Location, val target: Location, val pathType: PathType, val request: Request, val call: (Result) -> (Unit)) {
 
     /**
      * 重试次数

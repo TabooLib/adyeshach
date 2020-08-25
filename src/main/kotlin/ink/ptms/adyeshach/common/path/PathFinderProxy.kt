@@ -27,7 +27,7 @@ object PathFinderProxy {
     private val version = Version.getCurrentVersionInt()
     private val proxyEntity = ConcurrentHashMap<String, PathEntity>()
 
-    fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, call: (PathResult) -> (Unit)) {
+    fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> (Unit)) {
         if (pathType.supportVersion > version) {
             throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
         }
@@ -38,7 +38,7 @@ object PathFinderProxy {
         if (proxyEntity.spawnFailed.contains(pathType)) {
             throw PathException("navigation proxy did not complete initialization.")
         }
-        proxyEntity.schedule.add(PathSchedule(start, target, pathType, call))
+        proxyEntity.schedule.add(PathSchedule(start, target, pathType, request, call))
     }
 
     fun isProxyEntity(id: Int): Boolean {
@@ -85,10 +85,21 @@ object PathFinderProxy {
                     if (entity != null) {
                         val time = System.currentTimeMillis()
                         entity.teleport(schedule.start)
-                        val pathList = NMS.INSTANCE.getNavigationPathList(entity, schedule.target)
-                        if (pathList.isNotEmpty() || schedule.retry++ > 4) {
-                            schedule.call.invoke(PathResult(NMS.INSTANCE.getNavigationPathList(entity, schedule.target), schedule.beginTime, time))
-                            pathEntity.schedule.remove(schedule)
+                        when (schedule.request) {
+                            Request.NAVIGATION -> {
+                                val pathList = NMS.INSTANCE.getNavigationPathList(entity, schedule.target)
+                                if (pathList.isNotEmpty() || schedule.retry++ > 4) {
+                                    schedule.call.invoke(ResultNavigation(pathList, schedule.beginTime, time))
+                                    pathEntity.schedule.remove(schedule)
+                                }
+                            }
+                            Request.RANDOM_POSITION -> {
+                                val position = NMS.INSTANCE.generateRandomPosition(entity, entity.location.block.isLiquid)
+                                if (position != null || schedule.retry++ > 4) {
+                                    schedule.call.invoke(ResultRandomPosition(position, schedule.beginTime, time))
+                                    pathEntity.schedule.remove(schedule)
+                                }
+                            }
                         }
                     }
                 }

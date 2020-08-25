@@ -17,6 +17,8 @@ class PathfinderRandomLookaround(entity: EntityInstance) : Pathfinder(entity) {
     }
 
     override fun onTick() {
-        TODO("Not yet implemented")
+        entity.position.run {
+            entity.controllerLook(yaw + Numbers.getRandomDouble(-90, 90).toFloat(), 0f)
+        }
     }
 }

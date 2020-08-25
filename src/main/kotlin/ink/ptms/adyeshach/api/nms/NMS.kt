@@ -15,6 +15,7 @@ import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
@@ -106,6 +107,8 @@ abstract class NMS {
     abstract fun getEntity(world: World, id: Int): Entity?
 
     abstract fun parseVec3d(obj: Any): Vector
+
+    abstract fun generateRandomPosition(entity: Creature, inWater: Boolean): Vector?
 
     companion object {
 

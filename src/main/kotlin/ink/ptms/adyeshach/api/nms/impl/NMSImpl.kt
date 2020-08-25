@@ -21,15 +21,14 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
+import org.bukkit.entity.*
 import org.bukkit.entity.Entity
-import org.bukkit.entity.Mob
-import org.bukkit.entity.Player
-import org.bukkit.entity.Villager
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -405,7 +404,8 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             version == 11300 -> {
-                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
+                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase()))
+                        ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
                 } else {
@@ -413,7 +413,8 @@ class NMSImpl : NMS() {
                 }
             }
             version >= 11400 -> {
-                val p = SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true) ?: Particles.FLAME
+                val p = SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true)
+                        ?: Particles.FLAME
                 if (p is Particle<*>) {
                     p.d()
                 } else {
@@ -452,4 +453,12 @@ class NMSImpl : NMS() {
         return Vector((obj as Vec3D).x, obj.y, obj.z)
     }
 
+    override fun generateRandomPosition(entity: Creature, inWater: Boolean): Vector? {
+        val vec3d = if (inWater) {
+            RandomPositionGenerator.b((entity as CraftCreature).handle, 15, 7) ?: RandomPositionGenerator.a(entity.handle, 10, 7)
+        } else {
+            RandomPositionGenerator.a((entity as CraftCreature).handle, 10, 7)
+        } ?: return null
+        return Vector(vec3d.x, vec3d.y, vec3d.z)
+    }
 }

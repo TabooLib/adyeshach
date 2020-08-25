@@ -2,7 +2,10 @@ package ink.ptms.adyeshach.common.entity
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.type.*
+import ink.ptms.adyeshach.common.path.PathFinderProxy
+import ink.ptms.adyeshach.common.path.PathType
 import org.bukkit.entity.EntityType
 
 /**
@@ -14,7 +17,8 @@ enum class EntityTypes(
         val bukkitId: Int,
         val entitySize: EntitySize,
         val entityBase: Class<out EntityInstance>,
-        val internalName: String? = null
+        val internalName: String? = null,
+        val flying: Boolean = false,
 ) {
 
     AREA_EFFECT_CLOUD(
@@ -35,21 +39,24 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "ARROW").orNull(),
             60,
             EntitySize(0.5, 0.5),
-            AdyArrow::class.java
+            AdyArrow::class.java,
+            flying = true
     ),
 
     BAT(
             Enums.getIfPresent(EntityType::class.java, "BAT").orNull(),
             65,
             EntitySize(0.5, 0.9),
-            AdyBat::class.java
+            AdyBat::class.java,
+            flying = true
     ),
 
     BEE(
             Enums.getIfPresent(EntityType::class.java, "BEE").orNull(),
             -1,
             EntitySize(0.7, 0.6),
-            AdyBee::class.java
+            AdyBee::class.java,
+            flying = true
     ),
 
     BLAZE(
@@ -197,7 +204,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "ENDER_SIGNAL").orNull(),
             72,
             EntitySize(0.25, 0.25),
-            AdyEyeOfEnder::class.java
+            AdyEyeOfEnder::class.java,
+            flying = true
     ),
 
     FALLING_BLOCK(
@@ -211,7 +219,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "FIREWORK").orNull(),
             76,
             EntitySize(0.25, 0.25),
-            AdyFireworkRocket::class.java
+            AdyFireworkRocket::class.java,
+            flying = true
     ),
 
     FOX(
@@ -225,7 +234,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "GHAST").orNull(),
             56,
             EntitySize(4.0, 4.0),
-            AdyGhast::class.java
+            AdyGhast::class.java,
+            flying = true
     ),
 
     GIANT(
@@ -296,7 +306,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "FIREBALL").orNull(),
             63,
             EntitySize(1.0, 1.0),
-            AdyFireball::class.java
+            AdyFireball::class.java,
+            flying = true
     ),
 
     LEASH_KNOT(
@@ -317,7 +328,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "LLAMA_SPIT").orNull(),
             68,
             EntitySize(0.25, 0.25),
-            AdyLlamaSpit::class.java
+            AdyLlamaSpit::class.java,
+            flying = true
     ),
 
     MAGMA_CUBE(
@@ -423,14 +435,16 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "PARROT").orNull(),
             105,
             EntitySize(0.5, 0.9),
-            AdyParrot::class.java
+            AdyParrot::class.java,
+            flying = true
     ),
 
     PHANTOM(
             Enums.getIfPresent(EntityType::class.java, "PHANTOM").orNull(),
             -1,
             EntitySize(0.9, 0.5),
-            AdyPhantom::class.java
+            AdyPhantom::class.java,
+            flying = true
     ),
 
     PIG(
@@ -525,7 +539,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "SHULKER_BULLET").orNull(),
             67,
             EntitySize(0.3125, 0.3125),
-            AdyShulkerBullet::class.java
+            AdyShulkerBullet::class.java,
+            flying = true
     ),
 
     SILVERFISH(
@@ -560,7 +575,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "SMALL_FIREBALL").orNull(),
             64,
             EntitySize(0.3125, 0.3125),
-            AdySmallFireball::class.java
+            AdySmallFireball::class.java,
+            flying = true
     ),
 
     SNOW_GOLEM(
@@ -574,14 +590,16 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "SNOWBALL").orNull(),
             61,
             EntitySize(0.25, 0.25),
-            AdySnowball::class.java
+            AdySnowball::class.java,
+            flying = true
     ),
 
     SPECTRAL_ARROW(
             Enums.getIfPresent(EntityType::class.java, "SPECTRAL_ARROW").orNull(),
             91,
             EntitySize(0.5, 0.5),
-            AdySpectralArrow::class.java
+            AdySpectralArrow::class.java,
+            flying = true
     ),
 
     SPIDER(
@@ -617,7 +635,8 @@ enum class EntityTypes(
             62,
             EntitySize(0.25, 0.25),
             AdyThrownEgg::class.java,
-            "EGG"
+            "EGG",
+            flying = true
     ),
 
     THROWN_ENDER_PEARL(
@@ -625,7 +644,8 @@ enum class EntityTypes(
             65,
             EntitySize(0.25, 0.25),
             AdyThrownEnderPearl::class.java,
-            "ENDER_PEARL"
+            "ENDER_PEARL",
+            flying = true
     ),
 
     THROWN_EXPERIENCE_BOTTLE(
@@ -633,7 +653,8 @@ enum class EntityTypes(
             75,
             EntitySize(0.25, 0.25),
             AdyThrownExperienceBottle::class.java,
-            "EXPERIENCE_BOTTLE"
+            "EXPERIENCE_BOTTLE",
+            flying = true
     ),
 
     THROWN_POTION(
@@ -641,7 +662,8 @@ enum class EntityTypes(
             73,
             EntitySize(0.25, 0.25),
             AdyThrownPotion::class.java,
-            "POTION"
+            "POTION",
+            flying = true
     ),
 
     THROWN_TRIDENT(
@@ -649,7 +671,8 @@ enum class EntityTypes(
             73,
             EntitySize(0.5, 0.5),
             AdyThrownTrident::class.java,
-            "TRIDENT"
+            "TRIDENT",
+            flying = true
     ),
 
     TRADER_LLAMA(
@@ -677,7 +700,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "VEX").orNull(),
             -1,
             EntitySize(0.4, 0.8),
-            AdyVex::class.java
+            AdyVex::class.java,
+            flying = true
     ),
 
     VILLAGER(
@@ -705,7 +729,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "WITCH").orNull(),
             -1,
             EntitySize(0.6, 1.95),
-            AdyWitch::class.java
+            AdyWitch::class.java,
+            flying = true
     ),
 
     WITHER(
@@ -726,7 +751,8 @@ enum class EntityTypes(
             Enums.getIfPresent(EntityType::class.java, "WITHER_SKULL").orNull(),
             66,
             EntitySize(0.3125, 0.3125),
-            AdyWitherSkull::class.java
+            AdyWitherSkull::class.java,
+            flying = true
     ),
 
     WOLF(
@@ -795,5 +821,23 @@ enum class EntityTypes(
 
     fun getEntityTypeNMS(): Any {
         return NMS.INSTANCE.getEntityTypeNMS(this)
+    }
+
+    fun getPathType(): PathType {
+        val h = entitySize.height
+        return when {
+            flying && Editor.version >= 11500 -> {
+                PathType.FLY
+            }
+            h <= 1 -> {
+                PathType.WALK_1
+            }
+            h <= 2 -> {
+                PathType.WALK_2
+            }
+            else -> {
+                PathType.WALK_3
+            }
+        }
     }
 }

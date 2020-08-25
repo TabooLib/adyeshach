@@ -6,11 +6,7 @@ import io.izzel.taboolib.module.nms.impl.Position
  * @Author sky
  * @Since 2020-08-13 16:34
  */
-class PathResult(
-        /**
-         * 路径点
-         */
-        val pointList: List<Position>,
+open class Result(
         /**
          * 请求发起时间
          */

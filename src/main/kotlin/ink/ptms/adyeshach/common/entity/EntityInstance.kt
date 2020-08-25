@@ -16,17 +16,15 @@ import ink.ptms.adyeshach.common.entity.element.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.path.PathType
+import ink.ptms.adyeshach.common.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
+import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Location
-import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.entity.Pose
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
@@ -35,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     @Expose
-    private var passengers = CopyOnWriteArrayList<String>()
+    private var passengers = ConcurrentSet<String>()
 
     /**
      * 实体序号
@@ -87,6 +85,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                     }
         }
     }
+
+    /**
+     * 切换可视状态
+     */
+    abstract fun visible(viewer: Player, visible: Boolean)
 
     /**
      * 内部调用方法，用于第三方事件处理
@@ -191,11 +194,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     /**
-     * 切换可视状态
-     */
-    abstract fun visible(viewer: Player, visible: Boolean)
-
-    /**
      * 修改实体位置
      */
     fun teleport(location: Location) {
@@ -236,18 +234,23 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 使实体看向某个坐标
      */
     fun controllerLook(location: Location) {
+        position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
+            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+            controllerLook(entityLocation.yaw, entityLocation.pitch)
+        }
+    }
+
+    fun controllerLook(yaw: Float, pitch: Float) {
         if (pathfinder.any { it is GeneralSmoothLook }) {
             val look = pathfinder.first { it is GeneralSmoothLook } as GeneralSmoothLook
             position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
-                entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-                look.yaw = entityLocation.yaw
-                look.pitch = entityLocation.pitch
+                look.yaw = yaw
+                look.pitch = pitch
                 look.isLooking = true
             }
         } else {
             position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
-                entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-                setHeadRotation(entityLocation.yaw, entityLocation.pitch)
+                setHeadRotation(yaw, pitch)
             }
         }
     }
@@ -272,8 +275,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         PathFinderProxy.request(position.toLocation(), location, pathType) {
             move.speed = speed
             move.pathType = pathType
-            move.pathResult = it
+            move.resultNavigation = it as ResultNavigation
         }
+    }
+
+    fun isVehicle(): Boolean {
+        return getPassengers().isNotEmpty()
+    }
+
+    fun getVehicle(): EntityInstance? {
+        return manager?.getEntities()?.firstOrNull { uniqueId in it.passengers }
     }
 
     fun getPassengers(): List<EntityInstance> {
@@ -283,16 +294,35 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return passengers.mapNotNull { manager!!.getEntityByUniqueId(it) }.toList()
     }
 
-    fun addPassenger(var1: EntityInstance) {
-//        NMS.INSTANCE.updatePassengers()
+    fun addPassenger(entity: EntityInstance) {
+        if (manager == null) {
+            throw RuntimeException("Entity Manager not initialized.")
+        }
+        getVehicle()?.removePassenger(this)
+        passengers.add(entity.uniqueId)
+        forViewers {
+            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        }
     }
 
-    fun removePassenger(var1: EntityInstance) {
-
+    fun removePassenger(entity: EntityInstance) {
+        if (manager == null) {
+            throw RuntimeException("Entity Manager not initialized.")
+        }
+        getVehicle()?.removePassenger(this)
+        passengers.remove(entity.uniqueId)
+        forViewers {
+            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        }
     }
 
-    fun getVehicle(): EntityInstance? {
-        return null
+    fun refreshPassenger() {
+        if (manager == null) {
+            throw RuntimeException("Entity Manager not initialized.")
+        }
+        forViewers {
+            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        }
     }
 
     fun isFired(): Boolean {
@@ -381,6 +411,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun getPose(): BukkitPose {
         return getMetadata("pose")
+    }
+
+    fun isPathfinderMoving(): Boolean {
+        return hasTag("isMoving")
+    }
+
+    fun isPathfinderJumping(): Boolean {
+        return hasTag("isJumping")
     }
 
     /**

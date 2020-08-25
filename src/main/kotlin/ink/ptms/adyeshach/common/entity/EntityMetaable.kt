@@ -14,6 +14,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
@@ -21,14 +23,17 @@ import org.bukkit.util.EulerAngle
  */
 abstract class EntityMetaable {
 
-    protected val meta = ArrayList<Meta>()
+    protected val meta = CopyOnWriteArrayList<Meta>()
     protected val version = Version.getCurrentVersionInt()
 
     @Expose
-    protected val metadata = HashMap<String, Any>()
+    protected val tag = ConcurrentHashMap<String, String>()
 
     @Expose
-    protected val metadataMask = HashMap<String, HashMap<String, Boolean>>()
+    protected val metadata = ConcurrentHashMap<String, Any>()
+
+    @Expose
+    protected val metadataMask = ConcurrentHashMap<String, HashMap<String, Boolean>>()
 
     @Suppress("UNCHECKED_CAST")
     protected fun <T> at(vararg index: Pair<Int, T>): T {
@@ -114,6 +119,22 @@ abstract class EntityMetaable {
         } else {
             registerMeta.dataWatcher!!.parse(metadata[key]!!) as T
         }
+    }
+
+    fun getTags(): Set<Map.Entry<String, String>> {
+        return tag.entries
+    }
+
+    fun hasTag(key: String): Boolean {
+        return tag.containsKey(key)
+    }
+
+    fun setTag(key: String, value: String) {
+        tag[key] = value
+    }
+
+    fun removeTag(key: String) {
+        tag.remove(key)
     }
 
     abstract class Meta(val index: Int, val key: String, val def: Any) {
