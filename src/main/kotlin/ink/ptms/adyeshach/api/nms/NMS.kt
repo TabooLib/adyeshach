@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.api.nms
 
+import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -8,7 +10,9 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.lite.SimpleReflection
+import io.izzel.taboolib.module.lite.SimpleVersionControl
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode

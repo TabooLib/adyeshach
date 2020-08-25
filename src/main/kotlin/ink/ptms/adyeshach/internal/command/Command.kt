@@ -4,6 +4,7 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.move.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.base.*
@@ -79,6 +80,24 @@ class Command : BaseMainCommand(), Helper {
             }
             sender.info("Creating...")
             Editor.open(sender as Player, entity)
+        }
+    }
+
+    @SubCommand(description = "pickup and move an adyeshach npc.", type = CommandType.PLAYER)
+    val move = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
+                sender.info("Adyeshach NPC not found.")
+                return
+            }
+            sender.info("Picking up...")
+            Picker.selecet(sender as Player, entity)
         }
     }
 
