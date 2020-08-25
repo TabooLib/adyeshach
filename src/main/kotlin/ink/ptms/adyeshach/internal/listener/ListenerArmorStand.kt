@@ -84,9 +84,9 @@ class ListenerArmorStand : Listener, Helper {
         HEAD_Z({ it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).add(0.0, 0.0, 0.05)) }, { it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).subtract(0.0, 0.0, 0.05)) }, Materials.IRON_HELMET),
 
         // 身体
-        BODY_X({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).add(0.05, 0.0, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).subtract(0.05, 0.0, 0.0)) }, Materials.IRON_CHESTPLATE),
-        BODY_Y({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).add(0.0, 0.05, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).subtract(0.0, 0.05, 0.0)) }, Materials.IRON_CHESTPLATE),
-        BODY_Z({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).add(0.0, 0.0, 0.05)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.HEAD).subtract(0.0, 0.0, 0.05)) }, Materials.IRON_CHESTPLATE),
+        BODY_X({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(0.05, 0.0, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(0.05, 0.0, 0.0)) }, Materials.IRON_CHESTPLATE),
+        BODY_Y({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(0.0, 0.05, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(0.0, 0.05, 0.0)) }, Materials.IRON_CHESTPLATE),
+        BODY_Z({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(0.0, 0.0, 0.05)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(0.0, 0.0, 0.05)) }, Materials.IRON_CHESTPLATE),
 
         // 左手
         LEFT_ARM_X({ it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).add(0.05, 0.0, 0.0)) }, { it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).subtract(0.05, 0.0, 0.0)) }, Materials.STICK),
