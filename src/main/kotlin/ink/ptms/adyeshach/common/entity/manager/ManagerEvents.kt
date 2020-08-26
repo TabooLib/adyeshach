@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.spigotmc.AsyncCatcher
 
 /**
  * @Author sky
@@ -39,24 +40,30 @@ private class ManagerEvents : Listener {
 
     @TSchedule(period = 1, async = true)
     fun onTickPublic() {
+        val asyncCatcher = AsyncCatcher.enabled
+        AsyncCatcher.enabled = false
         Mirror.get("ManagerPublic:onTick(async)", false).eval {
             AdyeshachAPI.getEntityManagerPublic().onTick()
         }
-        Mirror.get("ManagerPublicTemporary:onTick(async)", false).eval {
+        Mirror.get("ManagerPublic:onTick(async)(temporary)", false).eval {
             AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
         }
+        AsyncCatcher.enabled = asyncCatcher
     }
 
     @TSchedule(period = 1, async = true)
     fun onTickPrivate() {
+        val asyncCatcher = AsyncCatcher.enabled
+        AsyncCatcher.enabled = false
         Bukkit.getOnlinePlayers().forEach { player ->
             Mirror.get("ManagerPrivate:onTick(async)", false).eval {
                 AdyeshachAPI.getEntityManagerPrivate(player).onTick()
             }
-            Mirror.get("ManagerPrivateTemporary:onTick(async)", false).eval {
+            Mirror.get("ManagerPrivate:onTick(async)(temporary)", false).eval {
                 AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
             }
         }
+        AsyncCatcher.enabled = asyncCatcher
     }
 
     @TSchedule(period = 1200, async = true)

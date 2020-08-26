@@ -8,7 +8,7 @@ import com.google.common.collect.Maps
  */
 object Mirror {
 
-    val dataMap = Maps.newTreeMap<String, MirrorData>()!!
+    val dataMap = Maps.newConcurrentMap<String, MirrorData>()!!
 
     fun get(id: String, total: Boolean = true): MirrorData {
         return dataMap.computeIfAbsent(id) { MirrorData(total) }

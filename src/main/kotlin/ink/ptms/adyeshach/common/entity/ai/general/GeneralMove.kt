@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.ai.general
 
+import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import ink.ptms.adyeshach.common.path.ResultNavigation
@@ -66,7 +67,7 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
             }
         }
         val plan = positionEntity.clone().add(next.clone().subtract(positionEntity).toVector().normalize().multiply(speed))
-        if (plan.block.isPassable) {
+        if (NMS.INSTANCE.getBlockHeight(plan.block) == 0.0) {
             entity.teleport(plan.x, plan.y, plan.z)
         } else if (pathType != PathType.FLY) {
             entity.setTag("isJumping", "true")

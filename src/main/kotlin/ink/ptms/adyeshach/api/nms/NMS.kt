@@ -19,9 +19,9 @@ import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.block.Block
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
-import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -102,7 +102,7 @@ abstract class NMS {
 
     abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
 
-    abstract fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position>
+    abstract fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position>
 
     abstract fun getEntityDataWatcher(entity: Entity): Any
 
@@ -113,6 +113,8 @@ abstract class NMS {
     abstract fun parseVec3d(obj: Any): Vector
 
     abstract fun generateRandomPosition(entity: Creature, inWater: Boolean): Vector?
+
+    abstract fun getBlockHeight(block: Block): Double
 
     companion object {
 

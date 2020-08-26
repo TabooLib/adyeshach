@@ -425,11 +425,17 @@ class NMSImpl : NMS() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getNavigationPathList(mob: Mob, location: Location): MutableList<Position> {
-        val pathEntity = (mob as CraftMob).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
-        val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
-        return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
+    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
+    override fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position> {
+        if (version >= 11400) {
+            val pathEntity = (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
+            val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
+            return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
+        } else {
+            val pathEntity = (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(net.minecraft.server.v1_12_R1.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+            val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as Array<PathPoint>
+            return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
+        }
     }
 
     override fun getEntityDataWatcher(entity: Entity): Any {
@@ -460,5 +466,15 @@ class NMSImpl : NMS() {
             RandomPositionGenerator.a((entity as CraftCreature).handle, 10, 7)
         } ?: return null
         return Vector(vec3d.x, vec3d.y, vec3d.z)
+    }
+
+    override fun getBlockHeight(block: org.bukkit.block.Block): Double {
+        return if (version >= 11300) {
+            block.boundingBox.maxY - block.y
+        } else {
+            val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
+            val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
+            b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+        }
     }
 }

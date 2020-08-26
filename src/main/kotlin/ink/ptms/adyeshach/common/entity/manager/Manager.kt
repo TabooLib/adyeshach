@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.manager
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import io.izzel.taboolib.util.Reflection
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -54,7 +55,7 @@ abstract class Manager {
         if (entityTypes.bukkitType == null) {
             throw RuntimeException("Entity \"${entityTypes.name}\" not supported this minecraft version.")
         }
-        val entityInstance = entityTypes.entityBase.newInstance()
+        val entityInstance = entityTypes.newInstance()
         function.invoke(entityInstance)
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })

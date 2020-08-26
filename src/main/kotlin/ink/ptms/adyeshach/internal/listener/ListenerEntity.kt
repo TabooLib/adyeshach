@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.internal.listener
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
@@ -14,6 +11,7 @@ import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.util.Vector
 
@@ -45,12 +43,19 @@ class ListenerEntity : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun e(e: AdyeshachEntityVisibleEvent) {
         if (e.visible && e.entity is AdyEntityLiving) {
             Tasks.task {
                 e.entity.updateEquipment()
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun e(e: AdyeshachEntityTeleportEvent) {
+        e.entity.getPassengers().forEach {
+            it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
         }
     }
 }

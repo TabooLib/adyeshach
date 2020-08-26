@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.type.*
 import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.path.PathType
+import io.izzel.taboolib.util.Reflection
 import org.bukkit.entity.EntityType
 
 /**
@@ -818,6 +819,12 @@ enum class EntityTypes(
             AdyFishingHook::class.java,
             "FISHING_BOBBER"
     );
+
+    val constructor = Reflection.getConstructor(entityBase)
+
+    fun newInstance(): EntityInstance {
+        return constructor.newInstance() as EntityInstance
+    }
 
     fun getEntityTypeNMS(): Any {
         return NMS.INSTANCE.getEntityTypeNMS(this)

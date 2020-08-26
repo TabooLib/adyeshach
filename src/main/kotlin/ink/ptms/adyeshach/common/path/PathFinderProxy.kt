@@ -11,7 +11,7 @@ import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.entity.Mob
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -34,10 +34,7 @@ object PathFinderProxy {
         if (start.world!!.name != target.world!!.name) {
             throw PathException("cannot request navigation in different worlds.")
         }
-        val proxyEntity = proxyEntity[start.world!!.name]!!
-        if (proxyEntity.spawnFailed.contains(pathType)) {
-            throw PathException("navigation proxy did not complete initialization.")
-        }
+        val proxyEntity = proxyEntity[start.world!!.name] ?: throw PathException("navigation proxy did not complete initialization.")
         proxyEntity.schedule.add(PathSchedule(start, target, pathType, request, call))
     }
 
@@ -55,18 +52,21 @@ object PathFinderProxy {
         proxyEntity.values.forEach { it.entity.values.forEach { entity -> entity.remove() } }
     }
 
-    @TSchedule(period = 20)
+    @TSchedule(period = 100)
     private fun check() {
         Bukkit.getWorlds().forEach {
             Mirror.get("PathFinderProxy:onCheck:${it.name}", false).eval {
                 val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
-                pathEntity.entity.values.removeIf { entity -> !entity.isValid }
-                PathType.values().filterNot { pathType -> pathEntity.entity.containsKey(pathType) && pathType.supportVersion <= version }.forEach e@{ pathType ->
-                    val proxyEntity = it.spawn(Location(it, 0.0, 100.0, 0.0), pathType.entity) { entity -> pathEntity.entity[pathType] = entity }.silent()
-                    if (proxyEntity.isValid) {
-                        pathEntity.spawnFailed.remove(pathType)
-                    } else {
-                        pathEntity.spawnFailed.add(pathType)
+                for (pathType in PathType.values()) {
+                    // 版本允许
+                    if (pathType.supportVersion <= version) {
+                        // 实体不存在或失效
+                        if (!pathEntity.entity.containsKey(pathType) || !pathEntity.entity[pathType]!!.isValid) {
+                            it.spawn(Location(it, 0.0, 100.0, 0.0), pathType.entity) { entity ->
+                                pathEntity.entity.put(pathType, entity)?.remove()
+                                entity.customName = "Adyeshach Pathfinder Proxy"
+                            }.silent()
+                        }
                     }
                 }
             }
@@ -91,7 +91,9 @@ object PathFinderProxy {
                                 if (pathList.isNotEmpty() || schedule.retry++ > 4) {
                                     schedule.call.invoke(ResultNavigation(pathList, schedule.beginTime, time))
                                     pathEntity.schedule.remove(schedule)
+                                    println(" done ")
                                 }
+                                println("retry ${entity.location} ${entity.location.chunk.isLoaded}")
                             }
                             Request.RANDOM_POSITION -> {
                                 val position = NMS.INSTANCE.generateRandomPosition(entity, entity.location.block.isLiquid)
@@ -107,8 +109,7 @@ object PathFinderProxy {
         }
     }
 
-    private fun Mob.silent(): Mob {
-        customName = "Adyeshach Pathfinder Proxy"
+    private fun Creature.silent(): Creature {
         isSilent = true
         isCollidable = false
         isInvulnerable = true

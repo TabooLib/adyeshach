@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.api.Settings
-import ink.ptms.adyeshach.api.event.AdyeshachEntityDestroyEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editors
@@ -25,6 +22,7 @@ import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
@@ -59,7 +57,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 实体逻辑
      */
-    val pathfinder = ArrayList<Pathfinder>()
+    val pathfinder = CopyOnWriteArrayList<Pathfinder>()
 
     init {
         registerMetaByteMask(0, "onFire", 0x01)
@@ -197,7 +195,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置
      */
     fun teleport(location: Location) {
-        position = EntityPosition.fromLocation(location)
+        val event = AdyeshachEntityTeleportEvent(this, location).call()
+        if (event.isCancelled) {
+            return
+        }
+        position = EntityPosition.fromLocation(event.location)
         forViewers {
             NMS.INSTANCE.teleportEntity(it, index, location)
         }
@@ -283,6 +285,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getPassengers().isNotEmpty()
     }
 
+    fun hasVehicle(): Boolean {
+        return getVehicle() != null
+    }
+
     fun getVehicle(): EntityInstance? {
         return manager?.getEntities()?.firstOrNull { uniqueId in it.passengers }
     }
@@ -294,25 +300,38 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return passengers.mapNotNull { manager!!.getEntityByUniqueId(it) }.toList()
     }
 
-    fun addPassenger(entity: EntityInstance) {
-        if (manager == null) {
+    fun addPassenger(vararg entity: EntityInstance) {
+        if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        getVehicle()?.removePassenger(this)
-        passengers.add(entity.uniqueId)
-        forViewers {
-            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        // 禁止套娃
+        entity.forEach { it.removePassenger(this) }
+        // 实体变动后发包
+        if (passengers.addAll(entity.map { it.uniqueId })) {
+            forViewers {
+                NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+            }
         }
     }
 
-    fun removePassenger(entity: EntityInstance) {
-        if (manager == null) {
+    fun removePassenger(vararg entity: EntityInstance) {
+        if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        getVehicle()?.removePassenger(this)
-        passengers.remove(entity.uniqueId)
+        if (passengers.removeAll(entity.map { it.uniqueId })) {
+            forViewers {
+                NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+            }
+        }
+    }
+
+    fun clearPassengers() {
+        if (manager == null && getPassengers().isEmpty()) {
+            return
+        }
+        passengers.clear()
         forViewers {
-            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+            NMS.INSTANCE.updatePassengers(it, index)
         }
     }
 

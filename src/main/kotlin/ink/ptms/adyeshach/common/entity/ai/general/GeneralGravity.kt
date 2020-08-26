@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.common.entity.ai.general
 
+import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import io.izzel.taboolib.module.lite.SimpleCounter
+import net.minecraft.server.v1_16_R1.NavigationAbstract
 import org.bukkit.Location
 import org.bukkit.block.Block
 
@@ -33,7 +35,9 @@ class GeneralGravity(entity: EntityInstance) : Pathfinder(entity) {
             x = locEntity.x
             z = locEntity.z
             b = getHeightBlock(locEntity.clone())
-            by = b?.boundingBox?.maxY ?: 0.0
+            if (b != null) {
+                by = NMS.INSTANCE.getBlockHeight(b!!) + b!!.y
+            }
         }
         if (b == null) {
             return
@@ -60,6 +64,6 @@ class GeneralGravity(entity: EntityInstance) : Pathfinder(entity) {
             return null
         }
         val block = loc.subtract(0.0, 1.0, 0.0).block
-        return if (block.isPassable) getHeightBlock(block.location) else block
+        return if (NMS.INSTANCE.getBlockHeight(block) == 0.0) getHeightBlock(block.location) else block
     }
 }

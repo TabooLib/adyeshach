@@ -6,7 +6,9 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @Author sky
  * @Since 2020-08-04 18:28
  */
-open class AdyZombie(entityTypes: EntityTypes = EntityTypes.ZOMBIE) : AdyMob(entityTypes) {
+open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
+
+    constructor(): this(EntityTypes.ZOMBIE)
 
     init {
         /**
