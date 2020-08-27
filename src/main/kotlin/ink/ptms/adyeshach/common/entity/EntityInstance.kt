@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
@@ -354,6 +355,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
         forViewers {
             NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        }
+    }
+
+    fun displayAnimation(animation: BukkitAnimation) {
+        forViewers {
+            NMS.INSTANCE.sendAnimation(it, index, animation.id)
         }
     }
 

@@ -116,6 +116,8 @@ abstract class NMS {
 
     abstract fun getBlockHeight(block: Block): Double
 
+    abstract fun sendAnimation(player: Player, id: Int, type: Int)
+
     companion object {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")

@@ -23,6 +23,7 @@ import org.bukkit.World
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
@@ -476,5 +477,9 @@ class NMSImpl : NMS() {
             val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
             b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
         }
+    }
+
+    override fun sendAnimation(player: Player, id: Int) {
+        sendPacket(player, PacketPlayOutAnimation(), "a" to id, "b" to id)
     }
 }
