@@ -22,7 +22,6 @@ import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.util.Vector
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -236,20 +235,21 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体看向某个坐标
      */
-    fun controllerLook(location: Location, smooth: Boolean = true, smoothSpeed: Int = 6) {
+    fun controllerLook(location: Location, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
         position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-            controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothSpeed)
+            controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothInternal)
         }
     }
 
-    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothSpeed: Int = 6) {
+    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
         if (smooth && pathfinder.any { it is GeneralSmoothLook }) {
             val look = pathfinder.first { it is GeneralSmoothLook } as GeneralSmoothLook
             look.yaw = yaw
             look.pitch = pitch
-            look.speed = smoothSpeed
+            look.isReset = true
             look.isLooking = true
+            look.interval = smoothInternal
         } else {
             setHeadRotation(yaw, pitch)
         }

@@ -15,5 +15,6 @@ Database:
     collection: adyeshach
 
 Settings:
+  debug: false
   editor-mode: BOOK
   visible-distance: 64

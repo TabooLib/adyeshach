@@ -1,61 +1,101 @@
 package ink.ptms.adyeshach.common.entity.ai.general
 
+import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Pathfinder
 import io.izzel.taboolib.module.lite.SimpleCounter
 
 /**
- * 实体平滑视角改变
- *
  * @Author sky
  * @Since 2020-08-19 22:09
  */
 class GeneralSmoothLook(entity: EntityInstance) : Pathfinder(entity) {
 
-    /**
-     * 平滑移动视角的周期 (ticks)
+    /*
+        -180  -135  -90  -45  0  +45  +90  +135  +180
+
      */
-    var speed = 6
-        set(value) {
-            field = value
-            init()
-        }
 
     var yaw = 0f
         set(value) {
-            field = value
-            init()
+            field = normalizeYaw(value)
         }
 
     var pitch = 0f
-        set(value) {
-            field = value
-            init()
-        }
+    var interval = 22.5f
 
+    var isReset = true
     var isLooking = false
 
-    private var deltaYaw = 0f
-    private var deltaPitch = 0f
-    private var counterSmoothLook = SimpleCounter(speed, true)
+    private var t = 0f
+    private var y = 0f
+    private var i = true
+    private var counter = SimpleCounter(2)
 
     override fun shouldExecute(): Boolean {
         return isLooking
     }
 
     override fun onTick() {
-        if (counterSmoothLook.next()) {
-            isLooking = false
-            counterSmoothLook.reset()
-        } else {
-            entity.setHeadRotation(entity.position.yaw + deltaYaw, entity.position.pitch + deltaPitch)
+        if (counter.next()) {
+            t = entity.position.yaw
+            if (isReset) {
+                isReset = false
+                if (yaw.coerceAtLeast(t) - yaw.coerceAtMost(t) > 180) {
+                    y = if (yaw > t) {
+                        if (t > 0) {
+                            180f * 2 + t
+                        } else {
+                            -180f * 2 - t
+                        }
+                    } else {
+                        yaw
+                    }
+                } else {
+                    y = yaw
+                    i = yaw > t
+                }
+            }
+            t = if (i) {
+                if (t + interval >= y) {
+                    isReset = true
+                    isLooking = false
+                    y
+                } else {
+                    t + interval
+                }
+            } else {
+                if (t - interval <= y) {
+                    isReset = true
+                    isLooking = false
+                    y
+                } else {
+                    t - interval
+                }
+            }
+            // 防止大陀螺
+            // 写了9个小时还是有陀螺bug，爷佛了
+            val normalizeYaw = normalizeYaw(t)
+            if (normalizeYaw.coerceAtLeast(yaw) - normalizeYaw.coerceAtMost(yaw) < interval) {
+                t = yaw
+                isReset = true
+                isLooking = false
+            }
+            if (Settings.get().debug) {
+                println("[Adyeshach DEBUG] GeneralSmoothLook ${normalizeYaw(t)} $yaw")
+            }
+            entity.setHeadRotation(normalizeYaw(t), pitch)
         }
     }
 
-    private fun init() {
-        deltaYaw = (yaw - entity.position.yaw) / speed
-        deltaPitch = (pitch - entity.position.pitch) / speed
-        counterSmoothLook = SimpleCounter(speed, true)
+    fun normalizeYaw(yaw: Float): Float {
+        var y = yaw
+        y %= 360.0f
+        if (y >= 180.0f) {
+            y -= 360.0f
+        } else if (y < -180.0f) {
+            y += 360.0f
+        }
+        return y
     }
-
 }

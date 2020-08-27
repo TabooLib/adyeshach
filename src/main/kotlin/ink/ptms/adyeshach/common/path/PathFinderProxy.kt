@@ -23,6 +23,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.world.ChunkUnloadEvent
+import org.bukkit.util.Vector
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -97,6 +98,7 @@ object PathFinderProxy {
                     val entity = pathEntity.entity[schedule.pathType]
                     if (entity != null) {
                         val time = System.currentTimeMillis()
+                        entity.fallDistance = 0f
                         entity.setGravity(true)
                         entity.teleport(schedule.start)
                         when (schedule.request) {
