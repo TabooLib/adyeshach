@@ -15,7 +15,7 @@ class GeneralSmoothLook(entity: EntityInstance) : Pathfinder(entity) {
     /**
      * 平滑移动视角的周期 (ticks)
      */
-    var speed = 25
+    var speed = 6
         set(value) {
             field = value
             init()

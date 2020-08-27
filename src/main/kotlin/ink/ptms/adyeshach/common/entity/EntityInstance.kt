@@ -22,6 +22,7 @@ import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.util.Vector
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -235,25 +236,22 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体看向某个坐标
      */
-    fun controllerLook(location: Location) {
+    fun controllerLook(location: Location, smooth: Boolean = true, smoothSpeed: Int = 6) {
         position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-            controllerLook(entityLocation.yaw, entityLocation.pitch)
+            controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothSpeed)
         }
     }
 
-    fun controllerLook(yaw: Float, pitch: Float) {
-        if (pathfinder.any { it is GeneralSmoothLook }) {
+    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothSpeed: Int = 6) {
+        if (smooth && pathfinder.any { it is GeneralSmoothLook }) {
             val look = pathfinder.first { it is GeneralSmoothLook } as GeneralSmoothLook
-            position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
-                look.yaw = yaw
-                look.pitch = pitch
-                look.isLooking = true
-            }
+            look.yaw = yaw
+            look.pitch = pitch
+            look.speed = smoothSpeed
+            look.isLooking = true
         } else {
-            position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
-                setHeadRotation(yaw, pitch)
-            }
+            setHeadRotation(yaw, pitch)
         }
     }
 
@@ -261,6 +259,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 使实体移动到某个坐标
      */
     fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.2) {
+        if (hasVehicle()) {
+            return
+        }
         if (pathType.supportVersion > version) {
             throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
         }
@@ -278,6 +279,18 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             move.speed = speed
             move.pathType = pathType
             move.resultNavigation = it as ResultNavigation
+        }
+    }
+
+    /**
+     * 使实体停止移动
+     */
+    fun controllerStopMove() {
+        if (pathfinder.any { it is GeneralMove }) {
+            pathfinder.removeIf { it is GeneralMove }
+            pathfinder.add(GeneralMove(this))
+            removeTag("isMoving")
+            removeTag("isJumping")
         }
     }
 

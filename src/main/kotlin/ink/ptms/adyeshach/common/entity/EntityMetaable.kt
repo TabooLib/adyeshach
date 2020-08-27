@@ -30,7 +30,6 @@ abstract class EntityMetaable {
     protected val meta = CopyOnWriteArrayList<Meta>()
     protected val version = Version.getCurrentVersionInt()
 
-    @Expose
     protected val tag = ConcurrentHashMap<String, String>()
 
     @Expose

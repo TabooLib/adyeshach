@@ -59,7 +59,7 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
             entity.controllerLook(positionNext.clone().run {
                 y = positionEntity.y + (entity.entityType.entitySize.height * 0.9)
                 this
-            })
+            }, smooth = false)
         }
         val next = positionNext.clone().also {
             if (pathType != PathType.FLY) {

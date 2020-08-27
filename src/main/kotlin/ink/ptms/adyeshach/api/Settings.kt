@@ -5,6 +5,10 @@ import ink.ptms.adyeshach.common.editor.EditorMode
 
 class Settings {
 
+    val debug: Boolean by lazy {
+        Adyeshach.conf.getBoolean("Settings.debug")
+    }
+
     val editorMode: EditorMode by lazy {
         try {
             EditorMode.valueOf(Adyeshach.conf.getString("Settings.editor-mode", "BOOK")!!.toUpperCase())

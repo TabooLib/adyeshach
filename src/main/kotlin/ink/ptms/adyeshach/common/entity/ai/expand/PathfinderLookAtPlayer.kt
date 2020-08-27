@@ -13,12 +13,12 @@ import io.izzel.taboolib.util.lite.Numbers
 class PathfinderLookAtPlayer(entity: EntityInstance) : Pathfinder(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.02)
+        return Numbers.random(0.02) && !entity.isPathfinderMoving()
     }
 
     override fun onTick() {
         entity.viewPlayers.getViewers().minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
-            entity.controllerLook(it.location)
+            entity.controllerLook(it.eyeLocation, smooth = true)
         }
     }
 }

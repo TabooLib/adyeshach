@@ -1,19 +1,31 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.ai.expand.PathfinderLookAtPlayer
+import ink.ptms.adyeshach.common.entity.ai.expand.PathfinderRandomLookaround
+import ink.ptms.adyeshach.common.entity.ai.expand.PathfinderRandomStrollLand
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
+import ink.ptms.adyeshach.common.entity.type.AdyWitherSkeleton
+import ink.ptms.adyeshach.common.path.PathFinderProxy
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.packet.Packet
+import io.izzel.taboolib.module.packet.TPacket
 import net.minecraft.server.v1_12_R1.BlockPosition
+import org.bukkit.Material
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.Pig
 import org.bukkit.entity.Player
 import org.bukkit.entity.Villager
+import org.bukkit.inventory.ItemStack
 
 /**
  * @author Arasple
@@ -29,21 +41,11 @@ object TestV {
             sender as Player
 
             val manager = AdyeshachAPI.getEntityManagerPublicTemporary()
-            val spider = manager.create(EntityTypes.SPIDER, sender.location)
-            val villager = manager.create(EntityTypes.SKELETON, sender.location.add(2.0, 0.0, 2.0))
+            val spider = manager.create(EntityTypes.WITHER_SKELETON, sender.location) as AdyWitherSkeleton
 
-            Tasks.delay(20) {
-                spider.addPassenger(villager)
-            }
-            Tasks.delay(40) {
-                spider.pathfinder.add(GeneralMove(spider))
-                spider.pathfinder.add(GeneralGravity(spider))
-                spider.controllerMove(sender.location)
-            }
-            Tasks.delay(100) {
-                spider.removePassenger(villager)
-            }
-
+            spider.pathfinder.add(GeneralSmoothLook(spider))
+            spider.pathfinder.add(PathfinderLookAtPlayer(spider))
+            spider.setItemInMainHand(ItemStack(Material.STONE_SWORD))
             sender.sendMessage("done. ")
         }
 }

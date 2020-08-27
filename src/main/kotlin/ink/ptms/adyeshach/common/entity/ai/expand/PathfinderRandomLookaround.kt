@@ -13,12 +13,12 @@ import io.izzel.taboolib.util.lite.Numbers
 class PathfinderRandomLookaround(entity: EntityInstance) : Pathfinder(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.02)
+        return Numbers.random(0.02) && !entity.isPathfinderMoving()
     }
 
     override fun onTick() {
         entity.position.run {
-            entity.controllerLook(yaw + Numbers.getRandomDouble(-90, 90).toFloat(), 0f)
+            entity.controllerLook(yaw + Numbers.getRandomDouble(-90, 90).toFloat(), Numbers.getRandomDouble(-1, 1).toFloat())
         }
     }
 }
