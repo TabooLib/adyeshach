@@ -479,7 +479,7 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun sendAnimation(player: Player, id: Int) {
-        sendPacket(player, PacketPlayOutAnimation(), "a" to id, "b" to id)
+    override fun sendAnimation(player: Player, id: Int, type: Int) {
+        sendPacket(player, PacketPlayOutAnimation(), "a" to id, "b" to type)
     }
 }
