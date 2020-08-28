@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.db.local.SecuredFile
@@ -85,20 +86,15 @@ private class ManagerEvents : Listener {
     }
 
     @EventHandler
-    fun e(e: PlayerJoinEvent) {
+    fun e(e: AdyeshachPlayerJoinEvent) {
         AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
         AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
-        Tasks.delay(100, true) {
-            if (!e.player.isOnline) {
-                return@delay
-            }
-            Mirror.get("ManagerPrivate:onLoad(async)").eval {
-                AdyeshachAPI.getEntityManagerPrivate(e.player).onEnable()
-            }
+        Mirror.get("ManagerPrivate:onLoad(async)").eval {
+            AdyeshachAPI.getEntityManagerPrivate(e.player).onEnable()
         }
     }
 

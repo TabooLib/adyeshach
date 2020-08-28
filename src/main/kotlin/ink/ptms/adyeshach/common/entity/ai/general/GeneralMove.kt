@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.path.ResultNavigation
 import ink.ptms.adyeshach.common.path.PathType
 import io.izzel.taboolib.module.lite.SimpleCounter
@@ -14,7 +14,7 @@ import org.bukkit.Location
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
+class GeneralMove(entity: EntityInstance) : Controller(entity) {
 
     private var i = 0
     private var counterLook = SimpleCounter(2)
@@ -79,6 +79,6 @@ class GeneralMove(entity: EntityInstance) : Pathfinder(entity) {
     }
 
     fun getGravity(): GeneralGravity {
-        return entity.pathfinder.first { it is GeneralGravity } as GeneralGravity
+        return entity.getController(GeneralGravity::class)!!
     }
 }

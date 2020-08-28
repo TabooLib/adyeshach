@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.BukkitUtils
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.Color
 import org.bukkit.entity.Player
@@ -22,6 +23,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
 
     init {
+        registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
         registerMeta(at(11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
                 .from(Editors.COLOR)
                 .build()
@@ -129,6 +131,24 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     override fun clear() {
         equipment.clear()
+    }
+
+    /**
+     * 尸体状态
+     */
+    fun die() {
+        setHealth(-1f)
+        Tasks.delay(15) {
+            setHealth(1f)
+        }
+    }
+    
+    fun setHealth(value: Float) {
+        setMetadata("health", value)
+    }
+
+    fun getHealth(): Float {
+        return getMetadata("health")
     }
 
     fun setPotionEffectColor(value: Color) {

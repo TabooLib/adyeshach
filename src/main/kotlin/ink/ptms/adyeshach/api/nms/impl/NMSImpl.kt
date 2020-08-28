@@ -14,6 +14,8 @@ import ink.ptms.adyeshach.common.entity.element.VillagerData
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
+import net.minecraft.server.v1_11_R1.PacketPlayOutEntityEffect
+import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_9_R2.WorldSettings
 import org.bukkit.GameMode
@@ -481,5 +483,13 @@ class NMSImpl : NMS() {
 
     override fun sendAnimation(player: Player, id: Int, type: Int) {
         sendPacket(player, PacketPlayOutAnimation(), "a" to id, "b" to type)
+    }
+
+    override fun sendAttachEntity(player: Player, attached: Int, holding: Int) {
+        sendPacket(player, PacketPlayOutAttachEntity(), "a" to attached, "b" to holding)
+    }
+
+    override fun sendPlayerSleeping(player: Player, id: Int, location: Location) {
+        sendPacket(player, PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
     }
 }

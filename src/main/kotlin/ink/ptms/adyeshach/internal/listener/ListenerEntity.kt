@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
+import net.minecraft.server.v1_16_R1.PacketPlayInFlying
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -24,6 +25,10 @@ class ListenerEntity : Listener {
 
     @TPacket(type = TPacket.Type.RECEIVE)
     fun e(player: Player, packet: Packet): Boolean {
+        if (packet.`is`("PacketPlayInPosition") && player.name !in AdyeshachAPI.onlinePlayers) {
+            AdyeshachAPI.onlinePlayers.add(player.name)
+            AdyeshachPlayerJoinEvent(player).call()
+        }
         if (packet.`is`("PacketPlayInUseEntity")) {
             val entity = AdyeshachAPI.getEntityFromEntityId(packet.read("a", Int::class.java), player) ?: return true
             if (packet.read("action").toString() == "ATTACK") {

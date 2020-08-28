@@ -21,9 +21,12 @@ import org.bukkit.entity.Player
 import java.io.File
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 object AdyeshachAPI {
 
+    @PlayerContainer
+    val onlinePlayers = CopyOnWriteArrayList<String>()
     @PlayerContainer
     private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
     private val managerPrivateTemp = ConcurrentHashMap<String, ManagerPrivateTemp>()

@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -26,7 +28,10 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
     private val gameProfile = GameProfile()
 
     @Expose
-    private var hideFromTabList = true
+    private var isSleepingLegacy = false
+
+    @Expose
+    var isHideFromTabList = true
         set(value) {
             if (value) {
                 forViewers { removePlayerInfo(it) }
@@ -43,23 +48,34 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
          * 1.10 -> 13
          * 1.9 -> 12
          */
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCapeEnabled", 0x01, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacketEnabled", 0x02, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeveEnabled", 0x04, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeveEnabled", 0x08, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPantsEnabled", 0x10, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPantsEnabled", 0x20, true)
-        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHatEnabled", 0x40, true)
-        registerEditor("isHideFromTabList")
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
+        registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
+        registerEditor("isSleepingLegacy")
                 .reset { player, entity, meta ->
-                    hideFromTabList = true
+                    setSleeping(false)
                 }
                 .modify { player, entity, meta ->
-                    hideFromTabList = !hideFromTabList
+                    setSleeping(!isSleeping())
                     Editor.open(player, entity)
                 }
                 .display { _, entity, meta ->
-                    hideFromTabList.toDisplay()
+                    isSleeping().toDisplay()
+                }
+        registerEditor("isHideFromTabList")
+                .reset { player, entity, meta ->
+                    isHideFromTabList = true
+                }
+                .modify { player, entity, meta ->
+                    isHideFromTabList = !isHideFromTabList
+                    Editor.open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    isHideFromTabList.toDisplay()
                 }
         registerEditor("playerName")
                 .reset { player, entity, meta ->
@@ -96,7 +112,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     resetTexture()
                 }
                 .modify { player, entity, meta ->
-                    Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
+                    Signs.fakeSign(player, arrayOf(getTextureName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setTexture(it[0])
                         }
@@ -114,8 +130,15 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
             spawn(viewer) {
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
             }
-            if (hideFromTabList) {
-                removePlayerInfo(viewer)
+            Tasks.delay(1) {
+                if (isHideFromTabList) {
+                    removePlayerInfo(viewer)
+                }
+            }
+            Tasks.delay(5) {
+                if (isSleepingLegacy) {
+                    setSleeping(true)
+                }
             }
         } else {
             removePlayerInfo(viewer)
@@ -160,6 +183,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     setTexture(value, signature)
                 }
             } catch (t: Throwable) {
+                t.printStackTrace()
             }
         }
     }
@@ -236,6 +260,34 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
 
     fun isSkinHatEnabled() {
         return getMetadata("skinHatEnabled")
+    }
+
+    fun setSleeping(value: Boolean) {
+        if (value) {
+            if (version >= 11400) {
+                setPose(BukkitPose.SLEEPING)
+            } else {
+                forViewers {
+                    NMS.INSTANCE.sendPlayerSleeping(it, index, position.toLocation())
+                }
+            }
+        } else {
+            if (version >= 11400) {
+                setPose(BukkitPose.STANDING)
+            } else {
+                displayAnimation(BukkitAnimation.LEAVE_BED)
+            }
+            teleport(position)
+        }
+        isSleepingLegacy = value
+    }
+
+    fun isSleeping(): Boolean {
+        return if (version >= 11400) {
+            getPose() == BukkitPose.SLEEPING
+        } else {
+            isSleepingLegacy
+        }
     }
 
     private fun addPlayerInfo(viewer: Player) {

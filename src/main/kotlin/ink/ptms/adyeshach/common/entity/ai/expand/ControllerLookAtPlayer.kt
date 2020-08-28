@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.ai.expand
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.util.lite.Numbers
 
 /**
@@ -10,15 +10,17 @@ import io.izzel.taboolib.util.lite.Numbers
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class PathfinderLookAtPlayer(entity: EntityInstance) : Pathfinder(entity) {
+class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.02) && !entity.isPathfinderMoving()
+        return Numbers.random(0.01) && !entity.isPathfinderMoving()
     }
 
     override fun onTick() {
         entity.viewPlayers.getViewers().minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
-            entity.controllerLook(it.eyeLocation, smooth = true)
+            if (it.location.distance(entity.position.toLocation()) < 16) {
+                entity.controllerLook(it.eyeLocation, smooth = true)
+            }
         }
     }
 }

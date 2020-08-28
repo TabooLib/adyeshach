@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editors
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
@@ -22,8 +22,10 @@ import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Location
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.reflect.KClass
 
 /**
  * @Author sky
@@ -33,6 +35,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     @Expose
     private var passengers = ConcurrentSet<String>()
+    private val controller = CopyOnWriteArrayList<Controller>()
 
     /**
      * 实体序号
@@ -54,11 +57,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 玩家管理
      */
     val viewPlayers = ViewPlayers()
-
-    /**
-     * 实体逻辑
-     */
-    val pathfinder = CopyOnWriteArrayList<Pathfinder>()
 
     init {
         registerMetaByteMask(0, "onFire", 0x01)
@@ -206,10 +204,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
+    /**
+     * 修改实体位置
+     */
     fun teleport(entityPosition: EntityPosition) {
         this.teleport(entityPosition.toLocation())
     }
 
+    /**
+     * 修改实体位置，并继承实体本身的视角
+     */
     fun teleport(x: Double, y: Double, z: Double) {
         teleport(position.toLocation().run {
             this.x = x
@@ -233,6 +237,27 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
+    fun registerController(controller: Controller) {
+        this.controller.add(controller)
+    }
+
+    fun unregisterController(controller: Controller) {
+        this.controller.remove(controller)
+    }
+
+    fun unregisterController(name: String) {
+        this.controller.removeIf { it.javaClass.simpleName == name }
+    }
+
+    fun getController(): List<Controller> {
+        return this.controller.toList()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Controller> getController(controller: KClass<T>): T? {
+        return (this.controller.firstOrNull { it.javaClass == controller } ?: return null) as T
+    }
+
     /**
      * 使实体看向某个坐标
      */
@@ -243,9 +268,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
     }
 
+    /**
+     * 使实体看向某个视角
+     */
     fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
-        if (smooth && pathfinder.any { it is GeneralSmoothLook }) {
-            val look = pathfinder.first { it is GeneralSmoothLook } as GeneralSmoothLook
+        if (smooth && controller.any { it is GeneralSmoothLook }) {
+            val look = controller.first { it is GeneralSmoothLook } as GeneralSmoothLook
             look.yaw = yaw
             look.pitch = pitch
             look.isReset = true
@@ -267,15 +295,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
         }
         if (pathType == PathType.FLY) {
-            if (pathfinder.none { it is GeneralMove }) {
+            if (controller.none { it is GeneralMove }) {
                 throw RuntimeException("Entity flying movement requires GeneralMove.")
             }
         } else {
-            if (pathfinder.none { it is GeneralMove } || pathfinder.none { it is GeneralGravity }) {
+            if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
                 throw RuntimeException("Entity walking movement requires GeneralMove and GeneralGravity.")
             }
         }
-        val move = pathfinder.first { it is GeneralMove } as GeneralMove
+        val move = controller.first { it is GeneralMove } as GeneralMove
         PathFinderProxy.request(position.toLocation(), location, pathType) {
             move.speed = speed
             move.pathType = pathType
@@ -286,10 +314,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体停止移动
      */
-    fun controllerStopMove() {
-        if (pathfinder.any { it is GeneralMove }) {
-            pathfinder.removeIf { it is GeneralMove }
-            pathfinder.add(GeneralMove(this))
+    fun controllerStill() {
+        if (controller.any { it is GeneralMove }) {
+            controller.removeIf { it is GeneralMove }
+            controller.add(GeneralMove(this))
             removeTag("isMoving")
             removeTag("isJumping")
         }
@@ -482,6 +510,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             }
         }
         // 实体逻辑处理
-        pathfinder.filter { it.shouldExecute() }.forEach { it.onTick() }
+        controller.filter { it.shouldExecute() }.forEach { it.onTick() }
     }
 }

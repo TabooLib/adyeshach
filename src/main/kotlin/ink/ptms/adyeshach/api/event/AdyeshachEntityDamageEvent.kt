@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @Author sky
  * @Since 2020-08-14 19:21
  */
-class AdyeshachEntityDamageEvent(val entity: EntityInstance, var player: Player) : EventCancellable<AdyeshachEntityDamageEvent>() {
+class AdyeshachEntityDamageEvent(val entity: EntityInstance, val player: Player) : EventCancellable<AdyeshachEntityDamageEvent>() {
 
     init {
         async(!Bukkit.isPrimaryThread())

@@ -2,9 +2,8 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.module.lite.SimpleCounter
-import net.minecraft.server.v1_16_R1.NavigationAbstract
 import org.bukkit.Location
 import org.bukkit.block.Block
 
@@ -12,7 +11,7 @@ import org.bukkit.block.Block
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class GeneralGravity(entity: EntityInstance) : Pathfinder(entity) {
+class GeneralGravity(entity: EntityInstance) : Controller(entity) {
 
     private var p = 0.1
     private var x = 0.0

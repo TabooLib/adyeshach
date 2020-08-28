@@ -18,7 +18,6 @@ import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.lite.Materials
 import io.izzel.taboolib.util.lite.Numbers
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -105,7 +104,7 @@ object Editor {
                 .append("").newLine()
                 .append("  Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
                 .append("  Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-                .append("  Pathfinder §7${entity.pathfinder.size} ").append("§c(?)").hoverText(entity.pathfinder.joinToString("\n") { it.javaClass.name }).newLine()
+                .append("  Controller §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                 .append("").newLine()
                 .append("   §7§oX ${entity.position.x}").newLine()
                 .append("   §7§oY ${entity.position.y}").newLine()
@@ -164,7 +163,7 @@ object Editor {
                 .newLine()
                 .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
                 .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-                .append("      Pathfinder §7${entity.pathfinder.size} ").append("§c(?)").hoverText(entity.pathfinder.joinToString("\n") { it.javaClass.name }).newLine()
+                .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                 .newLine().append("      ")
         var i = 0
         entity.listMetadata().sortedBy { it.key }.forEach {

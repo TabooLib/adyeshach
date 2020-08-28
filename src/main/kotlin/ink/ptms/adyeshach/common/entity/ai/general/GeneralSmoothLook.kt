@@ -2,14 +2,14 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.module.lite.SimpleCounter
 
 /**
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class GeneralSmoothLook(entity: EntityInstance) : Pathfinder(entity) {
+class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
 
     /*
         -180  -135  -90  -45  0  +45  +90  +135  +180
@@ -80,9 +80,6 @@ class GeneralSmoothLook(entity: EntityInstance) : Pathfinder(entity) {
                 t = yaw
                 isReset = true
                 isLooking = false
-            }
-            if (Settings.get().debug) {
-                println("[Adyeshach DEBUG] GeneralSmoothLook ${normalizeYaw(t)} $yaw")
             }
             entity.setHeadRotation(normalizeYaw(t), pitch)
         }

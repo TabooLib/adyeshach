@@ -118,6 +118,10 @@ abstract class NMS {
 
     abstract fun sendAnimation(player: Player, id: Int, type: Int)
 
+    abstract fun sendAttachEntity(player: Player, attached: Int, holding: Int)
+
+    abstract fun sendPlayerSleeping(player: Player, id: Int, location: Location)
+
     companion object {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.Pathfinder
+import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.module.lite.SimpleCounter
 
 /**
@@ -10,7 +10,7 @@ import io.izzel.taboolib.module.lite.SimpleCounter
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class GeneralSmoothLookBak(entity: EntityInstance) : Pathfinder(entity) {
+private class GeneralSmoothLookBak(entity: EntityInstance) : Controller(entity) {
 
     /**
      * 平滑移动视角的周期 (ticks)
