@@ -83,7 +83,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "pickup and move an adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "pickup and move adyeshach npc.", type = CommandType.PLAYER)
     val move = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
