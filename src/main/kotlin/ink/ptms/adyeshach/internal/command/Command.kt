@@ -45,8 +45,8 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "remove adyeshach npc.", type = CommandType.ALL)
-    val remove = object : BaseSubCommand() {
+    @SubCommand(description = "remove adyeshach npc.", type = CommandType.ALL, aliases = ["remove"])
+    val delete = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
@@ -65,7 +65,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "modify adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "modify adyeshach npc.", type = CommandType.PLAYER, aliases = ["edit"])
     val modify = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
@@ -96,8 +96,49 @@ class Command : BaseMainCommand(), Helper {
                 sender.info("Adyeshach NPC not found.")
                 return
             }
+            if (entity.getController().isNotEmpty()) {
+                sender.error("Please unregister the Adyeshach NPC controller first.")
+                return
+            }
             sender.info("Picking up...")
-            Picker.selecet(sender as Player, entity)
+            Picker.select(sender as Player, entity)
+        }
+    }
+
+    @SubCommand(description = "move adyeshach npc.", type = CommandType.PLAYER, aliases = ["tphere"])
+    val movehere = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
+                sender.info("Adyeshach NPC not found.")
+                return
+            }
+            sender.info("Moving...")
+            entity.teleport((sender as Player).location)
+            entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
+        }
+    }
+
+    @SubCommand(description = "teleport to adyeshach npc.", type = CommandType.PLAYER, aliases = ["tp"])
+    val teleport = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
+                sender.info("Adyeshach NPC not found.")
+                return
+            }
+            sender.info("Teleport...")
+            (sender as Player).teleport(entity.position.toLocation())
         }
     }
 
