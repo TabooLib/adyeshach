@@ -35,7 +35,7 @@ object Picker : Helper {
             it.distance = 1.0
             if (entityInstance != null) {
                 TLocale.Display.sendTitle(player, "§3§lMove Entity", "§7Adjust Distance: §8${Numbers.format(it.distance)}", 0, 20, 0)
-                TLocale.Display.sendActionBar(player, "§7Press §fF §7 to settled entity's position §8| §7Press §fShift+F §7to reset")
+                TLocale.Display.sendActionBar(player, "§7Press §fF §7to settled entity's position §8| §7Press §fSHIFT + F §7to reset")
             }
         }
     }
@@ -70,7 +70,7 @@ object Picker : Helper {
                 select.distance -= amount
             }
             TLocale.Display.sendTitle(e.player, "§3§lMove Entity", "§7Adjust Distance: §8${Numbers.format(select.distance)}", 0, 20, 0)
-            TLocale.Display.sendActionBar(e.player, "§7Press §fF §7 to settled entity's position §8| §7Press §fShift+F §7to reset")
+            TLocale.Display.sendActionBar(e.player, "§7Press §fF §7to settled entity's position §8| §7Press §fSHIFT + F §7to reset")
             process(e.player, entity)
         }
 

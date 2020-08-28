@@ -33,7 +33,7 @@ class ListenerArmorStand : Listener, Helper {
     fun e() {
         Bukkit.getOnlinePlayers().forEach {
             if (it.isOp && Editor.editArmorStand.containsKey(it.name) && Items.hasLore(it.inventory.itemInMainHand, "Adyeshach Tool")) {
-                TLocale.Display.sendActionBar(it, "§7Press §fSHIFT + LEFT_CLICK §7to increment §8| §7Press §fSHIFT + RIGHT_CLICK §7to decrement")
+                TLocale.Display.sendActionBar(it, "§7Press §fSHIFT + LEFT-CLICK §7to increment §8| §7Press §fSHIFT + RIGHT-CLICK §7to decrement")
             }
         }
     }
@@ -68,7 +68,7 @@ class ListenerArmorStand : Listener, Helper {
                                     e.player.closeInventory()
                                     e.player.inventory.setItemInMainHand(ItemBuilder(e.player.inventory.itemInMainHand).name("&7Angle: &f${angle.name}").colored().build())
                                     TLocale.Display.sendTitle(e.player, "§3§lArmorStand Angel", "§7Select Angle: §8${angle.name}", 0, 40, 10)
-                                    TLocale.Display.sendActionBar(e.player, "§7Press §fSHIFT + LEFT_CLICK §7to increment §8| §7Press §fSHIFT + RIGHT_CLICK §7to decrement")
+                                    TLocale.Display.sendActionBar(e.player, "§7Press §fSHIFT + LEFT-CLICK §7to increment §8| §7Press §fSHIFT + RIGHT-CLICK §7to decrement")
                                 }
                             } catch (t: Throwable) {
                                 t.printStackTrace()
