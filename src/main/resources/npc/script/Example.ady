@@ -1,0 +1,6 @@
+def main:
+    use public temporary
+    create npc1 villager at world,0,100,0
+    wait 2s
+    select npc1
+    delete

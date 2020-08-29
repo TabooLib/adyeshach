@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
-import ink.ptms.adyeshach.common.entity.element.PositionNull
+import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import io.izzel.taboolib.internal.gson.*
 import io.izzel.taboolib.module.nms.impl.Position

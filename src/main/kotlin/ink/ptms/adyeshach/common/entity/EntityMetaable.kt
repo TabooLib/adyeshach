@@ -5,9 +5,8 @@ import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.entity.element.DataWatcher
-import ink.ptms.adyeshach.common.entity.element.VillagerData
-import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.common.bukkit.data.DataWatcher
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.nms.impl.Position
@@ -19,7 +18,6 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.annotation.concurrent.ThreadSafe
 
 /**
  * @Author sky

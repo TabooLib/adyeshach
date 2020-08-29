@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.common.entity.element.EntityPosition
-import ink.ptms.adyeshach.common.path.PathType
+import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import io.izzel.taboolib.internal.gson.annotations.Expose

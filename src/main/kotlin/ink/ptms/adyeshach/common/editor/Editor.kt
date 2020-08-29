@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.editor
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
-import ink.ptms.adyeshach.common.entity.element.PositionNull
+import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
 import io.izzel.taboolib.Version

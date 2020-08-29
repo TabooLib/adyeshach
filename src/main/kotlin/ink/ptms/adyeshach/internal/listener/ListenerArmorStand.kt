@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.internal.listener
 
 import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.entity.element.EntityRotation
+import ink.ptms.adyeshach.common.bukkit.BukkitRotation
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.command.Helper
 import io.izzel.taboolib.module.inject.TListener
@@ -12,7 +12,6 @@ import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import io.izzel.taboolib.util.lite.Materials
-import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
@@ -93,34 +92,34 @@ class ListenerArmorStand : Listener, Helper {
         BASE_Z({ it.teleport(it.position.add(0.0, 0.0, 1.0)) }, { it.teleport(it.position.subtract(0.0, 0.0, 1.0)) }, Materials.ARMOR_STAND),
 
         // 头部
-        HEAD_X({ it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_HELMET),
-        HEAD_Y({ it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_HELMET),
-        HEAD_Z({ it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.HEAD, it.getRotation(EntityRotation.HEAD).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_HELMET),
+        HEAD_X({ it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_HELMET),
+        HEAD_Y({ it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_HELMET),
+        HEAD_Z({ it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.HEAD, it.getRotation(BukkitRotation.HEAD).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_HELMET),
 
         // 身体
-        BODY_X({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_CHESTPLATE),
-        BODY_Y({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_CHESTPLATE),
-        BODY_Z({ it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.BODY, it.getRotation(EntityRotation.BODY).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_CHESTPLATE),
+        BODY_X({ it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_CHESTPLATE),
+        BODY_Y({ it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_CHESTPLATE),
+        BODY_Z({ it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.BODY, it.getRotation(BukkitRotation.BODY).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_CHESTPLATE),
 
         // 左手
-        LEFT_ARM_X({ it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).subtract(1.0, 0.0, 0.0)) }, Materials.STICK),
-        LEFT_ARM_Y({ it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).subtract(0.0, 1.0, 0.0)) }, Materials.STICK),
-        LEFT_ARM_Z({ it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.LEFT_ARM, it.getRotation(EntityRotation.LEFT_ARM).subtract(0.0, 0.0, 1.0)) }, Materials.STICK),
+        LEFT_ARM_X({ it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).subtract(1.0, 0.0, 0.0)) }, Materials.STICK),
+        LEFT_ARM_Y({ it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).subtract(0.0, 1.0, 0.0)) }, Materials.STICK),
+        LEFT_ARM_Z({ it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.LEFT_ARM, it.getRotation(BukkitRotation.LEFT_ARM).subtract(0.0, 0.0, 1.0)) }, Materials.STICK),
 
         // 右手
-        RIGHT_ARM_X({ it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).subtract(1.0, 0.0, 0.0)) }, Materials.BLAZE_ROD),
-        RIGHT_ARM_Y({ it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).subtract(0.0, 1.0, 0.0)) }, Materials.BLAZE_ROD),
-        RIGHT_ARM_Z({ it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.RIGHT_ARM, it.getRotation(EntityRotation.RIGHT_ARM).subtract(0.0, 0.0, 1.0)) }, Materials.BLAZE_ROD),
+        RIGHT_ARM_X({ it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).subtract(1.0, 0.0, 0.0)) }, Materials.BLAZE_ROD),
+        RIGHT_ARM_Y({ it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).subtract(0.0, 1.0, 0.0)) }, Materials.BLAZE_ROD),
+        RIGHT_ARM_Z({ it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.RIGHT_ARM, it.getRotation(BukkitRotation.RIGHT_ARM).subtract(0.0, 0.0, 1.0)) }, Materials.BLAZE_ROD),
 
         // 左脚
-        LEFT_LEG_X({ it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_LEGGINGS),
-        LEFT_LEG_Y({ it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_LEGGINGS),
-        LEFT_LEG_Z({ it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.LEFT_LEG, it.getRotation(EntityRotation.LEFT_LEG).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_LEGGINGS),
+        LEFT_LEG_X({ it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).subtract(1.0, 0.0, 0.0)) }, Materials.IRON_LEGGINGS),
+        LEFT_LEG_Y({ it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).subtract(0.0, 1.0, 0.0)) }, Materials.IRON_LEGGINGS),
+        LEFT_LEG_Z({ it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.LEFT_LEG, it.getRotation(BukkitRotation.LEFT_LEG).subtract(0.0, 0.0, 1.0)) }, Materials.IRON_LEGGINGS),
 
         // 右脚
-        RIGHT_LEG_X({ it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).add(1.0, 0.0, 0.0)) }, { it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).subtract(1.0, 0.0, 0.0)) }, Materials.GOLDEN_LEGGINGS),
-        RIGHT_LEG_Y({ it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).add(0.0, 1.0, 0.0)) }, { it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).subtract(0.0, 1.0, 0.0)) }, Materials.GOLDEN_LEGGINGS),
-        RIGHT_LEG_Z({ it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).add(0.0, 0.0, 1.0)) }, { it.setRotation(EntityRotation.RIGHT_LEG, it.getRotation(EntityRotation.RIGHT_LEG).subtract(0.0, 0.0, 1.0)) }, Materials.GOLDEN_LEGGINGS);
+        RIGHT_LEG_X({ it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).add(1.0, 0.0, 0.0)) }, { it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).subtract(1.0, 0.0, 0.0)) }, Materials.GOLDEN_LEGGINGS),
+        RIGHT_LEG_Y({ it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).add(0.0, 1.0, 0.0)) }, { it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).subtract(0.0, 1.0, 0.0)) }, Materials.GOLDEN_LEGGINGS),
+        RIGHT_LEG_Z({ it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).add(0.0, 0.0, 1.0)) }, { it.setRotation(BukkitRotation.RIGHT_LEG, it.getRotation(BukkitRotation.RIGHT_LEG).subtract(0.0, 0.0, 1.0)) }, Materials.GOLDEN_LEGGINGS);
 
         fun toItem(): ItemStack {
             return ItemBuilder(item.parseItem()).name("§7$name").build()

@@ -1,11 +1,10 @@
 package ink.ptms.adyeshach.common.entity.ai.expand
 
-import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.path.PathFinderProxy
-import ink.ptms.adyeshach.common.path.Request
-import ink.ptms.adyeshach.common.path.ResultRandomPosition
+import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
+import ink.ptms.adyeshach.common.entity.path.Request
+import ink.ptms.adyeshach.common.entity.path.ResultRandomPosition
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Location
 

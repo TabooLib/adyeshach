@@ -11,9 +11,10 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.35'
+    tabooLibVersion = '5.36'
     loaderVersion = '2.6'
     classifier = null
+    relocate('io.izzel.kether.common', 'ink.ptms.adyeshach.common.script.kether')
 }
 
 task buildJar(dependsOn: [clean, jar])
@@ -23,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    taboo 'io.izzel.kether.common:Kether:1.0'
     compile 'net.citizensnpcs:Citizens:2.0.18'
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11500:11500:all'

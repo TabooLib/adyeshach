@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.EntityRotation
+import ink.ptms.adyeshach.common.bukkit.BukkitRotation
 import org.bukkit.util.EulerAngle
 
 /**
@@ -72,11 +72,11 @@ class AdyArmorStand() : AdyEntityLiving(EntityTypes.ARMOR_STAND) {
         return getMetadata("isMarker")
     }
 
-    fun setRotation(rotation: EntityRotation, eulerAngle: EulerAngle) {
+    fun setRotation(rotation: BukkitRotation, eulerAngle: EulerAngle) {
         setMetadata(rotation.index, eulerAngle)
     }
 
-    fun getRotation(rotation: EntityRotation): EulerAngle {
+    fun getRotation(rotation: BukkitRotation): EulerAngle {
         return getMetadata(rotation.index)
     }
 }

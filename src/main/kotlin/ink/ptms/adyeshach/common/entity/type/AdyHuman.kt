@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.GameProfile
+import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.internal.gson.annotations.Expose

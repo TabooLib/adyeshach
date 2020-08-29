@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import ink.ptms.adyeshach.common.bukkit.BukkitProfession
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
-import ink.ptms.adyeshach.common.entity.element.VillagerData
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import org.bukkit.entity.Villager
 
 /**

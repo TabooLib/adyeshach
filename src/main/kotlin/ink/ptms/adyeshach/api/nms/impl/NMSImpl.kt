@@ -9,12 +9,11 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.element.PositionNull
-import ink.ptms.adyeshach.common.entity.element.VillagerData
+import ink.ptms.adyeshach.common.bukkit.data.PositionNull
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
-import net.minecraft.server.v1_11_R1.PacketPlayOutEntityEffect
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_9_R2.WorldSettings
@@ -25,8 +24,6 @@ import org.bukkit.World
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftMob
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers

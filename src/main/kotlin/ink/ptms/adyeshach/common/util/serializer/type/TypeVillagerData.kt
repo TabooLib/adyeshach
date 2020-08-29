@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import com.google.common.base.Enums
-import ink.ptms.adyeshach.common.entity.element.VillagerData
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import io.izzel.taboolib.internal.gson.*
 import org.bukkit.entity.Villager
@@ -23,7 +23,7 @@ class TypeVillagerData : JsonSerializer<VillagerData>, JsonDeserializer<Villager
     }
 
     override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): VillagerData {
-        return  VillagerData(
+        return VillagerData(
                 Enums.getIfPresent(Villager.Type::class.java, a.asJsonObject.get("type").asString).get(),
                 Enums.getIfPresent(Villager.Profession::class.java, a.asJsonObject.get("profession").asString).get()
         )
