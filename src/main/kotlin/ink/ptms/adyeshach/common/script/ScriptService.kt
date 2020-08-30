@@ -5,15 +5,20 @@ import com.google.common.collect.ImmutableMap
 import com.google.common.collect.Multimap
 import com.google.common.collect.MultimapBuilder
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
+import io.izzel.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import kotlin.collections.ArrayList
 
 
 /**
@@ -28,10 +33,12 @@ object ScriptService : QuestService<ScriptContext> {
     private val runningQuests = MultimapBuilder.hashKeys().arrayListValues().build<String, ScriptContext>()
     private var questMap: Map<String, Quest>? = null
     private var settingsMap: MutableMap<String, Map<String, Any>>? = null
+    private var listener = ArrayList<AutoCloseable>()
 
-    fun getRunningQuestContext() = ImmutableList.copyOf(runningQuests.values())
-
+    @Suppress("UNCHECKED_CAST")
     fun loadAll() {
+        listener.forEach { it.close() }
+        listener.clear()
         questMap = load()
         settingsMap = HashMap()
         for (quest in questMap!!.values) {
@@ -39,8 +46,25 @@ object ScriptService : QuestService<ScriptContext> {
             context.runActions().join()
             settingsMap!![quest.id] = context.persistentData
         }
-        questMap!!.filter { Coerce.toBoolean(settingsMap!![it.value.id]?.get("autostart")) }.forEach {
-            startQuest(ScriptContext.create(it.value))
+        questMap!!.forEach {
+            val trigger = getQuestSettings(it.value.id)["start"].toString()
+            if (trigger == "start") {
+                startQuest(ScriptContext.create(it.value))
+            } else {
+                val event = (Kether.getKnownEvent(trigger) ?: throw LocalizedException.of("unknown-event", trigger)) as KnownEvent<Event>
+                listener.add(Closables.listening(event.eventClass.java) { e ->
+                    val context = ScriptContext.create(it.value)
+                    val player = event.field["player"]
+                    val id = if (player != null) {
+                        context.viewer = Bukkit.getPlayerExact(player.key.invoke(e).toString())
+                        "${it.value.id}:${context.viewer?.name}"
+                    } else {
+                        "${it.value.id}:$trigger"
+                    }
+                    context.persistentData["\$currentEvent"] = e to event
+                    startQuest(id, context)
+                })
+            }
         }
     }
 
@@ -71,6 +95,17 @@ object ScriptService : QuestService<ScriptContext> {
         getRunningQuestContext().forEach { terminateQuest(it) }
     }
 
+    fun getRunningQuestContext(): List<ScriptContext> {
+        return ImmutableList.copyOf(runningQuests.values())
+    }
+
+    fun startQuest(id: String, context: ScriptContext) {
+        runningQuests.put(id, context)
+        context.runActions().thenRunAsync(Runnable {
+            runningQuests.remove(id, context)
+        }, this.executor)
+    }
+
     override fun getRegistry(): QuestRegistry {
         return registry
     }
@@ -88,10 +123,7 @@ object ScriptService : QuestService<ScriptContext> {
     }
 
     override fun startQuest(context: ScriptContext) {
-        runningQuests.put(context.playerIdentifier, context)
-        context.runActions().thenRunAsync(Runnable {
-            runningQuests.remove(context.playerIdentifier, context)
-        }, this.executor)
+        startQuest(UUID.randomUUID().toString(), context)
     }
 
     override fun terminateQuest(context: ScriptContext) {

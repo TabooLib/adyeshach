@@ -16,8 +16,7 @@ class ActionContinue : QuestAction<Void, ScriptContext> {
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        println("continue")
-        context.currentListener?.complete(null)
+        context.getCurrentListener()?.complete(null)
         return CompletableFuture.completedFuture(null)
     }
 

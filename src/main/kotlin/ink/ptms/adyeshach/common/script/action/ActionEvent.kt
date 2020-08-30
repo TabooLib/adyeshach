@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.common.script.ScriptResolver
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
 import org.bukkit.event.Event
+import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -30,8 +31,8 @@ class ActionEvent(val key: String, val symbol: Symbol, val value: Any?) : QuestA
                 is QuestAction<*, *> -> {
                     CompletableFuture<Void>().also { future ->
                         context.runAction("set", value).thenAccept {
-                            val event = context.currentEvent?.first
-                            val known = context.currentEvent?.second
+                            val event = context.getCurrentEvent()?.first
+                            val known = context.getCurrentEvent()?.second
                             if (event != null && known != null) {
                                 (known as KnownEvent<Event>).field[key]?.value?.invoke(event, it)
                             }
@@ -40,8 +41,8 @@ class ActionEvent(val key: String, val symbol: Symbol, val value: Any?) : QuestA
                     }
                 }
                 else -> {
-                    val event = context.currentEvent?.first
-                    val known = context.currentEvent?.second
+                    val event = context.getCurrentEvent()?.first
+                    val known = context.getCurrentEvent()?.second
                     if (event != null && known != null) {
                         (known as KnownEvent<Event>).field[key]?.value?.invoke(event, if (value == "null") null else value)
                     }
@@ -49,8 +50,8 @@ class ActionEvent(val key: String, val symbol: Symbol, val value: Any?) : QuestA
             }
             return CompletableFuture.completedFuture(null)
         } else {
-            val event = context.currentEvent?.first
-            val known = context.currentEvent?.second
+            val event = context.getCurrentEvent()?.first
+            val known = context.getCurrentEvent()?.second
             if (event != null && known != null) {
                 return CompletableFuture.completedFuture((known as KnownEvent<Event>).field[key]?.key?.invoke(event))
             }

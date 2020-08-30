@@ -26,11 +26,25 @@ class ScriptContext(
         persistentData: Map<String, Any>,
         childKey: String?,
         anonymous: Boolean,
-        var viewer: Player?
 ) : PersistentQuestContext(service, parent, quest, playerIdentifier, runningBlock, index, dataKey, tempData, persistentData, childKey, anonymous) {
 
-    var currentEvent: Pair<Event, KnownEvent<*>>? = null
-    var currentListener: CompletableFuture<Void>? = null
+    var viewer: Player?
+        set(value) {
+            persistentData["\$viewer"] = value
+        }
+        get() {
+            return (persistentData["\$viewer"] ?: return null) as Player
+        }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getCurrentEvent(): Pair<Event, KnownEvent<*>>? {
+        return (persistentData["\$currentEvent"] ?: return null) as Pair<Event, KnownEvent<*>>
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getCurrentListener(): CompletableFuture<Void>? {
+        return (persistentData["\$currentListener"] ?: return null) as CompletableFuture<Void>
+    }
 
     override fun createExecutor(): Executor {
         return ScriptSchedulerExecutor
@@ -38,7 +52,7 @@ class ScriptContext(
 
     @Suppress("UNCHECKED_CAST")
     override fun <C : QuestContext> createChild(key: String, anonymous: Boolean): C {
-        val context = ScriptContext(service, this, quest, playerIdentifier, key, 0, QuestContext.BASE_DATA_KEY, null, persistentData, key, anonymous, viewer)
+        val context = ScriptContext(service, this, quest, playerIdentifier, key, 0, QuestContext.BASE_DATA_KEY, null, persistentData, key, anonymous)
         children.addLast(context)
         return context as C
     }
@@ -60,7 +74,7 @@ class ScriptContext(
     companion object {
 
         fun create(quest: Quest, viewer: Player? = null): ScriptContext {
-            return ScriptContext(
+            val context = ScriptContext(
                     ScriptService,
                     null,
                     quest,
@@ -71,9 +85,10 @@ class ScriptContext(
                     null,
                     HashMap(),
                     null,
-                    false,
-                    viewer
+                    false
             )
+            context.viewer = viewer
+            return context
         }
     }
 }

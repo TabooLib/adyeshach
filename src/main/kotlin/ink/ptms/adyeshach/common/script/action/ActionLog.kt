@@ -18,7 +18,7 @@ class ActionLog(val message: String) : QuestAction<Void, ScriptContext> {
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        println("[Adyeshach] $message")
+        println("[Adyeshach] ${message.replace("@player", context.viewer?.name.toString())}")
         return CompletableFuture.completedFuture(null)
     }
 

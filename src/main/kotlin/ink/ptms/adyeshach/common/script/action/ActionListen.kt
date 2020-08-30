@@ -6,10 +6,8 @@ import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
-import org.bukkit.event.Event
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
-import kotlin.reflect.KClass
 
 /**
  * @author IzzelAliz
@@ -23,12 +21,11 @@ class ActionListen(val listen: KnownEvent<*>, val value: QuestAction<Any, QuestC
     @Suppress("UNCHECKED_CAST")
     override fun process(context: ScriptContext): CompletableFuture<Void> {
         return CompletableFuture<Void>().also { future ->
-            context.currentListener = future
-            context.addClosable(Closables.listening(listen.clazz.java, { true }, {
-                context.currentEvent = it to listen
+            context.persistentData["\$currentListener"] = future
+            context.addClosable(Closables.listening(listen.eventClass.java) {
+                context.persistentData["\$currentEvent"] = it to listen
                 value.process(context)
-                context.currentEvent = null
-            }))
+            })
         }
     }
 

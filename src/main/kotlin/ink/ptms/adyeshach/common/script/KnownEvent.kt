@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
  * @Author sky
  * @Since 2020-08-30 19:22
  */
-class KnownEvent<T: Event>(val clazz: KClass<out T>) {
+class KnownEvent<T: Event>(val eventClass: KClass<out T>) {
 
     val field = HashMap<String, KV<(T) -> (Any?), (T, Any?) -> (Unit)>>()
 

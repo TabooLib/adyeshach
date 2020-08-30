@@ -72,8 +72,12 @@ class CommandScript : BaseMainCommand(), Helper {
     var list: BaseSubCommand = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
-            sender.info("Scripts: &f${ScriptService.quests.map { it.value.id }.joinToString(", ")}")
-            sender.info("Scripts Running: &f${ImmutableList.copyOf(ScriptService.runningQuests.values()).map { it.quest.id }.joinToString(", ")}")
+            sender.info("Scripts: &f${ScriptService.quests.map { it.value.id }.joinToString(" ")}")
+            val json = TellrawJson.create().append("§c[Adyeshach] §7Scripts Running: §f")
+            ScriptService.runningQuests.entries().forEach {
+                json.append(it.value.quest.id).hoverText(it.key).append(" ")
+            }
+            json.send(sender)
         }
     }
 

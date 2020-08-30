@@ -24,7 +24,7 @@ class ActionJs(val script: CompiledScript) : QuestAction<Any, ScriptContext> {
                 "entity" to context.getEntity(),
                 "manager" to context.getManager(),
                 "data" to context.persistentData,
-                "event" to context.currentEvent?.first
+                "event" to context.getCurrentEvent()?.first
         ))))
     }
 

@@ -18,7 +18,7 @@ class ActionCommand(val command: String) : QuestAction<Void, ScriptContext> {
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
         Tasks.task {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("@player", context.viewer?.name.toString()))
         }
         return CompletableFuture.completedFuture(null)
     }
