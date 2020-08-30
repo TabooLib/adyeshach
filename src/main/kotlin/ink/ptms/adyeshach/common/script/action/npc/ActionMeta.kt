@@ -57,10 +57,10 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
             throw RuntimeException("No entity selected.")
         }
         context.getEntity()!!.filterNotNull().forEach {
-            val meta = it.listMetadata().firstOrNull { m -> m.key == key } ?: return@forEach
-            val editor = Editor.getEditor(meta) ?: return@forEach
+            val meta = it.listMetadata().firstOrNull { m -> m.key == key } ?: throw RuntimeException("Metadata \"${key}\" not found.")
+            val editor = Editor.getEditor(meta) ?: throw RuntimeException("Metadata is not editable. (0)")
             if (!editor.edit) {
-                throw RuntimeException("Metadata is not editable.")
+                throw RuntimeException("Metadata is not editable. (1)")
             }
             when (symbol) {
                 Symbol.SET -> {
