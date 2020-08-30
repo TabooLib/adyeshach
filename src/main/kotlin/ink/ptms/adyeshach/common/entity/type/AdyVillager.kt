@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitProfession
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
-import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import org.bukkit.entity.Villager
 
 /**
@@ -20,6 +20,8 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
             registerMeta(at(11500 to 17, 11400 to 16), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
         } else {
             registerMeta(at(11000 to 13, 10900 to 12), "profession", BukkitProfession.FARMER.ordinal)
+                    .canEdit(false)
+                    .build()
         }
         registerEditor(this)
     }

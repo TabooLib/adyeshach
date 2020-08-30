@@ -13,7 +13,7 @@ import io.izzel.taboolib.util.lite.Numbers
 class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.01) && !entity.isPathfinderMoving()
+        return Numbers.random(0.01) && !entity.isControllerMoving()
     }
 
     override fun onTick() {

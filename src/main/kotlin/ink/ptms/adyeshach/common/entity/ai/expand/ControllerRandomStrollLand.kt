@@ -18,7 +18,7 @@ import org.bukkit.Location
 class ControllerRandomStrollLand(entity: EntityInstance) : Controller(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.001) && !entity.isPathfinderMoving()
+        return Numbers.random(0.001) && !entity.isControllerMoving()
     }
 
     override fun onTick() {

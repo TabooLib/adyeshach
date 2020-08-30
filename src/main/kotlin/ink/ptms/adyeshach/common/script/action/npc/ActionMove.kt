@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
-import java.lang.RuntimeException
+import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -24,9 +24,9 @@ class ActionMove(val x: Double, val y: Double, val z: Double, val offset: Boolea
         }
         context.getEntity()!!.filterNotNull().forEach {
             if (offset) {
-                it.teleport(it.position.x + x, it.position.y + y, it.position.z + z)
+                it.controllerMove(Location(it.position.world, it.position.x + x, it.position.y + y, it.position.z + z))
             } else {
-                it.teleport(x, y, z)
+                it.controllerMove(Location(it.position.world, x, y, z))
             }
         }
         return CompletableFuture.completedFuture(null)

@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.script.ScriptResolver
 import ink.ptms.adyeshach.common.script.action.ActionCheck.Symbol.*
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
-import io.izzel.taboolib.cronus.util.StringNumber
 import io.izzel.taboolib.util.Coerce
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function

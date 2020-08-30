@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.util.Closables
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function

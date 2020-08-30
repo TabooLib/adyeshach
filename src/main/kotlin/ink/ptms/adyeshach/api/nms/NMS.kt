@@ -4,8 +4,8 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.lite.SimpleReflection

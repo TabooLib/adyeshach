@@ -8,7 +8,6 @@ import org.bukkit.event.Event
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
-import kotlin.collections.ArrayList
 
 
 /**

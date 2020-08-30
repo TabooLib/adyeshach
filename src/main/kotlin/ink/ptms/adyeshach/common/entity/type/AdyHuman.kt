@@ -3,10 +3,10 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
+import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.internal.gson.annotations.Expose
@@ -56,7 +56,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
         registerEditor("isSleepingLegacy")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     setSleeping(false)
                 }
                 .modify { player, entity, meta ->
@@ -67,7 +67,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     isSleeping().toDisplay()
                 }
         registerEditor("isHideFromTabList")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     isHideFromTabList = true
                 }
                 .modify { player, entity, meta ->
@@ -78,7 +78,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     isHideFromTabList.toDisplay()
                 }
         registerEditor("playerName")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     setName("AdyHuman")
                 }
                 .modify { player, entity, meta ->
@@ -93,7 +93,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
                 }
         registerEditor("playerPing")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     setPing(60)
                 }
                 .modify { player, entity, meta ->
@@ -108,7 +108,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                     getPing().toString()
                 }
         registerEditor("playerTexture")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     resetTexture()
                 }
                 .modify { player, entity, meta ->

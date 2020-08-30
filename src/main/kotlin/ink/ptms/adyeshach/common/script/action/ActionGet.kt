@@ -1,9 +1,7 @@
 package ink.ptms.adyeshach.common.script.action
 
 import io.izzel.kether.common.api.*
-import io.izzel.kether.common.util.Coerce
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 import java.util.function.Function
 
 /**

@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.ai.general
 
-import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.module.lite.SimpleCounter

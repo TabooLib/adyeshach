@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
-import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 

@@ -23,7 +23,7 @@ class AdyPainting() : AdyEntity(EntityTypes.PAINTING) {
     init {
         registerEditor("painting")
                 .from(Editors.enums(BukkitPaintings::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_painting ${entity.uniqueId} ${meta.key} $e" })
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     (entity as AdyPainting).painting = BukkitPaintings.KEBAB
                 }
                 .display { _, entity, _ ->
@@ -31,7 +31,7 @@ class AdyPainting() : AdyEntity(EntityTypes.PAINTING) {
                 }.build()
         registerEditor("direction")
                 .from(Editors.enums(BukkitDirection::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_direction ${entity.uniqueId} ${meta.key} $e" })
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     (entity as AdyPainting).direction = BukkitDirection.NORTH
                 }
                 .display { _, entity, _ ->

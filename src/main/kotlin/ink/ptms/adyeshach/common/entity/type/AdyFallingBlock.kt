@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.i18n.I18n
@@ -30,7 +29,7 @@ class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
 
     init {
         registerEditor("block")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     material = Material.STONE
                     data = 0.toByte()
                 }
@@ -69,6 +68,12 @@ class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
                 NMS.INSTANCE.destroyEntity(viewer, index)
             }
         }
+    }
+
+    fun setMaterial(material: Material, data: Byte) {
+        this.material = material
+        this.data = data
+        respawn()
     }
 
     fun setMaterial(material: Material) {

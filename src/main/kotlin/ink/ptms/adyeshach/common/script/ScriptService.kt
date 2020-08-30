@@ -7,11 +7,9 @@ import com.google.common.collect.MultimapBuilder
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
-import io.izzel.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import java.io.File
 import java.util.*
@@ -47,11 +45,11 @@ object ScriptService : QuestService<ScriptContext> {
             settingsMap!![quest.id] = context.persistentData
         }
         questMap!!.forEach {
-            val trigger = getQuestSettings(it.value.id)["start"].toString()
-            if (trigger == "start") {
+            val trigger = getQuestSettings(it.value.id)["start"] ?: return@forEach
+            if (trigger.toString() == "start") {
                 startQuest(ScriptContext.create(it.value))
-            } else {
-                val event = (Kether.getKnownEvent(trigger) ?: throw LocalizedException.of("unknown-event", trigger)) as KnownEvent<Event>
+            } else if (Kether.getKnownEvent(trigger.toString()) != null) {
+                val event = Kether.getKnownEvent(trigger.toString()) as KnownEvent<Event>
                 listener.add(Closables.listening(event.eventClass.java) { e ->
                     val context = ScriptContext.create(it.value)
                     val player = event.field["player"]
@@ -64,6 +62,8 @@ object ScriptService : QuestService<ScriptContext> {
                     context.persistentData["\$currentEvent"] = e to event
                     startQuest(id, context)
                 })
+            } else {
+                println("[Adyeshach] Unknown starting trigger $trigger")
             }
         }
     }

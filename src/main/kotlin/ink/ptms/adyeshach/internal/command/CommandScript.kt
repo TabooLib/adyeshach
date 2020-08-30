@@ -1,21 +1,12 @@
 package ink.ptms.adyeshach.internal.command
 
 import com.google.common.collect.ImmutableList
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptService
-import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.tellraw.TellrawJson
-import io.izzel.taboolib.util.book.BookFormatter
-import io.izzel.taboolib.util.book.builder.PageBuilder
-import io.izzel.taboolib.util.chat.ComponentSerializer
-import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 /**
  * @Author sky

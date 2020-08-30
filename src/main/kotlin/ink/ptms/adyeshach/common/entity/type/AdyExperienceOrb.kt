@@ -19,7 +19,7 @@ class AdyExperienceOrb : AdyEntity(EntityTypes.EXPERIENCE_ORB) {
 
     init {
         registerEditor("amount")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     amount = 1
                 }
                 .modify { player, entity, meta ->

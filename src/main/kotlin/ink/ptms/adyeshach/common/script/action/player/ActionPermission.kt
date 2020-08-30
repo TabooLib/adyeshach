@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.script.action.player
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
-import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 

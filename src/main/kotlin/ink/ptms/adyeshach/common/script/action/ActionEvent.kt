@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.script.ScriptResolver
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
 import org.bukkit.event.Event
-import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -78,7 +77,7 @@ class ActionEvent(val key: String, val symbol: Symbol, val value: Any?) : QuestA
                         val symbol = when (val type = t.nextElement()) {
                             "set" -> Symbol.SET
                             "get" -> Symbol.GET
-                            else -> throw LocalizedException.of("not-event-symbol", type)
+                            else -> throw LocalizedException.of("not-event-method", type)
                         }
                         val key = t.nextElement()
                         val value = if (symbol == Symbol.SET) try {

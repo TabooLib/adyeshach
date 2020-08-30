@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.entity
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.entity.type.*
 import ink.ptms.adyeshach.common.entity.path.PathType
+import ink.ptms.adyeshach.common.entity.type.*
 import io.izzel.taboolib.util.Reflection
 import org.bukkit.entity.EntityType
 

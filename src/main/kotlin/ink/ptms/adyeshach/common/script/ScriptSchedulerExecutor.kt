@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.script
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.util.Tasks
 import org.bukkit.Bukkit
 import java.util.concurrent.Executor

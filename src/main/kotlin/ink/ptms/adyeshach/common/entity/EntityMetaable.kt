@@ -18,6 +18,7 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.reflect.KClass
 
 /**
  * @Author sky
@@ -126,6 +127,10 @@ abstract class EntityMetaable {
         return tag.entries
     }
 
+    fun getTag(key: String): String? {
+        return tag[key]
+    }
+
     fun hasTag(key: String): Boolean {
         return tag.containsKey(key)
     }
@@ -211,16 +216,22 @@ abstract class EntityMetaable {
     class MetaEditor(val meta: Meta? = null, val custom: Boolean = false) {
 
         var edit = true
-        var onReset: ((Player, EntityInstance, Meta) -> (Unit))? = null
+        var enum: KClass<*>? = null
+        var onReset: ((EntityInstance, Meta) -> (Unit))? = null
         var onModify: ((Player, EntityInstance, Meta) -> (Unit))? = null
         var onDisplay: ((Player, EntityInstance, Meta) -> (String))? = null
+
+        fun toEnum(enum: KClass<*>): MetaEditor {
+            this.enum = enum
+            return this
+        }
 
         fun canEdit(edit: Boolean): MetaEditor {
             this.edit = edit
             return this
         }
 
-        fun reset(onReset: ((Player, EntityInstance, Meta) -> (Unit))): MetaEditor {
+        fun reset(onReset: ((EntityInstance, Meta) -> (Unit))): MetaEditor {
             this.onReset = onReset
             return this
         }
@@ -236,6 +247,7 @@ abstract class EntityMetaable {
         }
 
         fun from(editor: MetaEditor): MetaEditor {
+            enum = editor.enum
             onReset = editor.onReset
             onModify = editor.onModify
             onDisplay = editor.onDisplay

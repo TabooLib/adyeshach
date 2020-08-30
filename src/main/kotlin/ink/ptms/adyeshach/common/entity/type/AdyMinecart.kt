@@ -7,7 +7,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.module.i18n.I18n
 import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import io.izzel.taboolib.util.lite.Materials
 import org.bukkit.Material
@@ -34,7 +33,7 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
         registerMeta(at(11400 to 11, 11000 to 10, 10900 to 9), "customBlockPosition", 6)
         registerMeta(at(11400 to 12, 11000 to 11, 10900 to 10), "showCustomBlock", false)
         registerEditor("block")
-                .reset { player, entity, meta ->
+                .reset { entity, meta ->
                     setCustomBlock(MaterialData(Material.AIR, 0))
                 }
                 .modify { player, entity, meta ->

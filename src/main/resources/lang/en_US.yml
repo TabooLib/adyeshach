@@ -4,7 +4,7 @@ load-error:
   unknown-action: 'Unknown action {0}'
   unknown-select-type: 'Unknown select type {0}'
   unknown-event: 'Unknown event {0}'
-  unknown-controller: 'Unknown controller {0}'
+  unknown-animation: 'Unknown animation {0}'
   not-match: 'Should be entered {0} is actually {1}'
   require-async: 'This action cannot be used in require: {0}'
   string-not-close: "The string has no matching end (''')"
@@ -14,4 +14,8 @@ load-error:
   not-double: '{0} is not double'
   not-duration: '{0} is not duration (1d2h3m4s)'
   not-symbol: '{0} is not symbol (>,<,=)'
-  not-event-symbol: '{0} is not event symbol (get,set)'
+  not-tag-method: '{0} is not entity tag method (get,set)'
+  not-event-method: '{0} is not event method (get,set)'
+  not-viewer-method: '{0} is not viewer method (add,remove)'
+  not-passenger-method: '{0} is not passenger method (add,remove)'
+  not-controller-method: '{0} is not controller method (add,remove)'

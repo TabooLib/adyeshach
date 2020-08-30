@@ -27,6 +27,10 @@ object Editors {
     private val cacheEnums = HashMap<String, Array<out Any>>()
     private val cacheEquipment = HashMap<EquipmentSlot, EntityMetaable.MetaEditor>()
 
+    fun getEnums(enum: KClass<*>): Array<out Any> {
+        return cacheEnums.computeIfAbsent(enum.java.name) { enum.java.enumConstants }
+    }
+
     val TEXT = EntityMetaable.MetaEditor()
             .modify { player, entity, meta ->
                 Signs.fakeSign(player, arrayOf("${entity.getMetadata<Any>(meta.key)}", "", "请在第一行输入内容")) {
@@ -112,7 +116,7 @@ object Editors {
                     val book = BookFormatter.writtenBook()
                     var page = TellrawJson.create()
                     var i = 0
-                    cacheEnums.computeIfAbsent(enum.java.name) { enum.java.enumConstants }.forEachIndexed { index, e ->
+                    getEnums(enum).forEachIndexed { index, e ->
                         if (e is DyeColor && Editor.version >= 11600) {
                             page.append("  ${io.izzel.taboolib.util.chat.ChatColor.of(java.awt.Color(e.color.red, e.color.green, e.color.blue))}${Editor.toSimple(e.toString())}")
                         } else {
@@ -129,13 +133,13 @@ object Editors {
                         book.addPages(ComponentSerializer.parse(page.toRawMessage(player)))
                     }
                     book.open(player)
-                }
+                }.toEnum(enum)
     }
 
     fun equip(equipmentSlot: EquipmentSlot): EntityMetaable.MetaEditor {
         return cacheEquipment.computeIfAbsent(equipmentSlot) {
             EntityMetaable.MetaEditor()
-                    .reset { player, entity, meta ->
+                    .reset { entity, meta ->
                         (entity as AdyEntityLiving).setEquipment(equipmentSlot, ItemStack(Material.AIR))
                     }
                     .modify { player, entity, meta ->

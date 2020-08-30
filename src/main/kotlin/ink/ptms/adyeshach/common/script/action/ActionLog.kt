@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
-import org.bukkit.Bukkit
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 

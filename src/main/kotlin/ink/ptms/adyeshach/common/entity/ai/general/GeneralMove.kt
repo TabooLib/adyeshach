@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.entity.ai.general
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.path.PathType
+import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
 
@@ -33,7 +33,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun onTick() {
-        if (entity.isPathfinderJumping()) {
+        if (entity.isControllerJumping()) {
             if (counterJump.next()) {
                 entity.removeTag("isJumping")
                 getGravity().isGravity = true

@@ -2,14 +2,20 @@ package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
-import org.bukkit.Location
+import io.izzel.kether.common.util.LocalizedException
+import org.bukkit.Bukkit
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolean) : QuestAction<Void, ScriptContext> {
+class ActionViewer(val symbol: Symbol, val viewer: String?) : QuestAction<Void, ScriptContext> {
+
+    enum class Symbol {
+
+        ADD, REMOVE, RESET
+    }
 
     override fun isAsync(): Boolean {
         return false
@@ -23,17 +29,29 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
             throw RuntimeException("No entity selected.")
         }
         context.getEntity()!!.filterNotNull().forEach {
-            it.controllerLook(Location(it.position.world, x, y, z), smooth)
+            when (symbol) {
+                Symbol.ADD -> {
+                    Bukkit.getPlayerExact(viewer!!)?.run {
+                        it.addViewer(this)
+                    }
+                }
+                Symbol.REMOVE -> {
+                    Bukkit.getPlayerExact(viewer!!)?.run {
+                        it.removeViewer(this)
+                    }
+                }
+                Symbol.RESET -> it.clearViewer()
+            }
         }
         return CompletableFuture.completedFuture(null)
     }
 
     override fun getDataPrefix(): String {
-        return "look"
+        return "viewer"
     }
 
     override fun toString(): String {
-        return "ActionLook(x=$x, y=$y, z=$z, smooth=$smooth)"
+        return "ActionViewer(symbol=$symbol, viewer=$viewer)"
     }
 
     companion object {
@@ -44,31 +62,13 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        var x = 0.0
-                        var y = 0.0
-                        var z = 0.0
-                        var smooth = false
-                        while (t.hasNext()) {
-                            t.mark()
-                            when (t.nextElement()) {
-                                "x" -> x = t.nextDouble()
-                                "y" -> y = t.nextDouble()
-                                "z" -> z = t.nextDouble()
-                                else -> {
-                                    t.reset()
-                                    break
-                                }
-                            }
+                        val symbol = when (val type = t.nextElement()) {
+                            "add" -> Symbol.ADD
+                            "remove" -> Symbol.REMOVE
+                            "reset" -> Symbol.RESET
+                            else -> throw LocalizedException.of("not-viewer-method", type)
                         }
-                        if (t.hasNext()) {
-                            t.mark()
-                            if (t.nextElement() == "smooth") {
-                                smooth = true
-                            } else {
-                                t.reset()
-                            }
-                        }
-                        ActionLook(x, y, z, smooth) as QuestAction<T, C>
+                        ActionViewer(symbol, if (symbol != Symbol.RESET) t.nextElement() else null) as QuestAction<T, C>
                     }.apply(resolver)
                 }
 

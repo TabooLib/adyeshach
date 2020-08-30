@@ -5,12 +5,12 @@ import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
+import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
-import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
@@ -21,6 +21,7 @@ import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.concurrent.CopyOnWriteArrayList
@@ -73,7 +74,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             registerMeta(at(11400 to 6), "pose", BukkitPose.STANDING)
             registerEditor("entityPose")
                     .from(Editors.enums(BukkitPose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
-                    .reset { _, entity, _ ->
+                    .reset { entity, _ ->
                         entity.setPose(BukkitPose.STANDING)
                     }
                     .display { _, entity, _ ->
@@ -141,6 +142,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         viewPlayers.viewers.remove(viewer.name)
         viewPlayers.visible.remove(viewer.name)
         visible(viewer, false)
+    }
+
+    /**
+     * 清空观察者
+     */
+    fun clearViewer() {
+        Bukkit.getOnlinePlayers().filter { it.name in viewPlayers.viewers }.forEach {
+            removeViewer(it)
+        }
     }
 
     /**
@@ -248,13 +258,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         this.controller.removeIf { it.javaClass.simpleName == name }
     }
 
+    fun resetController() {
+        this.controller.clear()
+    }
+
     fun getController(): List<Controller> {
         return this.controller.toList()
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Controller> getController(controller: KClass<T>): T? {
-        return (this.controller.firstOrNull { it.javaClass == controller } ?: return null) as T
+        return (this.controller.firstOrNull { it.javaClass == controller.java } ?: return null) as T
     }
 
     /**
@@ -272,7 +286,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
         if (smooth && controller.any { it is GeneralSmoothLook }) {
-            val look = controller.first { it is GeneralSmoothLook } as GeneralSmoothLook
+            val look = getController(GeneralSmoothLook::class)!!
             look.yaw = yaw
             look.pitch = pitch
             look.isReset = true
@@ -286,7 +300,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体移动到某个坐标
      */
-    fun controllerMove(location: Location, pathType: PathType = PathType.WALK_2, speed: Double = 0.2) {
+    fun controllerMove(location: Location, pathType: PathType = entityType.getPathType(), speed: Double = 0.2) {
         if (hasVehicle()) {
             return
         }
@@ -302,7 +316,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 throw RuntimeException("Entity walking movement requires GeneralMove and GeneralGravity.")
             }
         }
-        val move = controller.first { it is GeneralMove } as GeneralMove
+        val move = getController(GeneralMove::class)!!
         PathFinderProxy.request(position.toLocation(), location, pathType) {
             move.speed = speed
             move.pathType = pathType
@@ -479,11 +493,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getMetadata("pose")
     }
 
-    fun isPathfinderMoving(): Boolean {
+    fun isControllerMoving(): Boolean {
         return hasTag("isMoving")
     }
 
-    fun isPathfinderJumping(): Boolean {
+    fun isControllerJumping(): Boolean {
         return hasTag("isJumping")
     }
 

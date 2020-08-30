@@ -14,8 +14,8 @@ import org.bukkit.block.Block
 class GeneralGravity(entity: EntityInstance) : Controller(entity) {
 
     private var p = 0.1
-    private var x = 0.0
-    private var z = 0.0
+    private var x = 0.99
+    private var z = 0.99
     private var b: Block? = null
     private var by = 0.0
     private var c = SimpleCounter(5)
@@ -53,8 +53,8 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
             })
             p = 0.1
         } else if (c.next()) {
-            x = 0.0
-            z = 0.0
+            x = 0.99
+            z = 0.99
         }
     }
 

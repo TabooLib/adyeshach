@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.internal.listener
 
-import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.bukkit.BukkitRotation
+import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.command.Helper
 import io.izzel.taboolib.module.inject.TListener

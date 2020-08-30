@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.*
+import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
-import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
@@ -71,7 +71,7 @@ class CommandAPI : BaseMainCommand(), Helper {
                         val entity = AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return
                         val meta = entity.listMetadata().firstOrNull { it.key == args[2] } ?: return
                         if (meta.editor?.onReset != null) {
-                            meta.editor!!.onReset!!.invoke(sender, entity, meta)
+                            meta.editor!!.onReset!!.invoke(entity, meta)
                         } else {
                             entity.setMetadata(meta.key, meta.def)
                         }
