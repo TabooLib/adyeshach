@@ -14,7 +14,6 @@ import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import kotlin.jvm.Throws
 
 
 /**
@@ -29,6 +28,8 @@ object ScriptService : QuestService<ScriptContext> {
     private val runningQuests = MultimapBuilder.hashKeys().arrayListValues().build<String, ScriptContext>()
     private var questMap: Map<String, Quest>? = null
     private var settingsMap: MutableMap<String, Map<String, Any>>? = null
+
+    fun getRunningQuestContext() = ImmutableList.copyOf(runningQuests.values())
 
     fun loadAll() {
         questMap = load()
@@ -67,7 +68,7 @@ object ScriptService : QuestService<ScriptContext> {
     }
 
     fun cancelAll() {
-        ImmutableList.copyOf(runningQuests.values()).forEach { terminateQuest(it) }
+        getRunningQuestContext().forEach { terminateQuest(it) }
     }
 
     override fun getRegistry(): QuestRegistry {

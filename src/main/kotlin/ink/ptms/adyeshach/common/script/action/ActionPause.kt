@@ -11,7 +11,7 @@ import java.util.function.Function
 /**
  * @author IzzelAliz
  */
-class ActionWait(val tick: Long) : QuestAction<Void, ScriptContext> {
+class ActionPause : QuestAction<Void, ScriptContext> {
 
     override fun isAsync(): Boolean {
         return true
@@ -22,22 +22,15 @@ class ActionWait(val tick: Long) : QuestAction<Void, ScriptContext> {
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        val future = CompletableFuture<Void>()
-        val bukkitTask = Tasks.delay(tick, true) {
-            future.complete(null)
-        }
-        context.addClosable(AutoCloseable {
-            bukkitTask.cancel()
-        })
-        return future
+        return CompletableFuture<Void>()
     }
 
     override fun getDataPrefix(): String {
-        return "wait"
+        return "pause"
     }
 
     override fun toString(): String {
-        return "ActionWait(tick=$tick)"
+        return "ActionPause()"
     }
 
     companion object {
@@ -47,7 +40,7 @@ class ActionWait(val tick: Long) : QuestAction<Void, ScriptContext> {
             return object : QuestActionParser {
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionWait(t.nextDuration() / 50L) as QuestAction<T, C> }.apply(resolver)
+                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionPause() as QuestAction<T, C> }.apply(resolver)
                 }
 
                 override fun complete(parms: List<String>): List<String> {

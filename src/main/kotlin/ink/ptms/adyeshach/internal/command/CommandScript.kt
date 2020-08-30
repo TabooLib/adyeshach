@@ -46,7 +46,7 @@ class CommandScript : BaseMainCommand(), Helper {
                     t.printStackTrace()
                 }
             } else {
-                sender.info("Adyeshach Scripts not found.")
+                sender.info("Script not found.")
             }
         }
     }
@@ -63,7 +63,7 @@ class CommandScript : BaseMainCommand(), Helper {
             if (quest != null) {
                 ScriptService.terminateQuest(quest)
             } else {
-                sender.info("Adyeshach Scripts not running.")
+                sender.info("Script not running.")
             }
         }
     }
@@ -83,7 +83,7 @@ class CommandScript : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
             ScriptService.cancelAll()
             ScriptService.loadAll()
-            sender.info("Adyeshach Scripts has been reloaded.")
+            sender.info("Scripts has been reloaded.")
         }
     }
 }

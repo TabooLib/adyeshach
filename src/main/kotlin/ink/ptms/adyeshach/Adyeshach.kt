@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.api.Settings
-import ink.ptms.adyeshach.common.script.Kether
-import ink.ptms.adyeshach.common.script.ScriptService
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.loader.PluginBase

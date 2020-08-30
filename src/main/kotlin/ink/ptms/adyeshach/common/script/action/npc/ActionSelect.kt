@@ -1,16 +1,9 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.npc
 
-import com.google.common.base.Enums
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.entity.Player
 import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
@@ -18,26 +11,27 @@ import java.util.function.Function
 /**
  * @author IzzelAliz
  */
-class ActionCreate(val id: String, val type: EntityTypes, val location: Location) : QuestAction<Void, ScriptContext> {
+class ActionSelect(val value: String, val byId: Boolean) : QuestAction<Void, ScriptContext> {
 
     override fun isAsync(): Boolean {
         return false
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
+        val manager = context.getManager()
+        if (manager !is Manager) {
             throw RuntimeException("No manager selected.")
         }
-        context.getManager()!!.create(type, location).id = id
+        context.persistentData["__entity__"] = if (byId) manager.getEntityById(value) else listOf(manager.getEntityByUniqueId(value))
         return CompletableFuture.completedFuture(null)
     }
 
     override fun getDataPrefix(): String {
-        return "create"
+        return "select"
     }
 
     override fun toString(): String {
-        return "ActionCreate(id='$id', type=$type, location=$location)"
+        return "ActionSelect(value='$value', byId=$byId)"
     }
 
     companion object {
@@ -48,19 +42,21 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: Location
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        val id = t.nextElement()
-                        val type = t.nextElement()
-                        val entityType = Enums.getIfPresent(EntityTypes::class.java, type.toUpperCase()).orNull() ?: throw RuntimeException("Entity \"$type\" not supported.")
-                        var location = Location(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0)
+                        val manager = t.nextElement()
+                        var byId = true
                         if (t.hasNext()) {
                             t.mark()
-                            if (t.nextElement() == "at" && t.hasNext()) {
-                                location = Kether.toLocation(t.nextElement())
+                            if (t.nextElement() == "by" && t.hasNext()) {
+                                byId = when (val type = t.nextElement().toLowerCase()) {
+                                    "id" -> true
+                                    "uniqueid", "uuid" -> false
+                                    else -> throw LocalizedException.of("unknown-select-type", type)
+                                }
                             } else {
                                 t.reset()
                             }
                         }
-                        ActionCreate(id, entityType, location) as QuestAction<T, C>
+                        ActionSelect(manager, byId) as QuestAction<T, C>
                     }.apply(resolver)
                 }
 

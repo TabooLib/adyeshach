@@ -1,43 +1,39 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.util.Closables
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
+import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
-
 
 /**
  * @author IzzelAliz
  */
-class ActionWait(val tick: Long) : QuestAction<Void, ScriptContext> {
+class ActionDelete : QuestAction<Void, ScriptContext> {
 
     override fun isAsync(): Boolean {
-        return true
-    }
-
-    override fun isPersist(): Boolean {
-        return true
+        return false
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        val future = CompletableFuture<Void>()
-        val bukkitTask = Tasks.delay(tick, true) {
-            future.complete(null)
+        if (context.getManager() == null) {
+            throw RuntimeException("No manager selected.")
         }
-        context.addClosable(AutoCloseable {
-            bukkitTask.cancel()
-        })
-        return future
+        if (!context.entitySelected()) {
+            throw RuntimeException("No entity selected.")
+        }
+        context.getEntity()!!.filterNotNull().forEach {
+            it.delete()
+        }
+        return CompletableFuture.completedFuture(null)
     }
 
     override fun getDataPrefix(): String {
-        return "wait"
+        return "delete"
     }
 
     override fun toString(): String {
-        return "ActionWait(tick=$tick)"
+        return "ActionDelete()"
     }
 
     companion object {
@@ -47,7 +43,9 @@ class ActionWait(val tick: Long) : QuestAction<Void, ScriptContext> {
             return object : QuestActionParser {
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionWait(t.nextDuration() / 50L) as QuestAction<T, C> }.apply(resolver)
+                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
+                        ActionDelete() as QuestAction<T, C>
+                    }.apply(resolver)
                 }
 
                 override fun complete(parms: List<String>): List<String> {

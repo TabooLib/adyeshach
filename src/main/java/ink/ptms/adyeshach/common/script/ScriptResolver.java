@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.script;
 import com.google.common.collect.ImmutableMap;
 import io.izzel.kether.common.api.*;
 import io.izzel.kether.common.util.LocalizedException;
+import io.izzel.taboolib.cronus.util.StringNumber;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,6 +124,17 @@ public final class ScriptResolver<CTX extends QuestContext> implements QuestReso
             return optional.get().resolve(this);
         } else {
             throw LocalizedException.of("unknown-action", element);
+        }
+    }
+
+    public Object nextAny() {
+        String element = nextElement();
+        if (element.equals("true")) {
+            return true;
+        } else if (element.equals("false")) {
+            return false;
+        } else {
+            return new StringNumber(element).get();
         }
     }
 

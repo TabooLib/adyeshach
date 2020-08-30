@@ -1,16 +1,7 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.npc
 
-import com.google.common.base.Enums
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.Kether
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
-import io.izzel.kether.common.util.LocalizedException
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.entity.Player
 import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
@@ -18,7 +9,7 @@ import java.util.function.Function
 /**
  * @author IzzelAliz
  */
-class ActionDelete : QuestAction<Void, ScriptContext> {
+class ActionDestroy : QuestAction<Void, ScriptContext> {
 
     override fun isAsync(): Boolean {
         return false
@@ -32,17 +23,17 @@ class ActionDelete : QuestAction<Void, ScriptContext> {
             throw RuntimeException("No entity selected.")
         }
         context.getEntity()!!.filterNotNull().forEach {
-            it.delete()
+            it.destroy()
         }
         return CompletableFuture.completedFuture(null)
     }
 
     override fun getDataPrefix(): String {
-        return "delete"
+        return "destroy"
     }
 
     override fun toString(): String {
-        return "ActionDelete()"
+        return "ActionDestroy()"
     }
 
     companion object {
@@ -53,7 +44,7 @@ class ActionDelete : QuestAction<Void, ScriptContext> {
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        ActionDelete() as QuestAction<T, C>
+                        ActionDestroy() as QuestAction<T, C>
                     }.apply(resolver)
                 }
 

@@ -1,48 +1,43 @@
 package ink.ptms.adyeshach.common.script.action
 
-import com.google.common.base.Enums
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.script.KnownEvent
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.entity.Player
-import java.lang.RuntimeException
+import org.bukkit.event.Event
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
+import kotlin.reflect.KClass
 
 /**
  * @author IzzelAliz
  */
-class ActionDestroy : QuestAction<Void, ScriptContext> {
+class ActionListen(val listen: KnownEvent<*>, val value: QuestAction<Any, QuestContext>) : QuestAction<Void, ScriptContext> {
 
     override fun isAsync(): Boolean {
-        return false
+        return true
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+        return CompletableFuture<Void>().also { future ->
+            context.currentListener = future
+            context.addClosable(Closables.listening(listen.clazz.java, { true }, {
+                context.currentEvent = it to listen
+                value.process(context)
+                context.currentEvent = null
+            }))
         }
-        if (!context.entitySelected()) {
-            throw RuntimeException("No entity selected.")
-        }
-        context.getEntity()!!.filterNotNull().forEach {
-            it.destroy()
-        }
-        return CompletableFuture.completedFuture(null)
     }
 
     override fun getDataPrefix(): String {
-        return "destroy"
+        return "listen"
     }
 
     override fun toString(): String {
-        return "ActionDestroy()"
+        return "ActionListen(listen=$listen, value=$value)"
     }
 
     companion object {
@@ -53,7 +48,10 @@ class ActionDestroy : QuestAction<Void, ScriptContext> {
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        ActionDestroy() as QuestAction<T, C>
+                        val name = t.nextElement()
+                        val event = Kether.getKnownEvent(name) ?: throw LocalizedException.of("unknown-event", name)
+                        t.consume("then")
+                        ActionListen(event, t.nextAction<QuestContext>() as QuestAction<Any, QuestContext>) as QuestAction<T, C>
                     }.apply(resolver)
                 }
 

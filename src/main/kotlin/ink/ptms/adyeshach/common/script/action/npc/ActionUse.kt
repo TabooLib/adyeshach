@@ -1,12 +1,8 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
-import io.izzel.kether.common.util.LocalizedException
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import java.lang.RuntimeException
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function

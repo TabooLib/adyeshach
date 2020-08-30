@@ -4,8 +4,11 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import io.izzel.kether.common.api.*
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
+import kotlin.collections.ArrayList
 
 
 /**
@@ -25,6 +28,9 @@ class ScriptContext(
         anonymous: Boolean,
         var viewer: Player?
 ) : PersistentQuestContext(service, parent, quest, playerIdentifier, runningBlock, index, dataKey, tempData, persistentData, childKey, anonymous) {
+
+    var currentEvent: Pair<Event, KnownEvent<*>>? = null
+    var currentListener: CompletableFuture<Void>? = null
 
     override fun createExecutor(): Executor {
         return ScriptSchedulerExecutor
