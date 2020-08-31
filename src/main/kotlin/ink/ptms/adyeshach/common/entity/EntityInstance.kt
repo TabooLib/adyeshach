@@ -21,8 +21,12 @@ import ink.ptms.adyeshach.common.util.Indexs
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
+import net.minecraft.server.v1_16_R1.BlockPosition
+import net.minecraft.server.v1_16_R1.IBlockData
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
+import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock
 import org.bukkit.entity.Player
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass

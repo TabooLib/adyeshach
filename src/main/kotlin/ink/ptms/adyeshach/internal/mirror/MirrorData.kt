@@ -4,16 +4,16 @@ import java.util.concurrent.TimeUnit
 
 class MirrorData(val total: Boolean) {
 
-    var timeTotal = 0.0
+    var timeTotal = 0L
         private set
-    var timeLatest = 0.0
+    var timeLatest = 0L
         private set
-    var times: Long = 0
+    var times = 0L
         private set
 
-    var lowest = 0.0
+    var lowest = 0L
         private set
-    var highest = 0.0
+    var highest = 0L
         private set
 
     private var runtime: Long = 0
@@ -24,7 +24,7 @@ class MirrorData(val total: Boolean) {
     }
 
     fun stop(): MirrorData {
-        timeLatest = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - runtime).toDouble()
+        timeLatest = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - runtime)
         timeTotal += timeLatest
         if (total) {
             times += 1
@@ -39,8 +39,8 @@ class MirrorData(val total: Boolean) {
     }
 
     fun reset(): MirrorData {
-        timeTotal = 0.0
-        timeLatest = 0.0
+        timeTotal = 0L
+        timeLatest = 0L
         times = 0
         return this
     }

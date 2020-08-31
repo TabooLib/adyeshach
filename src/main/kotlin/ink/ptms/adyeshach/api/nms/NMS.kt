@@ -132,7 +132,9 @@ abstract class NMS {
 
         fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
             fields.forEach { (key, value) ->
-                SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
+                if (value != null) {
+                    SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
+                }
             }
             return any
         }

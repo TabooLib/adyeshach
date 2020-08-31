@@ -56,7 +56,7 @@ class CommandTest : BaseMainCommand(), Helper {
                         .append("").newLine()
                         .append("  Total §7${if (v.total) v.times else "_"} times").newLine()
                         .append("  Total §7${v.timeTotal} ms").newLine()
-                        .append("  Average §7${Numbers.format(v.timeLatest)} ms ").append("§4(?)").hoverText("§8Details:\n§fLowest §7${v.lowest} ms\n§fHighest §7${v.highest} ms").newLine()
+                        .append("  Average §7${v.timeLatest} ms ").append("§4(?)").hoverText("§8Details:\n§fLowest §7${v.lowest} ms\n§fHighest §7${v.highest} ms").newLine()
                         .toRawMessage(sender as Player)))
             }
             sender.info("Created.")

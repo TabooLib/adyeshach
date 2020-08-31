@@ -106,9 +106,9 @@ abstract class EntityMetaable {
             throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
         }
         return if (registerMeta is MetaMasked) {
-            metadataMask[getByteMaskKey(registerMeta.index)]!![key] as T
+            (metadataMask[getByteMaskKey(registerMeta.index)]?.get(key) ?: registerMeta.def) as T
         } else {
-            registerMeta.dataWatcher!!.parse(metadata[key]!!) as T
+            registerMeta.dataWatcher!!.parse(metadata[key] ?: registerMeta.def) as T
         }
     }
 

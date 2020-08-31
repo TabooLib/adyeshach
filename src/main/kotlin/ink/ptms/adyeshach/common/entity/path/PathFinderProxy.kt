@@ -77,9 +77,15 @@ object PathFinderProxy {
                     if (pathType.supportVersion <= version) {
                         // 实体不存在或失效
                         if (!pathEntity.entity.containsKey(pathType) || !pathEntity.entity[pathType]!!.isValid) {
-                            (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
-                                pathEntity.entity.put(pathType, entity as Creature)?.remove()
-                            } as Creature).silent()
+                            if (version >= 11200) {
+                                it.spawn(loc, pathType.entity) { entity ->
+                                    pathEntity.entity.put(pathType, entity as Creature)?.remove()
+                                }.silent()
+                            } else {
+                                (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
+                                    pathEntity.entity.put(pathType, entity as Creature)?.remove()
+                                } as Creature).silent()
+                            }
                         }
                     }
                 }

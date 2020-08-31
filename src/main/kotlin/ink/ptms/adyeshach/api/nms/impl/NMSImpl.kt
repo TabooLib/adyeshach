@@ -15,6 +15,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
+import net.minecraft.server.v1_11_R1.BlockTorch
+import net.minecraft.server.v1_11_R1.IBlockAccess
 import net.minecraft.server.v1_11_R1.IBlockData
 import net.minecraft.server.v1_12_R1.EntityInsentient
 import net.minecraft.server.v1_12_R1.GroupDataEntity
@@ -25,6 +27,7 @@ import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.craftbukkit.v1_13_R2.block.CraftBlock
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
@@ -88,7 +91,7 @@ class NMSImpl : NMS() {
                 "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "m" to DataWatcher(null)
+                "m" to if (version >= 11500) null else DataWatcher(null)
         )
     }
 
@@ -103,7 +106,7 @@ class NMSImpl : NMS() {
                 "e" to location.z,
                 "f" to (location.yaw * 256 / 360).toInt().toByte(),
                 "g" to (location.pitch * 256 / 360).toInt().toByte(),
-                "h" to DataWatcher(null),
+                "h" to if (version >= 11500) null else DataWatcher(null),
         )
     }
 
@@ -482,18 +485,31 @@ class NMSImpl : NMS() {
 
     override fun getBlockHeight(block: org.bukkit.block.Block): Double {
         return if (version >= 11300) {
-            block.boundingBox.maxY - block.y
+            if (block.type.isSolid) {
+                (block.boundingBox.maxY - block.y).coerceAtLeast(0.0)
+            } else {
+                0.0
+            }
         } else {
             when (version) {
                 11200 -> {
                     val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
-                    b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+                    if (block.type.isSolid) {
+                        b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+                    } else {
+                        0.0
+                    }
                 }
                 11100 -> {
                     val p = net.minecraft.server.v1_11_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle.getType(p)
-                    b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)?.e ?: 0.0
+                    (b.block as BlockTorch).a(b, (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle as IBlockAccess, p)
+                    if (block.type.isSolid) {
+                        b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)?.e ?: 0.0
+                    } else {
+                        0.0
+                    }
                 }
                 else -> {
                     if (block.isEmpty) {
@@ -501,7 +517,11 @@ class NMSImpl : NMS() {
                     } else {
                         val p = net.minecraft.server.v1_9_R2.BlockPosition(block.x, block.y, block.z)
                         val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
-                        b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle,p)?.e ?: 0.0
+                        if (block.type.isSolid) {
+                            b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)?.e ?: 0.0
+                        } else {
+                            0.0
+                        }
                     }
                 }
             }
@@ -521,9 +541,6 @@ class NMSImpl : NMS() {
     }
 
     override fun addEntity(location: Location, clazz: Class<out Entity>, function: java.util.function.Consumer<Entity>): Entity {
-        if (version > 11200) {
-            return location.world!!.spawn(location, clazz) { function.accept(it) }
-        }
         val world = (location.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld)
         val entity = world.createEntity(location, clazz)!!
         if (entity is net.minecraft.server.v1_9_R2.EntityInsentient) {
