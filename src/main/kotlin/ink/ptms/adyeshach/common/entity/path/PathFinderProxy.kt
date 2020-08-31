@@ -15,6 +15,7 @@ import io.izzel.taboolib.util.lite.Effects
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.World
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -76,9 +77,9 @@ object PathFinderProxy {
                     if (pathType.supportVersion <= version) {
                         // 实体不存在或失效
                         if (!pathEntity.entity.containsKey(pathType) || !pathEntity.entity[pathType]!!.isValid) {
-                            it.spawn(loc, pathType.entity) { entity ->
-                                pathEntity.entity.put(pathType, entity)?.remove()
-                            }.silent()
+                            (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
+                                pathEntity.entity.put(pathType, entity as Creature)?.remove()
+                            } as Creature).silent()
                         }
                     }
                 }
@@ -98,7 +99,7 @@ object PathFinderProxy {
                     if (entity != null) {
                         val time = System.currentTimeMillis()
                         entity.fallDistance = 0f
-                        entity.setGravity(true)
+                        entity.setAI(true)
                         entity.teleport(schedule.start)
                         when (schedule.request) {
                             Request.NAVIGATION -> {
@@ -109,7 +110,7 @@ object PathFinderProxy {
                                 if (pathList.isNotEmpty() || schedule.retry++ > 4) {
                                     schedule.call.invoke(ResultNavigation(pathList, schedule.beginTime, time))
                                     pathEntity.schedule.remove(schedule)
-                                    entity.setGravity(false)
+                                    entity.setAI(false)
                                     entity.teleport(Location(entity.world, 0.0, 0.0, 0.0))
                                     if (Settings.get().debug) {
                                         pathList.forEach {
@@ -126,7 +127,7 @@ object PathFinderProxy {
                                 if (position != null || schedule.retry++ > 4) {
                                     schedule.call.invoke(ResultRandomPosition(position, schedule.beginTime, time))
                                     pathEntity.schedule.remove(schedule)
-                                    entity.setGravity(false)
+                                    entity.setAI(false)
                                     entity.teleport(Location(entity.world, 0.0, 0.0, 0.0))
                                 }
                             }
@@ -142,7 +143,7 @@ object PathFinderProxy {
         isSilent = true
         isCollidable = false
         isInvulnerable = true
-        setGravity(false)
+        setAI(false)
         SimpleAiSelector.getExecutor().clearGoalAi(this)
         SimpleAiSelector.getExecutor().clearTargetAi(this)
         getAttribute(Attribute.GENERIC_FOLLOW_RANGE)?.baseValue = 100.0

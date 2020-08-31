@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.script.action.npc
 
-import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
 import org.bukkit.Location
@@ -45,7 +45,7 @@ class ActionTeleport(val location: Location) : QuestAction<Void, ScriptContext> 
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        ActionTeleport(Kether.toLocation(t.nextElement())) as QuestAction<T, C>
+                        ActionTeleport(ScriptHandler.toLocation(t.nextElement())) as QuestAction<T, C>
                     }.apply(resolver)
                 }
 

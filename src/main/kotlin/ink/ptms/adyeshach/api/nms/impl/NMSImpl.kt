@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.api.nms.impl
 
 import com.google.common.base.Enums
+import com.google.common.base.Preconditions
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.api.nms.NMS
@@ -14,6 +15,9 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
+import net.minecraft.server.v1_11_R1.IBlockData
+import net.minecraft.server.v1_12_R1.EntityInsentient
+import net.minecraft.server.v1_12_R1.GroupDataEntity
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_9_R2.WorldSettings
@@ -31,9 +35,11 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Villager
+import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
+import org.bukkit.util.Consumer
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import java.util.*
@@ -434,7 +440,11 @@ class NMSImpl : NMS() {
             val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         } else {
-            val pathEntity = (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(net.minecraft.server.v1_12_R1.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+            val pathEntity = if (version >= 11200) {
+                (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(net.minecraft.server.v1_12_R1.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+            } else {
+                (mob as org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreature).handle.navigation.a(net.minecraft.server.v1_9_R2.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+            }
             val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as Array<PathPoint>
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         }
@@ -474,9 +484,27 @@ class NMSImpl : NMS() {
         return if (version >= 11300) {
             block.boundingBox.maxY - block.y
         } else {
-            val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
-            val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
-            b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+            when (version) {
+                11200 -> {
+                    val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
+                    val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
+                    b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+                }
+                11100 -> {
+                    val p = net.minecraft.server.v1_11_R1.BlockPosition(block.x, block.y, block.z)
+                    val b = (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle.getType(p)
+                    b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)?.e ?: 0.0
+                }
+                else -> {
+                    if (block.isEmpty) {
+                        0.0
+                    } else {
+                        val p = net.minecraft.server.v1_9_R2.BlockPosition(block.x, block.y, block.z)
+                        val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
+                        b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle,p)?.e ?: 0.0
+                    }
+                }
+            }
         }
     }
 
@@ -490,5 +518,19 @@ class NMSImpl : NMS() {
 
     override fun sendPlayerSleeping(player: Player, id: Int, location: Location) {
         sendPacket(player, PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
+    }
+
+    override fun addEntity(location: Location, clazz: Class<out Entity>, function: java.util.function.Consumer<Entity>): Entity {
+        if (version > 11200) {
+            return location.world!!.spawn(location, clazz) { function.accept(it) }
+        }
+        val world = (location.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld)
+        val entity = world.createEntity(location, clazz)!!
+        if (entity is net.minecraft.server.v1_9_R2.EntityInsentient) {
+            entity.prepare(world.handle.D(net.minecraft.server.v1_9_R2.BlockPosition(entity)), null)
+        }
+        function.accept(entity.bukkitEntity)
+        world.handle.addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM)
+        return entity.bukkitEntity
     }
 }

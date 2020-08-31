@@ -69,7 +69,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMetaByteMask(0, "isFlyingElytra", 0x80.toByte())
         registerMeta(2, "customName", TextComponent(""))
         registerMeta(3, "isCustomNameVisible", false)
-        registerMeta(at(11000 to 5, 10900 to -1), "noGravity", false)
+        registerMeta(at(11000 to 5), "noGravity", false)
         if (version >= 11400) {
             registerMeta(at(11400 to 6), "pose", BukkitPose.STANDING)
             registerEditor("entityPose")
@@ -250,25 +250,21 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         this.controller.add(controller)
     }
 
-    fun unregisterController(controller: Controller) {
-        this.controller.remove(controller)
+    fun <T : Controller> unregisterController(controller: KClass<T>) {
+        this.controller.removeIf { it.javaClass == controller.java }
     }
 
-    fun unregisterController(name: String) {
-        this.controller.removeIf { it.javaClass.simpleName == name }
-    }
-
-    fun resetController() {
-        this.controller.clear()
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Controller> getController(controller: KClass<T>): T? {
+        return (this.controller.firstOrNull { it.javaClass == controller.java } ?: return null) as T
     }
 
     fun getController(): List<Controller> {
         return this.controller.toList()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Controller> getController(controller: KClass<T>): T? {
-        return (this.controller.firstOrNull { it.javaClass == controller.java } ?: return null) as T
+    fun resetController() {
+        this.controller.clear()
     }
 
     /**

@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.script
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
@@ -24,18 +26,20 @@ import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.util.EulerAngle
 import java.util.concurrent.ConcurrentHashMap
 
-object Kether {
+object ScriptHandler {
 
     var storage: QuestStorage? = null
         private set
 
     val knownEvents = ConcurrentHashMap<String, KnownEvent<*>>()
-    val knownControllers = ConcurrentHashMap<String, (EntityInstance) -> (Controller)>()
+    val knownControllers = ConcurrentHashMap<String, KnownController>()
 
     @TFunction.Init
     fun init() {
@@ -97,13 +101,36 @@ object Kether {
                 .field("player", { it.player.name })
                 .field("message", { it.quitMessage }, { k, v -> k.quitMessage = v.toString() })
 
+        knownEvents["chat"] = KnownEvent(AsyncPlayerChatEvent::class)
+                .field("player", { it.player.name })
+                .field("message", { it.message }, { k, v -> k.message = v.toString() })
+                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+
+        knownEvents["command"] = KnownEvent(PlayerCommandPreprocessEvent::class)
+                .field("player", { it.player.name })
+                .field("command", { it.message }, { k, v -> k.message = v.toString() })
+                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+
+        knownEvents["npc_damage"] = KnownEvent(AdyeshachEntityDamageEvent::class)
+                .field("player", { it.player.name })
+                .field("id", { it.entity.id })
+                .field("uniqueId", { it.entity.uniqueId })
+                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+
+        knownEvents["npc_interact"] = KnownEvent(AdyeshachEntityInteractEvent::class)
+                .field("player", { it.player.name })
+                .field("id", { it.entity.id })
+                .field("uniqueId", { it.entity.uniqueId })
+                .field("action", { if (it.isMainHand) "HAND" else "OFF_HAND" })
+                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+
         // 已知控制器
-        knownControllers["Move"] = { GeneralMove(it) }
-        knownControllers["Gravity"] = { GeneralGravity(it) }
-        knownControllers["SmoothLook"] = { GeneralSmoothLook(it) }
-        knownControllers["LookAtPlayer"] = { ControllerLookAtPlayer(it) }
-        knownControllers["RandomLookGround"] = { ControllerRandomLookaround(it) }
-        knownControllers["RandomStrollLand"] = { ControllerRandomStrollLand(it) }
+        knownControllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
+        knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
+        knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class){ GeneralSmoothLook(it) }
+        knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
+        knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookaround::class) { ControllerRandomLookaround(it) }
+        knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
     }
 
     @TSchedule
@@ -157,7 +184,7 @@ object Kether {
         return knownEvents.entries.firstOrNull { it.key.equals(name, true) }?.value
     }
 
-    fun getKnownController(name: String): ((EntityInstance) -> (Controller))? {
+    fun getKnownController(name: String): KnownController? {
         return knownControllers.entries.firstOrNull { it.key.equals(name, true) }?.value
     }
 }

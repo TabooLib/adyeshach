@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.script.action.npc
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
 import org.bukkit.Bukkit
@@ -50,7 +50,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: Location
                         if (t.hasNext()) {
                             t.mark()
                             if (t.nextElement() == "at" && t.hasNext()) {
-                                location = Kether.toLocation(t.nextElement())
+                                location = ScriptHandler.toLocation(t.nextElement())
                             } else {
                                 t.reset()
                             }

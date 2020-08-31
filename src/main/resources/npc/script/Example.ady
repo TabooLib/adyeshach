@@ -1,6 +1,17 @@
 def main:
-    use public temporary
-    create npc1 villager at world,0,100,0
+    log main
+    use private temporary
+    create test armor_stand at world,0,85,0
+    select test
+    controller add Move
+    controller add Gravity
+    meta set hasArms to true
+    meta set isGlowing to true
+    meta set equipmentHelmet to iron_helmet
+    meta set equipmentHand to diamond_sword
+    meta set customName to Adyeshach_NPC
+    meta set isCustomNameVisible to true
     wait 2s
-    select npc1
+    move x 10 offset
+    wait 10s
     delete

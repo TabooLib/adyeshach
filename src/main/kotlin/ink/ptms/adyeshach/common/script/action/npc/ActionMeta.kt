@@ -7,7 +7,7 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.*
-import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.cronus.Cronus
 import io.izzel.kether.common.api.*
@@ -57,7 +57,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
             throw RuntimeException("No entity selected.")
         }
         context.getEntity()!!.filterNotNull().forEach {
-            val meta = it.listMetadata().firstOrNull { m -> m.key == key } ?: throw RuntimeException("Metadata \"${key}\" not found.")
+            val meta = it.listMetadata().firstOrNull { m -> m.key.equals(key, true) } ?: throw RuntimeException("Metadata \"${key}\" not found.")
             val editor = Editor.getEditor(meta) ?: throw RuntimeException("Metadata is not editable. (0)")
             if (!editor.edit) {
                 throw RuntimeException("Metadata is not editable. (1)")
@@ -139,8 +139,8 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                             when (meta.def.javaClass.kotlin) {
                                 Int::class, Byte::class, Float::class, Double::class, String::class, TextComponent::class -> it.setMetadata(meta.key, value.toString())
                                 Boolean::class -> it.setMetadata(meta.key, Coerce.toBoolean(value))
-                                Position::class -> it.setMetadata(meta.key, Kether.toPosition(value.toString()))
-                                EulerAngle::class -> it.setMetadata(meta.key, Kether.toEulerAngle(value.toString()))
+                                Position::class -> it.setMetadata(meta.key, ScriptHandler.toPosition(value.toString()))
+                                EulerAngle::class -> it.setMetadata(meta.key, ScriptHandler.toEulerAngle(value.toString()))
                                 ItemStack::class -> it.setMetadata(meta.key, getItem(value.toString()))
                                 MaterialData::class -> it.setMetadata(meta.key, getItem(value.toString()).data!!)
                                 BukkitParticles::class -> it.setMetadata(meta.key, Enums.getIfPresent(BukkitParticles::class.java, value.toString().toUpperCase()).get())

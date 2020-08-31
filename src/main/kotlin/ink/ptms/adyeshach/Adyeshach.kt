@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.api.Settings
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.loader.Plugin
 import io.izzel.taboolib.loader.PluginBase
@@ -15,6 +16,8 @@ object Adyeshach : Plugin() {
 
     var settings = Settings()
         private set
+
+    val scriptHandler = ScriptHandler
 
     override fun onLoad() {
         if (Version.isBefore(Version.v1_9)) {

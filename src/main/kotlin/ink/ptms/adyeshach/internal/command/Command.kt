@@ -28,7 +28,7 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1]).orNull()
+            val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].toUpperCase()).orNull()
             if (entityType == null) {
                 sender.error("Entity &f\"${args[1]}\" &7not supported.")
                 return
@@ -55,7 +55,7 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.info("Adyeshach NPC not found.")
+                sender.error("Adyeshach NPC not found.")
                 return
             }
             entity.forEach {
@@ -75,7 +75,7 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
             if (entity == null) {
-                sender.info("Adyeshach NPC not found.")
+                sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Creating...")
@@ -93,7 +93,7 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
             if (entity == null) {
-                sender.info("Adyeshach NPC not found.")
+                sender.error("Adyeshach NPC not found.")
                 return
             }
             if (entity.getController().isNotEmpty()) {
@@ -115,7 +115,7 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
             if (entity == null) {
-                sender.info("Adyeshach NPC not found.")
+                sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Moving...")
@@ -134,11 +134,54 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
             if (entity == null) {
-                sender.info("Adyeshach NPC not found.")
+                sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Teleport...")
             (sender as Player).teleport(entity.position.toLocation())
+        }
+    }
+
+    @SubCommand(description = "modify controller of adyeshach npc.", type = CommandType.PLAYER)
+    val controller = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("method") { listOf("add", "remove", "reset") }, Argument("name") { Adyeshach.scriptHandler.knownControllers.keys().toList() })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
+                sender.error("Adyeshach NPC not found.")
+                return
+            }
+            when (args[1]) {
+                "add" -> {
+                    val controller = Adyeshach.scriptHandler.getKnownController(args[2])
+                    if (controller == null) {
+                        sender.error("Unknown controller ${args[2]}")
+                        return
+                    }
+                    entity.registerController(controller.get.invoke(entity))
+                    sender.info("Changed.")
+                }
+                "remove" -> {
+                    val controller = Adyeshach.scriptHandler.getKnownController(args[2])
+                    if (controller == null) {
+                        sender.error("Unknown controller ${args[2]}")
+                        return
+                    }
+                    entity.unregisterController(controller.controllerClass)
+                    sender.info("Changed.")
+                }
+                "reset" -> {
+                    entity.resetController()
+                    sender.info("Changed.")
+                }
+                else -> {
+                    sender.error("Unknown controller method ${args[1]} (add,remove,reset)")
+                }
+            }
         }
     }
 

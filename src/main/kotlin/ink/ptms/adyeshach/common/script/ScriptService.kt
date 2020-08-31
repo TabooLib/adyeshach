@@ -48,8 +48,8 @@ object ScriptService : QuestService<ScriptContext> {
             val trigger = getQuestSettings(it.value.id)["start"] ?: return@forEach
             if (trigger.toString() == "start") {
                 startQuest(ScriptContext.create(it.value))
-            } else if (Kether.getKnownEvent(trigger.toString()) != null) {
-                val event = Kether.getKnownEvent(trigger.toString()) as KnownEvent<Event>
+            } else if (ScriptHandler.getKnownEvent(trigger.toString()) != null) {
+                val event = ScriptHandler.getKnownEvent(trigger.toString()) as KnownEvent<Event>
                 listener.add(Closables.listening(event.eventClass.java) { e ->
                     val context = ScriptContext.create(it.value)
                     val player = event.field["player"]
@@ -153,6 +153,6 @@ object ScriptService : QuestService<ScriptContext> {
     }
 
     override fun getStorage(): QuestStorage {
-        return Kether.storage!!
+        return ScriptHandler.storage!!
     }
 }

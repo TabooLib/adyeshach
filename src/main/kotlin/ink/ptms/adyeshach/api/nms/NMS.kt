@@ -118,6 +118,8 @@ abstract class NMS {
 
     abstract fun sendPlayerSleeping(player: Player, id: Int, location: Location)
 
+    abstract fun addEntity(location: Location, clazz: Class<out Entity>, function: java.util.function.Consumer<Entity>): Entity
+
     companion object {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")

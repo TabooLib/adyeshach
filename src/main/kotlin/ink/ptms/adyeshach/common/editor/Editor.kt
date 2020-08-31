@@ -114,7 +114,7 @@ object Editor {
                 .toRawMessage(player)))
         var page = TellrawJson.create()
         var i = 0
-        entity.listMetadata().sortedBy { it.key }.forEach {
+        entity.listMetadata().filter { it.index != -1 }.sortedBy { it.key }.forEach {
             val editor = getEditor(it)
             if (editor != null && editor.edit) {
                 page.append("  §n${it.key.toDisplay()}").newLine()
@@ -166,7 +166,7 @@ object Editor {
                 .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                 .newLine().append("      ")
         var i = 0
-        entity.listMetadata().sortedBy { it.key }.forEach {
+        entity.listMetadata().filter { it.index != -1 }.sortedBy { it.key }.forEach {
             val editor = getEditor(it)
             if (editor != null && editor.edit) {
                 json.append("§8[")
@@ -194,13 +194,13 @@ object Editor {
         json.newLine().send(player)
     }
 
-    fun Boolean.toDisplay(): String {
-        return if (this) "§aTrue" else "§cFalse"
+    fun Boolean?.toDisplay(): String {
+        return if (this == true) "§aTrue" else "§cFalse"
     }
 
-    fun String.toDisplay(): String {
+    fun String?.toDisplay(): String {
         val builder = StringBuilder()
-        toCharArray().forEachIndexed { index, c ->
+        toString().toCharArray().forEachIndexed { index, c ->
             when {
                 index == 0 -> builder.append(c.toUpperCase())
                 c.isUpperCase() -> builder.append(" $c")

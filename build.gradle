@@ -27,6 +27,8 @@ dependencies {
     taboo 'io.izzel.kether.common:Kether:1.0'
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'net.citizensnpcs:Citizens:2.0.18'
+    compile 'com.guillaumevdn.gcore:GCore:7.15.0'
+    compile 'com.guillaumevdn.questcreator:QuestCreator:5.30.0'
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11500:11500:all'
     compile 'ink.ptms.core:v11400:11400:all'

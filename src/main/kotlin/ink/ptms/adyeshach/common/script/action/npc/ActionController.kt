@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.script.action.npc
 
-import ink.ptms.adyeshach.common.script.Kether
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
@@ -31,11 +31,13 @@ class ActionController(val symbol: Symbol, val controller: String?) : QuestActio
         context.getEntity()!!.filterNotNull().forEach {
             when (symbol) {
                 Symbol.ADD -> {
-                    val controller = Kether.getKnownController(controller!!)
-                            ?: throw RuntimeException("Unknown controller $controller")
-                    it.registerController(controller.invoke(it))
+                    val controller = ScriptHandler.getKnownController(controller!!) ?: throw RuntimeException("Unknown controller $controller")
+                    it.registerController(controller.get.invoke(it))
                 }
-                Symbol.REMOVE -> it.unregisterController(controller!!)
+                Symbol.REMOVE -> {
+                    val controller = ScriptHandler.getKnownController(controller!!) ?: throw RuntimeException("Unknown controller $controller")
+                    it.unregisterController(controller.controllerClass)
+                }
                 Symbol.RESET -> it.resetController()
             }
         }
