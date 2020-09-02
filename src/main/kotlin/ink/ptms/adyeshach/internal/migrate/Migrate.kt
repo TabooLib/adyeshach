@@ -12,6 +12,6 @@ abstract class Migrate {
 
     companion object {
 
-        val migrates = hashMapOf("Citizens" to MigrateCitizens(), "ServerNPC" to MigrateServerNPC())
+        val migrates = hashMapOf("Citizens" to MigrateCitizens(), "ServerNPC" to MigrateServerNPC(), "QuestCreator" to MigrateQuestCreator())
     }
 }

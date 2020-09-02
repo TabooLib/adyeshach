@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.api.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
@@ -291,7 +292,8 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     private fun addPlayerInfo(viewer: Player) {
-        NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, gameProfile.name, gameProfile.ping, gameProfile.gameMode, gameProfile.texture)
+        val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone()).call()
+        NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.gameMode, event.gameProfile.texture)
     }
 
     private fun removePlayerInfo(viewer: Player) {

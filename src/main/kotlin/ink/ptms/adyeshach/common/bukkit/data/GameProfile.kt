@@ -31,4 +31,14 @@ class GameProfile {
 
     @Expose
     var gameMode = GameMode.SURVIVAL
+
+    fun clone(): GameProfile {
+        val gameProfile = GameProfile()
+        gameProfile.name = name
+        gameProfile.ping = ping
+        gameProfile.texture = texture.clone()
+        gameProfile.textureName = textureName
+        gameProfile.gameMode = gameMode
+        return gameProfile
+    }
 }
