@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
@@ -18,6 +19,7 @@ import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.Indexs
+import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
 import io.netty.util.internal.ConcurrentSet
@@ -28,6 +30,7 @@ import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock
 import org.bukkit.entity.Player
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass
 
@@ -524,5 +527,23 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
         // 实体逻辑处理
         controller.filter { it.shouldExecute() }.forEach { it.onTick() }
+    }
+
+    /**
+     * 克隆实体
+     */
+    fun clone(newId: String, location: Location): EntityInstance? {
+        val json = JsonParser.parseString(toJson()).asJsonObject
+        json.addProperty("id", newId)
+        json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
+        val entity = AdyeshachAPI.fromJson(json.toString()) ?: return null
+        manager?.addEntity(entity)
+        entity.manager = manager
+        entity.position = EntityPosition.fromLocation(location)
+        entity.controller.addAll(controller)
+        forViewers {
+            entity.addViewer(it)
+        }
+        return entity
     }
 }

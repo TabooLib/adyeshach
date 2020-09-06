@@ -16,7 +16,7 @@ object Closables {
     }
 
     fun <T : Event> listening(clazz: Class<T>, consumer: Consumer<T>): AutoCloseable {
-        val listener = OnetimeListener.set(clazz, { true }, consumer)
+        val listener = OnetimeListener.set(clazz, { it.javaClass == clazz }, consumer)
         return AutoCloseable { HandlerList.unregisterAll(listener) }
     }
 

@@ -30,11 +30,14 @@ class ListenerEntity : Listener {
         }
         if (packet.`is`("PacketPlayInUseEntity")) {
             val entity = AdyeshachAPI.getEntityFromEntityId(packet.read("a", Int::class.java), player) ?: return true
-            if (packet.read("action").toString() == "ATTACK") {
-                AdyeshachEntityDamageEvent(entity, player).call()
-            } else {
-                val v = packet.read("c")
-                AdyeshachEntityInteractEvent(entity, player, packet.read("d").toString() == "MAIN_HAND", if (v == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(v)).call()
+            when (packet.read("action").toString()) {
+                "ATTACK" -> {
+                    AdyeshachEntityDamageEvent(entity, player).call()
+                }
+                "INTERACT_AT" -> {
+                    val v = packet.read("c")
+                    AdyeshachEntityInteractEvent(entity, player, packet.read("d").toString() == "MAIN_HAND", if (v == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(v)).call()
+                }
             }
         }
         return true

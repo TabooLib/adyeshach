@@ -61,6 +61,14 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         activeEntity.remove(entityInstance)
     }
 
+    override fun addEntity(entityInstance: EntityInstance) {
+        activeEntity.add(entityInstance)
+    }
+
+    override fun removeEntity(entityInstance: EntityInstance) {
+        activeEntity.remove(entityInstance)
+    }
+
     override fun getEntities(): List<EntityInstance> {
         return activeEntity
     }

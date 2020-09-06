@@ -83,6 +83,24 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
+    @SubCommand(description = "copy adyeshach npc.", type = CommandType.PLAYER)
+    val copy = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
+            if (entity == null) {
+                sender.error("Adyeshach NPC not found.")
+                return
+            }
+            sender.info("Coping...")
+            entity.clone(args[0], (sender as Player).location)
+        }
+    }
+
     @SubCommand(description = "pickup and move adyeshach npc.", type = CommandType.PLAYER)
     val move = object : BaseSubCommand() {
 

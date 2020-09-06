@@ -15,13 +15,13 @@ import java.util.function.Predicate
  */
 class OnetimeListener<T : Event>(private val clazz: Class<T>, private val predicate: Predicate<T>, private val consumer: Consumer<T>) : Listener, EventExecutor {
 
-    @Throws(EventException::class)
     override fun execute(listener: Listener, event: Event) {
         try {
             val cast = clazz.cast(event)
             if (predicate.test(cast)) {
                 consumer.accept(cast)
             }
+        } catch (ignore: ClassCastException) {
         } catch (e: Exception) {
             throw EventException(e)
         }

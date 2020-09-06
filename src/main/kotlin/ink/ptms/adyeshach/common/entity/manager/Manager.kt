@@ -16,6 +16,10 @@ abstract class Manager {
 
     abstract fun remove(entityInstance: EntityInstance)
 
+    abstract fun addEntity(entityInstance: EntityInstance)
+
+    abstract fun removeEntity(entityInstance: EntityInstance)
+
     abstract fun getEntities(): List<EntityInstance>
 
     abstract fun getEntityById(id: String): List<EntityInstance>
