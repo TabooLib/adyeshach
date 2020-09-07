@@ -15,12 +15,13 @@ class ActionCheck(val left: Any, val right: Any, val symbol: Symbol) : QuestActi
 
     enum class Symbol {
 
-        EQUALS, GT, GT_EQ, LT, LT_EQ
+        EQUALS, EQUALS_IGNORE_CASE, GT, GT_EQ, LT, LT_EQ
     }
 
     fun check(left: Any?, right: Any?): Boolean {
         return when (symbol) {
             EQUALS -> left == right
+            EQUALS_IGNORE_CASE -> left.toString().equals(right.toString(), ignoreCase = true)
             GT -> Coerce.toDouble(left) > Coerce.toDouble(right)
             GT_EQ -> Coerce.toDouble(left) >= Coerce.toDouble(right)
             LT -> Coerce.toDouble(left) < Coerce.toDouble(right)
@@ -82,6 +83,7 @@ class ActionCheck(val left: Any, val right: Any, val symbol: Symbol) : QuestActi
                         }
                         val symbol = when (val type = t.nextElement()) {
                             "is", "eq", "equals", "==" -> EQUALS
+                            "like", "~=" -> EQUALS_IGNORE_CASE
                             "gt", ">" -> GT
                             "gteq", ">=" -> GT_EQ
                             "lt", "<" -> LT

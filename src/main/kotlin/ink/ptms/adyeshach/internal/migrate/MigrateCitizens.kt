@@ -10,6 +10,8 @@ import io.izzel.taboolib.module.lite.SimpleReflection
 import net.citizensnpcs.api.CitizensAPI
 import net.citizensnpcs.npc.entity.EntityHumanNPC
 import net.citizensnpcs.npc.skin.Skin
+import net.citizensnpcs.npc.skin.SkinnableEntity
+import net.citizensnpcs.util.NMS
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
 
@@ -24,9 +26,9 @@ class MigrateCitizens : Migrate() {
     }
 
     override fun migrate() {
-        CitizensAPI.getNPCRegistry().forEach { npc ->
+        CitizensAPI.getNPCRegistry().toList().forEach { npc ->
             if (npc.entity == null) {
-                println("[Adyeshach][Migrate] Citizens ${npc.name}'s entity was not found.")
+                println("[Adyeshach][Migrate] Citizens ${npc.name} is invalid or entity chunk not loaded.")
                 return@forEach
             }
             val entityTypes = EntityTypes.fromBukkit(npc.entity.type)
@@ -34,8 +36,8 @@ class MigrateCitizens : Migrate() {
                 println("[Adyeshach][Migrate] Citizens ${npc.entity.type} not supported.")
                 return@forEach
             }
-            npc.destroy()
             val entity = AdyeshachAPI.getEntityManagerPublic().create(entityTypes, npc.entity.location)
+            entity.id = "citizens_${npc.id}"
             entity.setCustomName(npc.fullName)
             entity.setCustomNameVisible(true)
             if (entity is AdyEntityAgeable && npc.entity is Ageable) {
@@ -113,10 +115,12 @@ class MigrateCitizens : Migrate() {
                 entity.setPattern((npc.entity as TropicalFish).pattern)
             }
             if (entity is AdyHuman && npc.entity is Player) {
-                val playerNPC = npc.entity as EntityHumanNPC.PlayerNPC
-                val property = SimpleReflection.getFieldValueChecked(Skin::class.java, playerNPC.skinTracker.skin, "skinData", true) as Property
-                entity.setName(playerNPC.name)
-                entity.setTexture(property.value, property.signature)
+                val skin = if (npc.entity is SkinnableEntity) npc.entity as SkinnableEntity  else NMS.getSkinnable(npc.entity)
+                if (skin != null && !skin.profile.properties.isEmpty) {
+                    val property = skin.profile.properties.entries().first().value
+                    entity.setName(npc.name)
+                    entity.setTexture(property.value, property.signature)
+                }
             }
             if (entity is AdyEntityLiving && npc.entity is LivingEntity) {
                 (npc.entity as LivingEntity).equipment?.helmet?.let { entity.setEquipment(EquipmentSlot.HEAD, it) }
@@ -135,6 +139,7 @@ class MigrateCitizens : Migrate() {
             } catch (ignore: Throwable) {
             }
             entity.setGlowing(npc.entity.isGlowing)
+            npc.destroy()
         }
     }
 }

@@ -250,6 +250,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun registerController(controller: Controller) {
+        unregisterController(controller::class)
         this.controller.add(controller)
     }
 
