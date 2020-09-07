@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityThrowable
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
@@ -63,6 +64,17 @@ class ListenerEntity : Listener {
     fun e(e: AdyeshachEntityTeleportEvent) {
         e.entity.getPassengers().forEach {
             it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun e(e: AdyeshachNaturalMetaGenerateEvent) {
+        if (e.meta.key == "customName" && e.value is String) {
+            val nameLength = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
+            if ((e.value as String).length > nameLength) {
+                e.value = (e.value as String).substring(0, nameLength)
+                println("[Adyeshach] NPC ${e.entity.id} created with name length greater than $nameLength, truncating to ${(e.value as String).substring(0, nameLength)}")
+            }
         }
     }
 }

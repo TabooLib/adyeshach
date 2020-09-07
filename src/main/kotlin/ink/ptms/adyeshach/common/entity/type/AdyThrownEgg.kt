@@ -14,4 +14,12 @@ class AdyThrownEgg() : AdyEntity(EntityTypes.THROWN_EGG), EntityThrowable {
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.EGG))
     }
+
+    fun getItem(): ItemStack {
+        return getMetadata("item")
+    }
+
+    fun setItem(value: ItemStack) {
+        setMetadata("item", value)
+    }
 }

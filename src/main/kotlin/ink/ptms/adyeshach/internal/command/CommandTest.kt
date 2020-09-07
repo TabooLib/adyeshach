@@ -2,13 +2,13 @@ package ink.ptms.adyeshach.internal.command
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.internal.migrate.Migrate
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.PageBuilder
 import io.izzel.taboolib.util.chat.ComponentSerializer
-import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -31,6 +31,26 @@ class CommandTest : BaseMainCommand(), Helper {
                 }
             }
             sender.info("Done.")
+        }
+    }
+
+    @SubCommand(description = "migrate from the other.")
+    var migrate: BaseSubCommand = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("type") { Migrate.migrates.filter { it.value.isEnabled() }.map { it.key }.toList() })
+        }
+
+        override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
+            val migrate = Migrate.migrates[args[0]]
+            if (migrate == null || !migrate.isEnabled()) {
+                sender.error("Migrate Type ${args[0]} not registered.")
+                return
+            }
+            val time = System.currentTimeMillis()
+            sender.info("Translating.")
+            migrate.migrate()
+            sender.info("Successfully. (${System.currentTimeMillis() - time}ms)")
         }
     }
 

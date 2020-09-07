@@ -14,4 +14,12 @@ class AdyThrownExperienceBottle() : AdyEntity(EntityTypes.THROWN_EXPERIENCE_BOTT
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.EXPERIENCE_BOTTLE))
     }
+
+    fun getItem(): ItemStack {
+        return getMetadata("item")
+    }
+
+    fun setItem(value: ItemStack) {
+        setMetadata("item", value)
+    }
 }

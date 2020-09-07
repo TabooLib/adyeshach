@@ -70,4 +70,20 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
     fun getCustomBlock(): MaterialData {
         return MaterialData(customBlock, customBlockData)
     }
+
+    fun getCustomBlockOffset(): Int {
+        return getMetadata("customBlockPosition")
+    }
+
+    fun setCustomBlockOffset(value: Int) {
+        setMetadata("customBlockPosition", value)
+    }
+
+    fun isShowCustomBlock(): Boolean {
+        return getMetadata("showCustomBlock")
+    }
+
+    fun setShowCustomBlock(value: Boolean) {
+        setMetadata("showCustomBlock", value)
+    }
 }

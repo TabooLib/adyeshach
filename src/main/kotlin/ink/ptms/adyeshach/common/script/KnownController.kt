@@ -2,8 +2,6 @@ package ink.ptms.adyeshach.common.script
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import io.izzel.taboolib.util.KV
-import org.bukkit.event.Event
 import kotlin.reflect.KClass
 
 /**

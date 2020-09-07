@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.KnownEvent
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException

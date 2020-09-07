@@ -26,6 +26,8 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
          * 1.9 -> 14
          */
         registerMeta(at(11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
+                .canEdit(false)
+                .build()
     }
 
     fun getColor(): Horse.Color {

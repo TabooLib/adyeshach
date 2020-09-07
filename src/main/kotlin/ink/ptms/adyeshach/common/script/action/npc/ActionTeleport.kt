@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.script.action.npc
 
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import io.izzel.kether.common.api.*
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture

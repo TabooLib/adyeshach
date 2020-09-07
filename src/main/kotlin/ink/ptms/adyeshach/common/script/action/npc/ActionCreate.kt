@@ -2,8 +2,8 @@ package ink.ptms.adyeshach.common.script.action.npc
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import io.izzel.kether.common.api.*
 import org.bukkit.Bukkit
 import org.bukkit.Location

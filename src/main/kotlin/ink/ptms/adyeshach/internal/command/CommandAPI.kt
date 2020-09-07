@@ -10,6 +10,8 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
+import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
+import ink.ptms.adyeshach.common.util.BukkitUtils
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.module.command.base.*
@@ -17,6 +19,7 @@ import io.izzel.taboolib.util.Files
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.util.NumberConversions
 import java.io.File
@@ -108,6 +111,21 @@ class CommandAPI : BaseMainCommand(), Helper {
                     "painting_direction" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyPainting
                         entity.setDirection(BukkitDirection.valueOf(args[3]))
+                        Editor.open(sender, entity)
+                    }
+                    "pattern_color" -> {
+                        val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
+                        entity.setPatternColor(BukkitUtils.valuesDyeColor()[NumberConversions.toInt(args[3])])
+                        Editor.open(sender, entity)
+                    }
+                    "body_color" -> {
+                        val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
+                        entity.setBodyColor(BukkitUtils.valuesDyeColor()[NumberConversions.toInt(args[3])])
+                        Editor.open(sender, entity)
+                    }
+                    "pattern" -> {
+                        val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
+                        entity.setPattern(TropicalFish.Pattern.values()[NumberConversions.toInt(args[3])])
                         Editor.open(sender, entity)
                     }
                     else -> {

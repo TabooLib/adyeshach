@@ -10,8 +10,6 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
-import org.spigotmc.AsyncCatcher
-import java.util.concurrent.Executors
 
 /**
  * @Author sky

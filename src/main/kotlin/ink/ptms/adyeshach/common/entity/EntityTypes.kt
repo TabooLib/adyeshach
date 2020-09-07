@@ -846,4 +846,11 @@ enum class EntityTypes(
             }
         }
     }
+
+    companion object {
+
+        fun fromBukkit(bukkitType: EntityType): EntityTypes? {
+            return values().firstOrNull { it.bukkitType == bukkitType }
+        }
+    }
 }

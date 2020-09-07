@@ -24,18 +24,18 @@ class AdyPainting() : AdyEntity(EntityTypes.PAINTING) {
         registerEditor("painting")
                 .from(Editors.enums(BukkitPaintings::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_painting ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
-                    (entity as AdyPainting).painting = BukkitPaintings.KEBAB
+                    setPainting(BukkitPaintings.KEBAB)
                 }
                 .display { _, entity, _ ->
-                    (entity as AdyPainting).painting.name
+                    getPainting().name
                 }.build()
         registerEditor("direction")
                 .from(Editors.enums(BukkitDirection::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_direction ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
-                    (entity as AdyPainting).direction = BukkitDirection.NORTH
+                    setDirection(BukkitDirection.NORTH)
                 }
                 .display { _, entity, _ ->
-                    (entity as AdyPainting).direction.name
+                    getDirection().name
                 }.build()
     }
 

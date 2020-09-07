@@ -7,8 +7,8 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.*
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.cronus.Cronus
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.util.LocalizedException
@@ -17,6 +17,8 @@ import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Bukkit
+import org.bukkit.DyeColor
+import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -102,6 +104,15 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                         }
                         meta.key == "paintingDirection" && it is AdyPainting -> {
                             it.setDirection(BukkitDirection.valueOf(value.toString().toUpperCase()))
+                        }
+                        meta.key == "patternColor" && it is AdyTropicalFish -> {
+                            it.setPatternColor(DyeColor.valueOf(value.toString().toUpperCase()))
+                        }
+                        meta.key == "bodyColor" && it is AdyTropicalFish -> {
+                            it.setBodyColor(DyeColor.valueOf(value.toString().toUpperCase()))
+                        }
+                        meta.key == "pattern" && it is AdyTropicalFish -> {
+                            it.setPattern(TropicalFish.Pattern.valueOf(value.toString().toUpperCase()))
                         }
                         meta.key == "equipmentHelmet" && it is AdyEntityLiving -> {
                             it.setHelmet(getItem(value.toString()))

@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.api.event
 
 import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import io.izzel.taboolib.module.event.EventNormal
 import org.bukkit.Bukkit
