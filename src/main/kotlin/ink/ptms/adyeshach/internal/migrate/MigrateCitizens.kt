@@ -25,13 +25,17 @@ class MigrateCitizens : Migrate() {
 
     override fun migrate() {
         CitizensAPI.getNPCRegistry().forEach { npc ->
+            if (npc.entity == null) {
+                println("[Adyeshach][Migrate] Citizens ${npc.name}'s entity was not found.")
+                return@forEach
+            }
             val entityTypes = EntityTypes.fromBukkit(npc.entity.type)
             if (entityTypes == null) {
                 println("[Adyeshach][Migrate] Citizens ${npc.entity.type} not supported.")
                 return@forEach
             }
             npc.destroy()
-            val entity = AdyeshachAPI.getEntityManagerPublic().create(entityTypes, npc.storedLocation)
+            val entity = AdyeshachAPI.getEntityManagerPublic().create(entityTypes, npc.entity.location)
             entity.setCustomName(npc.fullName)
             entity.setCustomNameVisible(true)
             if (entity is AdyEntityAgeable && npc.entity is Ageable) {
@@ -89,7 +93,7 @@ class MigrateCitizens : Migrate() {
             }
             if (entity is AdySheep && npc.entity is Sheep) {
                 (npc.entity as Sheep).color?.let { entity.setDyeColor(it) }
-                entity.setSheared((npc.entity as Sheep).isSheared())
+                entity.setSheared((npc.entity as Sheep).isSheared)
             }
             if (entity is AdyShulker && npc.entity is Shulker) {
                 (npc.entity as Shulker).color?.let { entity.setColor(it) }
