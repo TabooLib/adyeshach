@@ -20,4 +20,12 @@ class AdyFireball() : AdyEntity(EntityTypes.FIREBALL), EntityFireball {
          */
         registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
     }
+
+    fun getItem(): ItemStack {
+        return getMetadata("item")
+    }
+
+    fun setItem(value: ItemStack) {
+        setMetadata("item", value)
+    }
 }

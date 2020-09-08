@@ -1,20 +1,15 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Horse
+import org.bukkit.entity.Villager
 
 /**
  * @author sky
  * @date 2020/8/4 23:15
  */
 class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
-
-    @Expose
-    private var color: Horse.Color = Horse.Color.WHITE
-
-    @Expose
-    private var style: Horse.Style = Horse.Style.NONE
 
     init {
         /**
@@ -28,24 +23,42 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
         registerMeta(at(11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
                 .canEdit(false)
                 .build()
+        registerEditor("horseColor")
+                .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
+                .reset { entity, meta ->
+                    setColor(Horse.Color.WHITE)
+                }
+                .display { _, entity, _ ->
+                    getColor().name
+                }.build()
+        registerEditor("horseStyle")
+                .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
+                .reset { entity, meta ->
+                    setStyle(Horse.Style.NONE)
+                }
+                .display { _, entity, _ ->
+                    getStyle().name
+                }.build()
+    }
+
+    fun getVariant(): Int {
+        return getMetadata("variant")
     }
 
     fun getColor(): Horse.Color {
-        return color
+        return Horse.Color.values()[getVariant() and 255]
     }
 
-    fun getStyle(): Horse.Color {
-        return color
+    fun getStyle(): Horse.Style {
+        return Horse.Style.values()[getVariant() ushr 8]
     }
 
     fun setColor(color: Horse.Color) {
-        this.color = color
-        setColorAndStyle(this.color, this.style)
+        setColorAndStyle(color, getStyle())
     }
 
     fun setStyle(style: Horse.Style) {
-        this.style = style
-        setColorAndStyle(this.color, this.style)
+        setColorAndStyle(getColor(), style)
     }
 
     fun setColorAndStyle(color: Horse.Color, style: Horse.Style) {

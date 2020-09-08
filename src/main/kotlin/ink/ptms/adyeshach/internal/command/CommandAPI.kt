@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
+import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
 import ink.ptms.adyeshach.common.util.BukkitUtils
@@ -18,6 +19,7 @@ import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.util.Files
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
@@ -126,6 +128,16 @@ class CommandAPI : BaseMainCommand(), Helper {
                     "pattern" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
                         entity.setPattern(TropicalFish.Pattern.values()[NumberConversions.toInt(args[3])])
+                        Editor.open(sender, entity)
+                    }
+                    "horse_color" -> {
+                        val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyHorse
+                        entity.setColor(Horse.Color.values()[NumberConversions.toInt(args[3])])
+                        Editor.open(sender, entity)
+                    }
+                    "horse_style" -> {
+                        val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyHorse
+                        entity.setStyle(Horse.Style.values()[NumberConversions.toInt(args[3])])
                         Editor.open(sender, entity)
                     }
                     else -> {

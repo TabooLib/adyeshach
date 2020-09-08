@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.DyeColor
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftTropicalFish
 import org.bukkit.entity.TropicalFish
-import org.bukkit.entity.Villager
 
 /**
  * @author sky
@@ -18,7 +17,7 @@ class AdyTropicalFish() : AdyFish(EntityTypes.TROPICAL_FISH) {
                 .canEdit(false)
                 .build()
         registerEditor("patternColor")
-                .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern_color ${entity.uniqueId} ${meta.key} $e" })
+                .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern_color ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
                     setPatternColor(DyeColor.WHITE)
                 }
@@ -26,7 +25,7 @@ class AdyTropicalFish() : AdyFish(EntityTypes.TROPICAL_FISH) {
                     getPatternColor().name
                 }.build()
         registerEditor("bodyColor")
-                .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit body_color ${entity.uniqueId} ${meta.key} $e" })
+                .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit body_color ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
                     setBodyColor(DyeColor.WHITE)
                 }
@@ -34,7 +33,7 @@ class AdyTropicalFish() : AdyFish(EntityTypes.TROPICAL_FISH) {
                     getBodyColor().name
                 }.build()
         registerEditor("pattern")
-                .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern ${entity.uniqueId} ${meta.key} $e" })
+                .from(Editors.enums(TropicalFish.Pattern::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
                     setPattern(TropicalFish.Pattern.KOB)
                 }

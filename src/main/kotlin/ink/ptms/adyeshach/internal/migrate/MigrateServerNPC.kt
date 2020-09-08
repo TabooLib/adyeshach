@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.internal.migrate
 
 import com.isnakebuzz.servernpc.Main
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer

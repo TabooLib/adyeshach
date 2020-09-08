@@ -18,6 +18,7 @@ import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Bukkit
 import org.bukkit.DyeColor
+import org.bukkit.entity.Horse
 import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
@@ -113,6 +114,12 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                         }
                         meta.key == "pattern" && it is AdyTropicalFish -> {
                             it.setPattern(TropicalFish.Pattern.valueOf(value.toString().toUpperCase()))
+                        }
+                        meta.key == "horseColor" && it is AdyHorse -> {
+                            it.setColor(Horse.Color.valueOf(value.toString().toUpperCase()))
+                        }
+                        meta.key == "horseStyle" && it is AdyHorse -> {
+                            it.setStyle(Horse.Style.valueOf(value.toString().toUpperCase()))
                         }
                         meta.key == "equipmentHelmet" && it is AdyEntityLiving -> {
                             it.setHelmet(getItem(value.toString()))

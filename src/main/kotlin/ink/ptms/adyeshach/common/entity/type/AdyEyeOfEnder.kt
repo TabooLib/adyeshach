@@ -17,4 +17,12 @@ class AdyEyeOfEnder() : AdyEntity(EntityTypes.EYE_OF_ENDER) {
          */
         registerMeta(at(11400 to 7), "item", ItemStack(Material.ENDER_EYE))
     }
+
+    fun getItem(): ItemStack {
+        return getMetadata("item")
+    }
+
+    fun setItem(value: ItemStack) {
+        setMetadata("item", value)
+    }
 }

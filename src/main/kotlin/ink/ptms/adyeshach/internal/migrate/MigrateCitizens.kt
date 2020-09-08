@@ -1,15 +1,11 @@
 package ink.ptms.adyeshach.internal.migrate
 
-import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.BukkitCreeperState
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.*
-import io.izzel.taboolib.module.lite.SimpleReflection
 import net.citizensnpcs.api.CitizensAPI
-import net.citizensnpcs.npc.entity.EntityHumanNPC
-import net.citizensnpcs.npc.skin.Skin
 import net.citizensnpcs.npc.skin.SkinnableEntity
 import net.citizensnpcs.util.NMS
 import org.bukkit.entity.*
