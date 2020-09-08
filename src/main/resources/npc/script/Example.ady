@@ -2,11 +2,6 @@ def settings:
     set start to npc_interact
 
 def main:
-    if check event get id is test then
-        command '''say @player checked test npc'''
-
-def main:
-    log main
     use private temporary
     create test armor_stand at world,0,85,0
     select test
