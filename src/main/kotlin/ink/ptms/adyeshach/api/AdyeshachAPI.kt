@@ -32,7 +32,7 @@ object AdyeshachAPI {
     private val database by lazy {
         when (Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
             "LOCAL" -> DatabaseLocal()
-            "METHOD" -> DatabaseMongodb()
+            "MONGODB" -> DatabaseMongodb()
             else -> CustomDatabaseEvent().call().database ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
         }
     }
