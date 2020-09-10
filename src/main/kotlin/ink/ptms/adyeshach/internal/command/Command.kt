@@ -110,17 +110,18 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
-            if (entity.getController().isNotEmpty()) {
+            val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
+            if (entityFirst.getController().isNotEmpty()) {
                 sender.error("Please unregister the Adyeshach NPC controller first.")
                 return
             }
             sender.info("Picking up...")
-            Picker.select(sender as Player, entity)
+            Picker.select(sender as Player, entityFirst)
         }
     }
 
@@ -132,14 +133,16 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Moving...")
-            entity.teleport((sender as Player).location)
-            entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
+            entity.forEach {
+                it.teleport((sender as Player).location)
+                it.setHeadRotation(sender.location.yaw, sender.location.pitch)
+            }
         }
     }
 
@@ -151,13 +154,13 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Teleport...")
-            (sender as Player).teleport(entity.position.toLocation())
+            (sender as Player).teleport(entity.minBy { it.position.toLocation().toDistance(sender.location) }!!.position.toLocation())
         }
     }
 
@@ -169,8 +172,8 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
@@ -181,7 +184,9 @@ class Command : BaseMainCommand(), Helper {
                         sender.error("Unknown controller ${args[2]}")
                         return
                     }
-                    entity.registerController(controller.get.invoke(entity))
+                    entity.forEach {
+                        it.registerController(controller.get.invoke(it))
+                    }
                     sender.info("Changed.")
                 }
                 "remove" -> {
@@ -190,11 +195,15 @@ class Command : BaseMainCommand(), Helper {
                         sender.error("Unknown controller ${args[2]}")
                         return
                     }
-                    entity.unregisterController(controller.controllerClass)
+                    entity.forEach {
+                        it.unregisterController(controller.controllerClass)
+                    }
                     sender.info("Changed.")
                 }
                 "reset" -> {
-                    entity.resetController()
+                    entity.forEach {
+                        it.resetController()
+                    }
                     sender.info("Changed.")
                 }
                 else -> {
