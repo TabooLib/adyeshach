@@ -164,11 +164,63 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "modify controller of adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "modify passenger of adyeshach npc.")
+    val passenger = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(
+                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                    Argument("method") { listOf("add", "remove", "reset") },
+                    Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
+            )
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
+                sender.error("Adyeshach NPC not found.")
+                return
+            }
+            val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
+            when (args[1]) {
+                "add" -> {
+                    val target = AdyeshachAPI.getEntityManagerPublic().getEntityById(args.getOrNull(2).toString())
+                    if (target.isEmpty()) {
+                        sender.error("Adyeshach NPC not found.")
+                        return
+                    }
+                    val entityTarget = target.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
+                    if (entityFirst == entityTarget) {
+                        sender.error("Please choose different Adyeshach NPC.")
+                        return
+                    }
+                    entityFirst.addPassenger(entityTarget)
+                    sender.info("Changed.")
+                }
+                "remove" -> {
+                    entityFirst.removePassenger(args.getOrNull(2).toString())
+                    sender.info("Changed.")
+                }
+                "reset" -> {
+                    entityFirst.clearPassengers()
+                    sender.info("Changed.")
+                }
+                else -> {
+                    sender.error("Unknown passenger method ${args[1]} (add,remove,reset)")
+                }
+            }
+        }
+    }
+
+    @SubCommand(description = "modify controller of adyeshach npc.")
     val controller = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("method") { listOf("add", "remove", "reset") }, Argument("name") { Adyeshach.scriptHandler.knownControllers.keys().toList() })
+            return arrayOf(
+                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                    Argument("method") { listOf("add", "remove", "reset") },
+                    Argument("name") { Adyeshach.scriptHandler.knownControllers.keys().toList() }
+            )
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
@@ -209,6 +261,20 @@ class Command : BaseMainCommand(), Helper {
                 else -> {
                     sender.error("Unknown controller method ${args[1]} (add,remove,reset)")
                 }
+            }
+        }
+    }
+
+    @SubCommand(description = "load adyeshach npc.")
+    val load = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            Tasks.task(true) {
+                Bukkit.getOnlinePlayers().forEach {
+                    AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
+                }
+                AdyeshachAPI.getEntityManagerPublic().onEnable()
+                sender.info("Adyeshach NPC has been loaded.")
             }
         }
     }

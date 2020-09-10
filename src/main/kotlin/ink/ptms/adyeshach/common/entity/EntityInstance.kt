@@ -363,9 +363,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         entity.forEach { it.removePassenger(this) }
         // 实体变动后发包
         if (passengers.addAll(entity.map { it.uniqueId })) {
-            forViewers {
-                NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
-            }
+            refreshPassenger()
         }
     }
 
@@ -374,9 +372,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             throw RuntimeException("Entity Manager not initialized.")
         }
         if (passengers.removeAll(entity.map { it.uniqueId })) {
-            forViewers {
-                NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
-            }
+            refreshPassenger()
+        }
+    }
+
+    fun removePassenger(vararg id: String) {
+        if (manager == null) {
+            throw RuntimeException("Entity Manager not initialized.")
+        }
+        if (passengers.removeAll(id)) {
+            refreshPassenger()
         }
     }
 
@@ -385,9 +390,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             return
         }
         passengers.clear()
-        forViewers {
-            NMS.INSTANCE.updatePassengers(it, index)
-        }
+        refreshPassenger()
     }
 
     fun refreshPassenger() {

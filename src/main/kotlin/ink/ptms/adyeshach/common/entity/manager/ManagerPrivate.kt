@@ -17,6 +17,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
     override fun onEnable() {
+        activeEntity.clear()
         val player = Bukkit.getPlayerExact(player)!!
         val file = database.download(player)
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return

@@ -23,6 +23,7 @@ class ManagerPublic : Manager() {
     }
 
     override fun onEnable() {
+        activeEntity.clear()
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
             Files.read(file) {
                 val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n")) ?: return@read
