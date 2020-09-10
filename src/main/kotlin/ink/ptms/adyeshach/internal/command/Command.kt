@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.command.base.*
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -73,13 +74,13 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Creating...")
-            Editor.open(sender as Player, entity)
+            Editor.open(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
         }
     }
 
@@ -91,13 +92,13 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0]).firstOrNull()
-            if (entity == null) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
             sender.info("Coping...")
-            entity.clone(args[0], (sender as Player).location)
+            entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!.clone(args[0], (sender as Player).location)
         }
     }
 
@@ -223,6 +224,14 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
             Adyeshach.reload()
             sender.info("Adyeshach Settings has been reloaded.")
+        }
+    }
+
+    fun Location.toDistance(loc: Location): Double {
+        return if (this.world!!.name == loc.world!!.name) {
+            this.distance(loc)
+        } else {
+            Double.MAX_VALUE
         }
     }
 }
