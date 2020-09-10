@@ -44,22 +44,6 @@ class ListenerEntity : Listener {
         return true
     }
 
-    @EventHandler
-    fun e(e: AdyeshachEntitySpawnEvent) {
-        if (e.entity is EntityThrowable) {
-            e.entity.setNoGravity(true)
-        }
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityVisibleEvent) {
-        if (e.visible && e.entity is AdyEntityLiving) {
-            Tasks.task {
-                e.entity.updateEquipment()
-            }
-        }
-    }
-
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun e(e: AdyeshachEntityTeleportEvent) {
         e.entity.getPassengers().forEach {

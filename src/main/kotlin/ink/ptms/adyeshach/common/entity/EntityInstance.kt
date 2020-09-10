@@ -19,6 +19,7 @@ import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.Indexs
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.chat.TextComponent
@@ -99,6 +100,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             spawn.invoke()
             updateMetadata()
             setHeadRotation(position.yaw, position.pitch)
+            // 关联实体初始化
+            Tasks.delay(5) {
+                refreshPassenger()
+            }
         }
     }
 

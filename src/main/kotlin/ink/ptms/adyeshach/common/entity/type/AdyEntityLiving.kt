@@ -52,6 +52,10 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             spawn(viewer) {
                 NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, UUID.randomUUID(), position.toLocation())
             }
+            // 装备初始化
+            Tasks.task {
+                updateEquipment()
+            }
         } else {
             destroy(viewer) {
                 NMS.INSTANCE.destroyEntity(viewer, index)
