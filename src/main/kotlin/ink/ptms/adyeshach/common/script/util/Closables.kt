@@ -15,12 +15,12 @@ object Closables {
         return AutoCloseable { Bukkit.getScheduler().cancelTask(taskId) }
     }
 
-    fun <T : Event> listening(clazz: Class<T>, consumer: Consumer<T>): AutoCloseable {
+    fun <T : Event> listening(clazz: Class<T>, consumer: (T) -> Unit): AutoCloseable {
         val listener = OnetimeListener.set(clazz, { it.javaClass == clazz }, consumer)
         return AutoCloseable { HandlerList.unregisterAll(listener) }
     }
 
-    fun <T : Event> listening(clazz: Class<T>, predicate: Predicate<T>, consumer: Consumer<T>): AutoCloseable {
+    fun <T : Event> listening(clazz: Class<T>, predicate: (T) -> Boolean, consumer: (T) -> Unit): AutoCloseable {
         val listener = OnetimeListener.set(clazz, predicate, consumer)
         return AutoCloseable { HandlerList.unregisterAll(listener) }
     }

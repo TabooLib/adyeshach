@@ -13,13 +13,13 @@ import java.util.function.Predicate
 /**
  * @Author IzzelAliz
  */
-class OnetimeListener<T : Event>(private val clazz: Class<T>, private val predicate: Predicate<T>, private val consumer: Consumer<T>) : Listener, EventExecutor {
+class OnetimeListener<T : Event>(private val clazz: Class<T>, private val predicate: (T) -> Boolean, private val consumer: (T) -> Unit) : Listener, EventExecutor {
 
     override fun execute(listener: Listener, event: Event) {
         try {
             val cast = clazz.cast(event)
-            if (predicate.test(cast)) {
-                consumer.accept(cast)
+            if (predicate.invoke(cast)) {
+                consumer.invoke(cast)
             }
         } catch (ignore: ClassCastException) {
         } catch (e: Exception) {
@@ -30,7 +30,7 @@ class OnetimeListener<T : Event>(private val clazz: Class<T>, private val predic
     companion object {
 
         @JvmStatic
-        operator fun <T : Event> set(clazz: Class<T>, predicate: Predicate<T>, consumer: Consumer<T>): OnetimeListener<T> {
+        operator fun <T : Event> set(clazz: Class<T>, predicate: (T) -> Boolean, consumer: (T) -> Unit): OnetimeListener<T> {
             val listener = OnetimeListener(clazz, predicate, consumer)
             Bukkit.getPluginManager().registerEvent(clazz, listener, EventPriority.NORMAL, listener, Adyeshach.plugin)
             return listener
