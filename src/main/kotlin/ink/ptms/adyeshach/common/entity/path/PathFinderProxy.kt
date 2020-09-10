@@ -31,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object PathFinderProxy {
 
-    private val version = Version.getCurrentVersionInt()
-    private val proxyEntity = ConcurrentHashMap<String, PathEntity>()
+    val version = Version.getCurrentVersionInt()
+    val proxyEntity = ConcurrentHashMap<String, PathEntity>()
 
     fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> (Unit)) {
         if (pathType.supportVersion > version) {

@@ -45,10 +45,10 @@ class MirrorData(val total: Boolean) {
         return this
     }
 
-    fun eval(runnable: Runnable): MirrorData {
+    fun eval(runnable: () -> (Any?)): MirrorData {
         start()
         try {
-            runnable.run()
+            runnable.invoke()
         } catch (t: Throwable) {
             t.printStackTrace()
         }

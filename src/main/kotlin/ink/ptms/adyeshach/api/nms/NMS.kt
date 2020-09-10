@@ -118,7 +118,7 @@ abstract class NMS {
 
     abstract fun sendPlayerSleeping(player: Player, id: Int, location: Location)
 
-    abstract fun addEntity(location: Location, clazz: Class<out Entity>, function: java.util.function.Consumer<Entity>): Entity
+    abstract fun addEntity(location: Location, clazz: Class<out Entity>, function: (Entity) -> Unit): Entity
 
     companion object {
 
@@ -138,6 +138,5 @@ abstract class NMS {
             }
             return any
         }
-
     }
 }

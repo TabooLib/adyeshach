@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.internal.command
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.internal.migrate.Migrate
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.command.base.*
@@ -23,11 +24,21 @@ class CommandTest : BaseMainCommand(), Helper {
     var verify: BaseSubCommand = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
+            sender.info("Checking...")
+            sender.info("  EntityTypes:")
             EntityTypes.values().forEach {
                 try {
                     NMS.INSTANCE.getEntityTypeNMS(it)
+                    sender.info("    §f$it &aSUPPORTED")
                 } catch (t: Throwable) {
-                    sender.info("Error: §f$it")
+                    sender.info("    §f$it &cERROR")
+                }
+            }
+            sender.info("  PathfinderProxy:")
+            PathFinderProxy.proxyEntity.forEach { (k, v) ->
+                sender.info("    &f${k}:")
+                v.entity.forEach { (type, entity) ->
+                    sender.info("      &f${type}: ${if (entity.isValid) "&aSUPPORTED" else "&cERROR"}")
                 }
             }
             sender.info("Done.")
@@ -48,7 +59,7 @@ class CommandTest : BaseMainCommand(), Helper {
                 return
             }
             val time = System.currentTimeMillis()
-            sender.info("Translating.")
+            sender.info("Translating...")
             migrate.migrate()
             sender.info("Successfully. (${System.currentTimeMillis() - time}ms)")
         }
@@ -74,7 +85,7 @@ class CommandTest : BaseMainCommand(), Helper {
                         .append("  §1§l§n${k.split(":")[0]}").newLine()
                         .append("  §1" + toSimple(name)).hoverText(name).newLine()
                         .append("").newLine()
-                        .append("  Total §7${if (v.total) v.times else "_"} times").newLine()
+                        .append("  Total §7${if (v.total) v.times.toString() else "_"} times").newLine()
                         .append("  Total §7${v.timeTotal} ms").newLine()
                         .append("  Average §7${v.timeLatest} ms ").append("§4(?)").hoverText("§8Details:\n§fLowest §7${v.lowest} ms\n§fHighest §7${v.highest} ms").newLine()
                         .toRawMessage(sender as Player)))

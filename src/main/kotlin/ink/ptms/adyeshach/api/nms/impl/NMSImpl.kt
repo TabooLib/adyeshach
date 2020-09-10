@@ -534,13 +534,13 @@ class NMSImpl : NMS() {
         sendPacket(player, PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
     }
 
-    override fun addEntity(location: Location, clazz: Class<out Entity>, function: java.util.function.Consumer<Entity>): Entity {
+    override fun addEntity(location: Location, clazz: Class<out Entity>, function: (Entity) -> Unit): Entity {
         val world = (location.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld)
         val entity = world.createEntity(location, clazz)!!
         if (entity is net.minecraft.server.v1_9_R2.EntityInsentient) {
             entity.prepare(world.handle.D(net.minecraft.server.v1_9_R2.BlockPosition(entity)), null)
         }
-        function.accept(entity.bukkitEntity)
+        function.invoke(entity.bukkitEntity)
         world.handle.addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM)
         return entity.bukkitEntity
     }
