@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -150,7 +151,7 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     fun setName(name: String) {
-        gameProfile.name = name
+        gameProfile.name = TLocale.Translate.setColored(name)
         respawn()
     }
 
