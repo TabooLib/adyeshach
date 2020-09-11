@@ -38,8 +38,16 @@ import kotlin.reflect.KClass
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     @Expose
-    private var passengers = ConcurrentSet<String>()
-    private val controller = CopyOnWriteArrayList<Controller>()
+    protected var visibleDistance = -1.0
+        get() = if (field == -1.0) {
+            Settings.get().visibleDistance
+        } else {
+            field
+        }
+
+    @Expose
+    protected var passengers = ConcurrentSet<String>()
+    protected val controller = CopyOnWriteArrayList<Controller>()
 
     /**
      * 实体序号
@@ -85,6 +93,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                         entity.getPose().name
                     }
         }
+        registerEditor("visibleDistance")
+                .from(Editors.TEXT)
     }
 
     /**
@@ -517,14 +527,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleLock.next()) {
             // 复活
             viewPlayers.getOutsider().forEach { player ->
-                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < Settings.get().visibleDistance) {
+                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
                     viewPlayers.visible.add(player.name)
                     visible(player, true)
                 }
             }
             // 销毁
             viewPlayers.getViewers().forEach { player ->
-                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > Settings.get().visibleDistance) {
+                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
                     viewPlayers.visible.remove(player.name)
                     visible(player, false)
                 }
