@@ -374,6 +374,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
+        if (entity.any { it.manager != manager }) {
+            throw RuntimeException("Entity Manager not identical.")
+        }
         entity.forEach {
             it.removePassenger(this)
             AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
@@ -386,6 +389,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     fun removePassenger(vararg entity: EntityInstance) {
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
+        }
+        if (entity.any { it.manager != manager }) {
+            throw RuntimeException("Entity Manager not identical.")
         }
         entity.forEach {
             AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
