@@ -374,38 +374,39 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        // 禁止套娃
-        entity.forEach { it.removePassenger(this) }
-        // 实体变动后发包
-        if (passengers.addAll(entity.map { it.uniqueId })) {
-            refreshPassenger()
+        entity.forEach {
+            it.removePassenger(this)
+            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+                passengers.add(it.uniqueId)
+            }
         }
+        refreshPassenger()
     }
 
     fun removePassenger(vararg entity: EntityInstance) {
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        if (passengers.removeAll(entity.map { it.uniqueId })) {
-            refreshPassenger()
+        entity.forEach {
+            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+                passengers.remove(it.uniqueId)
+            }
         }
+        refreshPassenger()
     }
 
     fun removePassenger(vararg id: String) {
         if (manager == null) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        if (passengers.removeAll(id)) {
-            refreshPassenger()
-        }
+        removePassenger(*getPassengers().filter { it.id in id }.toTypedArray())
     }
 
     fun clearPassengers() {
         if (manager == null && getPassengers().isEmpty()) {
             return
         }
-        passengers.clear()
-        refreshPassenger()
+        removePassenger(*getPassengers().toTypedArray())
     }
 
     fun refreshPassenger() {
