@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -21,6 +23,8 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     @Expose
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
+    @Expose
+    private var isDie = false
 
     init {
         registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
@@ -45,6 +49,17 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         registerEditor("equipmentOffhand")
                 .from(Editors.equip(EquipmentSlot.OFF_HAND))
                 .build()
+        registerEditor("isDie")
+                .reset { entity, meta ->
+                    die(false)
+                }
+                .modify { player, entity, meta ->
+                    die(!isDie)
+                    Editor.open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    isDie.toDisplay()
+                }
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
@@ -52,9 +67,13 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             spawn(viewer) {
                 NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, UUID.randomUUID(), position.toLocation())
             }
-            // 装备初始化
-            Tasks.task {
+            Tasks.delay(1) {
                 updateEquipment()
+            }
+            Tasks.delay(5) {
+                if (isDie) {
+                    die()
+                }
             }
         } else {
             destroy(viewer) {
@@ -140,10 +159,15 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     /**
      * 尸体状态
      */
-    fun die() {
-        setHealth(-1f)
-        Tasks.delay(15) {
-            setHealth(1f)
+    fun die(die: Boolean = true) {
+        isDie = die
+        if (isDie) {
+            setHealth(-1f)
+            Tasks.delay(15) {
+                setHealth(1f)
+            }
+        } else {
+            respawn()
         }
     }
     

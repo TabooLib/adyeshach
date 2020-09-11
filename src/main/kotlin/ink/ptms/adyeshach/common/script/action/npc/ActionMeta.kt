@@ -68,6 +68,9 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
             when (symbol) {
                 Symbol.SET -> {
                     when {
+                        meta.key == "isDie" && it is AdyEntityLiving -> {
+                            it.die(Coerce.toBoolean(value))
+                        }
                         meta.key == "isAngered" && it is AdyBee -> {
                             it.setAngered(Coerce.toBoolean(value))
                         }
