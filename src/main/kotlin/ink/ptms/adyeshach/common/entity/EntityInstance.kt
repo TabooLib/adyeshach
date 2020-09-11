@@ -38,7 +38,7 @@ import kotlin.reflect.KClass
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     @Expose
-    protected var visibleDistance = -1.0
+    var visibleDistance = -1.0
         get() = if (field == -1.0) {
             Settings.get().visibleDistance
         } else {
