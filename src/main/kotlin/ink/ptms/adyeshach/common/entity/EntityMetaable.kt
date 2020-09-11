@@ -115,10 +115,16 @@ abstract class EntityMetaable {
     fun updateMetadata() {
         if (this is EntityInstance) {
             forViewers {
-                val metadata = getMetadata(it)
-                if (metadata.isNotEmpty()) {
-                    NMS.INSTANCE.updateEntityMetadata(it, this.index, *metadata)
-                }
+                updateMetadata(it)
+            }
+        }
+    }
+
+    fun updateMetadata(viewer: Player) {
+        if (this is EntityInstance) {
+            val metadata = getMetadata(viewer)
+            if (metadata.isNotEmpty()) {
+                NMS.INSTANCE.updateEntityMetadata(viewer, this.index, *metadata)
             }
         }
     }

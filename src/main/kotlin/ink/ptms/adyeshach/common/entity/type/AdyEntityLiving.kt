@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.bukkit.data.DataWatcher
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.editor.Editors
@@ -13,6 +14,7 @@ import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.NumberConversions
 import java.util.*
 
 /**
@@ -24,7 +26,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     @Expose
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
     @Expose
-    private var isDie = false
+    protected var isDie = false
 
     init {
         registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
@@ -51,10 +53,10 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
                 .build()
         registerEditor("isDie")
                 .reset { entity, meta ->
-                    die(false)
+                    die(die = false)
                 }
                 .modify { player, entity, meta ->
-                    die(!isDie)
+                    die(die = !isDie)
                     Editor.open(player, entity)
                 }
                 .display { _, entity, meta ->
@@ -72,7 +74,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             }
             Tasks.delay(5) {
                 if (isDie) {
-                    die()
+                    die(viewer = viewer)
                 }
             }
         } else {
@@ -156,21 +158,6 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         equipment.clear()
     }
 
-    /**
-     * 尸体状态
-     */
-    fun die(die: Boolean = true) {
-        isDie = die
-        if (isDie) {
-            setHealth(-1f)
-            Tasks.delay(15) {
-                setHealth(1f)
-            }
-        } else {
-            respawn()
-        }
-    }
-    
     fun setHealth(value: Float) {
         setMetadata("health", value)
     }
@@ -214,6 +201,38 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             EquipmentSlot.LEGS -> getLeggings()
             EquipmentSlot.CHEST -> getChestplate()
             EquipmentSlot.HEAD -> getHelmet()
+        }
+    }
+
+    /**
+     * 尸体状态
+     */
+    fun die(die: Boolean = true) {
+        isDie = die
+        if (isDie) {
+            setHealth(-1f)
+            Tasks.delay(15) {
+                if (isDie) {
+                    setHealth(1f)
+                }
+            }
+        } else {
+            respawn()
+        }
+    }
+
+    /**
+     * 对指定玩家播放尸体状态
+     */
+    fun die(viewer: Player, die: Boolean = true) {
+        if (die) {
+            val registerMeta = meta.firstOrNull { it.key == "health" }!!
+            NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(-1)))
+            Tasks.delay(15) {
+                NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(1)))
+            }
+        } else {
+            visible(viewer, true)
         }
     }
 }
