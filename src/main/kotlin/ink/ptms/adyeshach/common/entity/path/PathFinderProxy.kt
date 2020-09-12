@@ -78,10 +78,12 @@ object PathFinderProxy {
                         if (!pathEntity.entity.containsKey(pathType) || !pathEntity.entity[pathType]!!.isValid) {
                             if (version >= 11200) {
                                 it.spawn(loc, pathType.entity) { entity ->
+                                    entity.customName = "Adyeshach Pathfinder Proxy"
                                     pathEntity.entity.put(pathType, entity as Creature)?.remove()
                                 }.silent()
                             } else {
                                 (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
+                                    entity.customName = "Adyeshach Pathfinder Proxy"
                                     pathEntity.entity.put(pathType, entity as Creature)?.remove()
                                 } as Creature).silent()
                             }
@@ -144,7 +146,6 @@ object PathFinderProxy {
     }
 
     private fun Creature.silent(): Creature {
-        customName = "Adyeshach Pathfinder Proxy"
         isSilent = true
         isCollidable = false
         isInvulnerable = true
