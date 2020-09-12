@@ -3,8 +3,6 @@ package ink.ptms.adyeshach.common.script.util
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  * @Author IzzelAliz
