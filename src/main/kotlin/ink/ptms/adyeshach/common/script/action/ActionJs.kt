@@ -43,7 +43,7 @@ class ActionJs(val script: CompiledScript) : QuestAction<Any, ScriptContext> {
             return object : QuestActionParser {
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionJs(Scripts.compile(t.nextElement())) as QuestAction<T, C> }.apply(resolver)
+                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionJs(Scripts.compile(t.nextElement().trimIndent())) as QuestAction<T, C> }.apply(resolver)
                 }
 
                 override fun complete(parms: List<String>): List<String> {
