@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
  */
 class DatabaseMongodb : Database() {
 
-    val collection = CronusBridge.get(Adyeshach.conf.getString("Database.url.client"), Adyeshach.conf.getString("Database.url.database"), Adyeshach.conf.getString("Database.url.client"), IndexType.UUID)!!
+    val collection = CronusBridge.get(Adyeshach.conf.getString("Database.url.client"), Adyeshach.conf.getString("Database.url.database"), Adyeshach.conf.getString("Database.url.collection"), IndexType.UUID)!!
 
     override fun download(player: Player): FileConfiguration {
         return collection.get(player.uniqueId.toString()).run {
