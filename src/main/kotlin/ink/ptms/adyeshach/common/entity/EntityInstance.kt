@@ -38,8 +38,16 @@ import kotlin.reflect.KClass
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     @Expose
-    private var passengers = ConcurrentSet<String>()
-    private val controller = CopyOnWriteArrayList<Controller>()
+    var visibleDistance = -1.0
+        get() = if (field == -1.0) {
+            Settings.get().visibleDistance
+        } else {
+            field
+        }
+
+    @Expose
+    protected var passengers = ConcurrentSet<String>()
+    protected val controller = CopyOnWriteArrayList<Controller>()
 
     /**
      * 实体序号
@@ -85,6 +93,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                         entity.getPose().name
                     }
         }
+        registerEditor("visibleDistance")
+                .from(Editors.TEXT)
     }
 
     /**
@@ -366,38 +376,45 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        // 禁止套娃
-        entity.forEach { it.removePassenger(this) }
-        // 实体变动后发包
-        if (passengers.addAll(entity.map { it.uniqueId })) {
-            refreshPassenger()
+        if (entity.any { it.manager != manager }) {
+            throw RuntimeException("Entity Manager not identical.")
         }
+        entity.forEach {
+            it.removePassenger(this)
+            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+                passengers.add(it.uniqueId)
+            }
+        }
+        refreshPassenger()
     }
 
     fun removePassenger(vararg entity: EntityInstance) {
         if (manager == null || entity.any { it.manager == null }) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        if (passengers.removeAll(entity.map { it.uniqueId })) {
-            refreshPassenger()
+        if (entity.any { it.manager != manager }) {
+            throw RuntimeException("Entity Manager not identical.")
         }
+        entity.forEach {
+            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+                passengers.remove(it.uniqueId)
+            }
+        }
+        refreshPassenger()
     }
 
     fun removePassenger(vararg id: String) {
         if (manager == null) {
             throw RuntimeException("Entity Manager not initialized.")
         }
-        if (passengers.removeAll(id)) {
-            refreshPassenger()
-        }
+        removePassenger(*getPassengers().filter { it.id in id }.toTypedArray())
     }
 
     fun clearPassengers() {
         if (manager == null && getPassengers().isEmpty()) {
             return
         }
-        passengers.clear()
-        refreshPassenger()
+        removePassenger(*getPassengers().toTypedArray())
     }
 
     fun refreshPassenger(viewer: Player) {
@@ -531,14 +548,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleLock.next()) {
             // 复活
             viewPlayers.getOutsider().forEach { player ->
-                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < Settings.get().visibleDistance) {
+                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
                     viewPlayers.visible.add(player.name)
                     visible(player, true)
                 }
             }
             // 销毁
             viewPlayers.getViewers().forEach { player ->
-                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > Settings.get().visibleDistance) {
+                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
                     viewPlayers.visible.remove(player.name)
                     visible(player, false)
                 }

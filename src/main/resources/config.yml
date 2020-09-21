@@ -15,5 +15,5 @@ Database:
 
 Settings:
   debug: false
-  editor-mode: BOOK
+  editor-mode: CHAT
   visible-distance: 64

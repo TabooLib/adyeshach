@@ -7,8 +7,6 @@ import org.bukkit.event.EventException
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
-import java.util.function.Consumer
-import java.util.function.Predicate
 
 /**
  * @Author IzzelAliz

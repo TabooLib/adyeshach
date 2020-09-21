@@ -68,6 +68,12 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
             when (symbol) {
                 Symbol.SET -> {
                     when {
+                        meta.key == "entityPose" -> {
+                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().toUpperCase()).get())
+                        }
+                        meta.key == "visibleDistance" -> {
+                            it.visibleDistance = Coerce.toDouble(value)
+                        }
                         meta.key == "isDie" && it is AdyEntityLiving -> {
                             it.die(Coerce.toBoolean(value))
                         }
@@ -88,9 +94,6 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                         }
                         meta.key == "playerTexture" && it is AdyHuman -> {
                             it.setTexture(value.toString())
-                        }
-                        meta.key == "entityPose" -> {
-                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().toUpperCase()).get())
                         }
                         meta.key == "villagerType" && it is EntityVillager -> {
                             val data = it.getVillagerData()

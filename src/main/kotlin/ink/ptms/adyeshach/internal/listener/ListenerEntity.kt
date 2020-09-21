@@ -3,10 +3,7 @@ package ink.ptms.adyeshach.internal.listener
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket

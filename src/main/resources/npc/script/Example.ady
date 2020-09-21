@@ -17,3 +17,4 @@ def main:
     move x 10 offset
     wait 10s
     delete
+
