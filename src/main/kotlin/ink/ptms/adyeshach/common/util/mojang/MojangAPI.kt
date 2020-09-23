@@ -116,6 +116,7 @@ object MojangAPI {
             sender.sendMessage("§c[Adyeshach] §7Took too long to connect to mineskin.org!")
         } catch (t: Throwable) {
             sender.sendMessage("§c[Adyeshach] §7Unexpected error while accessing mineskin.org, please try again.")
+            t.printStackTrace()
         }
         return null
     }

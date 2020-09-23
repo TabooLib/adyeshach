@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
 import io.izzel.taboolib.module.locale.TLocale
+import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
@@ -45,10 +46,12 @@ object ScriptService : QuestService<ScriptContext> {
             settingsMap!![quest.id] = context.persistentData
         }
         questMap!!.forEach {
-            val trigger = getQuestSettings(it.value.id)["start"] ?: return@forEach
-            if (trigger.toString() == "start") {
+            if (Coerce.toBoolean(getQuestSettings(it.value.id)["autostart"])) {
                 startQuest(ScriptContext.create(it.value))
-            } else if (ScriptHandler.getKnownEvent(trigger.toString()) != null) {
+                return@forEach
+            }
+            val trigger = getQuestSettings(it.value.id)["start"] ?: return@forEach
+            if (ScriptHandler.getKnownEvent(trigger.toString()) != null) {
                 val event = ScriptHandler.getKnownEvent(trigger.toString()) as KnownEvent<Event>
                 listener.add(Closables.listening(event.eventClass.java) { e ->
                     val context = ScriptContext.create(it.value)
