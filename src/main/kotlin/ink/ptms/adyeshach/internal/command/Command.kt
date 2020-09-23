@@ -43,6 +43,7 @@ class Command : BaseMainCommand(), Helper {
             }
             entity.id = args[0]
             sender.info("Adyeshach NPC has been created.")
+            Editor.open(sender, entity)
         }
     }
 
@@ -146,6 +147,26 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
+    @SubCommand(description = "make adyeshach npc look at your eye location.", type = CommandType.PLAYER)
+    val lookhere = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
+                sender.error("Adyeshach NPC not found.")
+                return
+            }
+            sender.info("Looking...")
+            entity.forEach {
+                it.controllerLook((sender as Player).eyeLocation)
+            }
+        }
+    }
+
     @SubCommand(description = "teleport to adyeshach npc.", type = CommandType.PLAYER, aliases = ["tp"])
     val teleport = object : BaseSubCommand() {
 
@@ -219,7 +240,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(
                     Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
                     Argument("method") { listOf("add", "remove", "reset") },
-                    Argument("name") { Adyeshach.scriptHandler.knownControllers.keys().toList() }
+                    Argument("name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
             )
         }
 

@@ -12,10 +12,10 @@ class AdySheep() : AdyEntityAgeable(EntityTypes.SHEEP) {
 
     init {
         val index = at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
-        registerMeta(index, "dyeColor", DyeColor.WHITE.dyeData)
-                .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit byte ${entity.uniqueId} ${meta.key} ${(e as DyeColor).dyeData}" })
+        registerMeta(index, "dyeColor", DyeColor.WHITE.ordinal)
+                .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} ${(e as DyeColor).ordinal}" })
                 .display { _, entity, _ ->
-                    DyeColor.getByDyeData(entity.getMetadata("dyeColor"))!!.name
+                    DyeColor.values()[entity.getMetadata("dyeColor")].name
                 }.build()
         registerMetaByteMask(index, "isSheared", 0x10)
     }
