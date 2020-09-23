@@ -59,6 +59,23 @@ class CommandScript : BaseMainCommand(), Helper {
         }
     }
 
+    @SubCommand(description = "terminate all of the adyeshach scripts.")
+    var stopall: BaseSubCommand = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("id") { ScriptService.quests.map { it.value.id } }, Argument("viewer", false))
+        }
+
+        override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
+            val quest = ImmutableList.copyOf(ScriptService.runningQuests.values()).filter { args.isEmpty() || it.quest.id == args[0] }
+            if (quest.isNotEmpty()) {
+                quest.forEach { ScriptService.terminateQuest(it) }
+            } else {
+                sender.info("Script not running.")
+            }
+        }
+    }
+
     @SubCommand(description = "view all the adyeshach scripts.")
     var list: BaseSubCommand = object : BaseSubCommand() {
 
