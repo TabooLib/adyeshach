@@ -133,11 +133,15 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
             }
             Tasks.delay(1) {
+                updateEquipment()
                 if (isHideFromTabList) {
                     removePlayerInfo(viewer)
                 }
             }
             Tasks.delay(5) {
+                if (isDie) {
+                    die(viewer)
+                }
                 if (isSleepingLegacy) {
                     setSleeping(true)
                 }

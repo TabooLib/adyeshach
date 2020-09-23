@@ -108,11 +108,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     protected fun spawn(viewer: Player, spawn: () -> (Unit)) {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call().nonCancelled()) {
             spawn.invoke()
-            updateMetadata()
+            // 更新单位属性
+            updateMetadata(viewer)
+            // 更新单位视角
             setHeadRotation(position.yaw, position.pitch)
             // 关联实体初始化
             Tasks.delay(5) {
-                refreshPassenger()
+                refreshPassenger(viewer)
             }
         }
     }
@@ -415,12 +417,24 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         removePassenger(*getPassengers().toTypedArray())
     }
 
+    fun refreshPassenger(viewer: Player) {
+        if (manager == null) {
+            throw RuntimeException("Entity Manager not initialized.")
+        }
+        NMS.INSTANCE.updatePassengers(viewer, index, *getPassengers().map { e -> e.index }.toIntArray())
+        getVehicle()?.refreshPassenger(viewer)
+    }
+
     fun refreshPassenger() {
         if (manager == null) {
             throw RuntimeException("Entity Manager not initialized.")
         }
         forViewers {
             NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
+        }
+        val vehicle = getVehicle() ?: return
+        forViewers {
+            vehicle.refreshPassenger(it)
         }
     }
 
