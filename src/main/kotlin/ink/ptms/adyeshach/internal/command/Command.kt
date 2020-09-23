@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.move.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.internal.trait.KnownTraits
 import io.izzel.taboolib.module.command.base.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -80,7 +81,7 @@ class Command : BaseMainCommand(), Helper {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
-            sender.info("Creating...")
+            sender.info("Editing...")
             Editor.open(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
         }
     }
@@ -283,6 +284,31 @@ class Command : BaseMainCommand(), Helper {
                     sender.error("Unknown controller method ${args[1]} (add,remove,reset)")
                 }
             }
+        }
+    }
+
+    @SubCommand(description = "modify trait of adyeshach npc.")
+    var trait: BaseSubCommand = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(
+                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                    Argument("trait") { KnownTraits.traits.map { it.getName() } }
+            )
+        }
+
+        override fun onCommand(sender: CommandSender, command: Command, s: String, args: Array<String>) {
+            val trait = KnownTraits.traits.firstOrNull { it.getName() == args[0] }
+            if (trait == null) {
+                sender.error("Trait not found.")
+                return
+            }
+            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            if (entity.isEmpty()) {
+                sender.error("Adyeshach NPC not found.")
+                return
+            }
+            trait.edit(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
         }
     }
 
