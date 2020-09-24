@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
@@ -30,11 +31,15 @@ class ListenerEntity : Listener {
             val entity = AdyeshachAPI.getEntityFromEntityId(packet.read("a", Int::class.java), player) ?: return true
             when (packet.read("action").toString()) {
                 "ATTACK" -> {
-                    AdyeshachEntityDamageEvent(entity, player).call()
+                    Tasks.task {
+                        AdyeshachEntityDamageEvent(entity, player).call()
+                    }
                 }
                 "INTERACT_AT" -> {
                     val v = packet.read("c")
-                    AdyeshachEntityInteractEvent(entity, player, packet.read("d").toString() == "MAIN_HAND", if (v == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(v)).call()
+                    Tasks.task {
+                        AdyeshachEntityInteractEvent(entity, player, packet.read("d").toString() == "MAIN_HAND", if (v == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(v)).call()
+                    }
                 }
             }
         }

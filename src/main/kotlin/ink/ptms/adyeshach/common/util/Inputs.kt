@@ -33,12 +33,14 @@ object Inputs {
         @EventHandler
         fun e(e: PlayerEditBookEvent) {
             if (e.newBookMeta.lore?.get(0) == "§7Inputs") {
-                Items.takeItem(e.player.inventory, { Items.hasLore(it, "Inputs") }, 99)
                 val listen = bookData.remove(e.player.name) ?: return
                 val lines = e.newBookMeta.pages.flatMap {
                     TextComponent(it).toPlainText().replace("§0", "").split("\n")
                 }
                 listen.invoke(lines)
+                Tasks.delay(1) {
+                    Items.takeItem(e.player.inventory, { Items.hasLore(it, "Inputs") }, 99)
+                }
             }
         }
     }

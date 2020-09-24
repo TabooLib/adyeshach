@@ -30,6 +30,8 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
         protected set
         get() = field.clone()
 
+    fun getLocation() = position.toLocation()
+
     fun toJson(): String {
         return Serializer.gson.toJson(this)
     }

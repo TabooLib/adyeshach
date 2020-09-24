@@ -32,6 +32,7 @@ class Command : Trait(), Listener {
             } else {
                 data.set(entityInstance.uniqueId, it)
             }
+            player.sendMessage("§c[Adyeshach] §7Trait Edited.")
         }
     }
 
