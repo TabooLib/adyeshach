@@ -58,6 +58,7 @@ object ScriptHandler {
         registry.registerAction("run", ActionRun.parser())
         registry.registerAction("check", ActionCheck.parser())
         registry.registerAction("pause", ActionPause.parser())
+        registry.registerAction("stop", ActionStop.parser())
 
         // 无参语法
         registry.registerAction("respawn", ActionRespawn.parser())
