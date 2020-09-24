@@ -30,7 +30,7 @@ object Metrics {
         metrics.addCustomChart(BStats.SingleLineChart("entity_created") {
             createdEntities
         })
-        metrics.addCustomChart(BStats.SimpleBarChart("entity_types") {
+        metrics.addCustomChart(BStats.AdvancedPie("entity_types") {
             val map = HashMap<String, Int>()
             AdyeshachAPI.getEntityManagerPublic().getEntities().forEach {
                 map[it.entityType.name] = (map[it.entityType.name] ?: 0) + 1
