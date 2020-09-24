@@ -298,14 +298,14 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, command: Command, s: String, args: Array<String>) {
-            val trait = KnownTraits.traits.firstOrNull { it.getName() == args[0] }
-            if (trait == null) {
-                sender.error("Trait not found.")
-                return
-            }
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
+                return
+            }
+            val trait = KnownTraits.traits.firstOrNull { it.getName() == args[1] }
+            if (trait == null) {
+                sender.error("Trait not found.")
                 return
             }
             trait.edit(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
