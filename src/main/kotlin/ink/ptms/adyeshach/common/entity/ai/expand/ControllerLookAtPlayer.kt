@@ -12,6 +12,10 @@ import io.izzel.taboolib.util.lite.Numbers
  */
 class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
 
+    override fun isAsync(): Boolean {
+        return true
+    }
+
     override fun shouldExecute(): Boolean {
         return Numbers.random(0.01) && !entity.isControllerMoving()
     }

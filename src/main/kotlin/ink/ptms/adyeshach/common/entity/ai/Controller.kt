@@ -12,4 +12,7 @@ abstract class Controller(val entity: EntityInstance) {
 
     abstract fun onTick()
 
+    open fun isAsync(): Boolean {
+        return false
+    }
 }

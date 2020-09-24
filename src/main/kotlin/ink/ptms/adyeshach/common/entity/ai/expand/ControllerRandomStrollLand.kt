@@ -17,6 +17,10 @@ import org.bukkit.Location
  */
 class ControllerRandomStrollLand(entity: EntityInstance) : Controller(entity) {
 
+    override fun isAsync(): Boolean {
+        return true
+    }
+
     override fun shouldExecute(): Boolean {
         return Numbers.random(0.001) && !entity.isControllerMoving()
     }

@@ -38,10 +38,10 @@ private class ManagerEvents : Listener {
 
     @TSchedule(period = 1)
     fun onTickPublic() {
-        Mirror.get("ManagerPublic:onTick(async)", false).eval {
+        Mirror.get("ManagerPublic:onTick", false).eval {
             AdyeshachAPI.getEntityManagerPublic().onTick()
         }
-        Mirror.get("ManagerPublic:onTick(async)(temporary)", false).eval {
+        Mirror.get("ManagerPublic:onTick(temporary)", false).eval {
             AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
         }
     }
@@ -49,10 +49,10 @@ private class ManagerEvents : Listener {
     @TSchedule(period = 1)
     fun onTickPrivate() {
         Bukkit.getOnlinePlayers().forEach { player ->
-            Mirror.get("ManagerPrivate:onTick(async)", false).eval {
+            Mirror.get("ManagerPrivate:onTick", false).eval {
                 AdyeshachAPI.getEntityManagerPrivate(player).onTick()
             }
-            Mirror.get("ManagerPrivate:onTick(async)(temporary)", false).eval {
+            Mirror.get("ManagerPrivate:onTick(temporary)", false).eval {
                 AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
             }
         }

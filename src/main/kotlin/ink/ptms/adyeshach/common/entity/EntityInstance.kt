@@ -29,6 +29,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.Executors
 import kotlin.reflect.KClass
 
 /**
@@ -562,7 +563,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             }
         }
         // 实体逻辑处理
-        controller.filter { it.shouldExecute() }.forEach { it.onTick() }
+        controller.filter { it.shouldExecute() }.forEach {
+            if (it.isAsync()) {
+                pool.submit {
+                    it.onTick()
+                }
+            } else {
+                it.onTick()
+            }
+        }
     }
 
     /**
@@ -586,5 +595,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             entity.addViewer(it)
         }
         return entity
+    }
+
+    companion object {
+
+        val pool = Executors.newFixedThreadPool(16)
     }
 }

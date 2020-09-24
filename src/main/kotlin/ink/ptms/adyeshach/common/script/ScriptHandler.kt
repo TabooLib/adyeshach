@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
+import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookaround
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomStrollLand
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
@@ -127,6 +128,7 @@ object ScriptHandler {
         knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
         knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class){ GeneralSmoothLook(it) }
         knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
+        knownControllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
         knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookaround::class) { ControllerRandomLookaround(it) }
         knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
     }
