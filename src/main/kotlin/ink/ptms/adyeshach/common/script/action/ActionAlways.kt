@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import io.izzel.kether.common.api.*
+import io.izzel.taboolib.util.Coerce
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -15,7 +16,12 @@ class ActionAlways : QuestAction<Boolean, ScriptContext> {
     }
 
     override fun process(context: ScriptContext): CompletableFuture<Boolean> {
-        return CompletableFuture.completedFuture(true)
+        return if (Coerce.toBoolean(context.persistentData["continue"])) {
+            context.persistentData.remove("continue")
+            CompletableFuture.completedFuture(false)
+        } else {
+            CompletableFuture.completedFuture(true)
+        }
     }
 
     override fun getDataPrefix(): String {
