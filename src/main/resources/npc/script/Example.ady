@@ -14,7 +14,6 @@ def main:
     meta set customName to Adyeshach_NPC
     meta set isCustomNameVisible to true
     wait 2s
-    move x 10 offset
+    move x to 10
     wait 10s
     delete
-
