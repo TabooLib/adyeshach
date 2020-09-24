@@ -287,7 +287,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "modify trait of adyeshach npc.")
+    @SubCommand(description = "modify trait of adyeshach npc.", type = CommandType.PLAYER)
     var trait: BaseSubCommand = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
@@ -303,7 +303,7 @@ class Command : BaseMainCommand(), Helper {
                 sender.error("Adyeshach NPC not found.")
                 return
             }
-            val trait = KnownTraits.traits.firstOrNull { it.getName() == args[1] }
+            val trait = KnownTraits.traits.firstOrNull { it.getName().equals(args[1], true) }
             if (trait == null) {
                 sender.error("Trait not found.")
                 return
