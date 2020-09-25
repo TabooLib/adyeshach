@@ -30,6 +30,8 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
         protected set
         get() = field.clone()
 
+    fun getWorld() = position.world
+
     fun getLocation() = position.toLocation()
 
     fun toJson(): String {
