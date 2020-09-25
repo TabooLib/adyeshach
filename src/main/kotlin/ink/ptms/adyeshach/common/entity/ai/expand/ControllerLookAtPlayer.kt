@@ -21,7 +21,7 @@ class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun onTick() {
-        entity!!.viewPlayers.getViewers().minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
+        entity!!.viewPlayers.getViewPlayers().minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
             if (it.location.distance(entity.position.toLocation()) < 16) {
                 entity.controllerLook(it.eyeLocation, smooth = true)
             }

@@ -26,14 +26,14 @@ class ViewPlayers {
     /**
      * 获取允许看到且在可视范围内的所有玩家
      */
-    fun getViewers(): List<Player> {
+    fun getViewPlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name in visible }
     }
 
     /**
      * 获取允许看到但不在可视范围内的所有玩家
      */
-    fun getOutsider(): List<Player> {
+    fun getOutsidePlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name !in visible }
     }
 }

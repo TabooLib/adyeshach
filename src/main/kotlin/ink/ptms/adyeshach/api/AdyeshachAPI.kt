@@ -108,6 +108,23 @@ object AdyeshachAPI {
         return entity
     }
 
+    fun getEntityFromId(id: String, player: Player? = null): EntityInstance? {
+        var entity: EntityInstance? = null
+        if (entity == null) {
+            entity = getEntityManagerPublic().getEntities().firstOrNull { it.id == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.id == id }
+        }
+        if (entity == null) {
+            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.id == id }
+        }
+        if (entity == null && player != null) {
+            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.id == id }
+        }
+        return entity
+    }
+
     fun getEntityFromUniqueId(id: String, player: Player? = null): EntityInstance? {
         var entity: EntityInstance? = null
         if (entity == null) {

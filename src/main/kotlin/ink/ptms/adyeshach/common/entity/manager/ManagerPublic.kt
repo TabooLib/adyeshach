@@ -31,8 +31,10 @@ class ManagerPublic : Manager() {
                     println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
                 } else {
                     entity.manager = this
-                    Bukkit.getOnlinePlayers().forEach { entity.addViewer(it) }
                     activeEntity.add(entity)
+                    if (entity.alwaysVisible) {
+                        Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
+                    }
                 }
             }
         }
@@ -53,7 +55,7 @@ class ManagerPublic : Manager() {
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> Unit): EntityInstance {
-        return create(entityTypes, location, location.world!!.players, function).run {
+        return create(entityTypes, location, Bukkit.getOnlinePlayers().toList(), function).run {
             activeEntity.add(this)
             this
         }

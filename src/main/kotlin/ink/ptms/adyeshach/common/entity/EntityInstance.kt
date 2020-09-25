@@ -7,6 +7,8 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
@@ -39,6 +41,12 @@ import kotlin.reflect.KClass
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     @Expose
+    protected var passengers = ConcurrentSet<String>()
+
+    @Expose
+    protected val controller = CopyOnWriteArrayList<Controller>()
+
+    @Expose
     var visibleDistance = -1.0
         get() = if (field == -1.0) {
             Settings.get().visibleDistance
@@ -47,9 +55,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
 
     @Expose
-    protected var passengers = ConcurrentSet<String>()
-    @Expose
-    protected val controller = CopyOnWriteArrayList<Controller>()
+    var alwaysVisible = true
+        set(value) {
+            if (!isPublic()) {
+                throw RuntimeException("Entity Manager not public.")
+            }
+            if (!value) {
+                clearViewer()
+            }
+            field = value
+        }
 
     /**
      * 实体序号
@@ -97,6 +112,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
         registerEditor("visibleDistance")
                 .from(Editors.TEXT)
+        registerEditor("alwaysVisible")
+                .reset { _, _ ->
+                    alwaysVisible = true
+                }
+                .modify { player, entity, meta ->
+                    alwaysVisible = !alwaysVisible
+                    Editor.open(player, entity)
+                }
+                .display { _, _, _ ->
+                    alwaysVisible.toDisplay()
+                }
     }
 
     /**
@@ -131,7 +157,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun forViewers(viewer: (Player) -> (Unit)) {
-        viewPlayers.getViewers().forEach { viewer.invoke(it) }
+        viewPlayers.getViewPlayers().forEach { viewer.invoke(it) }
     }
 
     /**
@@ -173,6 +199,20 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         Bukkit.getOnlinePlayers().filter { it.name in viewPlayers.viewers }.forEach {
             removeViewer(it)
         }
+    }
+
+    /**
+     * 是否为观察者
+     */
+    fun isViewer(viewer: Player): Boolean {
+        return viewer.name in viewPlayers.viewers
+    }
+
+    /**
+     * 是否为真实观察者（在观察范围内）
+     */
+    fun isVisibleViewer(viewer: Player): Boolean {
+        return viewer.name in viewPlayers.viewers && viewer.name in viewPlayers.visible
     }
 
     /**
@@ -549,14 +589,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         // 确保客户端显示实体正常
         if (viewPlayers.visibleLock.next()) {
             // 复活
-            viewPlayers.getOutsider().forEach { player ->
+            viewPlayers.getOutsidePlayers().forEach { player ->
                 if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
                     viewPlayers.visible.add(player.name)
                     visible(player, true)
                 }
             }
             // 销毁
-            viewPlayers.getViewers().forEach { player ->
+            viewPlayers.getViewPlayers().forEach { player ->
                 if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
                     viewPlayers.visible.remove(player.name)
                     visible(player, false)

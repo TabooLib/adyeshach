@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -30,7 +31,7 @@ class ManagerPublicTemp : Manager() {
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> Unit): EntityInstance {
-        return create(entityTypes, location, location.world!!.players, function).run {
+        return create(entityTypes, location, Bukkit.getOnlinePlayers().toList(), function).run {
             activeEntity.add(this)
             this
         }

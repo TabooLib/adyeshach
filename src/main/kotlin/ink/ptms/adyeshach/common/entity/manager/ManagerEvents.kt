@@ -76,10 +76,10 @@ private class ManagerEvents : Listener {
 
     @EventHandler
     fun e(e: AdyeshachPlayerJoinEvent) {
-        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() }.forEach {
+        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
-        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() }.forEach {
+        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
         Mirror.get("ManagerPrivate:onLoad(async)").eval {

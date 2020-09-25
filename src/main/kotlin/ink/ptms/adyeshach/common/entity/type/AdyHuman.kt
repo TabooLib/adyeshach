@@ -134,9 +134,6 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
             }
             Tasks.delay(1) {
                 updateEquipment()
-                if (isHideFromTabList) {
-                    removePlayerInfo(viewer)
-                }
             }
             Tasks.delay(5) {
                 if (isDie) {
@@ -144,6 +141,9 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                 }
                 if (isSleepingLegacy) {
                     setSleeping(true)
+                }
+                if (isHideFromTabList) {
+                    removePlayerInfo(viewer)
                 }
             }
         } else {
