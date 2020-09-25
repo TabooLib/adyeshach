@@ -29,7 +29,7 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun onTick() {
-        val locEntity = entity.position.toLocation()
+        val locEntity = entity!!.position.toLocation()
         if (locEntity.x != x || locEntity.z != z) {
             x = locEntity.x
             z = locEntity.z

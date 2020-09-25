@@ -30,6 +30,7 @@ dependencies {
     compile 'com.guillaumevdn.gcore:GCore:7.15.0'
     compile 'com.guillaumevdn.questcreator:QuestCreator:5.30.0'
     compile 'com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE'
+    compile 'pl.betoncraft.betonquest:BetonQuest:1.12.0'
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11500:11500:all'
     compile 'ink.ptms.core:v11400:11400:all'

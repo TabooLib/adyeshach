@@ -48,12 +48,12 @@ private class GeneralSmoothLookBak(entity: EntityInstance) : Controller(entity) 
             isLooking = false
             counterSmoothLook.reset()
         } else {
-            entity.setHeadRotation(entity.position.yaw + deltaYaw, entity.position.pitch + deltaPitch)
+            entity!!.setHeadRotation(entity.position.yaw + deltaYaw, entity.position.pitch + deltaPitch)
         }
     }
 
     private fun init() {
-        deltaYaw = (yaw - entity.position.yaw) / speed
+        deltaYaw = (yaw - entity!!.position.yaw) / speed
         deltaPitch = (pitch - entity.position.pitch) / speed
         counterSmoothLook = SimpleCounter(speed, true)
     }

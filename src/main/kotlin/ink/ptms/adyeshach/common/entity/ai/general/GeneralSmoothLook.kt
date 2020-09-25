@@ -37,7 +37,7 @@ class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
 
     override fun onTick() {
         if (counter.next()) {
-            t = entity.position.yaw
+            t = entity!!.position.yaw
             if (isReset) {
                 isReset = false
                 if (yaw.coerceAtLeast(t) - yaw.coerceAtMost(t) > 180) {

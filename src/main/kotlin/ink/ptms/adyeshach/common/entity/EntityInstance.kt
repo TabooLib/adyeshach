@@ -48,6 +48,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     @Expose
     protected var passengers = ConcurrentSet<String>()
+    @Expose
     protected val controller = CopyOnWriteArrayList<Controller>()
 
     /**
@@ -564,12 +565,19 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
         // 实体逻辑处理
         controller.filter { it.shouldExecute() }.forEach {
-            if (it.isAsync()) {
-                pool.submit {
+            when {
+                it is Controller.Pre -> {
+                    controller.add(it.controller.get.invoke(this))
+                    controller.remove(it)
+                }
+                it.isAsync() -> {
+                    pool.submit {
+                        it.onTick()
+                    }
+                }
+                else -> {
                     it.onTick()
                 }
-            } else {
-                it.onTick()
             }
         }
     }

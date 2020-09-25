@@ -17,11 +17,11 @@ class ControllerRandomLookaround(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.01) && !entity.isControllerMoving()
+        return Numbers.random(0.01) && !entity!!.isControllerMoving()
     }
 
     override fun onTick() {
-        entity.position.run {
+        entity!!.position.run {
             entity.controllerLook(yaw + Numbers.getRandomDouble(-90, 90).toFloat(), Numbers.getRandomDouble(-1, 1).toFloat())
         }
     }

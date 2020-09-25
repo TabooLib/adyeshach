@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.script
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
+import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookaround

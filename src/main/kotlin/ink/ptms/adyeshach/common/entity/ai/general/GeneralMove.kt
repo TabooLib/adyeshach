@@ -33,7 +33,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun onTick() {
-        if (entity.isControllerJumping()) {
+        if (entity!!.isControllerJumping()) {
             if (counterJump.next()) {
                 entity.removeTag("isJumping")
                 getGravity().isGravity = true
@@ -80,6 +80,6 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
     }
 
     fun getGravity(): GeneralGravity {
-        return entity.getController(GeneralGravity::class)!!
+        return entity!!.getController(GeneralGravity::class)!!
     }
 }

@@ -22,11 +22,11 @@ class ControllerRandomStrollLand(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.001) && !entity.isControllerMoving()
+        return Numbers.random(0.001) && !entity!!.isControllerMoving()
     }
 
     override fun onTick() {
-        PathFinderProxy.request(entity.position.toLocation(), entity.position.toLocation(), entity.entityType.getPathType(), Request.RANDOM_POSITION) {
+        PathFinderProxy.request(entity!!.position.toLocation(), entity.position.toLocation(), entity.entityType.getPathType(), Request.RANDOM_POSITION) {
             if (it is ResultRandomPosition && it.random != null) {
                 entity.controllerMove(Location(entity.position.world, it.random.x, it.random.y, it.random.z), entity.entityType.getPathType(), speed = 0.1)
             }
