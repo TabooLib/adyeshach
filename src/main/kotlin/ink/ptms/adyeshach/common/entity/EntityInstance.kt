@@ -24,7 +24,9 @@ import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.chat.TextComponent
+import io.izzel.taboolib.util.lite.Signs
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -110,18 +112,31 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                         entity.getPose().name
                     }
         }
-        registerEditor("visibleDistance")
-                .from(Editors.TEXT)
         registerEditor("alwaysVisible")
                 .reset { _, _ ->
                     alwaysVisible = true
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     alwaysVisible = !alwaysVisible
                     Editor.open(player, entity)
                 }
                 .display { _, _, _ ->
                     alwaysVisible.toDisplay()
+                }
+        registerEditor("visibleDistance")
+                .reset { _, _ ->
+                    visibleDistance = -1.0
+                }
+                .modify { player, entity, _ ->
+                    Signs.fakeSign(player, arrayOf("$visibleDistance", "", "请在第一行输入内容")) {
+                        if (it[0].isNotEmpty()) {
+                            visibleDistance = Coerce.toDouble(it[0])
+                        }
+                        Editor.open(player, entity)
+                    }
+                }
+                .display { _, _, _ ->
+                    visibleDistance.toString()
                 }
     }
 

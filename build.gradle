@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ink.ptms.adyeshach'
-version = '1.0.2 ALPHA'
+version = '1.0.3 ALPHA'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

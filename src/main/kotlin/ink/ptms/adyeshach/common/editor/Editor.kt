@@ -34,45 +34,49 @@ object Editor {
     val editArmorStand = ConcurrentHashMap<String, KV<AdyArmorStand, ListenerArmorStand.Angle?>>()
 
     init {
-        editMethod[Boolean::class] = EntityMetaable.MetaEditor()
-                .modify { player, entity, meta ->
-                    entity.setMetadata(meta.key, !entity.getMetadata<Boolean>(meta.key))
-                    open(player, entity)
-                }
-                .display { _, entity, meta ->
-                    entity.getMetadata<Boolean>(meta.key).toDisplay()
-                }
-        editMethod[Position::class] = EntityMetaable.MetaEditor()
-                .modify { player, entity, meta ->
-                    entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
-                    open(player, entity)
-                }
-                .display { _, entity, meta ->
-                    entity.getMetadata<Position>(meta.key).run {
-                        if (this is PositionNull) "_" else "$x $y $z"
+        try {
+            editMethod[Boolean::class] = EntityMetaable.MetaEditor()
+                    .modify { player, entity, meta ->
+                        entity.setMetadata(meta.key, !entity.getMetadata<Boolean>(meta.key))
+                        open(player, entity)
                     }
-                }
-        editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
-                .modify { player, entity, meta ->
-                    editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
-                    Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
-                    player.inventory.addItem(ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
-                    player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
-                    player.closeInventory()
-                }
-                .display { player, entity, meta ->
-                    entity.getMetadata<EulerAngle>(meta.key).run {
-                        "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
+                    .display { _, entity, meta ->
+                        entity.getMetadata<Boolean>(meta.key).toDisplay()
                     }
-                }
-        editMethod[Int::class] = Editors.TEXT
-        editMethod[Byte::class] = Editors.TEXT
-        editMethod[Float::class] = Editors.TEXT
-        editMethod[Double::class] = Editors.TEXT
-        editMethod[String::class] = Editors.TEXT
-        editMethod[ItemStack::class] = Editors.ITEM
-        editMethod[MaterialData::class] = Editors.MATERIAL_DATA
-        editMethod[TextComponent::class] = Editors.TEXT
+            editMethod[Position::class] = EntityMetaable.MetaEditor()
+                    .modify { player, entity, meta ->
+                        entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
+                        open(player, entity)
+                    }
+                    .display { _, entity, meta ->
+                        entity.getMetadata<Position>(meta.key).run {
+                            if (this is PositionNull) "_" else "$x $y $z"
+                        }
+                    }
+            editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
+                    .modify { player, entity, meta ->
+                        editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
+                        Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
+                        player.inventory.addItem(ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
+                        player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
+                        player.closeInventory()
+                    }
+                    .display { player, entity, meta ->
+                        entity.getMetadata<EulerAngle>(meta.key).run {
+                            "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
+                        }
+                    }
+            editMethod[Int::class] = Editors.TEXT
+            editMethod[Byte::class] = Editors.TEXT
+            editMethod[Float::class] = Editors.TEXT
+            editMethod[Double::class] = Editors.TEXT
+            editMethod[String::class] = Editors.TEXT
+            editMethod[ItemStack::class] = Editors.ITEM
+            editMethod[MaterialData::class] = Editors.MATERIAL_DATA
+            editMethod[TextComponent::class] = Editors.TEXT
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
     }
 
     fun getEditor(meta: EntityMetaable.Meta): EntityMetaable.MetaEditor? {
