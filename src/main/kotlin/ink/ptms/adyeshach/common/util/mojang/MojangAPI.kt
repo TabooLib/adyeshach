@@ -7,6 +7,7 @@ import io.izzel.taboolib.internal.gson.Gson
 import io.izzel.taboolib.internal.gson.JsonObject
 import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
+import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import java.io.*
@@ -14,7 +15,6 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.nio.file.Files
 import java.util.stream.Collectors
 
 /**
@@ -26,9 +26,9 @@ object MojangAPI {
     const val CRLF = "\r\n"
 
     fun get(name: String): Texture? {
-        val file = File(Adyeshach.plugin.dataFolder, "skin/$name")
-        if (file.exists()) {
-            val json = JsonParser.parseString(io.izzel.taboolib.util.Files.readFromFile(file)) as JsonObject
+        val file = Files.file(Adyeshach.plugin.dataFolder, "skin/$name")
+        if (file.length() != 0L) {
+            val json = JsonParser.parseString(Files.readFromFile(file)) as JsonObject
             return if (json.has("network")) {
                 Texture(json.get("value").asString, json.get("signature").asString)
             } else {
@@ -43,9 +43,7 @@ object MojangAPI {
             val json = AshconAPI.getProfile(name)
             return if (json.has("uuid")) {
                 val texture = Texture(AshconAPI.getTextureValue(name), AshconAPI.getTextureSignature(name))
-                io.izzel.taboolib.util.Files.write(file) {
-                    it.write(Serializer.gson.toJson(texture))
-                }
+                file.writeText(Serializer.gson.toJson(texture))
                 texture
             } else {
                 null
@@ -77,7 +75,7 @@ object MojangAPI {
                         printWriter.append("Content-Type: image/png").append(CRLF)
                         printWriter.append("Content-Transfer-Encoding: binary").append(CRLF)
                         printWriter.append(CRLF).flush()
-                        Files.copy(file.toPath(), output)
+                        java.nio.file.Files.copy(file.toPath(), output)
                         output.flush()
                         printWriter.append(CRLF).flush()
                         // end
