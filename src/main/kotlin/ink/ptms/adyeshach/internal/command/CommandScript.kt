@@ -63,7 +63,7 @@ class CommandScript : BaseMainCommand(), Helper {
     var stopall: BaseSubCommand = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { ScriptService.quests.map { it.value.id } }, Argument("viewer", false))
+            return arrayOf(Argument("id", false) { ScriptService.quests.map { it.value.id } }, Argument("viewer", false))
         }
 
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {

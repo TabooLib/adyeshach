@@ -26,6 +26,7 @@ class ActionRun(val value: List<QuestAction<Any, QuestContext>>) : QuestAction<V
         return CompletableFuture.allOf(*futures.toTypedArray())
     }
 
+
     override fun getDataPrefix(): String {
         return "run"
     }
