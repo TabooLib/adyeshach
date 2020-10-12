@@ -94,7 +94,7 @@ object PathFinderProxy {
         }
     }
 
-    @TSchedule(period = 5)
+    @TSchedule(period = 2)
     private fun schedule() {
         proxyEntity.forEach { (world, pathEntity) ->
             if (pathEntity.schedule.isEmpty()) {
