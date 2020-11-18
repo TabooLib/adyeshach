@@ -11,7 +11,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.36'
+    tabooLibVersion = '5.43'
     loaderVersion = '2.6'
     classifier = null
     relocate('io.izzel.kether.common', 'ink.ptms.adyeshach.common.script.kether')
