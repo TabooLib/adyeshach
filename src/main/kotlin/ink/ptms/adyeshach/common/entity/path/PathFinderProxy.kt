@@ -67,9 +67,6 @@ object PathFinderProxy {
         Bukkit.getWorlds().forEach {
             Mirror.get("PathFinderProxy:onCheck:${it.name}", false).eval {
                 val loc = Location(it, 0.0, 0.0, 0.0)
-                if (version >= 11400 && it.getPluginChunkTickets(loc.chunk.x, loc.chunk.z).isEmpty()) {
-                    it.addPluginChunkTicket(loc.chunk.x, loc.chunk.z, Adyeshach.plugin)
-                }
                 val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
                 for (pathType in PathType.values()) {
                     // 版本允许
