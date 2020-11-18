@@ -10,7 +10,7 @@ import io.izzel.taboolib.util.lite.Numbers
  * @Author sky
  * @Since 2020-08-19 22:09
  */
-class ControllerRandomLookaround(entity: EntityInstance) : Controller(entity) {
+class ControllerRandomLookGround(entity: EntityInstance) : Controller(entity) {
 
     override fun isAsync(): Boolean {
         return true

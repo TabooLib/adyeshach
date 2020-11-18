@@ -3,10 +3,9 @@ package ink.ptms.adyeshach.common.script
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
-import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
-import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookaround
+import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookGround
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomStrollLand
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
@@ -131,7 +130,7 @@ object ScriptHandler {
         knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class){ GeneralSmoothLook(it) }
         knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
         knownControllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
-        knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookaround::class) { ControllerRandomLookaround(it) }
+        knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
         knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
     }
 
