@@ -44,28 +44,35 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
 
                 override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
                     return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
+                        var smooth = false
+                        t.mark()
+                        if (t.nextElement() == "smooth") {
+                            smooth = true
+                        } else {
+                            t.reset()
+                        }
                         var x = 0.0
                         var y = 0.0
                         var z = 0.0
-                        var smooth = false
                         while (t.hasNext()) {
                             t.mark()
                             when (t.nextElement()) {
-                                "x" -> x = t.nextDouble()
-                                "y" -> y = t.nextDouble()
-                                "z" -> z = t.nextDouble()
+                                "x" -> {
+                                    t.consume("to")
+                                    x = t.nextDouble()
+                                }
+                                "y" -> {
+                                    t.consume("to")
+                                    y = t.nextDouble()
+                                }
+                                "z" -> {
+                                    t.consume("to")
+                                    z = t.nextDouble()
+                                }
                                 else -> {
                                     t.reset()
                                     break
                                 }
-                            }
-                        }
-                        if (t.hasNext()) {
-                            t.mark()
-                            if (t.nextElement() == "smooth") {
-                                smooth = true
-                            } else {
-                                t.reset()
                             }
                         }
                         ActionLook(x, y, z, smooth) as QuestAction<T, C>

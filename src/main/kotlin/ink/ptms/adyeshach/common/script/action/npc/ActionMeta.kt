@@ -43,7 +43,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
         return if (cronusHook) {
             Cronus.getCronusService().itemStorage.getItem(item)
         } else {
-            ItemStack(Items.asMaterial(item))
+            ItemStack(Items.asMaterial(item)!!)
         }
     }
 

@@ -80,7 +80,7 @@ object ScriptHandler {
         registry.registerAction("animation", ActionAnimation.parser())
 
         // 集合类型
-        registry.registerAction("viewer", ActionLook.parser())
+        registry.registerAction("viewer", ActionViewer.parser())
         registry.registerAction("passenger", ActionPassenger.parser())
         registry.registerAction("controller", ActionController.parser())
 
