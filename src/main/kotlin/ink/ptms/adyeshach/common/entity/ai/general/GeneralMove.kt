@@ -70,7 +70,6 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         if (NMS.INSTANCE.getBlockHeight(plan.block) == 0.0) {
             entity.teleport(plan.x, plan.y, plan.z)
         } else if (pathType != PathType.FLY) {
-            println(" jump ${plan.block.type} ${plan.y} ${NMS.INSTANCE.getBlockHeight(plan.block)}")
             entity.setTag("isJumping", "true")
             getGravity().isGravity = false
         }
