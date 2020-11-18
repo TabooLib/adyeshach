@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import net.minecraft.server.v1_16_R1.HorseStyle
 import org.bukkit.entity.Horse
 import org.bukkit.entity.Villager
 
@@ -32,7 +33,7 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
                     getColor().name
                 }.build()
         registerEditor("horseStyle")
-                .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
+                .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
                 .reset { entity, meta ->
                     setStyle(Horse.Style.NONE)
                 }

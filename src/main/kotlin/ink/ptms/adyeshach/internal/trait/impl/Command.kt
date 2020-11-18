@@ -25,7 +25,7 @@ class Command : Trait(), Listener {
     }
 
     override fun edit(player: Player, entityInstance: EntityInstance) {
-        TLocale.Display.sendTitle(player, "§3§lCommand Traits", "§7Open book and input command content", 0, 20, 0)
+        TLocale.Display.sendTitle(player, "§3§lCommand Traits", "§7Open book and input command content", 10, 40, 10)
         Inputs.bookIn(player) {
             if (it.all { line -> line.isBlank() }) {
                 data.set(entityInstance.uniqueId, null)
