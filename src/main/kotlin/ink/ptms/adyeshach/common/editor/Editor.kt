@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
+import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.PlayerContainer
@@ -118,7 +119,7 @@ object Editor {
                 .toRawMessage(player)))
         var page = TellrawJson.create()
         var i = 0
-        entity.listMetadata().filter { it.index != -1 }.sortedBy { it.key }.forEach {
+        entity.forEachMeta {
             val editor = getEditor(it)
             if (editor != null && editor.edit) {
                 page.append("  §n${it.key.toDisplay()}").newLine()
@@ -170,7 +171,7 @@ object Editor {
                 .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                 .newLine().append("      ")
         var i = 0
-        entity.listMetadata().filter { it.index != -1 }.sortedBy { it.key }.forEach {
+        entity.forEachMeta {
             val editor = getEditor(it)
             if (editor != null && editor.edit) {
                 json.append("§8[")
@@ -198,6 +199,10 @@ object Editor {
         json.newLine().send(player)
     }
 
+    fun toSimple(source: String): String {
+        return if (source.length > 16) source.substring(0, source.length - (source.length - 10)) + "..." + source.substring(source.length - 7) else source
+    }
+
     fun Boolean?.toDisplay(): String {
         return if (this == true) "§aTrue" else "§cFalse"
     }
@@ -214,7 +219,12 @@ object Editor {
         return builder.toString()
     }
 
-    fun toSimple(source: String): String {
-        return if (source.length > 16) source.substring(0, source.length - (source.length - 10)) + "..." + source.substring(source.length - 7) else source
+    fun EntityInstance.forEachMeta(func: (EntityMetaable.Meta) -> (Unit)) {
+        listMetadata()
+                .filter { it.index != -1 && (this is AdyHuman && it.key != "customName") }
+                .sortedBy { it.key }
+                .forEach {
+                    func.invoke(it)
+                }
     }
 }
