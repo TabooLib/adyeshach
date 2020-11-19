@@ -13,7 +13,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
 
     enum class Symbol {
 
-        GET, SET, HAS
+        GET, SET, REMOVE, HAS
     }
 
     override fun isAsync(): Boolean {
@@ -29,9 +29,19 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
             throw RuntimeException("No entity selected.")
         }
         return when (symbol) {
+            Symbol.REMOVE -> {
+                context.getEntity()!!.filterNotNull().forEach {
+                    it.removeTag(key)
+                }
+                CompletableFuture.completedFuture(null)
+            }
             Symbol.SET -> {
                 context.getEntity()!!.filterNotNull().forEach {
-                    it.setTag(key, value!!)
+                    if (value!! == "null") {
+                        it.removeTag(key)
+                    } else {
+                        it.setTag(key, value)
+                    }
                 }
                 CompletableFuture.completedFuture(null)
             }
@@ -64,6 +74,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
                             "set" -> Symbol.SET
                             "get" -> Symbol.GET
                             "has" -> Symbol.HAS
+                            "remove" -> Symbol.REMOVE
                             else -> throw LocalizedException.of("not-tag-method", type)
                         }
                         val key = t.nextElement()
