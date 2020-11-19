@@ -29,7 +29,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id"), Argument("type") { EntityTypes.values().map { it.name } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].toUpperCase()).orNull()
             if (entityType == null) {
                 sender.error("Entity &f\"${args[1]}\" &7not supported.")
@@ -55,7 +55,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -75,7 +75,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -93,7 +93,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -111,7 +111,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -134,7 +134,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -155,7 +155,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -175,7 +175,7 @@ class Command : BaseMainCommand(), Helper {
             return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -197,7 +197,7 @@ class Command : BaseMainCommand(), Helper {
             )
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -245,7 +245,7 @@ class Command : BaseMainCommand(), Helper {
             )
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
@@ -315,7 +315,7 @@ class Command : BaseMainCommand(), Helper {
     @SubCommand(description = "load adyeshach npc.")
     val load = object : BaseSubCommand() {
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Tasks.task(true) {
                 Bukkit.getOnlinePlayers().forEach {
                     AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
@@ -329,7 +329,7 @@ class Command : BaseMainCommand(), Helper {
     @SubCommand(description = "save adyeshach npc.")
     val save = object : BaseSubCommand() {
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Tasks.task(true) {
                 Bukkit.getOnlinePlayers().forEach {
                     AdyeshachAPI.getEntityManagerPrivate(it).onSave()
@@ -343,7 +343,7 @@ class Command : BaseMainCommand(), Helper {
     @SubCommand(description = "reload adyeshach settings.")
     val reload = object : BaseSubCommand() {
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Adyeshach.reload()
             sender.info("Adyeshach Settings has been reloaded.")
         }

@@ -40,7 +40,7 @@ class CommandAPI : BaseMainCommand(), Helper {
             return arrayOf(Argument("type"), Argument("uniqueId"), Argument("value1", false), Argument("value2", false))
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             try {
                 when (args[0]) {
                     "int" -> {
@@ -159,7 +159,7 @@ class CommandAPI : BaseMainCommand(), Helper {
             })
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val file = File(Adyeshach.plugin.dataFolder, "skin/upload/${args[0]}")
             if (file.name.endsWith(".png")) {
                 Tasks.task(true) {
