@@ -34,10 +34,10 @@ object AdyeshachAPI {
     private val managerPublic = ManagerPublic()
     private val managerPublicTemp = ManagerPublicTemp()
     private val database by lazy {
-        when (Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
+        when (val db = Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
-            else -> CustomDatabaseEvent().call().database ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+            else -> CustomDatabaseEvent(db).call().database ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
         }
     }
 

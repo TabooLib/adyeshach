@@ -125,9 +125,9 @@ object ScriptHandler {
                 .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
 
         // 已知控制器
-        knownControllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
+        knownControllers["Move"] = KnownController(GeneralMove::class, get = { GeneralMove(it) })
         knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
-        knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class){ GeneralSmoothLook(it) }
+        knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class) { GeneralSmoothLook(it) }
         knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
         knownControllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
         knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
