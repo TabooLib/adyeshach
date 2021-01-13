@@ -6,10 +6,16 @@ import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.Files
+import io.izzel.taboolib.util.IO
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import java.io.BufferedInputStream
+import java.net.URL
+import java.net.UnknownHostException
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 /**
  * @author Arasple
@@ -22,11 +28,13 @@ object AshconAPI {
     @PlayerContainer
     private val CACHED_PROFILES = mutableMapOf<String, JsonObject>()
 
-    fun getProfile(name: String) = CACHED_PROFILES.computeIfAbsent(name) { JsonParser().parse(Files.readFromURL("${ASHCON_API[0]}$name")) as JsonObject }
-
     fun getTextureValue(name: String): String = getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("value").asString
 
     fun getTextureSignature(name: String): String = getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("signature").asString
+
+    fun getProfile(name: String) = CACHED_PROFILES.computeIfAbsent(name) {
+        JsonParser().parse(readFromURL("${ASHCON_API[0]}$name", StandardCharsets.UTF_8)).asJsonObject
+    }
 
     @TListener
     class ListenerJoin : Listener {
@@ -40,5 +48,17 @@ object AshconAPI {
                 }
             }
         }
+    }
+
+    fun readFromURL(url: String, charset: Charset): String {
+        try {
+            URL(url).openStream().use { inputStream ->
+                BufferedInputStream(inputStream).use { bufferedInputStream ->
+                    return String(IO.readFully(bufferedInputStream), charset)
+                }
+            }
+        } catch (ignored: Throwable) {
+        }
+        return "{}"
     }
 }

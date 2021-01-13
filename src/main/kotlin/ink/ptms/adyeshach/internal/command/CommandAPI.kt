@@ -14,6 +14,7 @@ import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
 import ink.ptms.adyeshach.common.util.BukkitUtils
 import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.common.util.mojang.Model
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.util.Files
@@ -156,20 +157,23 @@ class CommandAPI : BaseMainCommand(), Helper {
         override fun getArguments(): Array<Argument> {
             return arrayOf(Argument("file") {
                 File(Adyeshach.plugin.dataFolder, "skin/upload").listFiles()?.map { it.name }?.toList() ?: emptyList()
+            }, Argument("model") {
+                Model.values().map { it.name }
             })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
+            val model = Enums.getIfPresent(Model::class.java, args[1].toUpperCase()).or(Model.DEFAULT)
             val file = File(Adyeshach.plugin.dataFolder, "skin/upload/${args[0]}")
             if (file.name.endsWith(".png")) {
                 Tasks.task(true) {
                     sender.info("File provided and found, now attempting to upload to mineskin.org.")
-                    val repose = MojangAPI.upload(file, sender)
+                    val repose = MojangAPI.upload(file, model, sender)
                     if (repose != null) {
                         Files.write(File(Adyeshach.plugin.dataFolder, "skin/${args[0].split(".")[0]}")) {
                             it.write(GsonBuilder().setPrettyPrinting().create().toJson(repose))
                         }
-                        sender.info("Successfully uploaded skin and saved as &f\"${args[0].split(".")[0]}\"&7.")
+                        sender.info("Successfully uploaded skin and saved as &f\"${args[0].split(".")[0]}\"&7. (model: &f${model}&7)")
                     }
                 }
             } else {

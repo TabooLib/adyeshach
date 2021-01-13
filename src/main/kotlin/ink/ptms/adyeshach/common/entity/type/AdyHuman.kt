@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
@@ -15,6 +16,7 @@ import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.NumberConversions
 import java.util.*
 
@@ -58,32 +60,32 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
         registerMetaByteMask(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
         registerEditor("isSleepingLegacy")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setSleeping(false)
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     setSleeping(!isSleeping())
                     Editor.open(player, entity)
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     isSleeping().toDisplay()
                 }
         registerEditor("isHideFromTabList")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     isHideFromTabList = true
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     isHideFromTabList = !isHideFromTabList
                     Editor.open(player, entity)
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     isHideFromTabList.toDisplay()
                 }
         registerEditor("playerName")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setName("AdyHuman")
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setName(if (it[0].length > 16) it[0].substring(0, 16) else it[0])
@@ -91,14 +93,14 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                         Editor.open(player, entity)
                     }
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
                 }
         registerEditor("playerPing")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setPing(60)
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     Signs.fakeSign(player, arrayOf("${getPing()}", "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setPing(NumberConversions.toInt(it[0]))
@@ -106,14 +108,14 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                         Editor.open(player, entity)
                     }
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     getPing().toString()
                 }
         registerEditor("playerTexture")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     resetTexture()
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     Signs.fakeSign(player, arrayOf(getTextureName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setTexture(it[0])
@@ -121,9 +123,22 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                         Editor.open(player, entity)
                     }
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
                 }
+        // refresh skin
+        object : BukkitRunnable() {
+
+            override fun run() {
+                if (manager != null) {
+                    forViewers {
+                        refreshPlayerInfo(it)
+                    }
+                } else {
+                    cancel()
+                }
+            }
+        }.runTaskTimerAsynchronously(Adyeshach.plugin, 200, 200)
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
@@ -293,6 +308,16 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
             getPose() == BukkitPose.SLEEPING
         } else {
             isSleepingLegacy
+        }
+    }
+
+    fun refreshPlayerInfo(viewer: Player) {
+        removePlayerInfo(viewer)
+        addPlayerInfo(viewer)
+        Tasks.delay(5) {
+            if (isHideFromTabList) {
+                removePlayerInfo(viewer)
+            }
         }
     }
 
