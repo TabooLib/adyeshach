@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.kotlin.Reflex
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
@@ -133,7 +134,7 @@ abstract class NMS {
         fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
             fields.forEach { (key, value) ->
                 if (value != null) {
-                    SimpleReflection.setFieldValue(any.javaClass, any, key, value, true)
+                    Reflex.from(any.javaClass, any).write(key, value)
                 }
             }
             return any

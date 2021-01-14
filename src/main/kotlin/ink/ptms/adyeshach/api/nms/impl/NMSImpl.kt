@@ -108,7 +108,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (version >= 11300) {
-            val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, material.name, true)
+            val block = Reflex.from(Blocks::class.java).read<Block>(material.name)
             sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
@@ -348,7 +348,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
-        return Reflection.instantiateObject(DataWatcher.Item::class.java, DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value))
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam)
     }
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
@@ -489,12 +489,7 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(
-                net.minecraft.server.v1_16_R1.EntityTypes::class.java,
-                null,
-                entityTypes.internalName ?: entityTypes.name,
-                true
-            )
+            Reflex.from(net.minecraft.server.v1_16_R1.EntityTypes::class.java).read<net.minecraft.server.v1_16_R1.EntityTypes<*>>(entityTypes.internalName ?: entityTypes.name)!!
         } else {
             entityTypes.bukkitId
         }
@@ -506,7 +501,7 @@ class NMSImpl : NMS() {
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(Paintings::class.java, null, bukkitPaintings.index.toString(), true)
+            Reflex.from(Paintings::class.java).read<Paintings>(bukkitPaintings.index.toString())!!
         } else {
             bukkitPaintings.legacy
         }
@@ -514,18 +509,13 @@ class NMSImpl : NMS() {
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
+            version >= 11400 -> {
+                Reflex.from(Particles::class.java).read<Any>(bukkitParticles.name) ?: Particles.FLAME
+            }
             version == 11300 -> {
                 val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
-                } else {
-                    p
-                }
-            }
-            version >= 11400 -> {
-                val p = Reflex.from(Particles::class.java).read(bukkitParticles.name) ?: Particles.FLAME
-                if (p is Particle<*>) {
-                    p.d()
                 } else {
                     p
                 }
@@ -537,9 +527,8 @@ class NMSImpl : NMS() {
     @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     override fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position> {
         if (version >= 11400) {
-            val pathEntity =
-                (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
-            val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
+            val pathEntity = (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
+            val pathPoint = Reflex.from(PathEntity::class.java, pathEntity).read<List<PathPoint>>("a")!!
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         } else {
             val pathEntity = if (version >= 11200) {
@@ -559,7 +548,7 @@ class NMSImpl : NMS() {
                     )
                 ) ?: return mutableListOf()
             }
-            val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as Array<PathPoint>
+            val pathPoint = Reflex.from(PathEntity::class.java, pathEntity).read<Array<PathPoint>>("a")!!
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         }
     }
@@ -570,7 +559,7 @@ class NMSImpl : NMS() {
 
     override fun toBlockId(materialData: MaterialData): Int {
         return if (version >= 11300) {
-            val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, materialData.itemType.name, true)
+            val block = Reflex.from(Blocks::class.java).read<Block>(materialData.itemType.name)
             Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)
