@@ -37,36 +37,38 @@ object Editor {
     init {
         try {
             editMethod[Boolean::class] = EntityMetaable.MetaEditor()
-                    .modify { player, entity, meta ->
-                        entity.setMetadata(meta.key, !entity.getMetadata<Boolean>(meta.key))
-                        open(player, entity)
-                    }
-                    .display { _, entity, meta ->
-                        entity.getMetadata<Boolean>(meta.key).toDisplay()
-                    }
+                .modify { player, entity, meta ->
+                    entity.setMetadata(meta.key, !entity.getMetadata<Boolean>(meta.key))
+                    open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    entity.getMetadata<Boolean>(meta.key).toDisplay()
+                }
             editMethod[Position::class] = EntityMetaable.MetaEditor()
-                    .modify { player, entity, meta ->
-                        entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
-                        open(player, entity)
+                .modify { player, entity, meta ->
+                    entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
+                    open(player, entity)
+                }
+                .display { _, entity, meta ->
+                    entity.getMetadata<Position>(meta.key).run {
+                        if (this is PositionNull) "_" else "$x $y $z"
                     }
-                    .display { _, entity, meta ->
-                        entity.getMetadata<Position>(meta.key).run {
-                            if (this is PositionNull) "_" else "$x $y $z"
-                        }
-                    }
+                }
             editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
-                    .modify { player, entity, meta ->
-                        editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
-                        Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
-                        player.inventory.addItem(ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build())
-                        player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
-                        player.closeInventory()
+                .modify { player, entity, meta ->
+                    editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
+                    Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
+                    player.inventory.addItem(
+                        ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build()
+                    )
+                    player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
+                    player.closeInventory()
+                }
+                .display { player, entity, meta ->
+                    entity.getMetadata<EulerAngle>(meta.key).run {
+                        "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
                     }
-                    .display { player, entity, meta ->
-                        entity.getMetadata<EulerAngle>(meta.key).run {
-                            "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
-                        }
-                    }
+                }
             editMethod[Int::class] = Editors.TEXT
             editMethod[Byte::class] = Editors.TEXT
             editMethod[Float::class] = Editors.TEXT
@@ -103,37 +105,47 @@ object Editor {
 
     fun openByBook(player: Player, entity: EntityInstance) {
         val book = BookFormatter.writtenBook()
-        book.addPages(ComponentSerializer.parse(TellrawJson.create()
-                .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
-                .append("  §1${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
-                .append("").newLine()
-                .append("  Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
-                .append("  Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-                .append("  Controller §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
-                .append("").newLine()
-                .append("   §7§oX ${entity.position.x}").newLine()
-                .append("   §7§oY ${entity.position.y}").newLine()
-                .append("   §7§oZ ${entity.position.z}").newLine()
-                .append("   §7§oYaw ${entity.position.yaw}").newLine()
-                .append("   §7§oPitch ${entity.position.pitch}").newLine()
-                .toRawMessage(player)))
+        book.addPages(
+            ComponentSerializer.parse(
+                TellrawJson.create()
+                    .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
+                    .append("  §1${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
+                    .append("").newLine()
+                    .append("  Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
+                    .append("  Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n"))
+                    .newLine()
+                    .append("  Controller §7${entity.getController().size} ").append("§c(?)")
+                    .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
+                    .append("").newLine()
+                    .append("   §7§oX ${entity.position.x}").newLine()
+                    .append("   §7§oY ${entity.position.y}").newLine()
+                    .append("   §7§oZ ${entity.position.z}").newLine()
+                    .append("   §7§oYaw ${entity.position.yaw}").newLine()
+                    .append("   §7§oPitch ${entity.position.pitch}").newLine()
+                    .toRawMessage(player)
+            )
+        )
         var page = TellrawJson.create()
         var i = 0
-        entity.forEachMeta {
-            val editor = getEditor(it)
+        entity.forEachMeta { meta, hide ->
+            val editor = getEditor(meta)
             if (editor != null && editor.edit) {
-                page.append("  §n${it.key.toDisplay()}").newLine()
-                try {
-                    page.append("   §c✘")
-                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${it.key}")
+                if (hide) {
+                    page.append("  §8§m${meta.key.toDisplay()}").newLine()
+                } else {
+                    page.append("  §n${meta.key.toDisplay()}").newLine()
+                    try {
+                        page.append("   §c✘")
+                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                             .hoverText("§nClick To Reset")
-                    page.append(" §7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, it) else entity.getMetadata<Any>(it.key)}")
-                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${it.key}")
+                        page.append(" §7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)}")
+                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
                             .hoverText("§nClick To Edit")
                             .newLine()
-                } catch (t: Throwable) {
-                    t.printStackTrace()
-                    page.append(" §c§o<ERROR:${t.message}>").newLine()
+                    } catch (t: Throwable) {
+                        t.printStackTrace()
+                        page.append(" §c§o<ERROR:${t.message}>").newLine()
+                    }
                 }
                 if (++i == 6) {
                     i = 0
@@ -162,34 +174,39 @@ object Editor {
             send(player)
         }
         val json = TellrawJson.create()
-                .newLine()
-                .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
-                .append("      §6${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
-                .newLine()
-                .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
-                .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-                .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)").hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
-                .newLine().append("      ")
+            .newLine()
+            .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
+            .append("      §6${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
+            .newLine()
+            .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
+            .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
+            .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)")
+            .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
+            .newLine().append("      ")
         var i = 0
-        entity.forEachMeta {
-            val editor = getEditor(it)
+        entity.forEachMeta { meta, hide ->
+            val editor = getEditor(meta)
             if (editor != null && editor.edit) {
-                json.append("§8[")
-                try {
-                    json.append("§7${it.key.toDisplay()}")
-                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${it.key}")
-                            .hoverText("§7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, it) else entity.getMetadata<Any>(it.key)}")
-                    json.append(" ")
-                    json.append("§c✘")
-                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${it.key}")
+                if (hide) {
+                    json.append("§8[§8§m${meta.key.toDisplay()}§8] ")
+                } else {
+                    json.append("§8[")
+                    try {
+                        json.append("§7${meta.key.toDisplay()}")
+                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                            .hoverText("§7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)}")
+                        json.append(" ")
+                        json.append("§c✘")
+                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                             .hoverText("§nClick To Reset")
-                } catch (t: Throwable) {
-                    json.append("§c§o<ERROR:${t.message}>")
-                    if (t is NullPointerException) {
-                        t.printStackTrace()
+                    } catch (t: Throwable) {
+                        json.append("§c§o<ERROR:${t.message}>")
+                        if (t is NullPointerException) {
+                            t.printStackTrace()
+                        }
                     }
+                    json.append("§8] ")
                 }
-                json.append("§8] ")
                 if (++i == 3) {
                     i = 0
                     json.newLine().append("      ")
@@ -219,12 +236,12 @@ object Editor {
         return builder.toString()
     }
 
-    fun EntityInstance.forEachMeta(func: (EntityMetaable.Meta) -> (Unit)) {
+    fun EntityInstance.forEachMeta(func: (EntityMetaable.Meta, Boolean) -> Unit) {
         listMetadata()
-                .filter { it.index != -1 && (this is AdyHuman && it.key != "customName") }
-                .sortedBy { it.key }
-                .forEach {
-                    func.invoke(it)
-                }
+            .filter { it.index != -1 }
+            .sortedBy { it.key }
+            .forEach {
+                func.invoke(it, HideMeta.isHideMeta(this, it))
+            }
     }
 }

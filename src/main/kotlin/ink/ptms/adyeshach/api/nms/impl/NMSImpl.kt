@@ -11,9 +11,11 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import io.izzel.taboolib.kotlin.Reflex
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
+import io.izzel.taboolib.util.Reflection
 import net.minecraft.server.v1_11_R1.BlockTorch
 import net.minecraft.server.v1_11_R1.IBlockAccess
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
@@ -49,6 +51,65 @@ class NMSImpl : NMS() {
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
+            player,
+            PacketPlayOutSpawnEntity(),
+            "a" to entityId,
+            "b" to uuid,
+            "c" to location.x,
+            "d" to location.y,
+            "e" to location.z,
+            "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+            "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+            "k" to if (version <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
+        )
+    }
+
+    override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+        if (entityType == EntityTypes.ARMOR_STAND && version < 11300) {
+            return spawnEntity(player, entityType, entityId, uuid, location)
+        }
+        sendPacket(
+            player,
+            PacketPlayOutSpawnEntityLiving(),
+            "a" to entityId,
+            "b" to uuid,
+            "c" to when {
+                version >= 11400 -> IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_16_R1.EntityTypes<*>)
+                version == 11300 -> net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
+                else -> entityType.bukkitId
+            },
+            "d" to location.x,
+            "e" to location.y,
+            "f" to location.z,
+            "g" to 0,
+            "h" to 0,
+            "i" to 0,
+            "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+            "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+            "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+            "m" to if (version >= 11500) null else DataWatcher(null)
+        )
+    }
+
+    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
+        sendPacket(
+            player,
+            PacketPlayOutNamedEntitySpawn(),
+            "a" to entityId,
+            "b" to uuid,
+            "c" to location.x,
+            "d" to location.y,
+            "e" to location.z,
+            "f" to (location.yaw * 256 / 360).toInt().toByte(),
+            "g" to (location.pitch * 256 / 360).toInt().toByte(),
+            "h" to if (version >= 11500) null else DataWatcher(null),
+        )
+    }
+
+    override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
+        if (version >= 11300) {
+            val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, material.name, true)
+            sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
@@ -58,117 +119,58 @@ class NMSImpl : NMS() {
                 "e" to location.z,
                 "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                "k" to if (version <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
-        )
-    }
-
-    override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
-        if (entityType == EntityTypes.ARMOR_STAND && version < 11300) {
-            return spawnEntity(player, entityType, entityId, uuid, location)
-        }
-        sendPacket(
+                "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
+                "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
+            )
+        } else {
+            sendPacket(
                 player,
-                PacketPlayOutSpawnEntityLiving(),
-                "a" to entityId,
-                "b" to uuid,
-                "c" to when {
-                    version >= 11400 -> IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_16_R1.EntityTypes<*>)
-                    version == 11300 -> net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
-                    else -> entityType.bukkitId
-                },
-                "d" to location.x,
-                "e" to location.y,
-                "f" to location.z,
-                "g" to 0,
-                "h" to 0,
-                "i" to 0,
-                "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "m" to if (version >= 11500) null else DataWatcher(null)
-        )
-    }
-
-    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
-        sendPacket(
-                player,
-                PacketPlayOutNamedEntitySpawn(),
+                PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
                 "c" to location.x,
                 "d" to location.y,
                 "e" to location.z,
-                "f" to (location.yaw * 256 / 360).toInt().toByte(),
-                "g" to (location.pitch * 256 / 360).toInt().toByte(),
-                "h" to if (version >= 11500) null else DataWatcher(null),
-        )
-    }
-
-    override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
-        if (version >= 11300) {
-            val block = SimpleReflection.getFieldValueChecked(Blocks::class.java, null, material.name, true)
-            sendPacket(
-                    player,
-                    PacketPlayOutSpawnEntity(),
-                    "a" to entityId,
-                    "b" to uuid,
-                    "c" to location.x,
-                    "d" to location.y,
-                    "e" to location.z,
-                    "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                    "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                    "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
-                    "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
-            )
-        } else {
-            sendPacket(
-                    player,
-                    PacketPlayOutSpawnEntity(),
-                    "a" to entityId,
-                    "b" to uuid,
-                    "c" to location.x,
-                    "d" to location.y,
-                    "e" to location.z,
-                    "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                    "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-                    "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
-                    "l" to material.id + (data.toInt() shl 12)
+                "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "k" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
+                "l" to material.id + (data.toInt() shl 12)
             )
         }
     }
 
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
         sendPacket(
-                player,
-                PacketPlayOutSpawnEntityExperienceOrb(),
-                "a" to entityId,
-                "b" to location.x,
-                "c" to location.y,
-                "d" to location.z,
-                "e" to amount,
+            player,
+            PacketPlayOutSpawnEntityExperienceOrb(),
+            "a" to entityId,
+            "b" to location.x,
+            "c" to location.y,
+            "d" to location.z,
+            "e" to amount,
         )
     }
 
     override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
         if (version > 11300) {
             sendPacket(
-                    player,
-                    PacketPlayOutSpawnEntityPainting(),
-                    "a" to entityId,
-                    "b" to uuid,
-                    "c" to getBlockPositionNMS(location),
-                    "d" to Enums.getIfPresent(EnumDirection::class.java, direction.name).get(),
-                    "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
+                player,
+                PacketPlayOutSpawnEntityPainting(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to getBlockPositionNMS(location),
+                "d" to Enums.getIfPresent(EnumDirection::class.java, direction.name).get(),
+                "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else {
             sendPacket(
-                    player,
-                    net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting(),
-                    "a" to entityId,
-                    "b" to uuid,
-                    "c" to getBlockPositionNMS(location),
-                    "d" to Enums.getIfPresent(net.minecraft.server.v1_9_R2.EnumDirection::class.java, direction.name).get(),
-                    "e" to getPaintingNMS(painting)
+                player,
+                net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to getBlockPositionNMS(location),
+                "d" to Enums.getIfPresent(net.minecraft.server.v1_9_R2.EnumDirection::class.java, direction.name).get(),
+                "e" to getPaintingNMS(painting)
             )
         }
     }
@@ -181,18 +183,32 @@ class NMSImpl : NMS() {
         if (version >= 11000) {
             val infoData = PacketPlayOutPlayerInfo()
             sendPacket(
-                    player,
-                    infoData,
-                    "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET), CraftChatMessage.fromString(name).firstOrNull()))
+                player,
+                infoData,
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
+                "b" to listOf(
+                    infoData.PlayerInfoData(
+                        profile,
+                        ping,
+                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
+                        CraftChatMessage.fromString(name).firstOrNull()
+                    )
+                )
             )
         } else {
             val infoData = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
             sendPacket(
-                    player,
-                    infoData,
-                    "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                    "b" to listOf(infoData.PlayerInfoData(profile, ping, Enums.getIfPresent(WorldSettings.EnumGamemode::class.java, gameMode.name).or(WorldSettings.EnumGamemode.NOT_SET), org.bukkit.craftbukkit.v1_9_R2.util.CraftChatMessage.fromString(name).firstOrNull()))
+                player,
+                infoData,
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
+                "b" to listOf(
+                    infoData.PlayerInfoData(
+                        profile,
+                        ping,
+                        Enums.getIfPresent(WorldSettings.EnumGamemode::class.java, gameMode.name).or(WorldSettings.EnumGamemode.NOT_SET),
+                        org.bukkit.craftbukkit.v1_9_R2.util.CraftChatMessage.fromString(name).firstOrNull()
+                    )
+                )
             )
         }
     }
@@ -200,10 +216,10 @@ class NMSImpl : NMS() {
     override fun removePlayerInfo(player: Player, uuid: UUID) {
         val infoData = PacketPlayOutPlayerInfo()
         sendPacket(
-                player,
-                infoData,
-                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
+            player,
+            infoData,
+            "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+            "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
         )
     }
 
@@ -213,21 +229,30 @@ class NMSImpl : NMS() {
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location) {
         sendPacket(
-                player,
-                PacketPlayOutEntityTeleport(),
-                "a" to entityId,
-                "b" to location.x,
-                "c" to location.y,
-                "d" to location.z,
-                "e" to (location.yaw * 256 / 360).toInt().toByte(),
-                "f" to (location.pitch * 256 / 360).toInt().toByte(),
-                "g" to false // onGround
+            player,
+            PacketPlayOutEntityTeleport(),
+            "a" to entityId,
+            "b" to location.x,
+            "c" to location.y,
+            "d" to location.z,
+            "e" to (location.yaw * 256 / 360).toInt().toByte(),
+            "f" to (location.pitch * 256 / 360).toInt().toByte(),
+            "g" to false // onGround
         )
     }
 
     override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {
         if (version >= 11400) {
-            sendPacket(player, PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, (x * 4096).toInt().toShort(), (y * 4096).toInt().toShort(), (z * 4096).toInt().toShort(), true))
+            sendPacket(
+                player,
+                PacketPlayOutEntity.PacketPlayOutRelEntityMove(
+                    entityId,
+                    (x * 4096).toInt().toShort(),
+                    (y * 4096).toInt().toShort(),
+                    (z * 4096).toInt().toShort(),
+                    true
+                )
+            )
         } else {
             sendPacket(player, net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
         }
@@ -243,29 +268,49 @@ class NMSImpl : NMS() {
 
     override fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
         sendPacket(
-                player,
-                PacketPlayOutEntityHeadRotation(),
-                "a" to entityId,
-                "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+            player,
+            PacketPlayOutEntityHeadRotation(),
+            "a" to entityId,
+            "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
         )
         sendPacket(
-                player,
-                PacketPlayOutEntity.PacketPlayOutEntityLook(
-                        entityId,
-                        MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
-                        MathHelper.d(pitch * 256.0f / 360.0f).toByte(),
-                        true
-                )
+            player,
+            PacketPlayOutEntity.PacketPlayOutEntityLook(
+                entityId,
+                MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
+                MathHelper.d(pitch * 256.0f / 360.0f).toByte(),
+                true
+            )
         )
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         if (version >= 11600) {
-            sendPacket(player, PacketPlayOutEntityEquipment(entityId, listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))))
+            sendPacket(
+                player,
+                PacketPlayOutEntityEquipment(
+                    entityId,
+                    listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))
+                )
+            )
         } else if (version >= 11300) {
-            sendPacket(player, net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(entityId, net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)))
+            sendPacket(
+                player,
+                net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
+                    entityId,
+                    net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms),
+                    org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)
+                )
+            )
         } else {
-            sendPacket(player, net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(entityId, net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)))
+            sendPacket(
+                player,
+                net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(
+                    entityId,
+                    net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms),
+                    org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
+                )
+            )
         }
     }
 
@@ -293,12 +338,17 @@ class NMSImpl : NMS() {
         return if (version >= 11300) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
         } else {
-            net.minecraft.server.v1_11_R1.DataWatcher.Item(net.minecraft.server.v1_11_R1.DataWatcherObject(index, net.minecraft.server.v1_11_R1.DataWatcherRegistry.h), value)
+            net.minecraft.server.v1_11_R1.DataWatcher.Item(
+                net.minecraft.server.v1_11_R1.DataWatcherObject(
+                    index,
+                    net.minecraft.server.v1_11_R1.DataWatcherRegistry.h
+                ), value
+            )
         }
     }
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam?)
+        return Reflection.instantiateObject(DataWatcher.Item::class.java, DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value))
     }
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
@@ -309,34 +359,71 @@ class NMSImpl : NMS() {
         return if (version >= 11300) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.i), net.minecraft.server.v1_12_R1.Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                net.minecraft.server.v1_12_R1.DataWatcherObject(
+                    index,
+                    net.minecraft.server.v1_12_R1.DataWatcherRegistry.i
+                ), net.minecraft.server.v1_12_R1.Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
+            )
         }
     }
 
     override fun getMetaEntityPosition(index: Int, value: Position?): Any {
         return if (version >= 11300) {
-            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.m), Optional.ofNullable(if (value == null || value is PositionNull) null else BlockPosition(value.x, value.y, value.z)))
+            DataWatcher.Item(
+                DataWatcherObject(index, DataWatcherRegistry.m),
+                Optional.ofNullable(if (value == null || value is PositionNull) null else BlockPosition(value.x, value.y, value.z))
+            )
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(
-                    net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
-                    com.google.common.base.Optional.fromNullable(if (value == null || value is PositionNull) null else net.minecraft.server.v1_12_R1.BlockPosition(value.x, value.y, value.z))
+                net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
+                com.google.common.base.Optional.fromNullable(
+                    if (value == null || value is PositionNull) null else net.minecraft.server.v1_12_R1.BlockPosition(
+                        value.x,
+                        value.y,
+                        value.z
+                    )
+                )
             )
         }
     }
 
     override fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any {
         return if (version >= 11300) {
-            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.h), Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value)))
+            DataWatcher.Item(
+                DataWatcherObject(index, DataWatcherRegistry.h),
+                Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value))
+            )
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.g), com.google.common.base.Optional.fromNullable(if (value == null) null else org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())))
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                net.minecraft.server.v1_12_R1.DataWatcherObject(
+                    index,
+                    net.minecraft.server.v1_12_R1.DataWatcherRegistry.g
+                ),
+                com.google.common.base.Optional.fromNullable(
+                    if (value != null) {
+                        org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())
+                    } else {
+                        null
+                    }
+                )
+            )
         }
     }
 
     override fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any {
         return if (version >= 11300) {
-            DataWatcher.Item<Optional<IChatBaseComponent>>(DataWatcherObject(index, DataWatcherRegistry.f), Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first()))
+            DataWatcher.Item<Optional<IChatBaseComponent>>(
+                DataWatcherObject(index, DataWatcherRegistry.f),
+                Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first())
+            )
         } else {
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.d), name ?: "")
+            net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                net.minecraft.server.v1_12_R1.DataWatcherObject(
+                    index,
+                    net.minecraft.server.v1_12_R1.DataWatcherRegistry.d
+                ), name ?: ""
+            )
         }
     }
 
@@ -346,40 +433,54 @@ class NMSImpl : NMS() {
                 DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.g), CraftItemStack.asNMSCopy(itemStack))
             }
             version >= 11200 -> {
-                net.minecraft.server.v1_12_R1.DataWatcher.Item(net.minecraft.server.v1_12_R1.DataWatcherObject(6, net.minecraft.server.v1_12_R1.DataWatcherRegistry.f), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack))
+                net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                    net.minecraft.server.v1_12_R1.DataWatcherObject(
+                        6,
+                        net.minecraft.server.v1_12_R1.DataWatcherRegistry.f
+                    ), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
+                )
             }
             else -> {
-                return net.minecraft.server.v1_9_R2.DataWatcher.Item(net.minecraft.server.v1_9_R2.DataWatcherObject(6, net.minecraft.server.v1_9_R2.DataWatcherRegistry.f), com.google.common.base.Optional.fromNullable(org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(itemStack)))
+                return net.minecraft.server.v1_9_R2.DataWatcher.Item(
+                    net.minecraft.server.v1_9_R2.DataWatcherObject(
+                        6,
+                        net.minecraft.server.v1_9_R2.DataWatcherRegistry.f
+                    ), com.google.common.base.Optional.fromNullable(org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(itemStack))
+                )
             }
         }
     }
 
     override fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(when (villagerData.type) {
-            Villager.Type.DESERT -> VillagerType.DESERT
-            Villager.Type.JUNGLE -> VillagerType.JUNGLE
-            Villager.Type.PLAINS -> VillagerType.PLAINS
-            Villager.Type.SAVANNA -> VillagerType.SAVANNA
-            Villager.Type.SNOW -> VillagerType.SNOW
-            Villager.Type.SWAMP -> VillagerType.SWAMP
-            Villager.Type.TAIGA -> VillagerType.TAIGA
-        }, when (villagerData.profession) {
-            Villager.Profession.NONE -> VillagerProfession.NONE
-            Villager.Profession.ARMORER -> VillagerProfession.ARMORER
-            Villager.Profession.BUTCHER -> VillagerProfession.BUTCHER
-            Villager.Profession.CARTOGRAPHER -> VillagerProfession.CARTOGRAPHER
-            Villager.Profession.CLERIC -> VillagerProfession.CLERIC
-            Villager.Profession.FARMER -> VillagerProfession.FARMER
-            Villager.Profession.FISHERMAN -> VillagerProfession.FISHERMAN
-            Villager.Profession.FLETCHER -> VillagerProfession.FLETCHER
-            Villager.Profession.LEATHERWORKER -> VillagerProfession.LEATHERWORKER
-            Villager.Profession.LIBRARIAN -> VillagerProfession.LIBRARIAN
-            Villager.Profession.MASON -> VillagerProfession.MASON
-            Villager.Profession.NITWIT -> VillagerProfession.NITWIT
-            Villager.Profession.SHEPHERD -> VillagerProfession.SHEPHERD
-            Villager.Profession.TOOLSMITH -> VillagerProfession.TOOLSMITH
-            Villager.Profession.WEAPONSMITH -> VillagerProfession.WEAPONSMITH
-        }, 1))
+        return DataWatcher.Item(
+            DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(
+                when (villagerData.type) {
+                    Villager.Type.DESERT -> VillagerType.DESERT
+                    Villager.Type.JUNGLE -> VillagerType.JUNGLE
+                    Villager.Type.PLAINS -> VillagerType.PLAINS
+                    Villager.Type.SAVANNA -> VillagerType.SAVANNA
+                    Villager.Type.SNOW -> VillagerType.SNOW
+                    Villager.Type.SWAMP -> VillagerType.SWAMP
+                    Villager.Type.TAIGA -> VillagerType.TAIGA
+                }, when (villagerData.profession) {
+                    Villager.Profession.NONE -> VillagerProfession.NONE
+                    Villager.Profession.ARMORER -> VillagerProfession.ARMORER
+                    Villager.Profession.BUTCHER -> VillagerProfession.BUTCHER
+                    Villager.Profession.CARTOGRAPHER -> VillagerProfession.CARTOGRAPHER
+                    Villager.Profession.CLERIC -> VillagerProfession.CLERIC
+                    Villager.Profession.FARMER -> VillagerProfession.FARMER
+                    Villager.Profession.FISHERMAN -> VillagerProfession.FISHERMAN
+                    Villager.Profession.FLETCHER -> VillagerProfession.FLETCHER
+                    Villager.Profession.LEATHERWORKER -> VillagerProfession.LEATHERWORKER
+                    Villager.Profession.LIBRARIAN -> VillagerProfession.LIBRARIAN
+                    Villager.Profession.MASON -> VillagerProfession.MASON
+                    Villager.Profession.NITWIT -> VillagerProfession.NITWIT
+                    Villager.Profession.SHEPHERD -> VillagerProfession.SHEPHERD
+                    Villager.Profession.TOOLSMITH -> VillagerProfession.TOOLSMITH
+                    Villager.Profession.WEAPONSMITH -> VillagerProfession.WEAPONSMITH
+                }, 1
+            )
+        )
     }
 
     override fun getMetaEntityPose(index: Int, pose: BukkitPose): Any {
@@ -388,7 +489,12 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (version >= 11300) {
-            SimpleReflection.getFieldValueChecked(net.minecraft.server.v1_16_R1.EntityTypes::class.java, null, entityTypes.internalName ?: entityTypes.name, true)
+            SimpleReflection.getFieldValueChecked(
+                net.minecraft.server.v1_16_R1.EntityTypes::class.java,
+                null,
+                entityTypes.internalName ?: entityTypes.name,
+                true
+            )
         } else {
             entityTypes.bukkitId
         }
@@ -409,8 +515,7 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             version == 11300 -> {
-                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase()))
-                        ?: net.minecraft.server.v1_13_R2.Particles.y
+                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
                 } else {
@@ -418,8 +523,7 @@ class NMSImpl : NMS() {
                 }
             }
             version >= 11400 -> {
-                val p = SimpleReflection.getFieldValueChecked(Particles::class.java, null, bukkitParticles.name, true)
-                        ?: Particles.FLAME
+                val p = Reflex.from(Particles::class.java).read(bukkitParticles.name) ?: Particles.FLAME
                 if (p is Particle<*>) {
                     p.d()
                 } else {
@@ -433,14 +537,27 @@ class NMSImpl : NMS() {
     @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     override fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position> {
         if (version >= 11400) {
-            val pathEntity = (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
+            val pathEntity =
+                (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
             val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as List<PathPoint>
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         } else {
             val pathEntity = if (version >= 11200) {
-                (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(net.minecraft.server.v1_12_R1.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+                (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(
+                    net.minecraft.server.v1_12_R1.BlockPosition(
+                        location.blockX,
+                        location.blockY,
+                        location.blockZ
+                    )
+                ) ?: return mutableListOf()
             } else {
-                (mob as org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreature).handle.navigation.a(net.minecraft.server.v1_9_R2.BlockPosition(location.blockX, location.blockY, location.blockZ)) ?: return mutableListOf()
+                (mob as org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreature).handle.navigation.a(
+                    net.minecraft.server.v1_9_R2.BlockPosition(
+                        location.blockX,
+                        location.blockY,
+                        location.blockZ
+                    )
+                ) ?: return mutableListOf()
             }
             val pathPoint = SimpleReflection.getFieldValueChecked(PathEntity::class.java, pathEntity, "a", true) as Array<PathPoint>
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()

@@ -162,6 +162,10 @@ abstract class EntityMetaable {
                 NMS.INSTANCE.updateEntityMetadata(it, entityInstance.index, getMetadata(it, entityInstance) ?: return@forViewers)
             }
         }
+
+        override fun toString(): String {
+            return "Meta(index=$index, key='$key', def=$def, editor=$editor, dataWatcher=$dataWatcher)"
+        }
     }
 
     open class MetaMasked(index: Int, key: String, val mask: Byte, def: Boolean) : Meta(index, key, def) {
@@ -185,6 +189,10 @@ abstract class EntityMetaable {
                 bits += k.mask
             }
             return dataWatcher?.getMetadata(index, bits.toByte())
+        }
+
+        override fun toString(): String {
+            return "MetaMasked(mask=$mask) ${super.toString()}"
         }
     }
 
@@ -216,6 +224,10 @@ abstract class EntityMetaable {
             val obj = entityInstance.metadata[key] ?: return null
             val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this, obj).call()
             return dataWatcher?.getMetadata(index, event.value)
+        }
+
+        override fun toString(): String {
+            return "MetaNatural() ${super.toString()}"
         }
     }
 
