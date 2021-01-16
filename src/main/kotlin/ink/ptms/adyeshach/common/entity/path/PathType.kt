@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.path
 
 import io.izzel.taboolib.TabooLib
+import io.izzel.taboolib.Version
 import org.bukkit.entity.*
 
 /**
@@ -12,7 +13,7 @@ enum class PathType(val entity: Class<out Creature>, val supportVersion: Int) {
     /**
      * 飞行单位（以 Bee 为代表，需要 1.15+ 版本以上）
      */
-    FLY(if (TabooLib.getVersion() >= 11500) Bee::class.java else Chicken::class.java, 11500),
+    FLY(if (Version.isAfter(Version.v1_15)) Bee::class.java else Chicken::class.java, 11500),
 
     /**
      * 高度接近一格（以 Chicken 为代表）
