@@ -2,6 +2,9 @@ package ink.ptms.adyeshach.api
 
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.editor.EditorMode
+import org.bukkit.Location
+import org.bukkit.World
+import org.bukkit.configuration.ConfigurationSection
 
 class Settings {
 
@@ -23,6 +26,14 @@ class Settings {
 
     val pathfinderProxy: Boolean by lazy {
         Adyeshach.conf.getBoolean("Settings.pathfinder-proxy", true)
+    }
+
+    fun getPathfinderProxySpawn(world: World): Location {
+        val spawn = Adyeshach.conf.get("Settings.pathfinder-proxy-spawn.${world.name}")
+        if (spawn == null || spawn.toString() == "~bukkit") {
+            return world.spawnLocation
+        }
+        return Location(world, (spawn as ConfigurationSection).getDouble("x"), 0.0, spawn.getDouble("z"))
     }
 
     companion object {

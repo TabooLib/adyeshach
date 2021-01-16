@@ -68,9 +68,7 @@ object PathFinderProxy {
         }
         Bukkit.getWorlds().forEach {
             Mirror.get("PathFinderProxy:onCheck:${it.name}").check {
-                val loc = it.spawnLocation.clone().also { loc ->
-                    loc.y = 0.0
-                }
+                val loc = Settings.get().getPathfinderProxySpawn(it)
                 val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
                 for (pathType in PathType.values()) {
                     // 版本允许
@@ -119,9 +117,7 @@ object PathFinderProxy {
                                     schedule.call.invoke(ResultNavigation(pathList, schedule.beginTime, time))
                                     pathEntity.schedule.remove(schedule)
                                     entity.setAI(false)
-                                    entity.teleport(entity.world.spawnLocation.clone().also { loc ->
-                                        loc.y = 0.0
-                                    })
+                                    entity.teleport(Settings.get().getPathfinderProxySpawn(entity.world))
                                     if (Settings.get().debug) {
                                         pathList.forEach {
                                             Effects.create(Particle.VILLAGER_HAPPY, Location(entity.world, it.x + 0.5, it.y + 0.5, it.z + 0.5))
