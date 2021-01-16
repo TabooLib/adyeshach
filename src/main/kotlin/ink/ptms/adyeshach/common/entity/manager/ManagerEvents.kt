@@ -38,10 +38,10 @@ private class ManagerEvents : Listener {
 
     @TSchedule(period = 1)
     fun onTickPublic() {
-        Mirror.get("ManagerPublic:onTick", false).eval {
+        Mirror.get("ManagerPublic:onTick").check {
             AdyeshachAPI.getEntityManagerPublic().onTick()
         }
-        Mirror.get("ManagerPublic:onTick(temporary)", false).eval {
+        Mirror.get("ManagerPublic:onTick(temporary)").check {
             AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
         }
     }
@@ -49,10 +49,10 @@ private class ManagerEvents : Listener {
     @TSchedule(period = 1)
     fun onTickPrivate() {
         Bukkit.getOnlinePlayers().forEach { player ->
-            Mirror.get("ManagerPrivate:onTick", false).eval {
+            Mirror.get("ManagerPrivate:onTick").check {
                 AdyeshachAPI.getEntityManagerPrivate(player).onTick()
             }
-            Mirror.get("ManagerPrivate:onTick(temporary)", false).eval {
+            Mirror.get("ManagerPrivate:onTick(temporary)").check {
                 AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
             }
         }
@@ -60,7 +60,7 @@ private class ManagerEvents : Listener {
 
     @TSchedule(period = 1200, async = true)
     fun onSavePublic() {
-        Mirror.get("ManagerPublic:onSave(async)").eval {
+        Mirror.get("ManagerPublic:onSave(async)").check {
             AdyeshachAPI.getEntityManagerPublic().onSave()
         }
     }
@@ -68,7 +68,7 @@ private class ManagerEvents : Listener {
     @TSchedule(period = 600, async = true)
     fun onSavePrivate() {
         Bukkit.getOnlinePlayers().forEach {
-            Mirror.get("ManagerPrivate:onSave(async)").eval {
+            Mirror.get("ManagerPrivate:onSave(async)").check {
                 AdyeshachAPI.getEntityManagerPrivate(it).onSave()
             }
         }
@@ -82,7 +82,7 @@ private class ManagerEvents : Listener {
         AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
             it.viewPlayers.viewers.add(e.player.name)
         }
-        Mirror.get("ManagerPrivate:onLoad(async)").eval {
+        Mirror.get("ManagerPrivate:onLoad(async)").check {
             AdyeshachAPI.getEntityManagerPrivate(e.player).onEnable()
         }
     }
@@ -97,7 +97,7 @@ private class ManagerEvents : Listener {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }
-        Mirror.get("ManagerPrivate:onSave(async)").eval {
+        Mirror.get("ManagerPrivate:onSave(async)").check {
             AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
         }
     }

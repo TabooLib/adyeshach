@@ -5,11 +5,13 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.internal.migrate.Migrate
 import ink.ptms.adyeshach.internal.mirror.Mirror
+import io.izzel.taboolib.kotlin.Tasks
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.PageBuilder
 import io.izzel.taboolib.util.chat.ComponentSerializer
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -65,37 +67,34 @@ class CommandTest : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "print performance monitoring.", type = CommandType.PLAYER)
+    @SubCommand(description = "print performance monitoring.")
     var mirror: BaseSubCommand = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
             sender.info("Creating...")
-            val bookBuilder = BookFormatter.writtenBook()
-            bookBuilder.addPages(PageBuilder()
-                    .add("").newLine()
-                    .add("").newLine()
-                    .add("        §l§nAdyeshach").newLine()
-                    .add("").newLine()
-                    .add("   Performance Monitoring").newLine()
-                    .build())
-            Mirror.dataMap.keys.toList().sortedByDescending { Mirror.get(it).timeTotal }.forEach { k ->
-                val v = Mirror.get(k)
-                val name = k.substring(k.indexOf(":") + 1)
-                bookBuilder.addPages(ComponentSerializer.parse(TellrawJson.create().newLine()
-                        .append("  §1§l§n${k.split(":")[0]}").newLine()
-                        .append("  §1" + toSimple(name)).hoverText(name).newLine()
-                        .append("").newLine()
-                        .append("  Total §7${if (v.total) v.times.toString() else "_"} times").newLine()
-                        .append("  Total §7${v.timeTotal} ms").newLine()
-                        .append("  Average §7${v.timeLatest} ms ").append("§4(?)").hoverText("§8Details:\n§fLowest §7${v.lowest} ms\n§fHighest §7${v.highest} ms").newLine()
-                        .toRawMessage(sender as Player)))
+            sender.info("---")
+            Tasks.task(true) {
+                Mirror.collect().run {
+                    print(sender, getTotal(), 0)
+                }
+                sender.info("---")
             }
-            sender.info("Created.")
-            BookFormatter.forceOpen(sender as Player, bookBuilder.build())
         }
     }
 
-    fun toSimple(source: String): String? {
-        return if (source.length > 20) source.substring(0, source.length - (source.length - 10)) + "..." + source.substring(source.length - 7) else source
+    @SubCommand(description = "print pathfinder proxy entities.")
+    var pathfinderProxy: BaseSubCommand = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
+            sender.info("Checking...")
+            Bukkit.getWorlds().forEach {
+                sender.info("  &f&n${it.name}")
+                it.entities.forEach { entity ->
+                    if (entity.customName == "Adyeshach Pathfinder Proxy") {
+                        sender.info("  &7${entity.entityId} &8··· &7${entity.type}")
+                    }
+                }
+            }
+        }
     }
 }

@@ -17,3 +17,4 @@ Settings:
   debug: false
   editor-mode: CHAT
   visible-distance: 64
+  pathfinder-proxy: true

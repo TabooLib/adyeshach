@@ -1,62 +1,89 @@
 package ink.ptms.adyeshach.internal.mirror
 
-import java.util.concurrent.TimeUnit
+import java.lang.Exception
+import java.math.BigDecimal
+import java.math.RoundingMode
 
-class MirrorData(val total: Boolean) {
+class MirrorData {
 
-    var timeTotal = 0L
+    private var startTime = 0L
+    private var stopTime = 0L
+
+    lateinit var timeTotal: BigDecimal
         private set
-    var timeLatest = 0L
+    lateinit var timeLatest: BigDecimal
         private set
-    var times = 0L
+    lateinit var timeLowest: BigDecimal
+        private set
+    lateinit var timeHighest: BigDecimal
         private set
 
-    var lowest = 0L
-        private set
-    var highest = 0L
+    var count = 0L
         private set
 
-    private var runtime: Long = 0
+    init {
+        reset()
+    }
 
-    fun start(): MirrorData {
-        runtime = System.nanoTime()
+    fun define(): MirrorData {
+        startTime = System.nanoTime()
         return this
     }
 
-    fun stop(): MirrorData {
-        timeLatest = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - runtime)
-        timeTotal += timeLatest
-        if (total) {
-            times += 1
+    fun finish(): MirrorData {
+        stopTime = System.nanoTime()
+        // 当前
+        timeLatest = BigDecimal((stopTime - startTime) / 1000000.0).setScale(2, RoundingMode.HALF_UP)
+        // 总计
+        timeTotal = timeTotal.add(timeLatest)
+        // 最高值
+        if (timeLatest.compareTo(timeHighest) == 1) {
+            timeHighest = timeLatest
         }
-        if (timeLatest > highest) {
-            highest = timeLatest
+        // 最低值
+        if (timeLatest.compareTo(timeLowest) == -1) {
+            timeLowest = timeLatest
         }
-        if (timeLatest < lowest) {
-            lowest = timeLatest
-        }
+        count++
         return this
+    }
+
+    fun check(func: () -> Unit) {
+        define()
+        try {
+            func.invoke()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        finish()
     }
 
     fun reset(): MirrorData {
-        timeTotal = 0L
-        timeLatest = 0L
-        times = 0
+        timeTotal = BigDecimal.ZERO
+        timeLatest = BigDecimal.ZERO
+        timeLowest = BigDecimal.ZERO
+        timeHighest = BigDecimal.ZERO
+        count = 0
         return this
     }
 
-    fun eval(runnable: () -> (Any?)): MirrorData {
-        start()
-        try {
-            runnable.invoke()
-        } catch (t: Throwable) {
-            t.printStackTrace()
-        }
-        stop()
-        return this
+    fun getTotal(): Double {
+        return timeTotal.toDouble()
     }
 
-    override fun toString(): String {
-        return "MirrorData(timeTotal=$timeTotal, timeLatest=$timeLatest, times=$times, runtime=$runtime)"
+    fun getLatest(): Double {
+        return timeLatest.toDouble()
+    }
+
+    fun getHighest(): Double {
+        return timeHighest.toDouble()
+    }
+
+    fun getLowest(): Double {
+        return timeLowest.toDouble()
+    }
+
+    fun getAverage(): Double {
+        return timeTotal.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP).toDouble()
     }
 }

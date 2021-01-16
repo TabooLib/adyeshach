@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.path
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.internal.mirror.Mirror
@@ -64,8 +63,11 @@ object PathFinderProxy {
 
     @TSchedule(period = 100)
     private fun check() {
+        if (!Settings.get().pathfinderProxy) {
+            return
+        }
         Bukkit.getWorlds().forEach {
-            Mirror.get("PathFinderProxy:onCheck:${it.name}", false).eval {
+            Mirror.get("PathFinderProxy:onCheck:${it.name}").check {
                 val loc = it.spawnLocation.clone().also { loc ->
                     loc.y = 0.0
                 }
@@ -99,7 +101,7 @@ object PathFinderProxy {
             if (pathEntity.schedule.isEmpty()) {
                 return@forEach
             }
-            Mirror.get("PathFinderProxy:onSchedule:$world").eval {
+            Mirror.get("PathFinderProxy:onSchedule:$world").check {
                 pathEntity.schedule.forEach { schedule ->
                     val entity = pathEntity.entity[schedule.pathType]
                     if (entity != null) {

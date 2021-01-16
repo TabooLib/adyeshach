@@ -21,6 +21,10 @@ class Settings {
         Adyeshach.conf.getDouble("Settings.visible-distance", 64.0)
     }
 
+    val pathfinderProxy: Boolean by lazy {
+        Adyeshach.conf.getBoolean("Settings.pathfinder-proxy", true)
+    }
+
     companion object {
 
         fun get() = Adyeshach.settings
