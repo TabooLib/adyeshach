@@ -100,7 +100,7 @@ class Command : BaseMainCommand(), Helper {
                 return
             }
             sender.info("Coping...")
-            entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!.clone(args[0], (sender as Player).location)
+            entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!.clone(args[1], (sender as Player).location)
         }
     }
 
