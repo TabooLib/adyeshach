@@ -7,13 +7,8 @@ import ink.ptms.adyeshach.internal.migrate.Migrate
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.kotlin.Tasks
 import io.izzel.taboolib.module.command.base.*
-import io.izzel.taboolib.module.tellraw.TellrawJson
-import io.izzel.taboolib.util.book.BookFormatter
-import io.izzel.taboolib.util.book.builder.PageBuilder
-import io.izzel.taboolib.util.chat.ComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 /**
  * @Author sky
@@ -34,13 +29,6 @@ class CommandTest : BaseMainCommand(), Helper {
                     sender.info("    §f$it &aSUPPORTED")
                 } catch (t: Throwable) {
                     sender.info("    §f$it &cERROR")
-                }
-            }
-            sender.info("  PathfinderProxy:")
-            PathFinderProxy.proxyEntity.forEach { (k, v) ->
-                sender.info("    &f${k}:")
-                v.entity.forEach { (type, entity) ->
-                    sender.info("      &f${type}: ${if (entity.isValid) "&aSUPPORTED" else "&cERROR"}")
                 }
             }
             sender.info("Done.")

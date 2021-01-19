@@ -12,10 +12,13 @@ import java.util.*
  */
 object Mirror {
 
+    private val internal = MirrorData()
     val dataMap = Maps.newConcurrentMap<String, MirrorData>()!!
     var isEnable = true
 
-    private val disabled = MirrorData()
+    fun check(name: String, func: () -> Unit) {
+        get(name).check(func)
+    }
 
     fun define(id: String) {
         if (isEnable) {
@@ -33,7 +36,7 @@ object Mirror {
         return if (isEnable) {
             dataMap.computeIfAbsent(id) { MirrorData() }
         } else {
-            disabled
+            internal
         }
     }
 
@@ -63,9 +66,9 @@ object Mirror {
             val total = getTotal()
             val avg = dataMap[key]?.getAverage() ?: 0.0
             if (sub.isEmpty()) {
-                sender.sendMessage("§c[System] §8${spaceStr}§f${path} §8[$total ms] §c[$avg ms] §8········· §7${percent(all, total)}%")
+                sender.sendMessage("§c[Adyeshach] §8${spaceStr}§f${path} §8[$total ms] §c[$avg ms] §8········· §7${percent(all, total)}%")
             } else {
-                sender.sendMessage("§c[System] §8${spaceStr}§7${path} §8[$total ms] §c[$avg ms] §8········· §7${percent(all, total)}%")
+                sender.sendMessage("§c[Adyeshach] §8${spaceStr}§7${path} §8[$total ms] §c[$avg ms] §8········· §7${percent(all, total)}%")
             }
             sub.values.map {
                 it to percent(all, it.getTotal())

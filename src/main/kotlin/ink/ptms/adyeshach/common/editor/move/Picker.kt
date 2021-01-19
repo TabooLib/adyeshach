@@ -4,12 +4,17 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.RayTrace
 import ink.ptms.adyeshach.internal.command.Helper
+import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.inject.TListener
+import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.locale.TLocale
+import io.izzel.taboolib.util.lite.Effects
 import io.izzel.taboolib.util.lite.Numbers
 import io.izzel.taboolib.util.lite.cooldown.Cooldown
+import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -18,6 +23,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,7 +33,8 @@ import kotlin.math.min
  */
 object Picker : Helper {
 
-    private val playerSelected = mutableMapOf<String, Handler>()
+    @PlayerContainer
+    private val playerSelected = ConcurrentHashMap<String, Handler>()
 
     fun select(player: Player, entityInstance: EntityInstance?) {
         getSelected(player).let {
@@ -50,14 +57,23 @@ object Picker : Helper {
     class Listener : org.bukkit.event.Listener {
 
         @TInject
-        private val cooldown = Cooldown("Adyeshach:picker:move", 100)
+        private val cooldown = Cooldown("Adyeshach:picker:move", 200)
 
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        fun e(e: PlayerMoveEvent) {
-            val select = getSelected(e.player)
-            val entity = select.entityInstance ?: return
-            process(e.player, entity)
+        @TSchedule(period = 1)
+        fun e() {
+            Bukkit.getOnlinePlayers().forEach {
+                val select = getSelected(it)
+                val entity = select.entityInstance ?: return@forEach
+                process(it, entity)
+            }
         }
+
+//        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+//        fun e(e: PlayerMoveEvent) {
+//            val select = getSelected(e.player)
+//            val entity = select.entityInstance ?: return
+//            process(e.player, entity)
+//        }
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         fun e(e: PlayerItemHeldEvent) {
@@ -97,13 +113,10 @@ object Picker : Helper {
             if (b != null) {
                 val maxY = NMS.INSTANCE.getBlockHeight(b) + b.y
                 if (maxY != entity.position.y) {
-                    if (max(entity.position.y, maxY) - min(entity.position.y, maxY) < 0.2 && !cooldown.isCooldown(player.name)) {
-                        entity.teleport(teleport.run {
-                            y = maxY
-                            this
-                        })
-                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 2f)
-                        return
+                    val distance = entity.position.y - maxY
+                    if (distance < 0.5 && !cooldown.isCooldown(player.name)) {
+                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.1f, 2f)
+                        TLocale.Display.sendActionBar(player, "§7The distance between the §fNPC §7and the §fGround §7is §f${Numbers.format(distance)}§7.")
                     }
                 }
             }

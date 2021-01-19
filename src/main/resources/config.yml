@@ -18,11 +18,3 @@ Settings:
   editor-mode: CHAT
   visible-distance: 64
   pathfinder-proxy: true
-  pathfinder-proxy-spawn:
-    world:
-      x: 0
-      z: 0
-    world_nether:
-      x: 0
-      z: 0
-    world_the_end: ~bukkit

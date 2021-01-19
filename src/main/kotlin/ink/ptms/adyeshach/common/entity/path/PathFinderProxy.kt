@@ -1,7 +1,9 @@
 package ink.ptms.adyeshach.common.entity.path
 
+import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.nms.NMS
+import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.ai.SimpleAiSelector
@@ -11,18 +13,17 @@ import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import io.izzel.taboolib.util.lite.Effects
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
-import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.event.world.ChunkUnloadEvent
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @Author sky
@@ -31,7 +32,8 @@ import java.util.concurrent.ConcurrentHashMap
 object PathFinderProxy {
 
     val version = Version.getCurrentVersionInt()
-    val proxyEntity = ConcurrentHashMap<String, PathEntity>()
+    val entities = ConcurrentHashMap<UUID, Creature>()
+    val requests = CopyOnWriteArrayList<PathSchedule>()
 
     fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> (Unit)) {
         if (pathType.supportVersion > version) {
@@ -40,17 +42,18 @@ object PathFinderProxy {
         if (start.world!!.name != target.world!!.name) {
             throw PathException("cannot request navigation in different worlds.")
         }
-        val proxyEntity = proxyEntity[start.world!!.name] ?: throw PathException("navigation proxy did not complete initialization.")
-        proxyEntity.schedule.add(PathSchedule(start, target, pathType, request, call))
+        if (Adyeshach.settings.pathfinderProxy) {
+            requests.add(PathSchedule(start, target, pathType, request, call))
+        }
     }
 
-    fun isProxyEntity(id: Int): Boolean {
-        return proxyEntity.values.any { it.entity.values.any { entity -> entity.entityId == id } }
+    fun isProxyEntity(player: Player, id: Int): Boolean {
+        return player.world.entities.any { it.entityId == id && it.customName == "Adyeshach Pathfinder Proxy" }
     }
 
     @TPacket(type = TPacket.Type.SEND)
     private fun packet(player: Player, packet: Packet): Boolean {
-        if (packet.`is`("PacketPlayOutSpawnEntityLiving") && isProxyEntity(packet.read("a", Int::class.java)) && !Settings.get().debug) {
+        if (packet.`is`("PacketPlayOutSpawnEntityLiving") && isProxyEntity(player, packet.read("a", 0)) && !Settings.get().debug) {
             return false
         }
         return true
@@ -58,92 +61,76 @@ object PathFinderProxy {
 
     @TFunction.Cancel
     private fun cancel() {
-        proxyEntity.values.forEach { it.entity.values.forEach { entity -> entity.remove() } }
+        entities.forEach { it.value.remove() }
+        entities.clear()
     }
 
-    @TSchedule(period = 100)
-    private fun check() {
-        if (!Settings.get().pathfinderProxy) {
-            return
-        }
-        Bukkit.getWorlds().forEach {
-            Mirror.get("PathFinderProxy:onCheck:${it.name}").check {
-                val loc = Settings.get().getPathfinderProxySpawn(it)
-                val pathEntity = proxyEntity.computeIfAbsent(it.name) { PathEntity() }
-                for (pathType in PathType.values()) {
-                    // 版本允许
-                    if (pathType.supportVersion <= version) {
-                        // 实体不存在或失效
-                        if (!pathEntity.entity.containsKey(pathType) || !pathEntity.entity[pathType]!!.isValid) {
-                            if (version >= 11200) {
-                                it.spawn(loc, pathType.entity) { entity ->
-                                    entity.customName = "Adyeshach Pathfinder Proxy"
-                                    pathEntity.entity.put(pathType, entity as Creature)?.remove()
-                                }.silent()
-                            } else {
-                                (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
-                                    entity.customName = "Adyeshach Pathfinder Proxy"
-                                    pathEntity.entity.put(pathType, entity as Creature)?.remove()
-                                } as Creature).silent()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @TSchedule(period = 2)
+    @TSchedule(period = 5)
     private fun schedule() {
-        proxyEntity.forEach { (world, pathEntity) ->
-            if (pathEntity.schedule.isEmpty()) {
+        val groups = requests.groupBy { it.start.world }
+        requests.clear()
+        groups.forEach { (world, request) ->
+            if (request.isEmpty()) {
                 return@forEach
             }
-            Mirror.get("PathFinderProxy:onSchedule:$world").check {
-                pathEntity.schedule.forEach { schedule ->
-                    val entity = pathEntity.entity[schedule.pathType]
-                    if (entity != null) {
+            Mirror.check("PathFinderProxy:onSchedule:${world.name}") {
+                val entity = spawnPathfinderProxyEntity(request[0].start, request[0].pathType)
+                entities[entity.uniqueId] = entity
+                Tasks.delay(2) {
+                    request.forEach {
                         val time = System.currentTimeMillis()
                         entity.fallDistance = 0f
-                        entity.setAI(true)
-                        entity.teleport(schedule.start)
-                        when (schedule.request) {
+                        entity.teleport(it.start)
+                        when (it.request) {
                             Request.NAVIGATION -> {
-                                if (Settings.get().debug) {
-                                    println("[Adyeshach DEBUG] Retry (${schedule.retry}) NAVIGATION ${schedule.pathType}")
-                                }
-                                val pathList = NMS.INSTANCE.getNavigationPathList(entity, schedule.target)
-                                if (pathList.isNotEmpty() || schedule.retry++ > 4) {
-                                    schedule.call.invoke(ResultNavigation(pathList, schedule.beginTime, time))
-                                    pathEntity.schedule.remove(schedule)
-                                    entity.setAI(false)
-                                    entity.teleport(Settings.get().getPathfinderProxySpawn(entity.world))
+                                val pathList = NMS.INSTANCE.getNavigationPathList(entity, it.target)
+                                if (pathList.isEmpty() && it.retry++ < 5) {
+                                    requests.add(it)
+                                } else {
+                                    it.call.invoke(ResultNavigation(pathList, it.beginTime, time))
                                     if (Settings.get().debug) {
-                                        pathList.forEach {
-                                            Effects.create(Particle.VILLAGER_HAPPY, Location(entity.world, it.x + 0.5, it.y + 0.5, it.z + 0.5))
+                                        pathList.forEach { p ->
+                                            Effects.create(Particle.VILLAGER_HAPPY, Location(entity.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
                                                 .count(10)
                                                 .range(100.0)
-                                                .play()
+                                                .playAsync()
                                         }
                                     }
                                 }
                             }
                             Request.RANDOM_POSITION -> {
-                                if (Settings.get().debug) {
-                                    println("[Adyeshach DEBUG] Retry (${schedule.retry}) RANDOM_POSITION ${schedule.pathType}")
-                                }
                                 val position = NMS.INSTANCE.generateRandomPosition(entity, entity.location.block.isLiquid)
-                                if (position != null || schedule.retry++ > 4) {
-                                    schedule.call.invoke(ResultRandomPosition(position, schedule.beginTime, time))
-                                    pathEntity.schedule.remove(schedule)
-                                    entity.setAI(false)
-                                    entity.teleport(Location(entity.world, 0.0, 0.0, 0.0))
+                                if (position == null && it.retry++ < 5) {
+                                    requests.add(it)
+                                } else {
+                                    it.call.invoke(ResultRandomPosition(position, it.beginTime, time))
+                                    if (Settings.get().debug) {
+                                        val p = position!!
+                                        Effects.create(Particle.FLAME, Location(entity.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
+                                            .count(10)
+                                            .range(100.0)
+                                            .playAsync()
+                                    }
                                 }
                             }
                         }
                     }
+                    entity.remove()
+                    entities.remove(entity.uniqueId)
                 }
             }
+        }
+    }
+
+    private fun spawnPathfinderProxyEntity(loc: Location, pathType: PathType): Creature {
+        return if (version >= 11200) {
+            loc.world.spawn(loc, pathType.entity) { entity ->
+                entity.customName = "Adyeshach Pathfinder Proxy"
+            }.silent()
+        } else {
+            (NMS.INSTANCE.addEntity(loc, pathType.entity) { entity ->
+                entity.customName = "Adyeshach Pathfinder Proxy"
+            } as Creature).silent()
         }
     }
 
@@ -151,7 +138,6 @@ object PathFinderProxy {
         isSilent = true
         isCollidable = false
         isInvulnerable = true
-        setAI(false)
         SimpleAiSelector.getExecutor().clearGoalAi(this)
         SimpleAiSelector.getExecutor().clearTargetAi(this)
         getAttribute(Attribute.GENERIC_FOLLOW_RANGE)?.baseValue = 100.0
@@ -163,16 +149,9 @@ object PathFinderProxy {
 
         @EventHandler
         fun e(e: EntityDeathEvent) {
-            if (isProxyEntity(e.entity.entityId)) {
+            if (e.entity.customName == "Adyeshach Pathfinder Proxy") {
                 e.drops.clear()
                 e.droppedExp = 0
-            }
-        }
-
-        @EventHandler
-        fun e(e: ChunkUnloadEvent) {
-            if (version < 11400 && e.chunk == Location(e.chunk.world, 0.0, 0.0, 0.0).chunk) {
-                (e as Cancellable).isCancelled = true
             }
         }
     }

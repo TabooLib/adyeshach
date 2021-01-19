@@ -143,7 +143,9 @@ class Command : BaseMainCommand(), Helper {
             sender.info("Moving...")
             entity.forEach {
                 it.teleport((sender as Player).location)
-                it.setHeadRotation(sender.location.yaw, sender.location.pitch)
+                Tasks.delay(20) {
+                    it.setHeadRotation(sender.location.yaw, sender.location.pitch)
+                }
             }
         }
     }

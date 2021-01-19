@@ -28,14 +28,6 @@ class Settings {
         Adyeshach.conf.getBoolean("Settings.pathfinder-proxy", true)
     }
 
-    fun getPathfinderProxySpawn(world: World): Location {
-        val spawn = Adyeshach.conf.get("Settings.pathfinder-proxy-spawn.${world.name}")
-        if (spawn == null || spawn.toString() == "~bukkit") {
-            return world.spawnLocation
-        }
-        return Location(world, (spawn as ConfigurationSection).getDouble("x"), 0.0, spawn.getDouble("z"))
-    }
-
     companion object {
 
         fun get() = Adyeshach.settings

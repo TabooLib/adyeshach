@@ -69,7 +69,7 @@ object Editors {
                 MenuBuilder.builder(Adyeshach.plugin)
                         .title("Adyeshach Editor : Input")
                         .rows(1)
-                        .items("#####@#####")
+                        .items("####@####")
                         .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
                         .put('@', meta.def as ItemStack)
                         .event {
