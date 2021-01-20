@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
-import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.PlayerContainer

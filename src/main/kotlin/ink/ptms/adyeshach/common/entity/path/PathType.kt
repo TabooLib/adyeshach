@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.path
 
-import io.izzel.taboolib.TabooLib
 import io.izzel.taboolib.Version
 import org.bukkit.entity.*
 

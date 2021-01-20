@@ -2,33 +2,31 @@ package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import io.izzel.kether.common.api.*
+import ink.ptms.adyeshach.common.script.ScriptParser
+import io.izzel.kether.common.api.QuestAction
+import io.izzel.kether.common.api.QuestContext
 import io.izzel.kether.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionController(val symbol: Symbol, val controller: String?) : QuestAction<Void, ScriptContext> {
+class ActionController(val symbol: Symbol, val controller: String?) : QuestAction<Void>() {
 
     enum class Symbol {
 
         ADD, REMOVE, RESET
     }
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
+    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
+        val s = (context.context() as ScriptContext)
+        if (s.manager == null) {
             throw RuntimeException("No manager selected.")
         }
-        if (!context.entitySelected()) {
+        if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        context.getEntity()!!.filterNotNull().forEach {
+        s.entities!!.filterNotNull().forEach {
             when (symbol) {
                 Symbol.ADD -> {
                     val controller = ScriptHandler.getKnownController(controller!!) ?: throw RuntimeException("Unknown controller $controller")
@@ -44,36 +42,20 @@ class ActionController(val symbol: Symbol, val controller: String?) : QuestActio
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun getDataPrefix(): String {
-        return "controller"
-    }
-
     override fun toString(): String {
         return "ActionController(symbol=$symbol, controller='$controller')"
     }
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        val symbol = when (val type = t.nextElement()) {
-                            "add" -> Symbol.ADD
-                            "remove" -> Symbol.REMOVE
-                            "reset" -> Symbol.RESET
-                            else -> throw LocalizedException.of("not-controller-method", type)
-                        }
-                        ActionController(symbol, if (symbol != Symbol.RESET) t.nextElement() else null) as QuestAction<T, C>
-                    }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
+        fun parser() = ScriptParser.parser {
+            val symbol = when (val type = it.nextToken()) {
+                "add" -> Symbol.ADD
+                "remove" -> Symbol.REMOVE
+                "reset" -> Symbol.RESET
+                else -> throw LocalizedException.of("not-controller-method", type)
             }
+            ActionController(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }
     }
 }

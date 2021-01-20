@@ -12,12 +12,12 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.Model
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.util.Files
+import org.bukkit.DyeColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Horse
@@ -118,27 +118,27 @@ class CommandAPI : BaseMainCommand(), Helper {
                     }
                     "pattern_color" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
-                        entity.setPatternColor(BukkitUtils.valuesDyeColor()[NumberConversions.toInt(args[3])])
+                        entity.setPatternColor(DyeColor.valueOf(args[3]))
                         Editor.open(sender, entity)
                     }
                     "body_color" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
-                        entity.setBodyColor(BukkitUtils.valuesDyeColor()[NumberConversions.toInt(args[3])])
+                        entity.setBodyColor(DyeColor.valueOf(args[3]))
                         Editor.open(sender, entity)
                     }
                     "pattern" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyTropicalFish
-                        entity.setPattern(TropicalFish.Pattern.values()[NumberConversions.toInt(args[3])])
+                        entity.setPattern(TropicalFish.Pattern.valueOf(args[3]))
                         Editor.open(sender, entity)
                     }
                     "horse_color" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyHorse
-                        entity.setColor(Horse.Color.values()[NumberConversions.toInt(args[3])])
+                        entity.setColor(Horse.Color.valueOf(args[3]))
                         Editor.open(sender, entity)
                     }
                     "horse_style" -> {
                         val entity = (AdyeshachAPI.getEntityFromUniqueId(args[1], sender as Player) ?: return) as AdyHorse
-                        entity.setStyle(Horse.Style.values()[NumberConversions.toInt(args[3])])
+                        entity.setStyle(Horse.Style.valueOf(args[3]))
                         Editor.open(sender, entity)
                     }
                     else -> {

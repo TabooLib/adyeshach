@@ -1,11 +1,11 @@
 plugins {
     id 'java'
-    id 'io.izzel.taboolib' version '1.2'
+    id 'io.izzel.taboolib' version '1.3'
     id 'org.jetbrains.kotlin.jvm' version '1.4.0-rc'
 }
 
 group = 'ink.ptms.adyeshach'
-version = '1.0.10'
+version = '1.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -24,13 +24,11 @@ repositories {
 }
 
 dependencies {
-    taboo 'io.izzel.kether.common:Kether:1.0'
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'net.citizensnpcs:Citizens:2.0.18'
     compile 'com.guillaumevdn.gcore:GCore:7.15.0'
     compile 'com.guillaumevdn.questcreator:QuestCreator:5.30.0'
     compile 'com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE'
-    compile 'public:ModelEngineAPI:1.0.0'
     compile 'ink.ptms.core:v11604:11604:all'
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11500:11500:all'
@@ -41,7 +39,7 @@ dependencies {
     compile 'ink.ptms.core:v11000:11000:all'
     compile 'ink.ptms.core:v10900:10900:all'
     compile 'org.jetbrains.kotlin:kotlin-stdlib'
-    compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+    taboo fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 processResources {

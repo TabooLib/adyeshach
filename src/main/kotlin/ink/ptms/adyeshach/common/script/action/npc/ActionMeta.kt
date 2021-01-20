@@ -9,8 +9,10 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.*
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptHandler
+import ink.ptms.adyeshach.common.script.ScriptParser
 import ink.ptms.cronus.Cronus
-import io.izzel.kether.common.api.*
+import io.izzel.kether.common.api.QuestAction
+import io.izzel.kether.common.api.QuestContext
 import io.izzel.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Coerce
@@ -25,12 +27,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : QuestAction<Void, ScriptContext> {
+class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : QuestAction<Void>() {
 
     val cronusHook = Bukkit.getPluginManager().isPluginEnabled("Cronus")
 
@@ -47,19 +48,16 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
         }
     }
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
     @Suppress("UNCHECKED_CAST")
-    override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
+    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
+        val s = (context.context() as ScriptContext)
+        if (s.manager == null) {
             throw RuntimeException("No manager selected.")
         }
-        if (!context.entitySelected()) {
+        if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        context.getEntity()!!.filterNotNull().forEach {
+        s.entities!!.filterNotNull().forEach {
             val meta = it.listMetadata().firstOrNull { m -> m.key.equals(key, true) } ?: throw RuntimeException("Metadata \"${key}\" not found.")
             val editor = Editor.getEditor(meta) ?: throw RuntimeException("Metadata is not editable. (0)")
             if (!editor.edit) {
@@ -97,11 +95,21 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                         }
                         meta.key == "villagerType" && it is EntityVillager -> {
                             val data = it.getVillagerData()
-                            it.setVillagerData(VillagerData(Enums.getIfPresent(Villager.Type::class.java, value.toString().toUpperCase()).get(), data.profession))
+                            it.setVillagerData(
+                                VillagerData(
+                                    Enums.getIfPresent(Villager.Type::class.java, value.toString().toUpperCase()).get(),
+                                    data.profession
+                                )
+                            )
                         }
                         meta.key == "villagerProfession" && it is EntityVillager -> {
                             val data = it.getVillagerData()
-                            it.setVillagerData(VillagerData(data.type, Enums.getIfPresent(Villager.Profession::class.java, value.toString().toUpperCase()).get()))
+                            it.setVillagerData(
+                                VillagerData(
+                                    data.type,
+                                    Enums.getIfPresent(Villager.Profession::class.java, value.toString().toUpperCase()).get()
+                                )
+                            )
                         }
                         meta.key == "villagerProfessionLegacy" && it is EntityVillager -> {
                             it.setLegacyProfession(BukkitProfession.valueOf(value.toString().toUpperCase()))
@@ -156,18 +164,25 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                             it.setCustomBlock(getItem(value.toString()).data!!)
                         }
                         editor.enum != null -> {
-                            val enum = Editors.getEnums(editor.enum!!).firstOrNull { e -> e.toString().equals(value.toString(), true) } ?: throw RuntimeException("Enum type \"${value}\" not found.")
+                            val enum = Editors.getEnums(editor.enum!!).firstOrNull { e -> e.toString().equals(value.toString(), true) }
+                                ?: throw RuntimeException("Enum type \"${value}\" not found.")
                             it.setMetadata(meta.key, (enum as Enum<*>).ordinal)
                         }
                         else -> {
                             when (meta.def.javaClass.kotlin) {
-                                Int::class, Byte::class, Float::class, Double::class, String::class, TextComponent::class -> it.setMetadata(meta.key, value.toString())
+                                Int::class, Byte::class, Float::class, Double::class, String::class, TextComponent::class -> it.setMetadata(
+                                    meta.key,
+                                    value.toString()
+                                )
                                 Boolean::class -> it.setMetadata(meta.key, Coerce.toBoolean(value))
                                 Position::class -> it.setMetadata(meta.key, ScriptHandler.toPosition(value.toString()))
                                 EulerAngle::class -> it.setMetadata(meta.key, ScriptHandler.toEulerAngle(value.toString()))
                                 ItemStack::class -> it.setMetadata(meta.key, getItem(value.toString()))
                                 MaterialData::class -> it.setMetadata(meta.key, getItem(value.toString()).data!!)
-                                BukkitParticles::class -> it.setMetadata(meta.key, Enums.getIfPresent(BukkitParticles::class.java, value.toString().toUpperCase()).get())
+                                BukkitParticles::class -> it.setMetadata(
+                                    meta.key,
+                                    Enums.getIfPresent(BukkitParticles::class.java, value.toString().toUpperCase()).get()
+                                )
                             }
                         }
                     }
@@ -184,40 +199,24 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun getDataPrefix(): String {
-        return "meta"
-    }
-
     override fun toString(): String {
         return "ActionMeta(key='$key', symbol=$symbol, value=$value)"
     }
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        val symbol = when (val type = t.nextElement()) {
-                            "set" -> Symbol.SET
-                            "reset" -> Symbol.RESET
-                            else -> throw LocalizedException.of("not-tag-method", type)
-                        }
-                        val key = t.nextElement()
-                        val value = if (symbol == Symbol.SET) {
-                            t.consume("to")
-                            t.nextElement()
-                        } else null
-                        ActionMeta(key, symbol, value) as QuestAction<T, C>
-                    }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
+        fun parser() = ScriptParser.parser {
+            val symbol = when (val type = it.nextToken()) {
+                "set" -> Symbol.SET
+                "reset" -> Symbol.RESET
+                else -> throw LocalizedException.of("not-tag-method", type)
             }
+            val key = it.nextToken()
+            val value = if (symbol == Symbol.SET) {
+                it.expect("to")
+                it.nextToken()
+            } else null
+            ActionMeta(key, symbol, value)
         }
     }
 }

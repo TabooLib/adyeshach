@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.api
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes

@@ -1,35 +1,29 @@
 package ink.ptms.adyeshach.common.script.action.npc
 
 import ink.ptms.adyeshach.common.script.ScriptContext
-import io.izzel.kether.common.api.*
+import ink.ptms.adyeshach.common.script.ScriptParser
+import io.izzel.kether.common.api.QuestAction
+import io.izzel.kether.common.api.QuestContext
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolean) : QuestAction<Void, ScriptContext> {
+class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolean) : QuestAction<Void>() {
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
+    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
+        val s = (context.context() as ScriptContext)
+        if (s.manager == null) {
             throw RuntimeException("No manager selected.")
         }
-        if (!context.entitySelected()) {
+        if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        context.getEntity()!!.filterNotNull().forEach {
+        s.entities!!.filterNotNull().forEach {
             it.controllerLook(Location(it.position.world, x, y, z), smooth)
         }
         return CompletableFuture.completedFuture(null)
-    }
-
-    override fun getDataPrefix(): String {
-        return "look"
     }
 
     override fun toString(): String {
@@ -39,50 +33,39 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
     companion object {
 
         @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        var smooth = false
-                        t.mark()
-                        if (t.nextElement() == "smooth") {
-                            smooth = true
-                        } else {
-                            t.reset()
-                        }
-                        var x = 0.0
-                        var y = 0.0
-                        var z = 0.0
-                        while (t.hasNext()) {
-                            t.mark()
-                            when (t.nextElement()) {
-                                "x" -> {
-                                    t.consume("to")
-                                    x = t.nextDouble()
-                                }
-                                "y" -> {
-                                    t.consume("to")
-                                    y = t.nextDouble()
-                                }
-                                "z" -> {
-                                    t.consume("to")
-                                    z = t.nextDouble()
-                                }
-                                else -> {
-                                    t.reset()
-                                    break
-                                }
-                            }
-                        }
-                        ActionLook(x, y, z, smooth) as QuestAction<T, C>
-                    }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
+        fun parser() = ScriptParser.parser {
+            var smooth = false
+            it.mark()
+            if (it.nextToken() == "smooth") {
+                smooth = true
+            } else {
+                it.reset()
+            }
+            var x = 0.0
+            var y = 0.0
+            var z = 0.0
+            while (it.hasNext()) {
+                it.mark()
+                when (it.nextToken()) {
+                    "x" -> {
+                        it.expect("to")
+                        x = it.nextDouble()
+                    }
+                    "y" -> {
+                        it.expect("to")
+                        y = it.nextDouble()
+                    }
+                    "z" -> {
+                        it.expect("to")
+                        z = it.nextDouble()
+                    }
+                    else -> {
+                        it.reset()
+                        break
+                    }
                 }
             }
+            ActionLook(x, y, z, smooth)
         }
     }
 }

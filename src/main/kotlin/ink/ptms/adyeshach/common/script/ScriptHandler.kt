@@ -15,7 +15,6 @@ import ink.ptms.adyeshach.common.script.action.npc.*
 import ink.ptms.adyeshach.common.script.action.player.ActionPermission
 import ink.ptms.adyeshach.common.script.action.player.ActionPlaceholder
 import io.izzel.kether.common.actions.KetherTypes
-import io.izzel.kether.common.api.QuestContext
 import io.izzel.kether.common.api.QuestStorage
 import io.izzel.kether.common.api.storage.LocalYamlStorage
 import io.izzel.taboolib.module.inject.TFunction
@@ -42,23 +41,19 @@ object ScriptHandler {
 
     @TFunction.Init
     fun init() {
-        KetherTypes.registerInternals(
-                ScriptService.registry,
-                ScriptService
-        )
-        val registry = ScriptService.registry
+        val registry = ScriptService.registry.also {
+            KetherTypes.registerInternals(it, ScriptService)
+        }
         // 系统逻辑
         registry.registerAction("log", ActionLog.parser())
-        registry.registerAction("call", ActionCall.parser<QuestContext>())
         registry.registerAction("wait", ActionWait.parser())
-        registry.registerAction("always", ActionAlways.parser())
         registry.registerAction("js", ActionJs.parser())
         registry.registerAction("set", ActionSet.parser())
         registry.registerAction("get", ActionGet.parser())
         registry.registerAction("run", ActionRun.parser())
         registry.registerAction("check", ActionCheck.parser())
         registry.registerAction("pause", ActionPause.parser())
-        registry.registerAction("stop", ActionStop.parser())
+        registry.registerAction("terminate", ActionTerminate.parser())
 
         // 无参语法
         registry.registerAction("respawn", ActionRespawn.parser())

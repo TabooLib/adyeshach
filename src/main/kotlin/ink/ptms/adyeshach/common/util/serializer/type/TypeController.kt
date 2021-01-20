@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.script.KnownController
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import io.izzel.taboolib.internal.gson.*
-import org.bukkit.util.EulerAngle
 import java.lang.reflect.Type
 
 /**

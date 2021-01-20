@@ -2,9 +2,6 @@ package ink.ptms.adyeshach.api
 
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.editor.EditorMode
-import org.bukkit.Location
-import org.bukkit.World
-import org.bukkit.configuration.ConfigurationSection
 
 class Settings {
 

@@ -1,28 +1,20 @@
 package ink.ptms.adyeshach.common.script.action.player
 
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptParser
 import io.izzel.kether.common.api.*
+import io.izzel.kether.common.loader.MultipleType
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionPermission(val permission: String) : QuestAction<Boolean, ScriptContext> {
+class ActionPermission(val permission: MultipleType) : QuestAction<Boolean>() {
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Boolean> {
-        if (context.viewer == null) {
-            throw RuntimeException("This action required any viewer.")
+    override fun process(context: QuestContext.Frame): CompletableFuture<Boolean> {
+        return permission.process(context).thenApply {
+            (context.context() as ScriptContext).viewer!!.hasPermission(it.toString().trimIndent())
         }
-        return CompletableFuture.completedFuture(context.viewer?.hasPermission(permission))
-    }
-
-    override fun getDataPrefix(): String {
-        return "permission"
     }
 
     override fun toString(): String {
@@ -31,18 +23,9 @@ class ActionPermission(val permission: String) : QuestAction<Boolean, ScriptCont
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionPermission(t.nextElement()) as QuestAction<T, C> }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
-            }
+        @Suppress("UnstableApiUsage")
+        fun parser() = ScriptParser.parser {
+            ActionPermission(it.nextMultipleType())
         }
     }
 }

@@ -1,25 +1,23 @@
 package ink.ptms.adyeshach.common.script.action
 
+import ink.ptms.adyeshach.common.script.ScriptParser
 import io.izzel.kether.common.api.*
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
+import java.util.concurrent.CompletionException
 
 /**
  * @author IzzelAliz
  */
-class ActionGet(val key: String) : QuestAction<Any?, QuestContext> {
-
-    override fun isAsync(): Boolean {
-        return false
-    }
+class ActionGet(val key: String) : QuestAction<Any?>() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun process(context: QuestContext): CompletableFuture<Any?> {
-        return CompletableFuture.completedFuture(context.persistentData[key])
-    }
-
-    override fun getDataPrefix(): String {
-        return "get"
+    override fun process(context: QuestContext.Frame): CompletableFuture<Any?> {
+        return try {
+            CompletableFuture.completedFuture(context.variables().get<Any>(key).orElse(null))
+        } catch (e: CompletionException) {
+            e.printStackTrace()
+            CompletableFuture.completedFuture(null)
+        }
     }
 
     override fun toString(): String {
@@ -28,18 +26,9 @@ class ActionGet(val key: String) : QuestAction<Any?, QuestContext> {
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionGet(t.nextElement()) as QuestAction<T, C> }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
-            }
+        @Suppress("UnstableApiUsage")
+        fun parser() = ScriptParser.parser {
+            ActionGet(it.nextToken())
         }
     }
 }

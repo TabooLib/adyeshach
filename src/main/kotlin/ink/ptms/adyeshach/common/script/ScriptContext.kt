@@ -2,92 +2,79 @@ package ink.ptms.adyeshach.common.script
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.manager.Manager
-import io.izzel.kether.common.api.*
+import io.izzel.kether.common.api.AbstractQuestContext
+import io.izzel.kether.common.api.Quest
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
-import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
-
 
 /**
- * @Author IzzelAliz
+ * Adyeshach
+ * ink.ptms.adyeshach.common.script.ScriptContext
+ *
+ * @author sky
+ * @since 2021/1/20 10:39 上午
  */
-class ScriptContext(
-        service: QuestService<*>?,
-        parent: AbstractQuestContext?,
-        quest: Quest?,
-        playerIdentifier: String?,
-        runningBlock: String?,
-        index: Int,
-        dataKey: String?,
-        tempData: Map<String, Any>?,
-        persistentData: Map<String, Any>,
-        childKey: String?,
-        anonymous: Boolean,
-) : PersistentQuestContext(service, parent, quest, playerIdentifier, runningBlock, index, dataKey, tempData, persistentData, childKey, anonymous) {
+class ScriptContext(service: ScriptService, script: Quest, playerIdentifier: String?) :
+    AbstractQuestContext<ScriptContext>(
+        service, script,
+        playerIdentifier
+    ) {
+
+    lateinit var id: String
 
     var viewer: Player?
         set(value) {
-            persistentData["\$viewer"] = value
+            rootFrame.variables().set("__viewer__", value)
         }
         get() {
-            return (persistentData["\$viewer"] ?: return null) as Player
+            return rootFrame.variables().get<Player?>("__viewer__").orElse(null)
         }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getCurrentEvent(): Pair<Event, KnownEvent<*>>? {
-        return (persistentData["\$currentEvent"] ?: return null) as Pair<Event, KnownEvent<*>>
-    }
+    var currentEvent: Pair<Event, KnownEvent<*>>?
+        set(value) {
+            rootFrame.variables().set("__current#event__", value)
+        }
+        get() {
+            return rootFrame.variables().get<Pair<Event, KnownEvent<*>>?>("__viewer__").orElse(null)
+        }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getCurrentListener(): CompletableFuture<Void>? {
-        return (persistentData["\$currentListener"] ?: return null) as CompletableFuture<Void>
-    }
+    var currentListener: CompletableFuture<Void>?
+        set(value) {
+            rootFrame.variables().set("__current#listener__", value)
+        }
+        get() {
+            return rootFrame.variables().get<CompletableFuture<Void>?>("__viewer__").orElse(null)
+        }
 
-    override fun createExecutor(): Executor {
-        return ScriptSchedulerExecutor
-    }
+    var manager: Manager?
+        set(value) {
+            rootFrame.variables().set("__manager__", value)
+        }
+        get() {
+            return rootFrame.variables().get<Manager?>("__viewer__").orElse(null)
+        }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <C : QuestContext> createChild(key: String, anonymous: Boolean): C {
-        val context = ScriptContext(service, this, quest, playerIdentifier, key, 0, QuestContext.BASE_DATA_KEY, null, persistentData, key, anonymous)
-        children.addLast(context)
-        return context as C
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun getManager(): Manager? {
-        return (persistentData["__manager__"] ?: return null) as Manager
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun getEntity(): List<EntityInstance?>? {
-        return (persistentData["__entity__"] ?: return null) as List<EntityInstance?>
-    }
+    var entities: List<EntityInstance?>?
+        set(value) {
+            rootFrame.variables().set("__entities__", value)
+        }
+        get() {
+            return rootFrame.variables().get<List<EntityInstance?>?>("__viewer__").orElse(null)
+        }
 
     fun entitySelected(): Boolean {
-        return getEntity() != null && getEntity()!!.filterNotNull().isNotEmpty()
+        return entities != null && entities!!.filterNotNull().isNotEmpty()
     }
+
+    override fun createExecutor() = ScriptSchedulerExecutor
 
     companion object {
 
-        fun create(quest: Quest, viewer: Player? = null): ScriptContext {
-            val context = ScriptContext(
-                    ScriptService,
-                    null,
-                    quest,
-                    null,
-                    QuestContext.BASE_BLOCK,
-                    0,
-                    QuestContext.BASE_DATA_KEY,
-                    null,
-                    HashMap(),
-                    null,
-                    false
-            )
-            context.viewer = viewer
-            return context
+        fun create(script: Quest, viewer: Player? = null): ScriptContext {
+            return ScriptContext(ScriptService, script, null).also {
+                it.viewer = viewer
+            }
         }
     }
 }

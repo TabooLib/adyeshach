@@ -1,23 +1,24 @@
 package ink.ptms.adyeshach.common.script
 
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.Multimap
-import com.google.common.collect.MultimapBuilder
+import com.google.common.collect.*
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.script.util.Closables
 import io.izzel.kether.common.api.*
+import io.izzel.kether.common.api.data.ExitStatus
+import io.izzel.kether.common.loader.SimpleQuestLoader
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
@@ -26,26 +27,25 @@ import kotlin.collections.ArrayList
 @Suppress("UnstableApiUsage")
 object ScriptService : QuestService<ScriptContext> {
 
-    private val registry: QuestRegistry = DefaultRegistry()
-    private val syncExecutor: Executor = ScriptSchedulerExecutor
+    private val registry = DefaultRegistry()
+    private val syncExecutor = ScriptSchedulerExecutor
     private val asyncExecutor = Executors.newScheduledThreadPool(2)
-    private val runningQuests = MultimapBuilder.hashKeys().arrayListValues().build<String, ScriptContext>()
-    private var questMap: Map<String, Quest>? = null
-    private var settingsMap: MutableMap<String, Map<String, Any>>? = null
+    private val runningScripts = MultimapBuilder.hashKeys().arrayListValues().build<String, ScriptContext>()
+
+    private var settings = HashMap<String, Map<String, Any>>()
+    private var scripts = HashMap<String, Quest>()
+
     private var listener = ArrayList<AutoCloseable>()
 
     @Suppress("UNCHECKED_CAST")
     fun loadAll() {
         listener.forEach { it.close() }
         listener.clear()
-        questMap = load()
-        settingsMap = HashMap()
-        for (quest in questMap!!.values) {
-            val context = SettingsContext(this, quest)
-            context.runActions().join()
-            settingsMap!![quest.id] = context.persistentData
-        }
-        questMap!!.forEach {
+
+        loadScripts()
+        loadSettings()
+
+        scripts.forEach {
             if (Coerce.toBoolean(getQuestSettings(it.value.id)["autostart"])) {
                 startQuest(ScriptContext.create(it.value))
                 return@forEach
@@ -62,7 +62,7 @@ object ScriptService : QuestService<ScriptContext> {
                     } else {
                         "${it.value.id}:$trigger"
                     }
-                    context.persistentData["\$currentEvent"] = e to event
+                    context.currentEvent = e to event
                     startQuest(id, context)
                 })
             } else {
@@ -71,9 +71,24 @@ object ScriptService : QuestService<ScriptContext> {
         }
     }
 
-    fun load(): Map<String, Quest> {
+    fun loadSettings() {
+        settings.clear()
+        scripts.values.forEach { quest ->
+            val context = ScriptContext.create(quest)
+            quest.getBlock("settings").ifPresent {
+                it.actions.forEach { action ->
+                    action.process(context.rootFrame())
+                }
+            }
+            settings[quest.id] = context.rootFrame().variables().values().map { it.key to it.value }.toMap()
+        }
+    }
+
+    fun loadScripts() {
+        scripts.clear()
+        val questLoader = SimpleQuestLoader()
         val folder = Files.folder(Adyeshach.plugin.dataFolder, "npc/script").toPath()
-        val questMap = HashMap<String, Quest>()
+        val scriptMap = HashMap<String, Quest>()
         if (java.nio.file.Files.notExists(folder)) {
             java.nio.file.Files.createDirectories(folder)
         }
@@ -84,14 +99,15 @@ object ScriptService : QuestService<ScriptContext> {
                 try {
                     val name = folder.relativize(path).toString().replace(File.separatorChar, '.')
                     if (name.endsWith(".ady")) {
-                        questMap[name] = ScriptLoader.of(path).load(this, Adyeshach.plugin.logger, name)
+                        val bytes = Files.readFromFile(path.toFile())?.toByteArray(StandardCharsets.UTF_8) ?: ByteArray(0)
+                        scriptMap[name] = questLoader.load(this, Adyeshach.plugin.logger, name, bytes)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }
-        return questMap
+        scripts.putAll(scriptMap)
     }
 
     fun cancelAll() {
@@ -99,13 +115,14 @@ object ScriptService : QuestService<ScriptContext> {
     }
 
     fun getRunningQuestContext(): List<ScriptContext> {
-        return ImmutableList.copyOf(runningQuests.values())
+        return ImmutableList.copyOf(runningScripts.values())
     }
 
     fun startQuest(id: String, context: ScriptContext) {
-        runningQuests.put(id, context)
-        context.runActions().thenRunAsync(Runnable {
-            runningQuests.remove(id, context)
+        context.id = id
+        runningScripts.put(id, context)
+        context.runActions().thenRunAsync({
+            runningScripts.remove(id, context)
         }, this.executor)
     }
 
@@ -114,33 +131,23 @@ object ScriptService : QuestService<ScriptContext> {
     }
 
     override fun getQuest(id: String): Optional<Quest> {
-        return Optional.ofNullable(questMap!![id])
+        return Optional.ofNullable(scripts[id])
     }
 
     override fun getQuestSettings(id: String): Map<String, Any> {
-        return Collections.unmodifiableMap(settingsMap!!.getOrDefault(id, ImmutableMap.of()))
+        return Collections.unmodifiableMap(settings.getOrDefault(id, ImmutableMap.of()))
     }
 
     override fun getQuests(): Map<String, Quest> {
-        return Collections.unmodifiableMap(questMap!!)
-    }
-
-    override fun startQuest(context: ScriptContext) {
-        startQuest(UUID.randomUUID().toString(), context)
-    }
-
-    override fun terminateQuest(context: ScriptContext) {
-        if (!context.exitStatus.isPresent) {
-            context.setExitStatus(ExitStatus.paused())
-        }
+        return Collections.unmodifiableMap(scripts)
     }
 
     override fun getRunningQuests(): Multimap<String, ScriptContext> {
-        return runningQuests
+        return runningScripts
     }
 
     override fun getRunningQuests(playerIdentifier: String): List<ScriptContext> {
-        return Collections.unmodifiableList(runningQuests[playerIdentifier])
+        return Collections.unmodifiableList(runningScripts[playerIdentifier])
     }
 
     override fun getExecutor(): Executor {
@@ -157,5 +164,16 @@ object ScriptService : QuestService<ScriptContext> {
 
     override fun getStorage(): QuestStorage {
         return ScriptHandler.storage!!
+    }
+
+    override fun startQuest(context: ScriptContext) {
+        startQuest(UUID.randomUUID().toString(), context)
+    }
+
+    override fun terminateQuest(context: ScriptContext) {
+        if (!context.exitStatus.isPresent) {
+            context.setExitStatus(ExitStatus.paused())
+            runningScripts.remove(context.id, context)
+        }
     }
 }

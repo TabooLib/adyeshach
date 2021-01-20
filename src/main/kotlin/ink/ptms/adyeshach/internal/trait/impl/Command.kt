@@ -3,13 +3,10 @@ package ink.ptms.adyeshach.internal.trait.impl
 import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.Inputs
-import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.Trait
 import io.izzel.taboolib.module.db.local.Local
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Commands
-import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

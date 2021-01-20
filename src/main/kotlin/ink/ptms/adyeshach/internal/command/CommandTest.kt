@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.internal.command
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.internal.migrate.Migrate
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.kotlin.Tasks

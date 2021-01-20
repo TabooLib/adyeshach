@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptParser
+import ink.ptms.adyeshach.common.script.ScriptService
 import io.izzel.kether.common.api.*
 import java.util.concurrent.CompletableFuture
 
@@ -9,21 +10,21 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionContinue : QuestAction<Void>() {
+class ActionTerminate : QuestAction<Void>() {
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        (context.context() as ScriptContext).currentListener?.complete(null)
+        ScriptService.terminateQuest(context.context() as ScriptContext)
         return CompletableFuture.completedFuture(null)
     }
 
     override fun toString(): String {
-        return "ActionContinue()"
+        return "ActionTerminate()"
     }
 
     companion object {
 
         fun parser() = ScriptParser.parser {
-            ActionContinue()
+            ActionTerminate()
         }
     }
 }

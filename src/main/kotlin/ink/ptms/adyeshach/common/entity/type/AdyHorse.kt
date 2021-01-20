@@ -2,9 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import net.minecraft.server.v1_16_R1.HorseStyle
 import org.bukkit.entity.Horse
-import org.bukkit.entity.Villager
 
 /**
  * @author sky
@@ -47,11 +45,15 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
     }
 
     fun getColor(): Horse.Color {
-        return Horse.Color.values()[getVariant() and 255]
+        return Horse.Color.values()[(getVariant() and 255) % hc]
     }
 
     fun getStyle(): Horse.Style {
-        return Horse.Style.values()[getVariant() ushr 8]
+        return if (version < 11600) {
+            Horse.Style.values()[(getVariant() ushr 8) % hs]
+        } else {
+            Horse.Style.values()[((getVariant() and '\uff00'.toInt()) shr 8) % hs]
+        }
     }
 
     fun setColor(color: Horse.Color) {
@@ -68,5 +70,11 @@ class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
         } else {
             setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8 and '\uff00'.toInt())
         }
+    }
+
+    companion object {
+
+        private val hc = Horse.Color.values().size
+        private val hs = Horse.Style.values().size
     }
 }

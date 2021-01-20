@@ -1,24 +1,24 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptResolver
+import ink.ptms.adyeshach.common.script.ScriptParser
 import ink.ptms.adyeshach.common.script.action.ActionCheck.Symbol.*
 import io.izzel.kether.common.api.*
+import io.izzel.kether.common.loader.MultipleType
 import io.izzel.kether.common.util.LocalizedException
 import io.izzel.taboolib.util.Coerce
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionCheck(val left: Any, val right: Any, val symbol: Symbol) : QuestAction<Boolean, QuestContext> {
+class ActionCheck(val left: MultipleType, val right: MultipleType, val symbol: Symbol) : QuestAction<Boolean>() {
 
     enum class Symbol {
 
         EQUALS, EQUALS_IGNORE_CASE, GT, GT_EQ, LT, LT_EQ
     }
 
-    fun check(left: Any?, right: Any?): Boolean {
+    fun check(left: Any, right: Any): Boolean {
         return when (symbol) {
             EQUALS -> left == right
             EQUALS_IGNORE_CASE -> left.toString().equals(right.toString(), ignoreCase = true)
@@ -29,37 +29,15 @@ class ActionCheck(val left: Any, val right: Any, val symbol: Symbol) : QuestActi
         }
     }
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
     @Suppress("UNCHECKED_CAST")
-    override fun process(context: QuestContext): CompletableFuture<Boolean> {
+    override fun process(context: QuestContext.Frame): CompletableFuture<Boolean> {
         return CompletableFuture<Boolean>().also { future ->
-            if (left is QuestAction<*, *>) {
-                context.runAction("equals_left", left).thenAccept { valueLeft ->
-                    if (right is QuestAction<*, *>) {
-                        context.runAction("equals_right", right).thenAccept { valueRight ->
-                            future.complete(check(valueLeft, valueRight))
-                        }
-                    } else {
-                        future.complete(check(valueLeft, right))
-                    }
-                }
-            } else {
-                if (right is QuestAction<*, *>) {
-                    context.runAction("equals_right", right).thenAccept { valueRight ->
-                        future.complete(check(left, valueRight))
-                    }
-                } else {
+            left.process(context).thenAccept { left ->
+                right.process(context).thenAccept { right ->
                     future.complete(check(left, right))
                 }
             }
         }
-    }
-
-    override fun getDataPrefix(): String {
-        return "check"
     }
 
     override fun toString(): String {
@@ -68,43 +46,20 @@ class ActionCheck(val left: Any, val right: Any, val symbol: Symbol) : QuestActi
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        val left = try {
-                            t.mark()
-                            t.nextAction<QuestContext>()
-                        } catch (ignore: Throwable) {
-                            t.reset()
-                            (t as ScriptResolver<C>).nextAny()
-                        }
-                        val symbol = when (val type = t.nextElement()) {
-                            "is", "eq", "equals", "==" -> EQUALS
-                            "like", "~=" -> EQUALS_IGNORE_CASE
-                            "gt", ">" -> GT
-                            "gteq", ">=" -> GT_EQ
-                            "lt", "<" -> LT
-                            "lteq", "<=" -> LT_EQ
-                            else -> throw LocalizedException.of("not-symbol", type)
-                        }
-                        val right = try {
-                            t.mark()
-                            t.nextAction<QuestContext>()
-                        } catch (ignore: Throwable) {
-                            t.reset()
-                            (t as ScriptResolver<C>).nextAny()
-                        }
-                        ActionCheck(left, right, symbol) as QuestAction<T, C>
-                    }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
+        @Suppress("UnstableApiUsage")
+        fun parser() = ScriptParser.parser {
+            val left = it.nextMultipleType()
+            val symbol = when (val type = it.nextToken()) {
+                "is", "eq", "equals", "==" -> EQUALS
+                "like", "~=" -> EQUALS_IGNORE_CASE
+                "gt", ">" -> GT
+                "gteq", ">=" -> GT_EQ
+                "lt", "<" -> LT
+                "lteq", "<=" -> LT_EQ
+                else -> throw LocalizedException.of("not-symbol", type)
             }
+            val right = it.nextMultipleType()
+            ActionCheck(left, right, symbol)
         }
     }
 }

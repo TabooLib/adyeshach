@@ -1,35 +1,35 @@
 package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptParser
 import io.izzel.kether.common.api.*
-import io.izzel.taboolib.util.lite.Scripts
+import io.izzel.taboolib.util.Features
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 import javax.script.CompiledScript
 import javax.script.SimpleBindings
 
 /**
  * @author IzzelAliz
  */
-class ActionJs(val script: CompiledScript) : QuestAction<Any, ScriptContext> {
+class ActionJs(val script: CompiledScript) : QuestAction<Any>() {
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Any> {
-        return CompletableFuture.completedFuture(script.eval(SimpleBindings(mapOf(
-                "player" to context.viewer,
-                "viewer" to context.viewer,
-                "entity" to context.getEntity(),
-                "manager" to context.getManager(),
-                "data" to context.persistentData,
-                "event" to context.getCurrentEvent()?.first
-        ))))
-    }
-
-    override fun getDataPrefix(): String {
-        return "js"
+    override fun process(context: QuestContext.Frame): CompletableFuture<Any> {
+        val s = (context.context() as ScriptContext)
+        return CompletableFuture.completedFuture(
+            script.eval(
+                SimpleBindings(
+                    mapOf(
+                        "player" to s.viewer,
+                        "viewer" to s.viewer,
+                        "entity" to s.entities?.firstOrNull(),
+                        "entities" to s.entities,
+                        "manager" to s.manager,
+                        "data" to context.variables().values().map { it.key to it.value }.toMap(),
+                        "event" to s.currentEvent?.first
+                    )
+                )
+            )
+        )
     }
 
     override fun toString(): String {
@@ -38,18 +38,8 @@ class ActionJs(val script: CompiledScript) : QuestAction<Any, ScriptContext> {
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionJs(Scripts.compile(t.nextElement().trimIndent())) as QuestAction<T, C> }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
-            }
+        fun parser() = ScriptParser.parser {
+            ActionJs(Features.compileScript(it.nextToken().trimIndent())!!)
         }
     }
 }

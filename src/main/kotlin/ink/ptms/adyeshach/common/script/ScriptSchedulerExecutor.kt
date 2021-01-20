@@ -10,7 +10,7 @@ object ScriptSchedulerExecutor : Executor {
         if (Bukkit.isPrimaryThread()) {
             command.run()
         } else {
-            Tasks.task(true) { command.run() }
+            Tasks.task { command.run() }
         }
     }
 }

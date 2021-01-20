@@ -4,31 +4,25 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import io.izzel.kether.common.api.*
+import ink.ptms.adyeshach.common.script.ScriptParser
+import io.izzel.kether.common.api.QuestAction
+import io.izzel.kether.common.api.QuestContext
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionCreate(val id: String, val type: EntityTypes, val location: Location) : QuestAction<Void, ScriptContext> {
+class ActionCreate(val id: String, val type: EntityTypes, val location: Location) : QuestAction<Void>() {
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Void> {
-        if (context.getManager() == null) {
+    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
+        val s = (context.context() as ScriptContext)
+        if (s.manager == null) {
             throw RuntimeException("No manager selected.")
         }
-        context.getManager()!!.create(type, location).id = id
+        s.manager!!.create(type, location).id = id
         return CompletableFuture.completedFuture(null)
-    }
-
-    override fun getDataPrefix(): String {
-        return "create"
     }
 
     override fun toString(): String {
@@ -37,32 +31,21 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: Location
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t ->
-                        val id = t.nextElement()
-                        val type = t.nextElement()
-                        val entityType = Enums.getIfPresent(EntityTypes::class.java, type.toUpperCase()).orNull() ?: throw RuntimeException("Entity \"$type\" not supported.")
-                        var location = Location(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0)
-                        if (t.hasNext()) {
-                            t.mark()
-                            if (t.nextElement() == "at" && t.hasNext()) {
-                                location = ScriptHandler.toLocation(t.nextElement())
-                            } else {
-                                t.reset()
-                            }
-                        }
-                        ActionCreate(id, entityType, location) as QuestAction<T, C>
-                    }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
+        fun parser() = ScriptParser.parser {
+            val id = it.nextToken()
+            val type = it.nextToken()
+            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.toUpperCase()).orNull()
+                ?: throw RuntimeException("Entity \"$type\" not supported.")
+            var location = Location(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0)
+            if (it.hasNext()) {
+                it.mark()
+                if (it.nextToken() == "at" && it.hasNext()) {
+                    location = ScriptHandler.toLocation(it.nextToken())
+                } else {
+                    it.reset()
                 }
             }
+            ActionCreate(id, entityType, location)
         }
     }
 }

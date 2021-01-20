@@ -5,7 +5,6 @@ import com.google.gson.JsonParser
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.util.Files
 import io.izzel.taboolib.util.IO
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -13,7 +12,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.BufferedInputStream
 import java.net.URL
-import java.net.UnknownHostException
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 

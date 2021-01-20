@@ -1,26 +1,25 @@
 package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.common.script.ScriptContext
+import ink.ptms.adyeshach.common.script.ScriptParser
 import io.izzel.kether.common.api.*
+import io.izzel.kether.common.loader.MultipleType
 import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 
 /**
  * @author IzzelAliz
  */
-class ActionLog(val message: String) : QuestAction<Void, ScriptContext> {
+class ActionLog(val message: MultipleType) : QuestAction<Void>() {
 
-    override fun isAsync(): Boolean {
-        return false
-    }
-
-    override fun process(context: ScriptContext): CompletableFuture<Void> {
-        println("[Adyeshach] ${message.replace("@player", context.viewer?.name.toString())}")
-        return CompletableFuture.completedFuture(null)
-    }
-
-    override fun getDataPrefix(): String {
-        return "log"
+    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
+        return message.process(context).thenAccept {
+            if (context.context() is ScriptContext) {
+                val player = (context.context() as ScriptContext).viewer?.name.toString()
+                println("[Adyeshach] ${it.toString().trimIndent().replace("@player", player)}")
+            } else {
+                println("[Adyeshach] ${it.toString().trimIndent()}")
+            }
+        }
     }
 
     override fun toString(): String {
@@ -31,18 +30,9 @@ class ActionLog(val message: String) : QuestAction<Void, ScriptContext> {
 
     companion object {
 
-        @Suppress("UNCHECKED_CAST")
-        fun parser(): QuestActionParser {
-            return object : QuestActionParser {
-
-                override fun <T, C : QuestContext> resolve(resolver: QuestResolver<C>): QuestAction<T, C> {
-                    return Function<QuestResolver<C>, QuestAction<T, C>> { t -> ActionLog(t.nextElement().trimIndent()) as QuestAction<T, C> }.apply(resolver)
-                }
-
-                override fun complete(parms: List<String>): List<String> {
-                    return KetherCompleters.seq(KetherCompleters.consume()).apply(parms)
-                }
-            }
+        @Suppress("UnstableApiUsage")
+        fun parser() = ScriptParser.parser {
+            ActionLog(it.nextMultipleType())
         }
     }
 }

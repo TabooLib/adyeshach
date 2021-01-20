@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.kotlin.Reflex
 import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode

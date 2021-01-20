@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.util
 
 import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.chat.TextComponent
 import io.izzel.taboolib.util.item.ItemBuilder
@@ -12,8 +11,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerEditBookEvent
-import org.bukkit.inventory.meta.BookMeta
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 object Inputs {
