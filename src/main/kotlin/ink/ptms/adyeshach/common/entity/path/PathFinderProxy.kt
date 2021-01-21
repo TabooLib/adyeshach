@@ -48,7 +48,7 @@ object PathFinderProxy {
     }
 
     fun isProxyEntity(player: Player, id: Int): Boolean {
-        return player.world.entities.any { it.entityId == id && it.customName == "Adyeshach Pathfinder Proxy" }
+        return player.world.entities.toList().any { it.entityId == id && it.customName == "Adyeshach Pathfinder Proxy" }
     }
 
     @TPacket(type = TPacket.Type.SEND)
