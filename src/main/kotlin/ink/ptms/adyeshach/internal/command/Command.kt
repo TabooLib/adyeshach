@@ -261,7 +261,7 @@ class Command : BaseMainCommand(), Helper {
                         return
                     }
                     entity.forEach {
-                        it.registerController(controller.get.invoke(it))
+                        it.registerController(controller.get(it))
                     }
                     sender.info("Changed.")
                 }

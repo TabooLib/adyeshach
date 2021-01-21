@@ -29,8 +29,9 @@ class ActionController(val symbol: Symbol, val controller: String?) : QuestActio
         s.entities!!.filterNotNull().forEach {
             when (symbol) {
                 Symbol.ADD -> {
+                    String
                     val controller = ScriptHandler.getKnownController(controller!!) ?: throw RuntimeException("Unknown controller $controller")
-                    it.registerController(controller.get.invoke(it))
+                    it.registerController(controller.get(it))
                 }
                 Symbol.REMOVE -> {
                     val controller = ScriptHandler.getKnownController(controller!!) ?: throw RuntimeException("Unknown controller $controller")

@@ -25,14 +25,14 @@ class ActionEvent(val key: String, val symbol: Symbol, val value: MultipleType) 
                 val event = currentEvent?.first
                 val known = currentEvent?.second as? KnownEvent<Event>
                 if (event != null && known != null) {
-                    known.field[key]?.value?.invoke(event, it)
+                    known.field[key]?.second?.func?.invoke(event, it)
                 }
             }
         } else {
             val event = currentEvent?.first
             val known = currentEvent?.second as? KnownEvent<Event>
             if (event != null && known != null) {
-                CompletableFuture.completedFuture(known.field[key]?.key?.invoke(event))
+                CompletableFuture.completedFuture(known.field[key]?.first?.func?.invoke(event))
             } else {
                 CompletableFuture.completedFuture(null)
             }

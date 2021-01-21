@@ -89,38 +89,84 @@ object ScriptHandler {
 
         // 已知监听器
         knownEvents["join"] = KnownEvent(PlayerJoinEvent::class)
-                .field("player", { it.player.name })
-                .field("message", { it.joinMessage }, { k, v -> k.joinMessage = v.toString() })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("message") {
+                get = { it.joinMessage }
+                set = { k, v -> k.joinMessage = v.toString() }
+            }
 
         knownEvents["quit"] = KnownEvent(PlayerQuitEvent::class)
-                .field("player", { it.player.name })
-                .field("message", { it.quitMessage }, { k, v -> k.quitMessage = v.toString() })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("message") {
+                get = { it.quitMessage }
+                set = { k, v -> k.quitMessage = v.toString() }
+            }
 
         knownEvents["chat"] = KnownEvent(AsyncPlayerChatEvent::class)
-                .field("player", { it.player.name })
-                .field("message", { it.message }, { k, v -> k.message = v.toString() })
-                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("message") {
+                get = { it.message }
+                set = { k, v -> k.message = v.toString() }
+            }
+            .unit("cancelled") {
+                get = { it.isCancelled }
+                set = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
+            }
 
         knownEvents["command"] = KnownEvent(PlayerCommandPreprocessEvent::class)
-                .field("player", { it.player.name })
-                .field("command", { it.message }, { k, v -> k.message = v.toString() })
-                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("command") {
+                get = { it.message }
+                set = { k, v -> k.message = v.toString() }
+            }
+            .unit("cancelled") {
+                get = { it.isCancelled }
+                set = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
+            }
 
         knownEvents["npc_damage"] = KnownEvent(AdyeshachEntityDamageEvent::class)
-                .field("player", { it.player.name })
-                .field("id", { it.entity.id })
-                .field("uniqueId", { it.entity.uniqueId })
-                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("id") {
+                get = { it.entity.id }
+            }
+            .unit("uniqueId") {
+                get = { it.entity.uniqueId }
+            }
+            .unit("cancelled") {
+                get = { it.isCancelled }
+                set = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
+            }
 
         knownEvents["npc_interact"] = KnownEvent(AdyeshachEntityInteractEvent::class)
-                .field("player", { it.player.name })
-                .field("id", { it.entity.id })
-                .field("uniqueId", { it.entity.uniqueId })
-                .field("action", { if (it.isMainHand) "HAND" else "OFF_HAND" })
-                .field("cancelled", { it.isCancelled }, { k, v -> k.isCancelled = Coerce.toBoolean(v) })
+            .unit("player") {
+                get = { it.player.name }
+            }
+            .unit("id") {
+                get = { it.entity.id }
+            }
+            .unit("uniqueId") {
+                get = { it.entity.uniqueId }
+            }
+            .unit("action") {
+                get = { if (it.isMainHand) "HAND" else "OFF_HAND" }
+            }
+            .unit("cancelled") {
+                get = { it.isCancelled }
+                set = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
+            }
 
         // 已知控制器
-        knownControllers["Move"] = KnownController(GeneralMove::class, get = { GeneralMove(it) })
+        knownControllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
         knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
         knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class) { GeneralSmoothLook(it) }
         knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
@@ -149,30 +195,30 @@ object ScriptHandler {
     fun toEulerAngle(str: String): EulerAngle {
         val args = str.split(",")
         return EulerAngle(
-                Coerce.toDouble(args.getOrElse(0) { "0" }),
-                Coerce.toDouble(args.getOrElse(1) { "0" }),
-                Coerce.toDouble(args.getOrElse(2) { "0" })
+            Coerce.toDouble(args.getOrElse(0) { "0" }),
+            Coerce.toDouble(args.getOrElse(1) { "0" }),
+            Coerce.toDouble(args.getOrElse(2) { "0" })
         )
     }
 
     fun toPosition(str: String): Position {
         val args = str.split(",")
         return Position(
-                Coerce.toInteger(args.getOrElse(0) { "0" }),
-                Coerce.toInteger(args.getOrElse(1) { "0" }),
-                Coerce.toInteger(args.getOrElse(2) { "0" })
+            Coerce.toInteger(args.getOrElse(0) { "0" }),
+            Coerce.toInteger(args.getOrElse(1) { "0" }),
+            Coerce.toInteger(args.getOrElse(2) { "0" })
         )
     }
 
     fun toLocation(str: String): Location {
         val args = str.split(",")
         return Location(
-                Bukkit.getWorld(args[0]),
-                Coerce.toDouble(args.getOrElse(1) { "0" }),
-                Coerce.toDouble(args.getOrElse(2) { "0" }),
-                Coerce.toDouble(args.getOrElse(3) { "0" }),
-                Coerce.toFloat(args.getOrElse(4) { "0" }),
-                Coerce.toFloat(args.getOrElse(5) { "0" })
+            Bukkit.getWorld(args[0]),
+            Coerce.toDouble(args.getOrElse(1) { "0" }),
+            Coerce.toDouble(args.getOrElse(2) { "0" }),
+            Coerce.toDouble(args.getOrElse(3) { "0" }),
+            Coerce.toFloat(args.getOrElse(4) { "0" }),
+            Coerce.toFloat(args.getOrElse(5) { "0" })
         )
     }
 

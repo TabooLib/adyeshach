@@ -622,7 +622,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         controller.filter { it.shouldExecute() }.forEach {
             when {
                 it is Controller.Pre -> {
-                    controller.add(it.controller.get.invoke(this))
+                    controller.add(it.controller.get(this))
                     controller.remove(it)
                 }
                 it.isAsync() -> {
