@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.script.action.bukkit
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptParser
-import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.loader.MultipleType
 import io.izzel.kether.common.util.LocalizedException
@@ -24,16 +23,16 @@ class ActionCommand(val command: MultipleType, val type: Type) : QuestAction<Voi
             val command = it.toString().trimIndent()
             when (type) {
                 Type.PLAYER -> {
-                    val player = (context.context() as ScriptContext).viewer ?: throw RuntimeException("No viewer selected.")
-                    Features.dispatchCommand(player, command.replace("@player", player.name))
+                    val viewer = (context.context() as ScriptContext).viewer ?: throw RuntimeException("No viewer selected.")
+                    Features.dispatchCommand(viewer, command.replace("@viewer", viewer.name))
                 }
                 Type.PLAYER_OP -> {
-                    val player = (context.context() as ScriptContext).viewer ?: throw RuntimeException("No viewer selected.")
-                    Features.dispatchCommand(player, command.replace("@player", player.name), true)
+                    val viewer = (context.context() as ScriptContext).viewer ?: throw RuntimeException("No viewer selected.")
+                    Features.dispatchCommand(viewer, command.replace("@viewer", viewer.name), true)
                 }
                 Type.CONSOLE -> {
-                    val player = (context.context() as ScriptContext).viewer?.name.toString()
-                    Features.dispatchCommand(command.replace("@player", player))
+                    val viewer = (context.context() as ScriptContext).viewer?.name.toString()
+                    Features.dispatchCommand(command.replace("@viewer", viewer))
                 }
             }
         }

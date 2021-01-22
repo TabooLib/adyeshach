@@ -4,7 +4,7 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import io.izzel.kether.common.api.AbstractQuestContext
 import io.izzel.kether.common.api.Quest
-import org.bukkit.entity.Player
+import org.bukkit.command.CommandSender
 import org.bukkit.event.Event
 import java.util.concurrent.CompletableFuture
 
@@ -23,12 +23,12 @@ class ScriptContext(service: ScriptService, script: Quest, playerIdentifier: Str
 
     lateinit var id: String
 
-    var viewer: Player?
+    var viewer: CommandSender?
         set(value) {
             rootFrame.variables().set("__viewer__", value)
         }
         get() {
-            return rootFrame.variables().get<Player?>("__viewer__").orElse(null)
+            return rootFrame.variables().get<CommandSender?>("__viewer__").orElse(null)
         }
 
     var currentEvent: Pair<Event, KnownEvent<*>>?
@@ -71,7 +71,7 @@ class ScriptContext(service: ScriptService, script: Quest, playerIdentifier: Str
 
     companion object {
 
-        fun create(script: Quest, viewer: Player? = null): ScriptContext {
+        fun create(script: Quest, viewer: CommandSender? = null): ScriptContext {
             return ScriptContext(ScriptService, script, null).also {
                 it.viewer = viewer
             }
