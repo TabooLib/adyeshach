@@ -14,7 +14,6 @@ taboolib {
     tabooLibVersion = '5.46'
     loaderVersion = '2.10'
     classifier = null
-    relocate('io.izzel.kether.common', 'ink.ptms.adyeshach.common.script.kether')
 }
 
 task buildJar(dependsOn: [clean, jar])
@@ -24,6 +23,7 @@ repositories {
 }
 
 dependencies {
+    taboo 'io.izzel.kether.common:Kether:1.0.5'
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'net.citizensnpcs:Citizens:2.0.18'
     compile 'com.guillaumevdn.gcore:GCore:7.15.0'
@@ -39,7 +39,7 @@ dependencies {
     compile 'ink.ptms.core:v11000:11000:all'
     compile 'ink.ptms.core:v10900:10900:all'
     compile 'org.jetbrains.kotlin:kotlin-stdlib'
-    taboo fileTree(dir: 'libs', includes: ['*.jar'])
+    compile fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 processResources {
