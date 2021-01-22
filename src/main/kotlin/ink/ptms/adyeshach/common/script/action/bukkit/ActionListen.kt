@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.bukkit
 
 import ink.ptms.adyeshach.common.script.*
 import ink.ptms.adyeshach.common.script.util.Closables

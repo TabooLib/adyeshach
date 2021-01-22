@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.script.action.player
+package ink.ptms.adyeshach.common.script.action.bukkit
 
 import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptParser

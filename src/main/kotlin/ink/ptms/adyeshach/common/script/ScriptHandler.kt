@@ -11,9 +11,8 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.script.action.*
+import ink.ptms.adyeshach.common.script.action.bukkit.*
 import ink.ptms.adyeshach.common.script.action.npc.*
-import ink.ptms.adyeshach.common.script.action.player.ActionPermission
-import ink.ptms.adyeshach.common.script.action.player.ActionPlaceholder
 import io.izzel.kether.common.actions.KetherTypes
 import io.izzel.kether.common.api.QuestStorage
 import io.izzel.kether.common.api.storage.LocalYamlStorage
@@ -22,7 +21,6 @@ import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
-import jdk.jfr.Event
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.player.AsyncPlayerChatEvent

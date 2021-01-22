@@ -19,3 +19,5 @@ load-error:
   not-viewer-method: '{0} is not viewer method (add,remove)'
   not-passenger-method: '{0} is not passenger method (add,remove)'
   not-controller-method: '{0} is not controller method (add,remove)'
+  not-command-type: '{0} is not command type'
+  custom: '{0}'

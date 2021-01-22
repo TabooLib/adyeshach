@@ -14,6 +14,10 @@ class ActionPause : QuestAction<Void>() {
         return CompletableFuture<Void>()
     }
 
+    override fun toString(): String {
+        return "ActionPause()"
+    }
+
     companion object {
 
         fun parser() = ScriptParser.parser {

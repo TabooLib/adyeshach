@@ -1,5 +1,6 @@
-package ink.ptms.adyeshach.common.script.action.player
+package ink.ptms.adyeshach.common.script.action.bukkit
 
+import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptParser
 import io.izzel.kether.common.api.*
 import io.izzel.kether.common.loader.MultipleType
@@ -9,23 +10,23 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionColor(val source: MultipleType) : QuestAction<String>() {
+class ActionPlaceholder(val source: MultipleType) : QuestAction<String>() {
 
     override fun process(context: QuestContext.Frame): CompletableFuture<String> {
         return source.process(context).thenApply {
-            TLocale.Translate.setColored(it.toString().trimIndent())
+            TLocale.Translate.setPlaceholders((context.context() as ScriptContext).viewer!!, it.toString().trimIndent())
         }
     }
 
     override fun toString(): String {
-        return "ActionColor(source='$source')"
+        return "ActionPlaceholder(source='$source')"
     }
 
     companion object {
 
         @Suppress("UnstableApiUsage")
         fun parser() = ScriptParser.parser {
-            ActionColor(it.nextMultipleType())
+            ActionPlaceholder(it.nextMultipleType())
         }
     }
 }
