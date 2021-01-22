@@ -22,6 +22,7 @@ import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.Files
+import jdk.jfr.Event
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.player.AsyncPlayerChatEvent
@@ -33,6 +34,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 object ScriptHandler {
 
+    val registry = ScriptService.registry.also {
+        KetherTypes.registerInternals(it, ScriptService)
+    }
+
     var storage: QuestStorage? = null
         private set
 
@@ -41,9 +46,6 @@ object ScriptHandler {
 
     @TFunction.Init
     fun init() {
-        val registry = ScriptService.registry.also {
-            KetherTypes.registerInternals(it, ScriptService)
-        }
         // 系统逻辑
         registry.registerAction("log", ActionLog.parser())
         registry.registerAction("wait", ActionWait.parser())
@@ -228,5 +230,9 @@ object ScriptHandler {
 
     fun getKnownController(name: String): KnownController? {
         return knownControllers.entries.firstOrNull { it.key.equals(name, true) }?.value
+    }
+
+    fun registerEvent(name: String, event: KnownEvent<*>) {
+        knownEvents[name] = event
     }
 }

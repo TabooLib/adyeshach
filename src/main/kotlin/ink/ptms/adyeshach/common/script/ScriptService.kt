@@ -57,7 +57,7 @@ object ScriptService : QuestService<ScriptContext> {
                     val context = ScriptContext.create(it.value)
                     val player = event.field["player"]
                     val id = if (player != null) {
-                        context.viewer = Bukkit.getPlayerExact(player.key.invoke(e).toString())
+                        context.viewer = Bukkit.getPlayerExact(player.first.func(e).toString())
                         "${it.value.id}:${context.viewer?.name}"
                     } else {
                         "${it.value.id}:$trigger"
