@@ -59,7 +59,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
             entity.controllerLook(positionNext.clone().run {
                 y = positionEntity.y + (entity.entityType.entitySize.height * 0.9)
                 this
-            }, smooth = true, smoothInternal = 45f)
+            }, smooth = false, smoothInternal = 45f)
         }
         val next = positionNext.clone().also {
             if (pathType != PathType.FLY) {

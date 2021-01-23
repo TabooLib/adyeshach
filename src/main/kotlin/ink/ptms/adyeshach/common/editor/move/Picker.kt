@@ -63,13 +63,6 @@ object Picker : Helper {
             }
         }
 
-//        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-//        fun e(e: PlayerMoveEvent) {
-//            val select = getSelected(e.player)
-//            val entity = select.entityInstance ?: return
-//            process(e.player, entity)
-//        }
-
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         fun e(e: PlayerItemHeldEvent) {
             val select = getSelected(e.player)

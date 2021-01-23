@@ -68,6 +68,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             field = value
         }
 
+    @Expose
+    var moveSpeed = 0.2
+
     /**
      * 实体序号
      */
@@ -138,6 +141,21 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 .display { _, _, _ ->
                     visibleDistance.toString()
                 }
+        registerEditor("moveSpeed")
+            .reset { _, _ ->
+                moveSpeed = 0.2
+            }
+            .modify { player, entity, _ ->
+                Signs.fakeSign(player, arrayOf("$moveSpeed", "", "请在第一行输入内容")) {
+                    if (it[0].isNotEmpty()) {
+                        moveSpeed = Coerce.toDouble(it[0])
+                    }
+                    Editor.open(player, entity)
+                }
+            }
+            .display { _, _, _ ->
+                moveSpeed.toString()
+            }
     }
 
     /**
@@ -374,7 +392,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体移动到某个坐标
      */
-    fun controllerMove(location: Location, pathType: PathType = entityType.getPathType(), speed: Double = 0.2) {
+    fun controllerMove(location: Location, pathType: PathType = entityType.getPathType(), speed: Double = moveSpeed) {
         if (hasVehicle()) {
             return
         }
@@ -392,6 +410,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         }
         val move = getController(GeneralMove::class)!!
         PathFinderProxy.request(position.toLocation(), location, pathType) {
+            // 基准等待时间为 350 毫秒（5 游戏刻用于列队 + 2 游戏刻用于延迟）
+            // 若等待时间超过 750 毫秒（15 游戏刻）则强制禁止移动，因为服务端已有明显卡顿
+            if (it.waitTime >= 750) {
+                println("[Adyeshach Mirror] Waiting ${it.waitTime}ms while calculating the navigation path, controller move has stopped.")
+                return@request
+            }
             move.speed = speed
             move.pathType = pathType
             move.resultNavigation = it as ResultNavigation

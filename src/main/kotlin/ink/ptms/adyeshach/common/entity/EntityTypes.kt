@@ -167,7 +167,7 @@ enum class EntityTypes(
     ENDERMAN(
             Enums.getIfPresent(EntityType::class.java, "ENDERMAN").orNull(),
             58,
-            EntitySize(16.0, 8.0),
+            EntitySize(16.0, 3.0),
             AdyEnderman::class.java
     ),
 

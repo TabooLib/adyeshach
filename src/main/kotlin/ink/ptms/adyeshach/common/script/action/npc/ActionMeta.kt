@@ -72,6 +72,12 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
                         meta.key == "visibleDistance" -> {
                             it.visibleDistance = Coerce.toDouble(value)
                         }
+                        meta.key == "alwaysVisible" -> {
+                            it.alwaysVisible = Coerce.toBoolean(value)
+                        }
+                        meta.key == "moveSpeed" -> {
+                            it.moveSpeed = Coerce.toDouble(value)
+                        }
                         meta.key == "isDie" && it is AdyEntityLiving -> {
                             it.die(Coerce.toBoolean(value))
                         }

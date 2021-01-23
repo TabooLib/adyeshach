@@ -15,12 +15,13 @@ class ActionCheck(val left: MultipleType, val right: MultipleType, val symbol: S
 
     enum class Symbol {
 
-        EQUALS, EQUALS_IGNORE_CASE, GT, GT_EQ, LT, LT_EQ
+        EQUALS, EQUALS_MEMORY, EQUALS_IGNORE_CASE, GT, GT_EQ, LT, LT_EQ
     }
 
     fun check(left: Any, right: Any): Boolean {
         return when (symbol) {
             EQUALS -> left == right
+            EQUALS_MEMORY -> left === right
             EQUALS_IGNORE_CASE -> left.toString().equals(right.toString(), ignoreCase = true)
             GT -> Coerce.toDouble(left) > Coerce.toDouble(right)
             GT_EQ -> Coerce.toDouble(left) >= Coerce.toDouble(right)
@@ -50,12 +51,13 @@ class ActionCheck(val left: MultipleType, val right: MultipleType, val symbol: S
         fun parser() = ScriptParser.parser {
             val left = it.nextMultipleType()
             val symbol = when (val type = it.nextToken()) {
-                "is", "eq", "equals", "==" -> EQUALS
-                "like", "~=" -> EQUALS_IGNORE_CASE
-                "gt", ">" -> GT
-                "gteq", ">=" -> GT_EQ
-                "lt", "<" -> LT
-                "lteq", "<=" -> LT_EQ
+                "==", "is" -> EQUALS
+                "=!", "is!" -> EQUALS_MEMORY
+                "=?", "is?" -> EQUALS_IGNORE_CASE
+                ">" -> GT
+                ">=" -> GT_EQ
+                "<" -> LT
+                "<=" -> LT_EQ
                 else -> throw LocalizedException.of("not-symbol", type)
             }
             val right = it.nextMultipleType()

@@ -15,8 +15,6 @@ import org.bukkit.event.Listener
 
 class Command : Trait(), Listener {
 
-    val data = Local.get().get("npc/traits/command.yml")
-
     override fun getName(): String {
         return "command"
     }
