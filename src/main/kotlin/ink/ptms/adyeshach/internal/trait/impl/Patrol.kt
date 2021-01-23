@@ -35,7 +35,7 @@ class Patrol : Trait(), Listener {
         Tasks.timer(0, 20, true) {
             data.getKeys(false).forEach {
                 val entityInstance = AdyeshachAPI.getEntityFromUniqueId(it)
-                if (entityInstance != null && !entityInstance.isEditing() && !entityInstance.isControllerMoving()) {
+                if (entityInstance != null && !entityInstance.isEditing() && !entityInstance.isControllerMoving() && entityInstance.hasViewer()) {
                     val index = entityInstance.index()
                     val nodes = entityInstance.nodes()
                     if (index < nodes.size) {

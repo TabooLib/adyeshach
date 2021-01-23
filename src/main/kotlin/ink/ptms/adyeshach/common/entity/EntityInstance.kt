@@ -242,6 +242,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     /**
+     * 是否拥有有效观察者
+     */
+    fun hasViewer(): Boolean {
+        return viewPlayers.getViewPlayers().isNotEmpty()
+    }
+
+    /**
      * 是否为真实观察者（在观察范围内）
      */
     fun isVisibleViewer(viewer: Player): Boolean {
