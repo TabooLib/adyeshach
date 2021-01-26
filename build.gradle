@@ -5,13 +5,13 @@ plugins {
 }
 
 group = 'ink.ptms.adyeshach'
-version = '1.1.4'
+version = '1.1.6'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.46'
+    tabooLibVersion = '5.5'
     loaderVersion = '2.10'
     classifier = null
 }
@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    taboo 'io.izzel.kether.common:Kether:1.0.5'
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'net.citizensnpcs:Citizens:2.0.18'
     compile 'com.guillaumevdn.gcore:GCore:7.15.0'

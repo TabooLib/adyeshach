@@ -1,12 +1,13 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import ink.ptms.adyeshach.common.script.ScriptParser
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
@@ -18,10 +19,10 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: Location
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
         val s = (context.context() as ScriptContext)
-        if (s.manager == null) {
+        if (s.getManager() == null) {
             throw RuntimeException("No manager selected.")
         }
-        s.manager!!.create(type, location).id = id
+        s.getManager()!!.create(type, location).id = id
         return CompletableFuture.completedFuture(null)
     }
 
@@ -34,8 +35,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: Location
         fun parser() = ScriptParser.parser {
             val id = it.nextToken()
             val type = it.nextToken()
-            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.toUpperCase()).orNull()
-                ?: throw RuntimeException("Entity \"$type\" not supported.")
+            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.toUpperCase()).orNull() ?: throw RuntimeException("Entity \"$type\" not supported.")
             var location = Location(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0)
             if (it.hasNext()) {
                 it.mark()

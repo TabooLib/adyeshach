@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.manager.*
 import ink.ptms.adyeshach.common.script.KnownController
-import ink.ptms.adyeshach.common.script.KnownEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
@@ -141,24 +140,12 @@ object AdyeshachAPI {
         return entity
     }
 
-    fun registerKnownEvent(name: String, event: KnownEvent<*>) {
-        ScriptHandler.knownEvents[name] = event
-    }
-
     fun registerKnownController(name: String, event: KnownController) {
         ScriptHandler.knownControllers[name] = event
     }
 
-    fun getKnownEvent(name: String): KnownEvent<*>? {
-        return ScriptHandler.getKnownEvent(name)
-    }
-
     fun getKnownController(name: String): KnownController? {
         return ScriptHandler.getKnownController(name)
-    }
-
-    fun getKnownEvents(): Map<String, KnownEvent<*>> {
-        return ScriptHandler.knownEvents
     }
 
     fun getKnownController(): Map<String, KnownController> {

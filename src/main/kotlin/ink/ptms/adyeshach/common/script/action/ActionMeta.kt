@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.bukkit.*
@@ -7,13 +7,16 @@ import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.*
-import ink.ptms.adyeshach.common.script.ScriptContext
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import ink.ptms.adyeshach.common.script.ScriptParser
+import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
+import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
+import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.cronus.Cronus
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
-import io.izzel.kether.common.util.LocalizedException
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
+import io.izzel.taboolib.kotlin.ketherx.common.util.LocalizedException
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.chat.TextComponent
@@ -51,13 +54,13 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
     @Suppress("UNCHECKED_CAST")
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
         val s = (context.context() as ScriptContext)
-        if (s.manager == null) {
+        if (s.getManager() == null) {
             throw RuntimeException("No manager selected.")
         }
         if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        s.entities!!.filterNotNull().forEach {
+        s.getEntities()!!.filterNotNull().forEach {
             val meta = it.listMetadata().firstOrNull { m -> m.key.equals(key, true) } ?: throw RuntimeException("Metadata \"${key}\" not found.")
             val editor = Editor.getEditor(meta) ?: throw RuntimeException("Metadata is not editable. (0)")
             if (!editor.edit) {

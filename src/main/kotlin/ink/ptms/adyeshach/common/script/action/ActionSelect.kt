@@ -1,25 +1,27 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.ScriptParser
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
-import io.izzel.kether.common.loader.MultipleType
-import io.izzel.kether.common.util.LocalizedException
+import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
+import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
+import io.izzel.taboolib.kotlin.ketherx.common.loader.InferType
+import io.izzel.taboolib.kotlin.ketherx.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionSelect(val value: MultipleType, val byId: Boolean) : QuestAction<Void>() {
+class ActionSelect(val value: InferType, val byId: Boolean) : QuestAction<Void>() {
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
         val s = (context.context() as ScriptContext)
-        if (s.manager == null) {
+        if (s.getManager() == null) {
             throw RuntimeException("No manager selected.")
         }
         return value.process(context).thenAccept {
-            s.entities = if (byId) s.manager!!.getEntityById(it.toString()) else listOf(s.manager!!.getEntityByUniqueId(it.toString()))
+            s.setEntities(if (byId) s.getManager()!!.getEntityById(it.toString()) else listOf(s.getManager()!!.getEntityByUniqueId(it.toString())))
         }
     }
 
@@ -31,7 +33,7 @@ class ActionSelect(val value: MultipleType, val byId: Boolean) : QuestAction<Voi
 
         @Suppress("UnstableApiUsage")
         fun parser() = ScriptParser.parser {
-            val value = it.nextMultipleType()
+            val value = it.nextInferType()
             var byId = true
             if (it.hasNext()) {
                 it.mark()

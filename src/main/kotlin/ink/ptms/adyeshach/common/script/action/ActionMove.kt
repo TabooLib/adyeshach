@@ -1,43 +1,50 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.ScriptParser
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
+import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
+import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolean) : QuestAction<Void>() {
+class ActionMove(val x: Double, val y: Double, val z: Double, val relative: Boolean) : QuestAction<Void>() {
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
         val s = (context.context() as ScriptContext)
-        if (s.manager == null) {
+        if (s.getManager() == null) {
             throw RuntimeException("No manager selected.")
         }
         if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        s.entities!!.filterNotNull().forEach {
-            it.controllerLook(Location(it.position.world, x, y, z), smooth)
+        s.getEntities()!!.filterNotNull().forEach {
+            if (relative) {
+                it.controllerMove(Location(it.position.world, it.position.x + x, it.position.y + y, it.position.z + z))
+            } else {
+                it.controllerMove(Location(it.position.world, x, y, z))
+            }
         }
         return CompletableFuture.completedFuture(null)
     }
 
     override fun toString(): String {
-        return "ActionLook(x=$x, y=$y, z=$z, smooth=$smooth)"
+        return "ActionMove(x=$x, y=$y, z=$z)"
     }
 
     companion object {
 
         @Suppress("UNCHECKED_CAST")
         fun parser() = ScriptParser.parser {
-            var smooth = false
+            var relative = false
             it.mark()
-            if (it.nextToken() == "smooth") {
-                smooth = true
+            if (it.nextToken() == "relative") {
+                relative = true
             } else {
                 it.reset()
             }
@@ -65,7 +72,7 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
                     }
                 }
             }
-            ActionLook(x, y, z, smooth)
+            ActionMove(x, y, z, relative)
         }
     }
 }

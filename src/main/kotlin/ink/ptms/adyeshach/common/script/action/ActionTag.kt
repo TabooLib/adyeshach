@@ -1,10 +1,13 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.ScriptParser
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
-import io.izzel.kether.common.util.LocalizedException
+import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
+import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
+import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
+import io.izzel.taboolib.kotlin.ketherx.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -20,7 +23,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
     @Suppress("UNCHECKED_CAST")
     override fun process(context: QuestContext.Frame): CompletableFuture<Any?> {
         val s = (context.context() as ScriptContext)
-        if (s.manager == null) {
+        if (s.getManager() == null) {
             throw RuntimeException("No manager selected.")
         }
         if (!s.entitySelected()) {
@@ -28,13 +31,13 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
         }
         return when (symbol) {
             Symbol.REMOVE -> {
-                s.entities!!.filterNotNull().forEach {
+                s.getEntities()!!.filterNotNull().forEach {
                     it.removeTag(key)
                 }
                 CompletableFuture.completedFuture(null)
             }
             Symbol.SET -> {
-                s.entities!!.filterNotNull().forEach {
+                s.getEntities()!!.filterNotNull().forEach {
                     if (value!! == "null") {
                         it.removeTag(key)
                     } else {
@@ -44,10 +47,10 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
                 CompletableFuture.completedFuture(null)
             }
             Symbol.HAS -> {
-                CompletableFuture.completedFuture(s.entities!!.filterNotNull().firstOrNull()?.hasTag(key))
+                CompletableFuture.completedFuture(s.getEntities()!!.filterNotNull().firstOrNull()?.hasTag(key))
             }
             else -> {
-                CompletableFuture.completedFuture(s.entities!!.filterNotNull().firstOrNull()?.getTag(key))
+                CompletableFuture.completedFuture(s.getEntities()!!.filterNotNull().firstOrNull()?.getTag(key))
             }
         }
     }

@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.Inputs
 import ink.ptms.adyeshach.internal.trait.Trait
-import io.izzel.taboolib.module.db.local.Local
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Commands
 import org.bukkit.Bukkit

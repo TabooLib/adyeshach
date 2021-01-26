@@ -2,7 +2,7 @@ package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
-import ink.ptms.adyeshach.common.script.ScriptService
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import io.izzel.taboolib.metrics.BStats
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.inject.TSchedule
@@ -25,7 +25,7 @@ object Metrics {
             sizePublic + sizePublicTemporary
         })
         metrics.addCustomChart(BStats.SingleLineChart("scripts") {
-            ScriptService.quests.size
+            ScriptHandler.workspace.scripts.size
         })
         metrics.addCustomChart(BStats.SingleLineChart("entity_created") {
             createdEntities

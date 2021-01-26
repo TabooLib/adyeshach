@@ -1,10 +1,11 @@
-package ink.ptms.adyeshach.common.script.action.npc
+package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.script.ScriptContext
-import ink.ptms.adyeshach.common.script.ScriptParser
-import io.izzel.kether.common.api.QuestAction
-import io.izzel.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.setManager
+import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.ketherx.ScriptParser
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
+import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
@@ -15,10 +16,10 @@ class ActionUse(val manager: String, val temporary: Boolean) : QuestAction<Void>
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
         val s = (context.context() as ScriptContext)
-        if (manager == "private" && s.viewer !is Player) {
+        if (manager == "private" && s.sender !is Player) {
             throw RuntimeException("The private manager required a player viewer.")
         }
-        s.manager = when (manager) {
+        s.setManager(when (manager) {
             "public" -> {
                 if (temporary) {
                     AdyeshachAPI.getEntityManagerPublicTemporary()
@@ -28,13 +29,13 @@ class ActionUse(val manager: String, val temporary: Boolean) : QuestAction<Void>
             }
             "private" -> {
                 if (temporary) {
-                    AdyeshachAPI.getEntityManagerPrivateTemporary(s.viewer as Player)
+                    AdyeshachAPI.getEntityManagerPrivateTemporary(s.sender as Player)
                 } else {
-                    AdyeshachAPI.getEntityManagerPrivate(s.viewer as Player)
+                    AdyeshachAPI.getEntityManagerPrivate(s.sender as Player)
                 }
             }
             else -> null
-        }
+        })
         return CompletableFuture.completedFuture(null)
     }
 
