@@ -4,10 +4,10 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.ketherx.ScriptContext
-import io.izzel.taboolib.kotlin.ketherx.ScriptParser
-import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
-import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
+import io.izzel.taboolib.kotlin.kether.ScriptContext
+import io.izzel.taboolib.kotlin.kether.ScriptParser
+import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
+import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture

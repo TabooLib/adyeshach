@@ -5,11 +5,11 @@ import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.ketherx.ScriptContext
-import io.izzel.taboolib.kotlin.ketherx.ScriptParser
-import io.izzel.taboolib.kotlin.ketherx.common.api.QuestAction
-import io.izzel.taboolib.kotlin.ketherx.common.api.QuestContext
-import io.izzel.taboolib.kotlin.ketherx.common.util.LocalizedException
+import io.izzel.taboolib.kotlin.kether.ScriptContext
+import io.izzel.taboolib.kotlin.kether.ScriptParser
+import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
+import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
 
 /**

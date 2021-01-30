@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.internal.command
 
 import com.google.common.collect.ImmutableList
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import io.izzel.taboolib.kotlin.ketherx.ScriptContext
+import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.tellraw.TellrawJson
 import org.bukkit.Bukkit

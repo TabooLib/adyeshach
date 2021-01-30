@@ -13,10 +13,10 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.script.action.*
-import io.izzel.taboolib.kotlin.ketherx.KetherX
-import io.izzel.taboolib.kotlin.ketherx.ScriptContext
-import io.izzel.taboolib.kotlin.ketherx.Workspace
-import io.izzel.taboolib.kotlin.ketherx.common.api.QuestActionParser
+import io.izzel.taboolib.kotlin.kether.Kether
+import io.izzel.taboolib.kotlin.kether.ScriptContext
+import io.izzel.taboolib.kotlin.kether.Workspace
+import io.izzel.taboolib.kotlin.kether.common.api.QuestActionParser
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.nms.impl.Position
@@ -33,7 +33,7 @@ object ScriptHandler {
     val knownControllers = ConcurrentHashMap<String, KnownController>()
 
     fun addAction(id: String, parser: QuestActionParser) {
-        KetherX.addAction(id, parser, "adyeshach")
+        Kether.addAction(id, parser, "adyeshach")
     }
 
     @TFunction.Init
@@ -60,7 +60,7 @@ object ScriptHandler {
         addAction("passenger", ActionPassenger.parser())
         addAction("controller", ActionController.parser())
         // 监听器
-        KetherX.addEventOperator("npc_damage", AdyeshachEntityDamageEvent::class) {
+        Kether.addEventOperator("npc_damage", AdyeshachEntityDamageEvent::class) {
             unit("player") {
                 reader = { it.player.name }
             }
@@ -75,7 +75,7 @@ object ScriptHandler {
                 writer = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
             }
         }
-        KetherX.addEventOperator("npc_interact", AdyeshachEntityInteractEvent::class) {
+        Kether.addEventOperator("npc_interact", AdyeshachEntityInteractEvent::class) {
             unit("player") {
                 reader = { it.player.name }
             }
