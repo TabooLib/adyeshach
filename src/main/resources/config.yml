@@ -18,3 +18,4 @@ Settings:
   editor-mode: CHAT
   visible-distance: 64
   pathfinder-proxy: true
+  spawn-event: KEEP_ALIVE

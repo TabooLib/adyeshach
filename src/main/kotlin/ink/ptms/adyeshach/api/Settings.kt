@@ -25,6 +25,19 @@ class Settings {
         Adyeshach.conf.getBoolean("Settings.pathfinder-proxy", true)
     }
 
+    val spawnTrigger: SpawnTrigger by lazy {
+        when (Adyeshach.conf.getString("Settings.spawn-trigger")) {
+            "KEEP_ALIVE" -> SpawnTrigger.KEEP_ALIVE
+            "JOIN" -> SpawnTrigger.JOIN
+            else -> SpawnTrigger.KEEP_ALIVE
+        }
+    }
+
+    enum class SpawnTrigger {
+
+        KEEP_ALIVE, JOIN
+    }
+
     companion object {
 
         fun get() = Adyeshach.settings

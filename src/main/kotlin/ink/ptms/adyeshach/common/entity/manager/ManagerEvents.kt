@@ -1,14 +1,18 @@
 package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
+import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 /**
@@ -75,15 +79,18 @@ private class ManagerEvents : Listener {
     }
 
     @EventHandler
+    fun e(e: PlayerJoinEvent) {
+        if (Settings.get().spawnTrigger == Settings.SpawnTrigger.JOIN) {
+           Tasks.delay(20) {
+               spawn(e.player)
+           }
+        }
+    }
+
+    @EventHandler
     fun e(e: AdyeshachPlayerJoinEvent) {
-        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
-            it.viewPlayers.viewers.add(e.player.name)
-        }
-        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
-            it.viewPlayers.viewers.add(e.player.name)
-        }
-        Mirror.get("ManagerPrivate:onLoad(async)").check {
-            AdyeshachAPI.getEntityManagerPrivate(e.player).onEnable()
+        if (Settings.get().spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
+            spawn(e.player)
         }
     }
 
@@ -99,6 +106,18 @@ private class ManagerEvents : Listener {
         }
         Mirror.get("ManagerPrivate:onSave(async)").check {
             AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
+        }
+    }
+
+    fun spawn(player: Player) {
+        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
+            it.viewPlayers.viewers.add(player.name)
+        }
+        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
+            it.viewPlayers.viewers.add(player.name)
+        }
+        Mirror.get("ManagerPrivate:onLoad(async)").check {
+            AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
         }
     }
 }
