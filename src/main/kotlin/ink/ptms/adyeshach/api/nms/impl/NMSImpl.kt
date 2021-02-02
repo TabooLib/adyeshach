@@ -487,7 +487,8 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (version >= 11300) {
-            Reflex.from(net.minecraft.server.v1_16_R1.EntityTypes::class.java).read<net.minecraft.server.v1_16_R1.EntityTypes<*>>(entityTypes.internalName ?: entityTypes.name)!!
+            Reflex.from(net.minecraft.server.v1_16_R1.EntityTypes::class.java)
+                .read<net.minecraft.server.v1_16_R1.EntityTypes<*>>(entityTypes.internalName ?: entityTypes.name)!!
         } else {
             entityTypes.bukkitId
         }
@@ -525,7 +526,8 @@ class NMSImpl : NMS() {
     @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     override fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position> {
         if (version >= 11400) {
-            val pathEntity = (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
+            val pathEntity =
+                (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
             val pathPoint = Reflex.from(PathEntity::class.java, pathEntity).read<List<PathPoint>>("a")!!
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         } else {
@@ -594,7 +596,12 @@ class NMSImpl : NMS() {
                     val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
                     if (block.type.isSolid) {
-                        b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)?.e ?: 0.0
+                        val a = b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)
+                        if (a != null) {
+                            a.e
+                        } else {
+                            0.0
+                        }
                     } else {
                         0.0
                     }
@@ -604,7 +611,12 @@ class NMSImpl : NMS() {
                     val b = (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle.getType(p)
                     (b.block as BlockTorch).a(b, (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle as IBlockAccess, p)
                     if (block.type.isSolid) {
-                        b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)?.e ?: 0.0
+                        val a = b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)
+                        if (a != null) {
+                            a.e
+                        } else {
+                            0.0
+                        }
                     } else {
                         0.0
                     }
@@ -616,7 +628,12 @@ class NMSImpl : NMS() {
                         val p = net.minecraft.server.v1_9_R2.BlockPosition(block.x, block.y, block.z)
                         val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
                         if (block.type.isSolid) {
-                            b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)?.e ?: 0.0
+                            val a = b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)
+                            if (a != null) {
+                                a.e
+                            } else {
+                                0.0
+                            }
                         } else {
                             0.0
                         }

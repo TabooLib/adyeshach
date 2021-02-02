@@ -326,12 +326,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置，并继承实体本身的视角
      */
     fun teleport(x: Double, y: Double, z: Double) {
-        teleport(position.toLocation().run {
-            this.x = x
-            this.y = y
-            this.z = z
-            this
-        })
+        if (x.isFinite() && y.isFinite() && z.isFinite()) {
+            teleport(position.toLocation().run {
+                this.x = x
+                this.y = y
+                this.z = z
+                this
+            })
+        }
     }
 
     /**
