@@ -57,7 +57,7 @@ class ActionController(val symbol: Symbol, val controller: String?) : QuestActio
                 "add" -> Symbol.ADD
                 "remove" -> Symbol.REMOVE
                 "reset" -> Symbol.RESET
-                else -> throw LocalizedException.of("not-controller-method", type)
+                else -> throw ScriptHandler.loadError("Unknown controller operator $type")
             }
             ActionController(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }

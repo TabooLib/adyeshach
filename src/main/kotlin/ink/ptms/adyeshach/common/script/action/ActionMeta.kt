@@ -218,7 +218,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Ques
             val symbol = when (val type = it.nextToken()) {
                 "set" -> Symbol.SET
                 "reset" -> Symbol.RESET
-                else -> throw LocalizedException.of("not-tag-method", type)
+                else -> throw ScriptHandler.loadError("Unknown meta operator $type")
             }
             val key = it.nextToken()
             val value = if (symbol == Symbol.SET) {

@@ -17,6 +17,7 @@ import io.izzel.taboolib.kotlin.kether.Kether
 import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.Workspace
 import io.izzel.taboolib.kotlin.kether.common.api.QuestActionParser
+import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.nms.impl.Position
@@ -166,4 +167,6 @@ object ScriptHandler {
     fun ScriptContext.entitySelected(): Boolean {
         return getEntities() != null && getEntities()!!.filterNotNull().isNotEmpty()
     }
+
+    fun loadError(message: String) = LocalizedException.of("load-error.custom", message)
 }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.script.action
 
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
@@ -58,7 +59,7 @@ class ActionViewer(val symbol: Symbol, val viewer: String?) : QuestAction<Void>(
                 "add" -> Symbol.ADD
                 "remove" -> Symbol.REMOVE
                 "reset" -> Symbol.RESET
-                else -> throw LocalizedException.of("not-viewer-method", type)
+                else -> throw ScriptHandler.loadError("Unknown viewer operator $type")
             }
             ActionViewer(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.script.action
 
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
@@ -67,7 +68,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
                 "get" -> Symbol.GET
                 "has" -> Symbol.HAS
                 "remove" -> Symbol.REMOVE
-                else -> throw LocalizedException.of("not-tag-method", type)
+                else -> throw ScriptHandler.loadError("Unknown tag operator $type")
             }
             val key = it.nextToken()
             val value = if (symbol == Symbol.SET) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ink.ptms.adyeshach'
-version = '1.1.10'
+version = '1.1.11'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -23,22 +23,21 @@ repositories {
 }
 
 dependencies {
-    compile 'ink.ptms.cronus:Cronus:1'
-    compile 'net.citizensnpcs:Citizens:2.0.18'
-    compile 'com.guillaumevdn.gcore:GCore:7.15.0'
-    compile 'com.guillaumevdn.questcreator:QuestCreator:5.30.0'
-    compile 'com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE'
-    compile 'ink.ptms.core:v11604:11604:all'
-    compile 'ink.ptms.core:v11600:11600:all'
-    compile 'ink.ptms.core:v11500:11500:all'
-    compile 'ink.ptms.core:v11400:11400:all'
-    compile 'ink.ptms.core:v11300:11300:all'
-    compile 'ink.ptms.core:v11200:11200:all'
-    compile 'ink.ptms.core:v11100:11100:all'
-    compile 'ink.ptms.core:v11000:11000:all'
-    compile 'ink.ptms.core:v10900:10900:all'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib'
-    compile fileTree(dir: 'libs', includes: ['*.jar'])
+    implementation 'ink.ptms.cronus:Cronus:1'
+    implementation 'net.citizensnpcs:Citizens:2.0.18'
+    implementation 'com.guillaumevdn.gcore:GCore:7.15.0'
+    implementation 'com.guillaumevdn.questcreator:QuestCreator:5.30.0'
+    implementation 'com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE'
+    implementation 'ink.ptms.core:v11604:11604:all'
+    implementation 'ink.ptms.core:v11600:11600:all'
+    implementation 'ink.ptms.core:v11500:11500:all'
+    implementation 'ink.ptms.core:v11400:11400:all'
+    implementation 'ink.ptms.core:v11300:11300:all'
+    implementation 'ink.ptms.core:v11200:11200:all'
+    implementation 'ink.ptms.core:v11100:11100:all'
+    implementation 'ink.ptms.core:v11000:11000:all'
+    implementation 'ink.ptms.core:v10900:10900:all'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 }
 
 processResources {

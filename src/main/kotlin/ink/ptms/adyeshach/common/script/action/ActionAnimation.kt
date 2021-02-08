@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.script.action
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
@@ -9,7 +10,6 @@ import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.ScriptParser
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,7 +39,8 @@ class ActionAnimation(val animation: BukkitAnimation) : QuestAction<Void>() {
 
         fun parser() = ScriptParser.parser {
             val type = it.nextToken()
-            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.toUpperCase()).orNull() ?: throw LocalizedException.of("unknown-animation", type)
+            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.toUpperCase()).orNull()
+                ?: throw ScriptHandler.loadError("Unknown animation $type")
             ActionAnimation(animation)
         }
     }

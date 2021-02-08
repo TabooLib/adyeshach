@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.script.action
 
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
@@ -57,7 +58,7 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?) : QuestAction<
                 "add" -> Symbol.ADD
                 "remove" -> Symbol.REMOVE
                 "reset" -> Symbol.RESET
-                else -> throw LocalizedException.of("not-passenger-method", type)
+                else -> throw ScriptHandler.loadError("Unknown passanger operator $type")
             }
             ActionPassenger(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.script.action
 
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
 import io.izzel.taboolib.kotlin.kether.ScriptContext
@@ -42,7 +43,7 @@ class ActionSelect(val value: ParsedAction<*>, val byId: Boolean) : QuestAction<
                     byId = when (val type = it.nextToken().toLowerCase()) {
                         "id" -> true
                         "uniqueid", "uuid" -> false
-                        else -> throw LocalizedException.of("unknown-select-type", type)
+                        else -> throw ScriptHandler.loadError("Unknown select type $type")
                     }
                 } else {
                     it.reset()
