@@ -88,7 +88,8 @@ class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
                 .modify { player, entity, _ ->
                     Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
-                            setName(if (it[0].length > 16) it[0].substring(0, 16) else it[0])
+                            val name = "${it[0]}${it[1]}"
+                            setName(if (name.length > 16) name.substring(0, 16) else name)
                         }
                         Editor.open(player, entity)
                     }
