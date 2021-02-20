@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.KnownTraits
 import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.util.Coerce
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.command.Command
@@ -72,7 +73,7 @@ class Command : BaseMainCommand(), Helper {
     val modify = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
@@ -193,9 +194,9 @@ class Command : BaseMainCommand(), Helper {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                    Argument("method") { listOf("add", "remove", "reset") },
-                    Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
+                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("method") { listOf("add", "remove", "reset") },
+                Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
             )
         }
 
@@ -241,9 +242,9 @@ class Command : BaseMainCommand(), Helper {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                    Argument("method") { listOf("add", "remove", "reset") },
-                    Argument("name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
+                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("method") { listOf("add", "remove", "reset") },
+                Argument("name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
             )
         }
 
@@ -294,8 +295,8 @@ class Command : BaseMainCommand(), Helper {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                    Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                    Argument("trait") { KnownTraits.traits.map { it.getName() } }
+                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("trait") { KnownTraits.traits.map { it.getName() } }
             )
         }
 
@@ -311,6 +312,37 @@ class Command : BaseMainCommand(), Helper {
                 return
             }
             trait.edit(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
+        }
+    }
+
+    @SubCommand(description = "nearby adyeshach npc.", type = CommandType.PLAYER)
+    val near = object : BaseSubCommand() {
+
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
+            sender.info("Nearby:")
+            mapOf(
+                "Public" to AdyeshachAPI.getEntityManagerPublic(),
+                "Public Temporary" to AdyeshachAPI.getEntityManagerPublicTemporary(),
+                "Private" to AdyeshachAPI.getEntityManagerPrivate(sender as Player),
+                "Private Temporary" to AdyeshachAPI.getEntityManagerPrivateTemporary(sender),
+            ).forEach { (k, v) ->
+                v.getEntities().mapNotNull {
+                    if (it.getWorld().name == sender.world.name && it.getLocation().distance(sender.location) < 64) {
+                        it to it.getLocation().distance(sender.location)
+                    } else {
+                        null
+                    }
+                }.sortedBy {
+                    it.second
+                }.also { result ->
+                    if (result.isNotEmpty()) {
+                        sender.info("  &f$k:")
+                        result.forEach {
+                            sender.info("  &8- &7${it.first.id} &a(${Coerce.format(it.second)}m)")
+                        }
+                    }
+                }
+            }
         }
     }
 
