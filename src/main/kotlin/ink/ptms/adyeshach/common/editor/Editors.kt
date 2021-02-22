@@ -20,6 +20,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.NumberConversions
+import java.lang.NullPointerException
 import kotlin.reflect.KClass
 
 object Editors {
@@ -159,7 +160,11 @@ object Editors {
                                 }.open(player)
                     }
                     .display { player, entity, meta ->
-                        I18n.get().getName(player, (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
+                        try {
+                            I18n.get().getName(player, (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
+                        } catch (ignored: NullPointerException) {
+                            "NULL"
+                        }
                     }
         }
     }
