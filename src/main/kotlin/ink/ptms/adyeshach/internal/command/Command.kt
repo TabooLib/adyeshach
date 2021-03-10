@@ -95,7 +95,7 @@ class Command : BaseMainCommand(), Helper {
     val copy = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("newId"))
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
