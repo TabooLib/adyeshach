@@ -77,7 +77,11 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityManagerPublic().getEntities()
+            } else {
+                AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+            }
             if (entity.isEmpty()) {
                 sender.error("Adyeshach NPC not found.")
                 return
