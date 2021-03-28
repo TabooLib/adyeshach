@@ -6,9 +6,7 @@ import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import io.izzel.taboolib.module.lite.SimpleCounter
-import io.izzel.taboolib.util.lite.Effects
 import org.bukkit.Location
-import org.bukkit.Particle
 
 /**
  * 实体移动逻辑

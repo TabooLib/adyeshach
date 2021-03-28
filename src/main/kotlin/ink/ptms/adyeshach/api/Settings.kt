@@ -21,10 +21,6 @@ class Settings {
         Adyeshach.conf.getDouble("Settings.visible-distance", 64.0)
     }
 
-    val pathfinderProxy: Boolean by lazy {
-        Adyeshach.conf.getBoolean("Settings.pathfinder-proxy", true)
-    }
-
     val spawnTrigger: SpawnTrigger by lazy {
         when (Adyeshach.conf.getString("Settings.spawn-trigger")) {
             "KEEP_ALIVE" -> SpawnTrigger.KEEP_ALIVE
@@ -33,9 +29,21 @@ class Settings {
         }
     }
 
+    val pathfinder: Pathfinder by lazy {
+        when (Adyeshach.conf.getString("Settings.pathfinder")) {
+            "PROXY" -> Pathfinder.PROXY
+            else -> Pathfinder.NATIVE
+        }
+    }
+
     enum class SpawnTrigger {
 
         KEEP_ALIVE, JOIN
+    }
+
+    enum class Pathfinder {
+
+        PROXY, NATIVE
     }
 
     companion object {

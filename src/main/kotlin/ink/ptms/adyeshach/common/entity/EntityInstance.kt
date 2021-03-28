@@ -418,6 +418,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             }
         }
         val move = getController(GeneralMove::class)!!
+        setTag("tryMoving", "true")
         PathFinderProxy.request(position.toLocation(), location, pathType) {
             // 基准等待时间为 350 毫秒（5 游戏刻用于列队 + 2 游戏刻用于延迟）
             // 若等待时间超过 750 毫秒（15 游戏刻）则强制禁止移动，因为服务端已有明显卡顿
@@ -425,9 +426,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 println("[Adyeshach Mirror] Waiting ${it.waitTime}ms while calculating the navigation path, controller move has stopped.")
                 return@request
             }
+            if ((it as ResultNavigation).pointList.isEmpty()) {
+                return@request
+            }
             move.speed = speed
             move.pathType = pathType
-            move.resultNavigation = it as ResultNavigation
+            move.resultNavigation = it
+            removeTag("tryMoving")
         }
     }
 
@@ -622,13 +627,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getMetadata("pose")
     }
 
-    fun isControllerMoving(): Boolean {
-        return hasTag("isMoving")
-    }
+    fun isControllerMoving() = hasTag("isMoving")
 
-    fun isControllerJumping(): Boolean {
-        return hasTag("isJumping")
-    }
+    fun isControllerJumping() = hasTag("isJumping")
+
+    fun isTryMoving() = hasTag("tryMoving")
 
     /**
      * 实体计算（async）

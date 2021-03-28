@@ -6,16 +6,17 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.ScriptParser
+import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
+import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
 import org.bukkit.Bukkit
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionViewer(val symbol: Symbol, val viewer: String?) : QuestAction<Void>() {
+class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : QuestAction<Void>() {
 
     enum class Symbol {
 
@@ -30,22 +31,23 @@ class ActionViewer(val symbol: Symbol, val viewer: String?) : QuestAction<Void>(
         if (!s.entitySelected()) {
             throw RuntimeException("No entity selected.")
         }
-        s.getEntities()!!.filterNotNull().forEach {
-            when (symbol) {
-                Symbol.ADD -> {
-                    Bukkit.getPlayerExact(viewer!!)?.run {
-                        it.addViewer(this)
+        return context.newFrame(viewer).run<Any>().thenAccept { viewer ->
+            s.getEntities()!!.filterNotNull().forEach {
+                when (symbol) {
+                    Symbol.ADD -> {
+                        Bukkit.getPlayerExact(viewer.toString())?.run {
+                            it.addViewer(this)
+                        }
                     }
-                }
-                Symbol.REMOVE -> {
-                    Bukkit.getPlayerExact(viewer!!)?.run {
-                        it.removeViewer(this)
+                    Symbol.REMOVE -> {
+                        Bukkit.getPlayerExact(viewer.toString())?.run {
+                            it.removeViewer(this)
+                        }
                     }
+                    Symbol.RESET -> it.clearViewer()
                 }
-                Symbol.RESET -> it.clearViewer()
             }
         }
-        return CompletableFuture.completedFuture(null)
     }
 
     override fun toString(): String {
@@ -61,7 +63,7 @@ class ActionViewer(val symbol: Symbol, val viewer: String?) : QuestAction<Void>(
                 "reset" -> Symbol.RESET
                 else -> throw ScriptHandler.loadError("Unknown viewer operator $type")
             }
-            ActionViewer(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
+            ActionViewer(symbol, if (symbol != Symbol.RESET) it.next(ArgTypes.ACTION) else null)
         }
     }
 }

@@ -27,10 +27,15 @@ class Patrol : Trait(), Listener {
     val edit = HashMap<String, EntityInstance>()
 
     init {
-        Tasks.timer(0, 20, true) {
+        Tasks.timer(0, 1, true) {
             data.getKeys(false).forEach {
                 val entityInstance = AdyeshachAPI.getEntityFromUniqueId(it)
-                if (entityInstance != null && !entityInstance.isEditing() && !entityInstance.isControllerMoving() && entityInstance.hasViewer()) {
+                if (entityInstance != null
+                    && !entityInstance.isEditing()
+                    && !entityInstance.isControllerMoving()
+                    && !entityInstance.hasTag("tryMoving")
+                    && entityInstance.hasViewer()
+                ) {
                     val index = entityInstance.index()
                     val nodes = entityInstance.nodes()
                     if (index < nodes.size) {
@@ -38,7 +43,7 @@ class Patrol : Trait(), Listener {
                             entityInstance.controllerMove(nodes[index])
                             entityInstance.index(index + 1)
                         } catch (e: Exception) {
-                            println("[Adyeshach] Patrol Error: ${e}")
+                            println("[Adyeshach] Patrol Error: $e")
                         }
                     } else {
                         entityInstance.index(0)
@@ -65,6 +70,18 @@ class Patrol : Trait(), Listener {
                                     }
                                 }
                                 p = node
+                            }
+                            if (i > 1 && i + 1 == nodes.size) {
+                                PathFinderProxy.request(node, nodes[0], edit[player.name]!!.entityType.getPathType()) { r ->
+                                    (r as ResultNavigation).pointList.forEachIndexed { index, p ->
+                                        Tasks.delay(index * 2L) {
+                                            Effects.create(Particle.FLAME, Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
+                                                .count(5)
+                                                .player(player)
+                                                .play()
+                                        }
+                                    }
+                                }
                             }
                             THologram.create(Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), "#${i + 1}", player)
                                 .deleteOn(40)

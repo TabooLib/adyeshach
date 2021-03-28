@@ -15,7 +15,14 @@ Database:
 
 Settings:
   debug: false
-  editor-mode: CHAT
+  # Must be less than "view-distance" in server.properties
   visible-distance: 64
-  pathfinder-proxy: true
+  # BOOK: Compatible Version
+  # CHAT: Recommended Version (Affected by Iridescent plugin, it will be invalid)
+  editor-mode: CHAT
+  # JOIN: When player joined the server
+  # KEEP_ALIVE: When player sent first position packet
   spawn-event: KEEP_ALIVE
+  # PROXY: Legacy Version
+  # NATIVE: Recode by Minecraft 1.16.5
+  pathfinder: NATIVE

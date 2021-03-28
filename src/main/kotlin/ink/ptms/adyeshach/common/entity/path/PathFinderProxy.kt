@@ -6,6 +6,8 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.kotlin.navigation.Navigation
+import io.izzel.taboolib.kotlin.navigation.pathfinder.NodeEntity
 import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TListener
@@ -21,6 +23,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDeathEvent
+import org.bukkit.util.Vector
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -42,8 +45,35 @@ object PathFinderProxy {
         if (start.world!!.name != target.world!!.name) {
             throw PathException("cannot request navigation in different worlds.")
         }
-        if (Adyeshach.settings.pathfinderProxy) {
-            requests.add(PathSchedule(start, target, pathType, request, call))
+        val startTime = System.currentTimeMillis()
+        when (Adyeshach.settings.pathfinder) {
+            Settings.Pathfinder.PROXY -> {
+                requests.add(PathSchedule(start, target, pathType, request, call))
+            }
+            Settings.Pathfinder.NATIVE -> {
+                Tasks.task(true) {
+                    if (request == Request.NAVIGATION) {
+                        val time = System.currentTimeMillis()
+                        val pathFinder = Navigation.create(NodeEntity(start, pathType.height, pathType.width))
+                        val path = pathFinder.findPath(target, distance = 32f)
+                        if (Settings.get().debug) {
+                            path?.nodes?.forEach { it.display(target.world) }
+                        }
+                        call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
+                    } else {
+                        val time = System.currentTimeMillis()
+                        var vec: Vector? = null
+                        repeat(10) {
+                            if (vec == null) {
+                                vec = Navigation.randomPositionGenerator().generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
+                            }
+                        }
+                        if (vec != null) {
+                            call(ResultRandomPosition(vec, startTime, time))
+                        }
+                    }
+                }
+            }
         }
     }
 

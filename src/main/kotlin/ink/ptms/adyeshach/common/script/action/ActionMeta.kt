@@ -16,7 +16,6 @@ import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.ScriptParser
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.chat.TextComponent

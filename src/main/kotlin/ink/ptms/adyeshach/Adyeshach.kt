@@ -12,7 +12,7 @@ import org.bukkit.Bukkit
 
 object Adyeshach : Plugin() {
 
-    @TInject(locale = "Language")
+    @TInject(locale = "Language", migrate = true)
     lateinit var conf: TConfig
         private set
 

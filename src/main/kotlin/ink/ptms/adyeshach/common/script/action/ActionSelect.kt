@@ -9,7 +9,6 @@ import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
 import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
-import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import java.util.concurrent.CompletableFuture
 
 /**
