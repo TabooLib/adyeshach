@@ -17,7 +17,7 @@ class ControllerRandomLookGround(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.01) && !entity!!.isControllerMoving()
+        return Numbers.random(0.01) && (entity!!.getTag("isFreeze") == "true" || !entity.isControllerMoving())
     }
 
     override fun onTick() {

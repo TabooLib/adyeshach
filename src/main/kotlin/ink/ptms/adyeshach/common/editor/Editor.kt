@@ -113,7 +113,9 @@ object Editor {
                     .append("  Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
                     .append("  Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n"))
                     .newLine()
-                    .append("  Controller §7${entity.getController().size} ").append("§c(?)")
+                    .append("  Tags §7${entity.getTags().size} ").append("§c(?)").hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                    .newLine()
+                    .append("  Pathfinder §7${entity.getController().size} ").append("§c(?)")
                     .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                     .append("").newLine()
                     .append("   §7§oX ${entity.position.x}").newLine()
@@ -137,7 +139,15 @@ object Editor {
                         page.append("   §c✘")
                             .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                             .hoverText("§nClick To Reset")
-                        page.append(" §7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)}")
+                        page.append(
+                            " §7${
+                                if (editor.onDisplay != null) editor.onDisplay!!.invoke(
+                                    player,
+                                    entity,
+                                    meta
+                                ) else entity.getMetadata<Any>(meta.key)
+                            }"
+                        )
                             .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
                             .hoverText("§nClick To Edit")
                             .newLine()
@@ -178,9 +188,12 @@ object Editor {
             .append("      §6${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
             .newLine()
             .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
-            .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
+            .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
+                .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
+            .append("      Tags §7${entity.getTags().size} ").append("§c(?)")
+                .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
             .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)")
-            .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
+                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
             .newLine().append("      ")
         var i = 0
         entity.forEachMeta { meta, hide ->
@@ -193,7 +206,15 @@ object Editor {
                     try {
                         json.append("§7${meta.key.toDisplay()}")
                             .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                            .hoverText("§7${if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)}")
+                            .hoverText(
+                                "§7${
+                                    if (editor.onDisplay != null) editor.onDisplay!!.invoke(
+                                        player,
+                                        entity,
+                                        meta
+                                    ) else entity.getMetadata<Any>(meta.key)
+                                }"
+                            )
                         json.append(" ")
                         json.append("§c✘")
                             .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
