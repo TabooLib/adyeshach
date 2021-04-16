@@ -26,3 +26,5 @@ Settings:
   # PROXY: Legacy Version
   # NATIVE: Recode by Minecraft 1.16.5
   pathfinder: NATIVE
+  # Calculate on the main thread (Very low latency, Otherwise >2000ms)
+  pathfinder-sync: true

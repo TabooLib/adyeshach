@@ -36,6 +36,10 @@ class Settings {
         }
     }
 
+    val pathfinderSync by lazy {
+        Adyeshach.conf.getBoolean("Settings.pathfinder-sync", true)
+    }
+
     enum class SpawnTrigger {
 
         KEEP_ALIVE, JOIN

@@ -51,7 +51,7 @@ object PathFinderProxy {
                 requests.add(PathSchedule(start, target, pathType, request, call))
             }
             Settings.Pathfinder.NATIVE -> {
-                Tasks.task(true) {
+                Tasks.task(!Settings.get().pathfinderSync) {
                     if (request == Request.NAVIGATION) {
                         val time = System.currentTimeMillis()
                         val pathFinder = Navigation.create(NodeEntity(start, pathType.height, pathType.width))

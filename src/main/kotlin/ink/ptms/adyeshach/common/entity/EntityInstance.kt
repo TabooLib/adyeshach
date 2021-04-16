@@ -363,6 +363,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun <T : Controller> unregisterController(controller: KClass<T>) {
+        if (controller == GeneralMove::class) {
+            removeTag("isMoving")
+        }
         this.controller.removeIf { it.javaClass == controller.java }
     }
 
@@ -376,6 +379,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun resetController() {
+        if (getController(GeneralMove::class) != null) {
+            removeTag("isMoving")
+        }
         this.controller.clear()
     }
 
@@ -427,12 +433,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         val move = getController(GeneralMove::class)!!
         setTag("tryMoving", "true")
         PathFinderProxy.request(position.toLocation(), location, pathType) {
-            // 基准等待时间为 350 毫秒（5 游戏刻用于列队 + 2 游戏刻用于延迟）
-            // 若等待时间超过 750 毫秒（15 游戏刻）则强制禁止移动，因为服务端已有明显卡顿
-            if (it.waitTime >= 750) {
-                println("[Adyeshach Mirror] Waiting ${it.waitTime}ms while calculating the navigation path, controller move has stopped.")
-                return@request
-            }
             if ((it as ResultNavigation).pointList.isEmpty()) {
                 return@request
             }
