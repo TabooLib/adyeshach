@@ -4,12 +4,14 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
+import io.izzel.taboolib.internal.xseries.XMaterial
 import io.izzel.taboolib.module.i18n.I18n
-import io.izzel.taboolib.module.tellraw.TellrawJson
-import io.izzel.taboolib.util.book.BookFormatter
-import io.izzel.taboolib.util.chat.ComponentSerializer
+import io.izzel.taboolib.util.Features
 import io.izzel.taboolib.util.item.ItemBuilder
+import io.izzel.taboolib.util.item.Items
+import io.izzel.taboolib.util.item.inventory.ClickEvent
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
+import io.izzel.taboolib.util.item.inventory.linked.MenuLinked
 import io.izzel.taboolib.util.lite.Materials
 import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.Color
@@ -17,6 +19,7 @@ import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.NumberConversions
@@ -113,36 +116,75 @@ object Editors {
     fun enums(enum: KClass<*>, command: (Player, EntityInstance, EntityMetaable.Meta, Int, Any) -> (String)): EntityMetaable.MetaEditor {
         return EntityMetaable.MetaEditor()
                 .modify { player, entity, meta ->
-                    val book = BookFormatter.writtenBook()
-                    var page = TellrawJson.create()
-                    var i = 0
-                    getEnums(enum).forEachIndexed { index, e ->
-                        if (e is DyeColor && Editor.version >= 11600) {
-                            page.append("  ${io.izzel.taboolib.util.chat.ChatColor.of(java.awt.Color(e.color.red, e.color.green, e.color.blue))}${Editor.toSimple(e.toString())}")
-                        } else {
-                            page.append("  ${Editor.toSimple(e.toString())}")
+                    val enums = getEnums(enum)
+
+                    object : MenuLinked<Any>(player) {
+
+                        init {
+                            addButtonPreviousPage(47)
+                            addButtonNextPage(51)
                         }
-                        page.clickCommand(command.invoke(player, entity, meta, index, e)).hoverText("§nClick To Select\n§7$e").newLine()
-                        if (++i == 12) {
-                            i = 0
-                            book.addPages(ComponentSerializer.parse(page.toRawMessage(player)))
-                            page = TellrawJson.create()
+
+                        override fun getTitle(): String {
+                            return "${enum.simpleName} [Pg. ${page + 1}]"
                         }
-                    }
-                    if (i > 0) {
-                        book.addPages(ComponentSerializer.parse(page.toRawMessage(player)))
-                    }
-                    book.open(player)
+
+                        override fun getRows(): Int {
+                            return 6
+                        }
+
+                        override fun getElements(): MutableList<Any> {
+                            return enums.toMutableList()
+                        }
+
+                        override fun getSlots(): MutableList<Int> {
+                            return Items.INVENTORY_CENTER.toMutableList()
+                        }
+
+                        override fun onBuild(inventory: Inventory) {
+                            if (hasPreviousPage()) {
+                                inventory.setItem(47, ItemBuilder(XMaterial.SPECTRAL_ARROW).name("§fPrevious").build())
+                            } else {
+                                inventory.setItem(47, ItemBuilder(XMaterial.ARROW).name("§8Previous").build())
+                            }
+                            if (hasNextPage()) {
+                                inventory.setItem(51, ItemBuilder(XMaterial.SPECTRAL_ARROW).name("§fNext").build())
+                            } else {
+                                inventory.setItem(51, ItemBuilder(XMaterial.ARROW).name("§8Next").build())
+                            }
+                        }
+
+                        override fun onClick(e: ClickEvent, obj: Any) {
+                            val cmd = command(player, entity, meta, Items.INVENTORY_CENTER.indexOf(e.rawSlot) + (Items.INVENTORY_CENTER.size * page), obj)
+                            Features.dispatchCommand(player, cmd.substring(1))
+                        }
+
+                        override fun generateItem(player: Player, obj: Any, index: Int, slot: Int): ItemStack {
+                            return if (obj is DyeColor && Editor.version >= 11600) {
+                                ItemBuilder(XMaterial.PAPER)
+                                    .name("&7${io.izzel.taboolib.util.chat.ChatColor.of(java.awt.Color(obj.color.red, obj.color.green, obj.color.blue))}${Editor.toSimple(obj.toString())}")
+                                    .lore("&8CLICK TO SELECT")
+                                    .colored()
+                                    .build()
+                            } else {
+                                ItemBuilder(XMaterial.PAPER)
+                                    .name("&7${Editor.toSimple(obj.toString())}")
+                                    .lore("&8CLICK TO SELECT")
+                                    .colored()
+                                    .build()
+                            }
+                        }
+                    }.open()
                 }.toEnum(enum)
     }
 
     fun equip(equipmentSlot: EquipmentSlot): EntityMetaable.MetaEditor {
         return cacheEquipment.computeIfAbsent(equipmentSlot) {
             EntityMetaable.MetaEditor()
-                    .reset { entity, meta ->
+                    .reset { entity, _ ->
                         (entity as AdyEntityLiving).setEquipment(equipmentSlot, ItemStack(Material.AIR))
                     }
-                    .modify { player, entity, meta ->
+                    .modify { player, entity, _ ->
                         MenuBuilder.builder(Adyeshach.plugin)
                                 .title("Adyeshach Editor : Input")
                                 .rows(1)
@@ -158,7 +200,7 @@ object Editors {
                                     Editor.open(player, entity)
                                 }.open(player)
                     }
-                    .display { player, entity, meta ->
+                    .display { player, entity, _ ->
                         try {
                             I18n.get().getName(player, (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
                         } catch (ignored: NullPointerException) {
