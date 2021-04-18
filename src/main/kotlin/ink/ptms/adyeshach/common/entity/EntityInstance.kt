@@ -46,7 +46,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     protected var passengers = ConcurrentSet<String>()
 
     @Expose
-    protected val controller = CopyOnWriteArrayList<Controller>()
+    protected val controller = ConcurrentSet<Controller>()
 
     @Expose
     var visibleDistance = -1.0
