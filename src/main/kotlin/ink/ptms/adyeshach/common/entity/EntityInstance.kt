@@ -692,7 +692,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         entity.tag.putAll(tag)
         entity.manager = manager
         entity.position = EntityPosition.fromLocation(location)
-        entity.controller.addAll(controller)
         entity.passengers.clear()
         getPassengers().forEachIndexed { index, passenger ->
             passenger.clone("${newId}_passenger_$index", location)?.let { entity.addPassenger(it) }
