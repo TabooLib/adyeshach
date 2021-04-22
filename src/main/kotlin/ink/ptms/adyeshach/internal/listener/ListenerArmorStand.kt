@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitRotation
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.command.Helper
+import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.locale.TLocale
@@ -32,7 +33,7 @@ class ListenerArmorStand : Listener, Helper {
     fun e() {
         Bukkit.getOnlinePlayers().forEach {
             if (it.isOp && Editor.editArmorStand.containsKey(it.name) && Items.hasLore(it.inventory.itemInMainHand, "Adyeshach Tool")) {
-                TLocale.Display.sendActionBar(it, "§7Press §fSHIFT + LEFT-CLICK §7to increment §8| §7Press §fSHIFT + RIGHT-CLICK §7to decrement")
+                it.sendLocale("armor-stand-editor-2")
             }
         }
     }
@@ -53,7 +54,7 @@ class ListenerArmorStand : Listener, Helper {
                 e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             } else {
                 MenuBuilder.builder()
-                        .title("ArmorStand Angles")
+                        .title(TLocale.asString("armor-stand-editor-name"))
                         .rows(3)
                         .buildAsync { inv ->
                             Angle.values().forEach { inv.addItem(it.toItem()) }
@@ -66,8 +67,8 @@ class ListenerArmorStand : Listener, Helper {
                                     Editor.editArmorStand[e.player.name] = KV(bind, angle)
                                     e.player.closeInventory()
                                     e.player.inventory.setItemInMainHand(ItemBuilder(e.player.inventory.itemInMainHand).name("&7Angle: &f${angle.name}").colored().build())
-                                    TLocale.Display.sendTitle(e.player, "§3§lArmorStand Angel", "§7Select Angle: §8${angle.name}", 0, 40, 10)
-                                    TLocale.Display.sendActionBar(e.player, "§7Press §fSHIFT + LEFT-CLICK §7to increment §8| §7Press §fSHIFT + RIGHT-CLICK §7to decrement")
+                                    e.player.sendLocale("armor-stand-editor-1", angle.name)
+                                    e.player.sendLocale("armor-stand-editor-2")
                                 }
                             } catch (t: Throwable) {
                                 t.printStackTrace()

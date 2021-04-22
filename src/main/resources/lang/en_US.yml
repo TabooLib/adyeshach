@@ -1,23 +1,35 @@
-load-error:
-  fail: 'Failed to load script {0}'
-  block-exception: 'Line {1} of block "{0}": {2}'
-  unknown-action: 'Unknown action {0}'
-  unknown-select-type: 'Unknown select type {0}'
-  unknown-event: 'Unknown event {0}'
-  unknown-animation: 'Unknown animation {0}'
-  not-match: 'Should be entered {0} is actually {1}'
-  require-async: 'This action cannot be used in require: {0}'
-  string-not-close: "The string has no matching end (''')"
-  comment-not-close: "The comment has no matching end (*)"
-  not-integer: '{0} is not integer'
-  not-long: '{0} is not long'
-  not-double: '{0} is not double'
-  not-duration: '{0} is not duration (1d2h3m4s)'
-  not-symbol: '{0} is not symbol (>,<,=)'
-  not-tag-method: '{0} is not entity tag method (get,set)'
-  not-event-method: '{0} is not event method (get,set)'
-  not-viewer-method: '{0} is not viewer method (add,remove)'
-  not-passenger-method: '{0} is not passenger method (add,remove)'
-  not-controller-method: '{0} is not controller method (add,remove)'
-  not-command-type: '{0} is not command type'
-  custom: '{0}'
+not-support: '§4[Adyeshach] §cSorry, The Adyeshach not supported this minecraft version.'
+
+trait-sit-manager-not-set: '§c[Adyeshach] §7Entity Manager not initialized.'
+trait-sit-remove: '§c[Adyeshach] §7Standing.'
+trait-sit-create: '§c[Adyeshach] §7Sitting.'
+
+trait-patrol:
+  - ==: TITLE
+    subtitle: '§7Path Nodes: §8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+  - ==: ACTION
+    text: '§7Press §fF §7to save entity''s path node §8| §7Press §fSHIFT + F §7to reset'
+
+trait-command-finish: '§c[Adyeshach] §7Trait Edited.'
+trait-command:
+  ==: TITLE
+  title: '§3§lCommand Traits'
+  subtitle: '§7Open book and input command content'
+  fadein: 10
+  stay: 40
+  fadeout: 10
+
+armor-stand-editor-name: 'ArmorStand Angles'
+armor-stand-editor-1:
+  ==: TITLE
+  title: '§3§lArmorStand Angel'
+  subtitle: '§7Select Angle: §8{0}'
+  fadein: 0
+  stay: 40
+  fadeout: 0
+armor-stand-editor-2:
+  ==: ACTION
+  text: '§7Press §fSHIFT + LEFT-CLICK §7to increment §8| §7Press §fSHIFT + RIGHT-CLICK §7to decrement'

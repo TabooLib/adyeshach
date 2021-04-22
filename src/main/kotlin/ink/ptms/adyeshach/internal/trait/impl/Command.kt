@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.Inputs
 import ink.ptms.adyeshach.internal.trait.Trait
+import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Commands
 import org.bukkit.Bukkit
@@ -19,14 +20,14 @@ class Command : Trait(), Listener {
     }
 
     override fun edit(player: Player, entityInstance: EntityInstance) {
-        TLocale.Display.sendTitle(player, "§3§lCommand Traits", "§7Open book and input command content", 10, 40, 10)
+        player.sendLocale("trait-command-title")
         Inputs.bookIn(player) {
             if (it.all { line -> line.isBlank() }) {
                 data.set(entityInstance.uniqueId, null)
             } else {
                 data.set(entityInstance.uniqueId, it)
             }
-            player.sendMessage("§c[Adyeshach] §7Trait Edited.")
+            player.sendLocale("trait-command-finish")
         }
     }
 

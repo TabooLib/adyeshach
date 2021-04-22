@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.Trait
 import io.izzel.taboolib.internal.xseries.XMaterial
+import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.hologram.THologram
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.item.ItemBuilder
@@ -92,8 +93,7 @@ class Patrol : Trait(), Listener {
                                 .play()
                         }
                     }
-                    TLocale.Display.sendTitle(player, "", "§7Path Nodes: §8${nodes.size}", 0, 60, 0)
-                    TLocale.Display.sendActionBar(player, "§7Press §fF §7to save entity's path node §8| §7Press §fSHIFT + F §7to reset")
+                    player.sendLocale("trait-patrol", nodes.size)
                 }
             }
         }
