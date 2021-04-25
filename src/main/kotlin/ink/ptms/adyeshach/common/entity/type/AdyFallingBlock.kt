@@ -37,7 +37,7 @@ class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
                     MenuBuilder.builder(Adyeshach.plugin)
                             .title("Adyeshach Editor : Input")
                             .rows(1)
-                            .items("#####@#####")
+                            .items("####@####")
                             .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
                             .put('@', ItemStack(material, 1, data.toShort()))
                             .event {

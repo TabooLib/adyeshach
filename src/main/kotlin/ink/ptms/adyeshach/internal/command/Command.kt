@@ -8,7 +8,9 @@ import ink.ptms.adyeshach.common.editor.move.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.KnownTraits
+import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Coerce
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -23,17 +25,17 @@ import org.bukkit.entity.Player
 @BaseCommand(name = "adyeshach", aliases = ["anpc", "npc"], permission = "adyeshach.command")
 class Command : BaseMainCommand(), Helper {
 
-    @SubCommand(description = "create adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-create", type = CommandType.PLAYER)
     val create = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id"), Argument("type") { EntityTypes.values().map { it.name } })
+            return arrayOf(Argument("@command-argument-id"), Argument("@command-argument-type") { EntityTypes.values().map { it.name } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].toUpperCase()).orNull()
             if (entityType == null) {
-                sender.error("Entity &f\"${args[1]}\" &7not supported.")
+                sender.sendLocale("command-main-entity-not-support", args[1])
                 return
             }
             val entity = try {
@@ -44,36 +46,36 @@ class Command : BaseMainCommand(), Helper {
                 return
             }
             entity.id = args[0]
-            sender.info("Adyeshach NPC has been created.")
+            sender.sendLocale("@command-main-entity-create")
             Editor.open(sender, entity)
         }
     }
 
-    @SubCommand(description = "remove adyeshach npc.", type = CommandType.ALL, aliases = ["remove"])
+    @SubCommand(description = "@command-main-delete", type = CommandType.ALL, aliases = ["remove"])
     val delete = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
             entity.forEach {
                 it.delete()
             }
-            sender.info("Adyeshach NPC has been removed.")
+            sender.sendLocale("command-main-entity-delete")
         }
     }
 
-    @SubCommand(description = "modify adyeshach npc.", type = CommandType.PLAYER, aliases = ["edit"])
+    @SubCommand(description = "@command-main-modify", type = CommandType.PLAYER, aliases = ["edit"])
     val modify = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
@@ -83,69 +85,68 @@ class Command : BaseMainCommand(), Helper {
                 AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             }
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            sender.info("Editing...")
             Editor.open(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
         }
     }
 
-    @SubCommand(description = "copy adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-copy", type = CommandType.PLAYER)
     val copy = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("newId"))
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("newId"))
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            sender.info("Coping...")
+            sender.sendLocale("command-main-success")
             entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!.clone(args[1], (sender as Player).location)
         }
     }
 
-    @SubCommand(description = "pickup and move adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-move", type = CommandType.PLAYER)
     val move = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
             val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
             if (entityFirst.getController().isNotEmpty()) {
-                sender.error("Please unregister the Adyeshach NPC controller first.")
+                sender.sendLocale("command-main-move-cancel")
                 return
             }
-            sender.info("Picking up...")
+            sender.sendLocale("command-main-success")
             Picker.select(sender as Player, entityFirst)
         }
     }
 
-    @SubCommand(description = "move adyeshach npc.", type = CommandType.PLAYER, aliases = ["tphere"])
+    @SubCommand(description = "@command-main-movehere", type = CommandType.PLAYER, aliases = ["tphere"])
     val movehere = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            sender.info("Moving...")
+            sender.sendLocale("command-main-success")
             entity.forEach {
                 it.teleport((sender as Player).location)
                 Tasks.delay(20) {
@@ -155,50 +156,50 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "make adyeshach npc look at your eye location.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-lookhere", type = CommandType.PLAYER)
     val lookhere = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            sender.info("Looking...")
+            sender.sendLocale("command-main-success")
             entity.forEach {
                 it.controllerLook((sender as Player).eyeLocation)
             }
         }
     }
 
-    @SubCommand(description = "teleport to adyeshach npc.", type = CommandType.PLAYER, aliases = ["tp"])
+    @SubCommand(description = "@command-main-teleport", type = CommandType.PLAYER, aliases = ["tp"])
     val teleport = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            sender.info("Teleport...")
+            sender.sendLocale("command-main-success")
             (sender as Player).teleport(entity.minBy { it.position.toLocation().toDistance(sender.location) }!!.position.toLocation())
         }
     }
 
-    @SubCommand(description = "modify passenger of adyeshach npc.")
+    @SubCommand(description = "@command-main-passenger")
     val passenger = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
                 Argument("method") { listOf("add", "remove", "reset") },
                 Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
             )
@@ -207,7 +208,7 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
             val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
@@ -215,120 +216,120 @@ class Command : BaseMainCommand(), Helper {
                 "add" -> {
                     val target = AdyeshachAPI.getEntityManagerPublic().getEntityById(args.getOrNull(2).toString())
                     if (target.isEmpty()) {
-                        sender.error("Adyeshach NPC not found.")
+                        sender.sendLocale("command-main-entity-not-found")
                         return
                     }
                     val entityTarget = target.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
                     if (entityFirst == entityTarget) {
-                        sender.error("Please choose different Adyeshach NPC.")
+                        sender.sendLocale("command-main-passenger-cancel")
                         return
                     }
                     entityFirst.addPassenger(entityTarget)
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 "remove" -> {
                     entityFirst.removePassenger(args.getOrNull(2).toString())
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 "reset" -> {
                     entityFirst.clearPassengers()
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 else -> {
-                    sender.error("Unknown passenger method ${args[1]} (add,remove,reset)")
+                    sender.sendLocale("command-main-passenger-method-error", args[1])
                 }
             }
         }
     }
 
-    @SubCommand(description = "modify controller of adyeshach npc.")
+    @SubCommand(description = "@command-main-controller")
     val controller = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                Argument("method") { listOf("add", "remove", "reset") },
-                Argument("name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
+                Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("@command-argument-method") { listOf("add", "remove", "reset") },
+                Argument("@command-argument-name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
             )
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
             when (args[1]) {
                 "add" -> {
                     val controller = Adyeshach.scriptHandler.getKnownController(args[2])
                     if (controller == null) {
-                        sender.error("Unknown controller ${args[2]}")
+                        sender.sendLocale("command-main-controller-not-found", args[2])
                         return
                     }
                     entity.forEach {
                         it.registerController(controller.get(it))
                     }
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 "remove" -> {
                     val controller = Adyeshach.scriptHandler.getKnownController(args[2])
                     if (controller == null) {
-                        sender.error("Unknown controller ${args[2]}")
+                        sender.sendLocale("command-main-controller-not-found", args[2])
                         return
                     }
                     entity.forEach {
                         it.unregisterController(controller.controllerClass)
                     }
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 "reset" -> {
                     entity.forEach {
                         it.resetController()
                     }
-                    sender.info("Changed.")
+                    sender.sendLocale("command-main-success")
                 }
                 else -> {
-                    sender.error("Unknown controller method ${args[1]} (add,remove,reset)")
+                    sender.sendLocale("command-main-controller-method-error", args[1])
                 }
             }
         }
     }
 
-    @SubCommand(description = "modify trait of adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-trait", type = CommandType.PLAYER)
     var trait: BaseSubCommand = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                Argument("id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                Argument("trait") { KnownTraits.traits.map { it.getName() } }
+                Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("@command-argument-trait") { KnownTraits.traits.map { it.getName() } }
             )
         }
 
         override fun onCommand(sender: CommandSender, command: Command, s: String, args: Array<String>) {
             val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
             if (entity.isEmpty()) {
-                sender.error("Adyeshach NPC not found.")
+                sender.sendLocale("command-main-entity-not-found")
                 return
             }
             val trait = KnownTraits.traits.firstOrNull { it.getName().equals(args[1], true) }
             if (trait == null) {
-                sender.error("Trait not found.")
+                sender.sendLocale("command-main-trait-not-found", args[1])
                 return
             }
             trait.edit(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
         }
     }
 
-    @SubCommand(description = "nearby adyeshach npc.", type = CommandType.PLAYER)
+    @SubCommand(description = "@command-main-near", type = CommandType.PLAYER)
     val near = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            sender.info("Nearby:")
+            sender.sendLocale("command-main-near-header")
             mapOf(
-                "Public" to AdyeshachAPI.getEntityManagerPublic(),
-                "Public Temporary" to AdyeshachAPI.getEntityManagerPublicTemporary(),
-                "Private" to AdyeshachAPI.getEntityManagerPrivate(sender as Player),
-                "Private Temporary" to AdyeshachAPI.getEntityManagerPrivateTemporary(sender),
+                TLocale.asString("command-main-near-1") to AdyeshachAPI.getEntityManagerPublic(),
+                TLocale.asString("command-main-near-2") to AdyeshachAPI.getEntityManagerPublicTemporary(),
+                TLocale.asString("command-main-near-3") to AdyeshachAPI.getEntityManagerPrivate(sender as Player),
+                TLocale.asString("command-main-near-4") to AdyeshachAPI.getEntityManagerPrivateTemporary(sender),
             ).forEach { (k, v) ->
                 v.getEntities().mapNotNull {
                     if (it.getWorld().name == sender.world.name && it.getLocation().distance(sender.location) < 64) {
@@ -350,7 +351,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "load adyeshach npc.")
+    @SubCommand(description = "@command-main-load")
     val load = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
@@ -359,12 +360,12 @@ class Command : BaseMainCommand(), Helper {
                     AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
                 }
                 AdyeshachAPI.getEntityManagerPublic().onEnable()
-                sender.info("Adyeshach NPC has been loaded.")
+                sender.sendMessage("command-main-success")
             }
         }
     }
 
-    @SubCommand(description = "save adyeshach npc.")
+    @SubCommand(description = "@command-main-save")
     val save = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
@@ -373,17 +374,17 @@ class Command : BaseMainCommand(), Helper {
                     AdyeshachAPI.getEntityManagerPrivate(it).onSave()
                 }
                 AdyeshachAPI.getEntityManagerPublic().onSave()
-                sender.info("Adyeshach NPC has been saved.")
+                sender.sendLocale("command-main-success")
             }
         }
     }
 
-    @SubCommand(description = "reload adyeshach settings.")
+    @SubCommand(description = "@command-main-reload")
     val reload = object : BaseSubCommand() {
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Adyeshach.reload()
-            sender.info("Adyeshach Settings has been reloaded.")
+            sender.sendLocale("command-main-success")
         }
     }
 

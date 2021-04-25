@@ -40,7 +40,7 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
                     MenuBuilder.builder(Adyeshach.plugin)
                             .title("Adyeshach Editor : Input")
                             .rows(1)
-                            .items("#####@#####")
+                            .items("####@####")
                             .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
                             .put('@', getCustomBlock().toItemStack(1))
                             .event {
