@@ -56,4 +56,15 @@ class ListenerEntity : Listener {
             it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
         }
     }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun e(e: AdyeshachNaturalMetaGenerateEvent) {
+        if (e.meta.key == "customName" && e.value is String) {
+            val nameLength = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
+            if ((e.value as String).length > nameLength) {
+                e.value = (e.value as String).substring(0, nameLength)
+                println("[Adyeshach] NPC ${e.entity.id} created with name length greater than $nameLength, truncating to ${(e.value as String).substring(0, nameLength)}")
+            }
+        }
+    }
 }
