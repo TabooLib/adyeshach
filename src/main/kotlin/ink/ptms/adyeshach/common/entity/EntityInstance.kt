@@ -644,6 +644,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 实体计算（async）
      */
     fun onTick() {
+        if (AdyeshachEntityTickEvent(this).call().isCancelled) {
+            return
+        }
         // 确保客户端显示实体正常
         if (viewPlayers.visibleLock.next()) {
             // 复活
