@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.common.entity.ai.Controller
 import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
 import org.bukkit.block.Block
+import org.bukkit.entity.FallingBlock
 
 /**
  * @Author sky
@@ -44,7 +45,9 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
         if (locEntity.y - by > p) {
             isOnGround = false
             entity.teleport(locEntity.clone().subtract(0.0, p, 0.0))
-            p += 0.1
+            if (entity !is FallingBlock) {
+                p += 0.1
+            }
         } else if (!isOnGround) {
             isOnGround = true
             entity.teleport(locEntity.clone().run {

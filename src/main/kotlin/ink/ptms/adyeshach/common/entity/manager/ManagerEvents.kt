@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.util.Tasks
-import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.inject.TSchedule
@@ -42,38 +42,44 @@ private class ManagerEvents : Listener {
 
     @TSchedule(period = 1)
     fun onTickPublic() {
-        Mirror.get("ManagerPublic:onTick").check {
+        mirrorFuture("ManagerPublic:onTick") {
             AdyeshachAPI.getEntityManagerPublic().onTick()
+            finish()
         }
-        Mirror.get("ManagerPublic:onTick(temporary)").check {
+        mirrorFuture("ManagerPublic:onTick(temporary)") {
             AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
+            finish()
         }
     }
 
     @TSchedule(period = 1)
     fun onTickPrivate() {
         Bukkit.getOnlinePlayers().forEach { player ->
-            Mirror.get("ManagerPrivate:onTick").check {
+            mirrorFuture("ManagerPrivate:onTick") {
                 AdyeshachAPI.getEntityManagerPrivate(player).onTick()
+                finish()
             }
-            Mirror.get("ManagerPrivate:onTick(temporary)").check {
+            mirrorFuture("ManagerPrivate:onTick(temporary)") {
                 AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
+                finish()
             }
         }
     }
 
     @TSchedule(period = 1200, async = true)
     fun onSavePublic() {
-        Mirror.get("ManagerPublic:onSave(async)").check {
+        mirrorFuture("ManagerPublic:onSave(async)") {
             AdyeshachAPI.getEntityManagerPublic().onSave()
+            finish()
         }
     }
 
     @TSchedule(period = 600, async = true)
     fun onSavePrivate() {
         Bukkit.getOnlinePlayers().forEach {
-            Mirror.get("ManagerPrivate:onSave(async)").check {
+            mirrorFuture("ManagerPrivate:onSave(async)") {
                 AdyeshachAPI.getEntityManagerPrivate(it).onSave()
+                finish()
             }
         }
     }
@@ -104,8 +110,9 @@ private class ManagerEvents : Listener {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }
-        Mirror.get("ManagerPrivate:onSave(async)").check {
+        mirrorFuture("ManagerPrivate:onSave(async)") {
             AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
+            finish()
         }
     }
 
@@ -116,8 +123,9 @@ private class ManagerEvents : Listener {
         AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
             it.viewPlayers.viewers.add(player.name)
         }
-        Mirror.get("ManagerPrivate:onLoad(async)").check {
+        mirrorFuture("ManagerPrivate:onLoad(async)") {
             AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
+            finish()
         }
     }
 }

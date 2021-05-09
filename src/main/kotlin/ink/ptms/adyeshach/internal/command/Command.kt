@@ -6,17 +6,25 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.move.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.script.KnownController
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.KnownTraits
 import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.locale.TLocale
+import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.Coerce
+import io.izzel.taboolib.util.item.ItemBuilder
+import io.izzel.taboolib.util.item.Items
+import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import org.bukkit.Bukkit
-import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import java.util.*
 
 /**
  * @Author sky
@@ -55,18 +63,20 @@ class Command : BaseMainCommand(), Helper {
     val delete = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            entity.forEach {
-                it.delete()
-            }
+            entity.delete()
             sender.sendLocale("command-main-entity-delete")
         }
     }
@@ -80,15 +90,15 @@ class Command : BaseMainCommand(), Helper {
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             val entity = if (args.isEmpty()) {
-                AdyeshachAPI.getEntityManagerPublic().getEntities()
+                AdyeshachAPI.getEntityNearly(sender as Player)
             } else {
-                AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
             }
-            if (entity.isEmpty()) {
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            Editor.open(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
+            Editor.open(sender, entity)
         }
     }
 
@@ -96,17 +106,21 @@ class Command : BaseMainCommand(), Helper {
     val copy = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("newId"))
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }, Argument("newId"))
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
             sender.sendLocale("command-main-success")
-            entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!.clone(args[1], (sender as Player).location)
+            entity.clone(args[1], sender.location)
         }
     }
 
@@ -114,22 +128,25 @@ class Command : BaseMainCommand(), Helper {
     val move = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
-            if (entityFirst.getController().isNotEmpty()) {
+            if (entity.getController().isNotEmpty()) {
                 sender.sendLocale("command-main-move-cancel")
                 return
             }
             sender.sendLocale("command-main-success")
-            Picker.select(sender as Player, entityFirst)
+            Picker.select(sender, entity)
         }
     }
 
@@ -137,21 +154,23 @@ class Command : BaseMainCommand(), Helper {
     val movehere = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
             sender.sendLocale("command-main-success")
-            entity.forEach {
-                it.teleport((sender as Player).location)
-                Tasks.delay(20) {
-                    it.setHeadRotation(sender.location.yaw, sender.location.pitch)
-                }
+            entity.teleport(sender.location)
+            Tasks.delay(20) {
+                entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
             }
         }
     }
@@ -160,19 +179,21 @@ class Command : BaseMainCommand(), Helper {
     val lookhere = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
             sender.sendLocale("command-main-success")
-            entity.forEach {
-                it.controllerLook((sender as Player).eyeLocation)
-            }
+            entity.controllerLook(sender.eyeLocation)
         }
     }
 
@@ -180,17 +201,21 @@ class Command : BaseMainCommand(), Helper {
     val teleport = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
+            return arrayOf(Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } })
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = if (args.isEmpty()) {
+                AdyeshachAPI.getEntityNearly(sender as Player)
+            } else {
+                AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            }
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
             sender.sendLocale("command-main-success")
-            (sender as Player).teleport(entity.minBy { it.position.toLocation().toDistance(sender.location) }!!.position.toLocation())
+            sender.teleport(entity.getLocation())
         }
     }
 
@@ -200,39 +225,37 @@ class Command : BaseMainCommand(), Helper {
         override fun getArguments(): Array<Argument> {
             return arrayOf(
                 Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                Argument("method") { listOf("add", "remove", "reset") },
-                Argument("id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
+                Argument("@command-argument-method") { listOf("add", "remove", "reset") },
+                Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } }
             )
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
-            val entityFirst = entity.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
             when (args[1]) {
                 "add" -> {
-                    val target = AdyeshachAPI.getEntityManagerPublic().getEntityById(args.getOrNull(2).toString())
-                    if (target.isEmpty()) {
+                    val target = AdyeshachAPI.getEntityFromUniqueIdOrId(args.getOrNull(2).toString())
+                    if (target == null || target.manager != entity.manager) {
                         sender.sendLocale("command-main-entity-not-found")
                         return
                     }
-                    val entityTarget = target.minBy { it.position.toLocation().toDistance((sender as Player).location) }!!
-                    if (entityFirst == entityTarget) {
+                    if (entity == target) {
                         sender.sendLocale("command-main-passenger-cancel")
                         return
                     }
-                    entityFirst.addPassenger(entityTarget)
+                    entity.addPassenger(target)
                     sender.sendLocale("command-main-success")
                 }
                 "remove" -> {
-                    entityFirst.removePassenger(args.getOrNull(2).toString())
+                    entity.removePassenger(args.getOrNull(2).toString())
                     sender.sendLocale("command-main-success")
                 }
                 "reset" -> {
-                    entityFirst.clearPassengers()
+                    entity.clearPassengers()
                     sender.sendLocale("command-main-success")
                 }
                 else -> {
@@ -247,49 +270,88 @@ class Command : BaseMainCommand(), Helper {
 
         override fun getArguments(): Array<Argument> {
             return arrayOf(
-                Argument("@command-argument-id") { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
-                Argument("@command-argument-method") { listOf("add", "remove", "reset") },
+                Argument("@command-argument-id", false) { AdyeshachAPI.getEntityManagerPublic().getEntities().map { it.id } },
+                Argument("@command-argument-method", false) { listOf("add", "remove", "reset") },
                 Argument("@command-argument-name", false) { Adyeshach.scriptHandler.knownControllers.keys().toList() }
             )
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
-                sender.sendLocale("command-main-entity-not-found")
-                return
-            }
-            when (args[1]) {
-                "add" -> {
-                    val controller = Adyeshach.scriptHandler.getKnownController(args[2])
-                    if (controller == null) {
-                        sender.sendLocale("command-main-controller-not-found", args[2])
-                        return
-                    }
-                    entity.forEach {
-                        it.registerController(controller.get(it))
-                    }
-                    sender.sendLocale("command-main-success")
+            if (args.size < 2) {
+                val entity = if (args.isEmpty()) {
+                    AdyeshachAPI.getEntityNearly(sender as Player)
+                } else {
+                    AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
                 }
-                "remove" -> {
-                    val controller = Adyeshach.scriptHandler.getKnownController(args[2])
-                    if (controller == null) {
-                        sender.sendLocale("command-main-controller-not-found", args[2])
-                        return
-                    }
-                    entity.forEach {
-                        it.unregisterController(controller.controllerClass)
-                    }
-                    sender.sendLocale("command-main-success")
+                if (entity == null) {
+                    sender.sendLocale("command-main-entity-not-found")
+                    return
                 }
-                "reset" -> {
-                    entity.forEach {
-                        it.resetController()
-                    }
-                    sender.sendLocale("command-main-success")
+                val slots = HashMap<Int, String>()
+                fun build(id: String, controller: KnownController): ItemStack {
+                    val en = entity.getController(controller.controllerClass) != null
+                    return ItemBuilder(Material.PAPER)
+                        .name("&7$id ${if (en) "&a&lENABLE" else "&c&lDISABLE"}")
+                        .lore("&8CLICK TO SELECT")
+                        .also {
+                            if (en) {
+                                it.shiny()
+                            }
+                        }.colored().build()
                 }
-                else -> {
-                    sender.sendLocale("command-main-controller-method-error", args[1])
+                MenuBuilder.builder(Adyeshach.plugin)
+                    .title("Controllers")
+                    .rows(6)
+                    .build { inv ->
+                        AdyeshachAPI.getKnownController().keys.forEachIndexed { index, id ->
+                            slots[Items.INVENTORY_CENTER[index]] = id
+                            inv.setItem(Items.INVENTORY_CENTER[index], build(id, AdyeshachAPI.getKnownController(id)!!))
+                        }
+                    }.click {
+                        if (slots.containsKey(it.rawSlot)) {
+                            val controller = AdyeshachAPI.getKnownController(slots[it.rawSlot]!!)!!
+                            if (entity.getController(controller.controllerClass) == null) {
+                                entity.registerController(controller.get(entity))
+                                it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
+                            } else {
+                                entity.unregisterController(controller.controllerClass)
+                                it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
+                            }
+                            sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                        }
+                    }.open(sender)
+            } else {
+                val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+                if (entity == null) {
+                    sender.sendLocale("command-main-entity-not-found")
+                    return
+                }
+                when (args[1]) {
+                    "add" -> {
+                        val controller = Adyeshach.scriptHandler.getKnownController(args[2])
+                        if (controller == null) {
+                            sender.sendLocale("command-main-controller-not-found", args[2])
+                            return
+                        }
+                        entity.registerController(controller.get(entity))
+                        sender.sendLocale("command-main-success")
+                    }
+                    "remove" -> {
+                        val controller = Adyeshach.scriptHandler.getKnownController(args[2])
+                        if (controller == null) {
+                            sender.sendLocale("command-main-controller-not-found", args[2])
+                            return
+                        }
+                        entity.unregisterController(controller.controllerClass)
+                        sender.sendLocale("command-main-success")
+                    }
+                    "reset" -> {
+                        entity.resetController()
+                        sender.sendLocale("command-main-success")
+                    }
+                    else -> {
+                        sender.sendLocale("command-main-controller-method-error", args[1])
+                    }
                 }
             }
         }
@@ -306,8 +368,8 @@ class Command : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, command: Command, s: String, args: Array<String>) {
-            val entity = AdyeshachAPI.getEntityManagerPublic().getEntityById(args[0])
-            if (entity.isEmpty()) {
+            val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender as Player)
+            if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
                 return
             }
@@ -316,7 +378,7 @@ class Command : BaseMainCommand(), Helper {
                 sender.sendLocale("command-main-trait-not-found", args[1])
                 return
             }
-            trait.edit(sender as Player, entity.minBy { it.position.toLocation().toDistance(sender.location) }!!)
+            trait.edit(sender, entity)
         }
     }
 
@@ -343,7 +405,11 @@ class Command : BaseMainCommand(), Helper {
                     if (result.isNotEmpty()) {
                         sender.info("  &f$k:")
                         result.forEach {
-                            sender.info("  &8- &7${it.first.id} &a(${Coerce.format(it.second)}m)")
+                            TellrawJson.create()
+                                .append("  &8- &a${Coerce.format(it.second)}m &7${it.first.id} &8(${it.first.getDisplayName()}&8)")
+                                .hoverText("CLICK TO TELEPORT")
+                                .clickCommand("/anpc tp ${it.first.uniqueId}")
+                                .send(sender)
                         }
                     }
                 }
@@ -357,8 +423,10 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Tasks.task(true) {
                 Bukkit.getOnlinePlayers().forEach {
+                    AdyeshachAPI.getEntityManagerPrivate(it).onDisable()
                     AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
                 }
+                AdyeshachAPI.getEntityManagerPublic().onDisable()
                 AdyeshachAPI.getEntityManagerPublic().onEnable()
                 sender.sendMessage("command-main-success")
             }
@@ -385,14 +453,6 @@ class Command : BaseMainCommand(), Helper {
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<String>) {
             Adyeshach.reload()
             sender.sendLocale("command-main-success")
-        }
-    }
-
-    fun Location.toDistance(loc: Location): Double {
-        return if (this.world!!.name == loc.world!!.name) {
-            this.distance(loc)
-        } else {
-            Double.MAX_VALUE
         }
     }
 }

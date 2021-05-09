@@ -20,6 +20,7 @@ import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
 import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
+import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.internal.gson.JsonParser
@@ -32,7 +33,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
-import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import kotlin.reflect.KClass
 
@@ -634,11 +634,42 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getMetadata("pose")
     }
 
+    /**
+     * 单位是否在尝试移动（等待寻路的过程）
+     */
+    fun isTryMoving() = hasTag("tryMoving")
+
+    /**
+     * 单位是否在移动状态
+     */
     fun isControllerMoving() = hasTag("isMoving")
 
+    /**
+     * 单位是否在跳跃状态
+     */
     fun isControllerJumping() = hasTag("isJumping")
 
-    fun isTryMoving() = hasTag("tryMoving")
+    /**
+     * 单位是否在地表（依赖 Gravity 控制器）
+     */
+    fun isControllerOnGround() = getController(GeneralGravity::class)?.isOnGround ?: error("no gravity")
+
+    /**
+     * 获取单位展示名称（没有 customName 则获取 EntityType 名称）
+     */
+    fun getDisplayName(): String {
+        return when {
+            this is AdyHuman -> {
+                getName()
+            }
+            getCustomName().isEmpty() -> {
+                entityType.name.toLowerCase().toDisplay()
+            }
+            else -> {
+                getCustomName()
+            }
+        }
+    }
 
     /**
      * 实体计算（async）

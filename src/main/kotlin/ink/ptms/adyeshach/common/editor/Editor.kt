@@ -193,7 +193,12 @@ object Editor {
             .append("      Tags §7${entity.getTags().size} ").append("§c(?)")
                 .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
             .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)")
-                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
+                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name })
+                .append(" ")
+                .append("§a(+)")
+                .hoverText("§7CLICK TO EDIT")
+                .clickCommand("/adyeshach controller ${entity.uniqueId}")
+                .newLine()
             .newLine().append("      ")
         var i = 0
         entity.forEachMeta { meta, hide ->

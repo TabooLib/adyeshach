@@ -32,7 +32,7 @@ class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
     private var counter = SimpleCounter(2)
 
     override fun shouldExecute(): Boolean {
-        return isLooking
+        return isLooking && !entity!!.isControllerMoving()
     }
 
     override fun onTick() {

@@ -1,0 +1,72 @@
+not-support: '§4[Adyeshach] §c抱歉, Adyeshach 不支持您的服务端版本!'
+
+trait-sit-manager-not-set: '§c[Adyeshach] §7单位管理器未被初始化.'
+trait-sit-remove: '§c[Adyeshach] §7生物已站立.'
+trait-sit-create: '§c[Adyeshach] §7生物已坐下.'
+
+trait-patrol:
+  - ==: TITLE
+    subtitle: '§7路径节点: §8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+  - ==: ACTION
+    text: '§7按下 §fF §7键保存该 NPC 的路径节点 §8| §7按下 §fSHIFT + F §7重置.'
+
+trait-command-finish: '§c[Adyeshach] §7特性编辑.'
+trait-command:
+  ==: TITLE
+  title: '§3§l特性 : 指令'
+  subtitle: '§7打开书并输入指令内容'
+  fadein: 10
+  stay: 40
+  fadeout: 10
+
+armor-stand-editor-name: '盔甲架角度'
+armor-stand-editor-1:
+  ==: TITLE
+  title: '§3§l盔甲架角度'
+  subtitle: '§7选中的部位角度: §8{0}'
+  fadein: 0
+  stay: 40
+  fadeout: 0
+armor-stand-editor-2:
+  ==: ACTION
+  text: '§7按下 §fSHIFT + LEFT-CLICK §7增加角度 §8| §7按下 §fSHIFT + RIGHT-CLICK §7减少角度'
+
+command-main-create: '创建单位.'
+command-main-entity-not-support: '&c[Adyeshach] &7抱歉, 插件不支持 &f"{0}" 类型.'
+command-main-entity-create: '&c[Adyeshach] &7已创建该单位.'
+command-main-delete: '移除单位.'
+command-main-entity-not-found: '&c[Adyeshach] &7该单位不存在.'
+command-main-entity-delete: '&c[Adyeshach] &7已删除该单位.'
+command-main-modify: '修改单位.'
+command-main-copy: '复制单位.'
+command-main-success: '&c[Adyeshach] &7成功.'
+command-main-move: '移动单位.'
+command-main-move-cancel: '&c[Adyeshach] &7请先移除所有单位控制器.'
+command-main-movehere: '移动单位到你的位置.'
+command-main-lookhere: '使单位看向你.'
+command-main-teleport: '传送到单位附近.'
+command-main-passenger: '修改单位的骑乘单位.'
+command-main-passenger-cancel: '&c[Adyeshach] &7请选择不同的单位. '
+command-main-passenger-method-error: '&c[Adyeshach] &7未知的方法 {0} (add,remove,reset)'
+command-main-controller: '修改单位的控制器.'
+command-main-controller-not-found: '&c[Adyeshach] &7未知的控制器 {0}'
+command-main-controller-method-error: '&c[Adyeshach] &7未知的方法 {0} (add,remove,reset)'
+command-main-trait: '修改单位的特性.'
+command-main-trait-not-found: '&c[Adyeshach] &7未知的特性 {0}'
+command-main-near: '查看附近的单位.'
+command-main-near-header: '&c[Adyeshach] &7附近的单位:'
+command-main-near-1: '公共的'
+command-main-near-2: '公共的 (临时单位)'
+command-main-near-3: '私有的'
+command-main-near-4: '私有的 (临时单位)'
+command-main-load: '加载单位.'
+command-main-save: '保存单位.'
+command-main-reload: '重载设置.'
+command-argument-id: '序号'
+command-argument-type: '类型'
+command-argument-method: '方法'
+command-argument-name: '名称'
+command-argument-trait: '特性'

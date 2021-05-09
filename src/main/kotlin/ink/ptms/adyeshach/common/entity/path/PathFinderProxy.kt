@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.common.entity.path
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.util.Tasks
-import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.kotlin.navigation.Navigation
 import io.izzel.taboolib.kotlin.navigation.pathfinder.NodeEntity
@@ -53,23 +53,29 @@ object PathFinderProxy {
             Settings.Pathfinder.NATIVE -> {
                 Tasks.task(!Settings.get().pathfinderSync) {
                     if (request == Request.NAVIGATION) {
-                        val time = System.currentTimeMillis()
-                        val pathFinder = Navigation.create(NodeEntity(start, pathType.height, pathType.width))
-                        val path = pathFinder.findPath(target, distance = 32f)
-                        if (Settings.get().debug) {
-                            path?.nodes?.forEach { it.display(target.world) }
-                        }
-                        call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
-                    } else {
-                        val time = System.currentTimeMillis()
-                        var vec: Vector? = null
-                        repeat(10) {
-                            if (vec == null) {
-                                vec = Navigation.randomPositionGenerator().generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
+                        mirrorFuture("PathFinderProxy:Native:Navigation") {
+                            val time = System.currentTimeMillis()
+                            val pathFinder = Navigation.create(NodeEntity(start, pathType.height, pathType.width))
+                            val path = pathFinder.findPath(target, distance = 32f)
+                            finish()
+                            if (Settings.get().debug) {
+                                path?.nodes?.forEach { it.display(target.world) }
                             }
+                            call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
                         }
-                        if (vec != null) {
-                            call(ResultRandomPosition(vec, startTime, time))
+                    } else {
+                        mirrorFuture("PathFinderProxy:Native:RandomPosition") {
+                            val time = System.currentTimeMillis()
+                            var vec: Vector? = null
+                            repeat(10) {
+                                if (vec == null) {
+                                    vec = Navigation.randomPositionGenerator().generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
+                                }
+                            }
+                            finish()
+                            if (vec != null) {
+                                call(ResultRandomPosition(vec, startTime, time))
+                            }
                         }
                     }
                 }
@@ -107,9 +113,10 @@ object PathFinderProxy {
             if (request.isEmpty()) {
                 return@forEach
             }
-            Mirror.check("PathFinderProxy:onSchedule:${world.name}") {
+            mirrorFuture("PathFinderProxy:onSchedule:${world.name}") {
                 val entity = spawnPathfinderProxyEntity(request[0].start, request[0].pathType)
                 entities[entity.uniqueId] = entity
+                finish()
                 Tasks.delay(2) {
                     request.forEach {
                         val time = System.currentTimeMillis()

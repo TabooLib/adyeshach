@@ -29,33 +29,35 @@ class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
 
     init {
         registerEditor("block")
-                .reset { entity, meta ->
-                    material = Material.STONE
-                    data = 0.toByte()
-                }
-                .modify { player, entity, meta ->
-                    MenuBuilder.builder(Adyeshach.plugin)
-                            .title("Adyeshach Editor : Input")
-                            .rows(1)
-                            .items("####@####")
-                            .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
-                            .put('@', ItemStack(material, 1, data.toShort()))
-                            .event {
-                                if (it.slot == '#') {
-                                    it.isCancelled = true
-                                }
-                            }.close {
-                                val item = it.inventory.getItem(4)
-                                if (Items.nonNull(item)) {
-                                    material = item!!.type
-                                    data = item.durability.toByte()
-                                }
-                                Editor.open(player, entity)
-                            }.open(player)
-                }
-                .display { player, entity, meta ->
-                    I18n.get().getName(player, ItemStack(material, 1, data.toShort()))
-                }
+            .reset { _, _ ->
+                material = Material.STONE
+                data = 0.toByte()
+            }
+            .modify { player, entity, meta ->
+                MenuBuilder.builder(Adyeshach.plugin)
+                    .title("Adyeshach Editor : Input")
+                    .rows(1)
+                    .items("####@####")
+                    .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
+                    .put('@', ItemStack(material, 1, data.toShort()))
+                    .event {
+                        if (it.slot == '#') {
+                            it.isCancelled = true
+                        }
+                    }.close {
+                        val item = it.inventory.getItem(4)
+                        if (Items.nonNull(item)) {
+                            material = item!!.type
+                            data = item.durability.toByte()
+                        }
+                        destroy()
+                        spawn(getLocation())
+                        Editor.open(player, entity)
+                    }.open(player)
+            }
+            .display { player, _, _ ->
+                I18n.get().getName(player, ItemStack(material, 1, data.toShort()))
+            }
     }
 
     override fun visible(viewer: Player, visible: Boolean) {

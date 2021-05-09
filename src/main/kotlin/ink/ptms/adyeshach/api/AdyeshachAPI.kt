@@ -12,9 +12,12 @@ import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
 import ink.ptms.adyeshach.internal.database.DatabaseMongodb
 import io.izzel.taboolib.internal.gson.JsonParser
+import io.izzel.taboolib.kotlin.Mirror
+import io.izzel.taboolib.kotlin.MirrorData
 import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.module.inject.PlayerContainer
 import io.izzel.taboolib.util.Files
+import org.bukkit.Location
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
 import java.io.File
@@ -24,8 +27,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 object AdyeshachAPI {
 
+    val mirror = Mirror()
+
     @PlayerContainer
     val onlinePlayers = CopyOnWriteArrayList<String>()
+
     @PlayerContainer
     private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
     private val managerPrivateTemp = ConcurrentHashMap<String, ManagerPrivateTemp>()
@@ -89,55 +95,35 @@ object AdyeshachAPI {
         return Serializer.gson.fromJson(source, entityType.entityBase)
     }
 
+    fun getEntityNearly(player: Player): EntityInstance? {
+        return getEntity(player) { true }
+    }
+
     fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance? {
-        var entity: EntityInstance? = null
-        if (entity == null) {
-            entity = getEntityManagerPublic().getEntities().firstOrNull { it.index == id }
-        }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.index == id }
-        }
-        if (entity == null) {
-            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.index == id }
-        }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.index == id }
-        }
-        return entity
+        return getEntity(player) { it.index == id }
     }
 
     fun getEntityFromId(id: String, player: Player? = null): EntityInstance? {
-        var entity: EntityInstance? = null
-        if (entity == null) {
-            entity = getEntityManagerPublic().getEntities().firstOrNull { it.id == id }
-        }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.id == id }
-        }
-        if (entity == null) {
-            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.id == id }
-        }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.id == id }
-        }
-        return entity
+        return getEntity(player) { it.id == id }
     }
 
     fun getEntityFromUniqueId(id: String, player: Player? = null): EntityInstance? {
-        var entity: EntityInstance? = null
-        if (entity == null) {
-            entity = getEntityManagerPublic().getEntities().firstOrNull { it.uniqueId == id }
+        return getEntity(player) { it.uniqueId == id }
+    }
+
+    fun getEntityFromUniqueIdOrId(id: String, player: Player? = null): EntityInstance? {
+        return getEntity(player) { it.id == id || it.uniqueId == id }
+    }
+
+    fun getEntity(player: Player? = null, filter: (EntityInstance) -> Boolean): EntityInstance? {
+        val entity = ArrayList<EntityInstance>()
+        entity.addAll(getEntityManagerPublic().getEntities().filter { filter(it) })
+        entity.addAll(getEntityManagerPublicTemporary().getEntities().filter { filter(it) })
+        if (player != null) {
+            entity.addAll(getEntityManagerPrivate(player).getEntities().filter { filter(it) })
+            entity.addAll(getEntityManagerPrivateTemporary(player).getEntities().filter { filter(it) })
         }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivate(player).getEntities().firstOrNull { it.uniqueId == id }
-        }
-        if (entity == null) {
-            entity = getEntityManagerPublicTemporary().getEntities().firstOrNull { it.uniqueId == id }
-        }
-        if (entity == null && player != null) {
-            entity = getEntityManagerPrivateTemporary(player).getEntities().firstOrNull { it.uniqueId == id }
-        }
-        return entity
+        return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
     }
 
     fun registerKnownController(name: String, event: KnownController) {
@@ -150,5 +136,21 @@ object AdyeshachAPI {
 
     fun getKnownController(): Map<String, KnownController> {
         return ScriptHandler.knownControllers
+    }
+
+    fun Location.toDistance(loc: Location): Double {
+        return if (this.world!!.name == loc.world!!.name) {
+            this.distance(loc)
+        } else {
+            Double.MAX_VALUE
+        }
+    }
+
+    fun mirrorFuture(id: String, func: Mirror.MirrorFuture.() -> Unit) {
+        mirror.mirrorFuture(id, func)
+    }
+
+    fun mirrorFinish(id: String, time: Long) {
+        mirror.dataMap.computeIfAbsent(id) { MirrorData() }.finish(time)
     }
 }

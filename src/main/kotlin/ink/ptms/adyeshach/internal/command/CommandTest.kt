@@ -1,16 +1,12 @@
 package ink.ptms.adyeshach.internal.command
 
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.internal.migrate.Migrate
-import ink.ptms.adyeshach.internal.mirror.Mirror
 import io.izzel.taboolib.kotlin.Tasks
-import io.izzel.taboolib.kotlin.navigation.Navigation
-import io.izzel.taboolib.kotlin.navigation.pathfinder.NodeEntity
 import io.izzel.taboolib.module.command.base.*
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
-import java.time.LocalTime
 
 /**
  * @Author sky
@@ -34,19 +30,6 @@ class CommandTest : BaseMainCommand(), Helper {
                 }
             }
             sender.info("Done.")
-        }
-    }
-
-    @SubCommand(description = "test random position generator.", type = CommandType.PLAYER)
-    var randomStrollLand: BaseSubCommand = object : BaseSubCommand() {
-
-        override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, s: String, args: Array<String>) {
-            val generateLand = Navigation.randomPositionGenerator().generateLand(NodeEntity((sender as Player).location, 2.0, 1.0), 10, 7)
-            if (generateLand == null) {
-                sender.sendMessage("[Adyeshach] No Way ${LocalTime.now().second}")
-            } else {
-                sender.sendMessage("[Adyeshach] Found Way $generateLand")
-            }
         }
     }
 
@@ -77,9 +60,7 @@ class CommandTest : BaseMainCommand(), Helper {
             sender.info("Creating...")
             sender.info("---")
             Tasks.task(true) {
-                Mirror.collect().run {
-                    print(sender, getTotal(), 0)
-                }
+                AdyeshachAPI.mirror.collectAndReport(sender)
                 sender.info("---")
             }
         }

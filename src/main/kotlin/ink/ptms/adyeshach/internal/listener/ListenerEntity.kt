@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import org.bukkit.entity.Player
