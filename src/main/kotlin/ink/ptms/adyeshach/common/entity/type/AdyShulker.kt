@@ -12,7 +12,7 @@ import org.bukkit.DyeColor
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyShulker() : AdyMob(EntityTypes.SHULKER) {
+class AdyShulker : AdyMob(EntityTypes.SHULKER) {
 
     init {
         /*

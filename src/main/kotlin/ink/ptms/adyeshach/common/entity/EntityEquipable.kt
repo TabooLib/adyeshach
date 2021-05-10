@@ -35,5 +35,5 @@ interface EntityEquipable {
 
     fun getBoots(): ItemStack?
 
-    fun clear();
+    fun clear()
 }

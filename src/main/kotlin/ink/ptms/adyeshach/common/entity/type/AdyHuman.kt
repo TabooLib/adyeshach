@@ -24,7 +24,7 @@ import java.util.*
  * @Author sky
  * @Since 2020-08-04 15:44
  */
-class AdyHuman() : AdyEntityLiving(EntityTypes.PLAYER) {
+class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
     private val playerUUID = UUID.randomUUID()
 

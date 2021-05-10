@@ -116,6 +116,11 @@ object AdyeshachAPI {
     }
 
     fun getEntity(player: Player? = null, filter: (EntityInstance) -> Boolean): EntityInstance? {
+        val entity = getEntities(player, filter)
+        return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
+    }
+
+    fun getEntities(player: Player? = null, filter: (EntityInstance) -> Boolean): List<EntityInstance> {
         val entity = ArrayList<EntityInstance>()
         entity.addAll(getEntityManagerPublic().getEntities().filter { filter(it) })
         entity.addAll(getEntityManagerPublicTemporary().getEntities().filter { filter(it) })
@@ -123,7 +128,7 @@ object AdyeshachAPI {
             entity.addAll(getEntityManagerPrivate(player).getEntities().filter { filter(it) })
             entity.addAll(getEntityManagerPrivateTemporary(player).getEntities().filter { filter(it) })
         }
-        return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
+        return entity
     }
 
     fun registerKnownController(name: String, event: KnownController) {

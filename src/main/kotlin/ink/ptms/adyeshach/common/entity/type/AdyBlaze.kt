@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyBlaze() : AdyMob(EntityTypes.BLAZE) {
+class AdyBlaze : AdyMob(EntityTypes.BLAZE) {
 
     /**
      * 1.13,1.12 -> Index 12

@@ -8,7 +8,7 @@ import org.bukkit.material.MaterialData
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyEnderman() : AdyMob(EntityTypes.ENDERMAN) {
+class AdyEnderman : AdyMob(EntityTypes.ENDERMAN) {
 
 
     init {

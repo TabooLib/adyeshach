@@ -10,7 +10,7 @@ import org.bukkit.entity.Villager
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyZombieVillager() : AdyZombie(EntityTypes.ZOMBIE_VILLAGER), EntityVillager {
+class AdyZombieVillager : AdyZombie(EntityTypes.ZOMBIE_VILLAGER), EntityVillager {
 
     init {
         if (version >= 11400) {

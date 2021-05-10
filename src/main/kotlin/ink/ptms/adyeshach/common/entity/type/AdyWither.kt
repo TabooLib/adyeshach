@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyWither() : AdyMob(EntityTypes.WITHER) {
+class AdyWither : AdyMob(EntityTypes.WITHER) {
 
     init {
         registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "firstHeadTarget", 0)

@@ -9,17 +9,17 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownPotion() : AdyEntity(EntityTypes.THROWN_POTION), EntityThrowable {
+class AdyThrownPotion : AdyEntity(EntityTypes.THROWN_POTION), EntityThrowable {
 
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
     }
 
     fun getItem(): ItemStack {
-        return getMetadata("item");
+        return getMetadata("item")
     }
 
     fun setItem(item: ItemStack) {
-        setMetadata("item", item);
+        setMetadata("item", item)
     }
 }

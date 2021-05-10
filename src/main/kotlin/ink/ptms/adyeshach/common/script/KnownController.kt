@@ -8,6 +8,4 @@ import kotlin.reflect.KClass
  * @Author sky
  * @Since 2020-08-30 19:22
  */
-class KnownController(val controllerClass: KClass<out Controller>, val get: (EntityInstance) -> (Controller)) {
-
-}
+class KnownController(val controllerClass: KClass<out Controller>, val get: (EntityInstance) -> (Controller))

@@ -9,7 +9,7 @@ import org.bukkit.entity.Ocelot
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyOcelot() : AdyEntityAgeable(EntityTypes.OCELOT) {
+class AdyOcelot : AdyEntityAgeable(EntityTypes.OCELOT) {
 
     init {
         /*

@@ -9,7 +9,7 @@ import org.bukkit.Color
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyArrow() : AdyEntity(EntityTypes.ARROW), EntityThrowable {
+class AdyArrow : AdyEntity(EntityTypes.ARROW), EntityThrowable {
 
     /**
      * 1.15 Index=7 一致

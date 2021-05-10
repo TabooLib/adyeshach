@@ -9,7 +9,7 @@ import org.bukkit.entity.Fox
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyFox() : AdyEntityAgeable(EntityTypes.FOX) {
+class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
 
     init {
         /*

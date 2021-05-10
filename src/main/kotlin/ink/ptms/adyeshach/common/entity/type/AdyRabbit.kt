@@ -9,7 +9,7 @@ import org.bukkit.entity.Rabbit
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyRabbit() : AdyEntityAgeable(EntityTypes.RABBIT) {
+class AdyRabbit : AdyEntityAgeable(EntityTypes.RABBIT) {
 
     init {
         /*

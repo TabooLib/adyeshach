@@ -11,7 +11,9 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.kotlin.Reflex
+import io.izzel.taboolib.kotlin.Reflex.Companion.asReflex
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.nms.impl.Position
 import net.minecraft.server.v1_11_R1.BlockTorch
@@ -46,6 +48,8 @@ import java.util.*
  * @date 2020/8/3 21:51
  */
 class NMSImpl : NMS() {
+
+    val version = Version.getCurrentVersionInt()
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         sendPacket(
@@ -106,7 +110,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (version >= 11300) {
-            val block = Reflex.from(Blocks::class.java).read<Block>(material.name)
+            val block = Blocks::class.java.asReflex().read<Block>(material.name)
             sendPacket(
                 player,
                 PacketPlayOutSpawnEntity(),
@@ -487,7 +491,7 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (version >= 11300) {
-            Reflex.from(net.minecraft.server.v1_16_R1.EntityTypes::class.java)
+            net.minecraft.server.v1_16_R1.EntityTypes::class.java.asReflex()
                 .read<net.minecraft.server.v1_16_R1.EntityTypes<*>>(entityTypes.internalName ?: entityTypes.name)!!
         } else {
             entityTypes.bukkitId
@@ -500,7 +504,7 @@ class NMSImpl : NMS() {
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
         return if (version >= 11300) {
-            Reflex.from(Paintings::class.java).read<Paintings>(bukkitPaintings.index.toString())!!
+            Paintings::class.java.asReflex().read<Paintings>(bukkitPaintings.index.toString())!!
         } else {
             bukkitPaintings.legacy
         }
@@ -509,7 +513,7 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             version >= 11400 -> {
-                Reflex.from(Particles::class.java).read<Any>(bukkitParticles.name) ?: Particles.FLAME
+                Particles::class.java.asReflex().read<Any>(bukkitParticles.name) ?: Particles.FLAME
             }
             version == 11300 -> {
                 val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
@@ -528,7 +532,7 @@ class NMSImpl : NMS() {
         if (version >= 11400) {
             val pathEntity =
                 (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
-            val pathPoint = Reflex.from(PathEntity::class.java, pathEntity).read<List<PathPoint>>("a")!!
+            val pathPoint = PathEntity::class.java.asReflex(pathEntity).read<List<PathPoint>>("a")!!
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         } else {
             val pathEntity = if (version >= 11200) {
@@ -548,7 +552,7 @@ class NMSImpl : NMS() {
                     )
                 ) ?: return mutableListOf()
             }
-            val pathPoint = Reflex.from(PathEntity::class.java, pathEntity).read<Array<PathPoint>>("a")!!
+            val pathPoint = PathEntity::class.java.asReflex(pathEntity).read<Array<PathPoint>>("a")!!
             return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
         }
     }
@@ -559,7 +563,7 @@ class NMSImpl : NMS() {
 
     override fun toBlockId(materialData: MaterialData): Int {
         return if (version >= 11300) {
-            val block = Reflex.from(Blocks::class.java).read<Block>(materialData.itemType.name)
+            val block = Blocks::class.java.asReflex().read<Block>(materialData.itemType.name)
             Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)

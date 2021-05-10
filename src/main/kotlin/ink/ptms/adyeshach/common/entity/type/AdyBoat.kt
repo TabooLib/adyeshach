@@ -8,7 +8,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author Arasple
  * @date 2020/8/4 22:48
  */
-class AdyBoat() : AdyEntity(EntityTypes.BOAT) {
+class AdyBoat : AdyEntity(EntityTypes.BOAT) {
 
     /**
      * 1.13 -> Index 6-12, 且 leftPaddleTurning / rightPaddleTurning 换位置

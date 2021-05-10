@@ -9,7 +9,7 @@ import org.bukkit.DyeColor
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyWolf() : AdyEntityTameable(EntityTypes.WOLF) {
+class AdyWolf : AdyEntityTameable(EntityTypes.WOLF) {
 
     init {
         registerMeta(at(11400 to 18, 11000 to 16, 10900 to 15), "isBegging", false)

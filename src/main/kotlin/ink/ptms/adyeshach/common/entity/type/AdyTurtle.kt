@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyTurtle() : AdyEntityAgeable(EntityTypes.TURTLE) {
+class AdyTurtle : AdyEntityAgeable(EntityTypes.TURTLE) {
 
     init {
         val index = at(11500 to 18, 11400 to 17, 11300 to 15)
@@ -17,7 +17,7 @@ class AdyTurtle() : AdyEntityAgeable(EntityTypes.TURTLE) {
     }
 
     fun isHasEgg(): Boolean {
-        return getMetadata("hasEgg");
+        return getMetadata("hasEgg")
     }
 
     fun setHasEgg(hasEgg: Boolean) {

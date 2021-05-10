@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.kotlin.Reflex
+import io.izzel.taboolib.kotlin.Reflex.Companion.asReflex
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.packet.TPacketHandler
@@ -124,7 +125,6 @@ abstract class NMS {
 
         @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")
         lateinit var INSTANCE: NMS
-        internal val version = Version.getCurrentVersionInt()
 
         fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any?>) {
             TPacketHandler.sendPacket(player, setFields(packet, *fields))
@@ -133,7 +133,7 @@ abstract class NMS {
         fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
             fields.forEach { (key, value) ->
                 if (value != null) {
-                    Reflex.from(any.javaClass, any).write(key, value)
+                    any.javaClass.asReflex(any).write(key, value)
                 }
             }
             return any

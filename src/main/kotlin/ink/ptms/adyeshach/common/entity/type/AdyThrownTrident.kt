@@ -7,7 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownTrident() : AdyEntity(EntityTypes.THROWN_TRIDENT), EntityThrowable {
+class AdyThrownTrident : AdyEntity(EntityTypes.THROWN_TRIDENT), EntityThrowable {
 
     init {
         registerMeta(at(11400 to 10, 11300 to 10), "loyaltyLevel", 0)

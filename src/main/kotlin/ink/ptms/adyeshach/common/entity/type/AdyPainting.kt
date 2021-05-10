@@ -13,7 +13,7 @@ import java.util.*
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPainting() : AdyEntity(EntityTypes.PAINTING) {
+class AdyPainting : AdyEntity(EntityTypes.PAINTING) {
 
     @Expose
     private var painting: BukkitPaintings = BukkitPaintings.KEBAB

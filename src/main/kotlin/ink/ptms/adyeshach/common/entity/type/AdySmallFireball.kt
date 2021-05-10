@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdySmallFireball() : AdyEntity(EntityTypes.SMALL_FIREBALL), EntityFireball {
+class AdySmallFireball : AdyEntity(EntityTypes.SMALL_FIREBALL), EntityFireball {
 
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.FIRE_CHARGE))

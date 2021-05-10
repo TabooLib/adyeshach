@@ -7,7 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @date 2020/8/4 23:15
  * 1.14+
  */
-class AdyPanda() : AdyEntityAgeable(EntityTypes.PANDA) {
+class AdyPanda : AdyEntityAgeable(EntityTypes.PANDA) {
 
     init {
         /**

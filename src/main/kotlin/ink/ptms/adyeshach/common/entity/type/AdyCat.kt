@@ -10,7 +10,7 @@ import org.bukkit.entity.Cat
  * @Author sky
  * @Since 2020-08-04 19:30
  */
-class AdyCat() : AdyEntityTameable(EntityTypes.CAT) {
+class AdyCat : AdyEntityTameable(EntityTypes.CAT) {
 
     /**
      * 仅 1.16, 1.15 有属性

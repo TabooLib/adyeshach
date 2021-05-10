@@ -8,7 +8,7 @@ import io.izzel.taboolib.module.nms.impl.Position
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyEndCrystal() : AdyEntity(EntityTypes.END_CRYSTAL) {
+class AdyEndCrystal : AdyEntity(EntityTypes.END_CRYSTAL) {
 
     init {
         /*

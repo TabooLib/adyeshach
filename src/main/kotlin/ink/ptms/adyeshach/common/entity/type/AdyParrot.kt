@@ -9,7 +9,7 @@ import org.bukkit.entity.Parrot
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyParrot() : AdyEntityTameable(EntityTypes.PARROT) {
+class AdyParrot : AdyEntityTameable(EntityTypes.PARROT) {
 
     init {
         registerMeta(at(11500 to 18, 11400 to 17, 11200 to 15), "color", Parrot.Variant.RED.ordinal)

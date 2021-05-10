@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyThrownEgg() : AdyEntity(EntityTypes.THROWN_EGG), EntityThrowable {
+class AdyThrownEgg : AdyEntity(EntityTypes.THROWN_EGG), EntityThrowable {
 
     init {
         registerMeta(at(11600 to 7), "item", ItemStack(Material.EGG))

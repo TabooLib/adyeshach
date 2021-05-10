@@ -8,7 +8,7 @@ import org.bukkit.entity.Horse
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyHorse() : AdyHorseBase(EntityTypes.HORSE) {
+class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
 
     init {
         /**

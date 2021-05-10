@@ -19,7 +19,7 @@ import java.util.*
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyFallingBlock() : AdyEntity(EntityTypes.FALLING_BLOCK) {
+class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
 
     @Expose
     private var material = Material.STONE

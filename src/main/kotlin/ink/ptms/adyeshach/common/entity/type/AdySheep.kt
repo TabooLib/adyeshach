@@ -8,7 +8,7 @@ import org.bukkit.DyeColor
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdySheep() : AdyEntityAgeable(EntityTypes.SHEEP) {
+class AdySheep : AdyEntityAgeable(EntityTypes.SHEEP) {
 
     init {
         val index = at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)

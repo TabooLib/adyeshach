@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyItemFrame() : AdyEntity(EntityTypes.ITEM_FRAME) {
+class AdyItemFrame : AdyEntity(EntityTypes.ITEM_FRAME) {
 
     init {
         /**

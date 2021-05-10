@@ -7,7 +7,4 @@ import io.izzel.taboolib.module.event.EventNormal
  * @Author sky
  * @Since 2020-08-14 14:52
  */
-class CustomDatabaseEvent(val name: String, var database: Database? = null) : EventNormal<CustomDatabaseEvent>() {
-
-
-}
+class CustomDatabaseEvent(val name: String, var database: Database? = null) : EventNormal<CustomDatabaseEvent>()

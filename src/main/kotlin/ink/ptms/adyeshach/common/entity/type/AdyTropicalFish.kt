@@ -10,7 +10,7 @@ import org.bukkit.entity.TropicalFish
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyTropicalFish() : AdyFish(EntityTypes.TROPICAL_FISH) {
+class AdyTropicalFish : AdyFish(EntityTypes.TROPICAL_FISH) {
 
     init {
         registerMeta(at(11500 to 16, 11400 to 15, 11300 to 13), "variant", 0)

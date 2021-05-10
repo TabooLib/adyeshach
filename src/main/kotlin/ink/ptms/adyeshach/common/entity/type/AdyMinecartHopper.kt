@@ -6,4 +6,4 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyMinecartHopper() : AdyMinecart(EntityTypes.MINECART_HOPPER)
+class AdyMinecartHopper : AdyMinecart(EntityTypes.MINECART_HOPPER)
