@@ -22,10 +22,12 @@ import java.util.*
 class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
 
     @Expose
-    private var material = Material.STONE
+    var material = Material.STONE
+        private set
 
     @Expose
-    private var data = 0.toByte()
+    var data = 0.toByte()
+        private set
 
     init {
         registerEditor("block")
@@ -83,16 +85,8 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
         respawn()
     }
 
-    fun getMaterial(material: Material): Material {
-        return material
-    }
-
     fun setData(data: Byte) {
         this.data = data
         respawn()
-    }
-
-    fun getData(data: Byte): Byte {
-        return data
     }
 }
