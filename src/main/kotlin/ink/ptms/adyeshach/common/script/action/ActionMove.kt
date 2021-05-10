@@ -5,32 +5,43 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.ScriptParser
+import io.izzel.taboolib.kotlin.kether.common.actions.LiteralAction
+import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
+import io.izzel.taboolib.util.Coerce
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionMove(val x: Double, val y: Double, val z: Double, val relative: Boolean) : QuestAction<Void>() {
+class ActionMove(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val relative: Boolean) : QuestAction<Void>() {
+
+    fun Any.d() = Coerce.toDouble(this)
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
-        if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
-        }
-        if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            if (relative) {
-                it.controllerMove(Location(it.position.world, it.position.x + x, it.position.y + y, it.position.z + z))
-            } else {
-                it.controllerMove(Location(it.position.world, x, y, z))
+        return context.newFrame(x).run<Any>().thenAccept { x ->
+            context.newFrame(y).run<Any>().thenAccept { y ->
+                context.newFrame(z).run<Any>().thenAccept { z ->
+                    val s = (context.context() as ScriptContext)
+                    if (s.getManager() == null) {
+                        throw RuntimeException("No manager selected.")
+                    }
+                    if (!s.entitySelected()) {
+                        throw RuntimeException("No entity selected.")
+                    }
+                    s.getEntities()!!.filterNotNull().forEach {
+                        if (relative) {
+                            it.controllerMove(Location(it.position.world, it.position.x + x.d(), it.position.y + y.d(), it.position.z + z.d()))
+                        } else {
+                            it.controllerMove(Location(it.position.world, x.d(), y.d(), z.d()))
+                        }
+                    }
+                }
             }
         }
-        return CompletableFuture.completedFuture(null)
     }
 
     override fun toString(): String {
@@ -48,23 +59,23 @@ class ActionMove(val x: Double, val y: Double, val z: Double, val relative: Bool
             } else {
                 it.reset()
             }
-            var x = 0.0
-            var y = 0.0
-            var z = 0.0
+            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
+            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
+            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
             while (it.hasNext()) {
                 it.mark()
                 when (it.nextToken()) {
                     "x" -> {
                         it.expect("to")
-                        x = it.nextDouble()
+                        x = it.next(ArgTypes.ACTION)
                     }
                     "y" -> {
                         it.expect("to")
-                        y = it.nextDouble()
+                        y = it.next(ArgTypes.ACTION)
                     }
                     "z" -> {
                         it.expect("to")
-                        z = it.nextDouble()
+                        z = it.next(ArgTypes.ACTION)
                     }
                     else -> {
                         it.reset()

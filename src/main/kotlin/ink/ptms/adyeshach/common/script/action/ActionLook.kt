@@ -5,28 +5,37 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import io.izzel.taboolib.kotlin.kether.ScriptContext
 import io.izzel.taboolib.kotlin.kether.ScriptParser
+import io.izzel.taboolib.kotlin.kether.common.actions.LiteralAction
+import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
 import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
+import io.izzel.taboolib.util.Coerce
 import org.bukkit.Location
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolean) : QuestAction<Void>() {
+class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val smooth: Boolean) : QuestAction<Void>() {
 
     override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
-        if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+        return context.newFrame(x).run<Any>().thenAccept { x ->
+            context.newFrame(y).run<Any>().thenAccept { y ->
+                context.newFrame(z).run<Any>().thenAccept { z ->
+                    val s = (context.context() as ScriptContext)
+                    if (s.getManager() == null) {
+                        throw RuntimeException("No manager selected.")
+                    }
+                    if (!s.entitySelected()) {
+                        throw RuntimeException("No entity selected.")
+                    }
+                    s.getEntities()!!.filterNotNull().forEach {
+                        it.controllerLook(Location(it.position.world, Coerce.toDouble(x), Coerce.toDouble(y), Coerce.toDouble(z)), smooth)
+                    }
+                }
+            }
         }
-        if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            it.controllerLook(Location(it.position.world, x, y, z), smooth)
-        }
-        return CompletableFuture.completedFuture(null)
     }
 
     override fun toString(): String {
@@ -44,23 +53,23 @@ class ActionLook(val x: Double, val y: Double, val z: Double, val smooth: Boolea
             } else {
                 it.reset()
             }
-            var x = 0.0
-            var y = 0.0
-            var z = 0.0
+            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
+            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
+            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
             while (it.hasNext()) {
                 it.mark()
                 when (it.nextToken()) {
                     "x" -> {
                         it.expect("to")
-                        x = it.nextDouble()
+                        x = it.next(ArgTypes.ACTION)
                     }
                     "y" -> {
                         it.expect("to")
-                        y = it.nextDouble()
+                        y = it.next(ArgTypes.ACTION)
                     }
                     "z" -> {
                         it.expect("to")
-                        z = it.nextDouble()
+                        z = it.next(ArgTypes.ACTION)
                     }
                     else -> {
                         it.reset()
