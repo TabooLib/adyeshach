@@ -350,7 +350,7 @@ class Command : BaseMainCommand(), Helper {
     }
 
     @SubCommand(description = "@command-main-load", priority = 1.3)
-    fun load(sender: Player, args: Array<String>) {
+    fun load(sender: CommandSender, args: Array<String>) {
         Tasks.task(true) {
             Bukkit.getOnlinePlayers().forEach {
                 AdyeshachAPI.getEntityManagerPrivate(it).onDisable()
@@ -363,7 +363,7 @@ class Command : BaseMainCommand(), Helper {
     }
 
     @SubCommand(description = "@command-main-save", priority = 1.4)
-    fun save(sender: Player, args: Array<String>) {
+    fun save(sender: CommandSender, args: Array<String>) {
         Tasks.task(true) {
             Bukkit.getOnlinePlayers().forEach {
                 AdyeshachAPI.getEntityManagerPrivate(it).onSave()
@@ -374,7 +374,7 @@ class Command : BaseMainCommand(), Helper {
     }
 
     @SubCommand(description = "@command-main-reload", priority = 1.5)
-    fun reload(sender: Player, args: Array<String>) {
+    fun reload(sender: CommandSender, args: Array<String>) {
         Adyeshach.reload()
         sender.sendLocale("command-main-success")
     }

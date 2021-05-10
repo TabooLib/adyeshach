@@ -26,13 +26,18 @@ class CommandScript : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "@command-script-run", arguments = ["@command-argument-script", "@command-argument-viewer?"], priority = 0.0)
+    @SubCommand(description = "@command-script-run", arguments = ["@command-argument-script", "@command-argument-viewer?", "@command-argument-var?"], priority = 0.0)
     fun run(sender: CommandSender, args: Array<String>) {
         val script = workspace.scripts[args[0]]
         if (script != null) {
             val context = ScriptContext.create(script) {
                 if (args.size > 1) {
                     this.sender = Bukkit.getPlayerExact(args[1])
+                    var i = 2
+                    while (i < args.size) {
+                        rootFrame().variables().set("arg${i - 2}", args[i])
+                        i++
+                    }
                 }
             }
             try {
