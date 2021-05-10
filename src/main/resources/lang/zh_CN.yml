@@ -1,23 +1,26 @@
-not-support: '§4[Adyeshach] §c抱歉, Adyeshach 不支持您的服务端版本!'
+not-support: '&4[Adyeshach] &c抱歉, Adyeshach 不支持当前服务端版本!'
+not-support-new-version: 
+  - '&4[Adyeshach] &c抱歉, Adyeshach 暂时不支持新的服务端版本!'
+  - '&4[Adyeshach] &c请等待兼容工作完成.'
 
-trait-sit-manager-not-set: '§c[Adyeshach] §7单位管理器未被初始化.'
-trait-sit-remove: '§c[Adyeshach] §7生物已站立.'
-trait-sit-create: '§c[Adyeshach] §7生物已坐下.'
+trait-sit-manager-not-set: '&c[Adyeshach] &7单位管理器未被初始化.'
+trait-sit-remove: '&c[Adyeshach] &7生物已站立.'
+trait-sit-create: '&c[Adyeshach] &7生物已坐下.'
 
 trait-patrol:
   - ==: TITLE
-    subtitle: '§7路径节点: §8{0}'
+    subtitle: '&7路径节点: &8{0}'
     fadein: 0
     stay: 60
     fadeout: 0
   - ==: ACTION
-    text: '§7按下 §fF §7键保存该 NPC 的路径节点 §8| §7按下 §fSHIFT + F §7重置.'
+    text: '&7按下 &fF &7键保存该 NPC 的路径节点 &8| &7按下 &fSHIFT + F &7重置.'
 
-trait-command-finish: '§c[Adyeshach] §7特性编辑.'
+trait-command-finish: '&c[Adyeshach] &7特性编辑.'
 trait-command:
   ==: TITLE
-  title: '§3§l特性 : 指令'
-  subtitle: '§7打开书并输入指令内容'
+  title: '&3&l特性 : 指令'
+  subtitle: '&7打开书并输入指令内容'
   fadein: 10
   stay: 40
   fadeout: 10
@@ -25,14 +28,14 @@ trait-command:
 armor-stand-editor-name: '盔甲架角度'
 armor-stand-editor-1:
   ==: TITLE
-  title: '§3§l盔甲架角度'
-  subtitle: '§7选中的部位角度: §8{0}'
+  title: '&3&l盔甲架角度'
+  subtitle: '&7选中的部位角度: &8{0}'
   fadein: 0
   stay: 40
   fadeout: 0
 armor-stand-editor-2:
   ==: ACTION
-  text: '§7按下 §fSHIFT + LEFT-CLICK §7增加角度 §8| §7按下 §fSHIFT + RIGHT-CLICK §7减少角度'
+  text: '&7按下 &fSHIFT + LEFT-CLICK &7增加角度 &8| &7按下 &fSHIFT + RIGHT-CLICK &7减少角度'
 
 command-main-create: '创建单位.'
 command-main-entity-not-support: '&c[Adyeshach] &7抱歉, 插件不支持 &f"{0}" 类型.'

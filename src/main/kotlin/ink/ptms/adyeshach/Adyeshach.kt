@@ -28,10 +28,21 @@ object Adyeshach : Plugin() {
             Bukkit.getConsoleSender().sendLocale("not-support")
             try {
                 CommandBuilder.create("adyeshach", plugin)
-                        .aliases("anpc", "npc")
-                        .execute { sender, _ ->
-                            sender.sendLocale("not-support")
-                        }.build()
+                    .aliases("anpc", "npc")
+                    .execute { sender, _ ->
+                        sender.sendLocale("not-support")
+                    }.build()
+            } catch (t: Throwable) {
+            }
+        } else if (Version.isAfter(Version.v1_17)) {
+            PluginBoot.setDisabled(true)
+            Bukkit.getConsoleSender().sendLocale("not-support-new-version")
+            try {
+                CommandBuilder.create("adyeshach", plugin)
+                    .aliases("anpc", "npc")
+                    .execute { sender, _ ->
+                        sender.sendLocale("not-support-new-version")
+                    }.build()
             } catch (t: Throwable) {
             }
         }
