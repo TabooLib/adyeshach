@@ -86,7 +86,7 @@ private class ManagerEvents : Listener {
 
     @EventHandler
     fun e(e: PlayerJoinEvent) {
-        if (Settings.get().spawnTrigger == Settings.SpawnTrigger.JOIN) {
+        if (Settings.spawnTrigger == Settings.SpawnTrigger.JOIN) {
            Tasks.delay(20) {
                spawn(e.player)
            }
@@ -95,7 +95,7 @@ private class ManagerEvents : Listener {
 
     @EventHandler
     fun e(e: AdyeshachPlayerJoinEvent) {
-        if (Settings.get().spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
+        if (Settings.spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
             spawn(e.player)
         }
     }

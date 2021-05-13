@@ -51,14 +51,14 @@ object PathFinderProxy {
                 requests.add(PathSchedule(start, target, pathType, request, call))
             }
             Settings.Pathfinder.NATIVE -> {
-                Tasks.task(!Settings.get().pathfinderSync) {
+                Tasks.task(!Settings.pathfinderSync) {
                     if (request == Request.NAVIGATION) {
                         mirrorFuture("PathFinderProxy:Native:Navigation") {
                             val time = System.currentTimeMillis()
                             val pathFinder = Navigation.create(NodeEntity(start, pathType.height, pathType.width))
                             val path = pathFinder.findPath(target, distance = 32f)
                             finish()
-                            if (Settings.get().debug) {
+                            if (Settings.debug) {
                                 path?.nodes?.forEach { it.display(target.world) }
                             }
                             call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
@@ -93,7 +93,7 @@ object PathFinderProxy {
 
     @TPacket(type = TPacket.Type.SEND)
     private fun packet(player: Player, packet: Packet): Boolean {
-        if (packet.`is`("PacketPlayOutSpawnEntityLiving") && isProxyEntity(player, packet.read("a", 0)) && !Settings.get().debug) {
+        if (packet.`is`("PacketPlayOutSpawnEntityLiving") && isProxyEntity(player, packet.read("a", 0)) && !Settings.debug) {
             return false
         }
         return true
@@ -129,7 +129,7 @@ object PathFinderProxy {
                                     requests.add(it)
                                 } else {
                                     it.call.invoke(ResultNavigation(pathList, it.beginTime, time))
-                                    if (Settings.get().debug) {
+                                    if (Settings.debug) {
                                         pathList.forEach { p ->
                                             Effects.create(Particle.VILLAGER_HAPPY, Location(entity.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
                                                 .count(10)
@@ -145,7 +145,7 @@ object PathFinderProxy {
                                     requests.add(it)
                                 } else {
                                     it.call.invoke(ResultRandomPosition(position, it.beginTime, time))
-                                    if (Settings.get().debug) {
+                                    if (Settings.debug) {
                                         val p = position!!
                                         Effects.create(Particle.FLAME, Location(entity.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
                                             .count(10)

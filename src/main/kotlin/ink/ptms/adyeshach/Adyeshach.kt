@@ -17,7 +17,7 @@ object Adyeshach : Plugin() {
     lateinit var conf: TConfig
         private set
 
-    var settings = Settings()
+    var settings = Settings
         private set
 
     val scriptHandler = ScriptHandler
@@ -49,6 +49,6 @@ object Adyeshach : Plugin() {
     }
 
     fun reload() {
-        settings = Settings()
+        conf.reload()
     }
 }

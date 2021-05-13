@@ -51,7 +51,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     @Expose
     var visibleDistance = -1.0
         get() = if (field == -1.0) {
-            Settings.get().visibleDistance
+            Settings.visibleDistance
         } else {
             field
         }
