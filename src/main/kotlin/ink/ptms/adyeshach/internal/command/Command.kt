@@ -45,7 +45,7 @@ class Command : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(description = "@command-main-create", type = CommandType.PLAYER, priority = 0.1)
+    @SubCommand(description = "@command-main-create", arguments = ["@command-argument-id", "@command-argument-type"], type = CommandType.PLAYER, priority = 0.1)
     fun create(sender: Player, args: Array<String>) {
         val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].toUpperCase()).orNull()
         if (entityType == null) {
