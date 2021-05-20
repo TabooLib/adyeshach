@@ -1,0 +1,113 @@
+#######Plugin Translate to spanish by Zarkness88
+#######thanks bkm016 for letting me translate your plugin, my discord ! Zarkness#0291 if you need to ask me any question
+#######if you find any translation error let me know and I will fix it.
+
+not-support: '&4[Adyeshach] &cLo siento, Adyeshach no soporta esta version de minecraft.'
+not-support-new-version:
+  - '&4[Adyeshach] &cLo siento, adyeshach no soporta esta nueva version de minecraft.'
+  - '&4[Adyeshach] &cPor favor espera a que la compatibilidad este completa.'
+
+trait-sit-manager-not-set: '&c[Adyeshach] &7El gestor de entidades no se ha iniciado.'
+trait-sit-remove: '&c[Adyeshach] &7Sentando.'
+trait-sit-create: '&c[Adyeshach] &7Levantando.'
+
+trait-patrol:
+  - ==: TITLE
+    subtitle: '&7Path Nodes: &8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+  - ==: ACTION
+    text: '&7Presiona &fF &7para guardar path node de las entidades &8| &7Presiona &fSHIFT + F &7para reiniciar'
+
+trait-command-finish: '&c[Adyeshach] &7Trait editado.'
+trait-command:
+  ==: TITLE
+  title: '&3&lAñadir comandos'
+  subtitle: '&7Abre el libro y escribe el comando'
+  fadein: 10
+  stay: 40
+  fadeout: 10
+
+armor-stand-editor-name: 'Ángulos del soporte de armaduras'
+armor-stand-editor-1:
+  ==: TITLE
+  title: '&3&lÁngulo del soporte de armaduras'
+  subtitle: '&7Selecciona los ángulos: &8{0}'
+  fadein: 0
+  stay: 40
+  fadeout: 0
+armor-stand-editor-2:
+  ==: ACTION
+  text: '&7Presiona &fSHIFT + CLICK IZQUIERDO &7Para aumentar &8| &7Presiona &fSHIFT + CLICK DERECHO &7disminuir'
+
+command-main-create: 'Crea un npc.'
+command-main-entity-not-support: '&c[Adyeshach] &7La entidad &f"{0}" &7no es soportada.'
+command-main-entity-create: '&c[Adyeshach] &7NPC creado.'
+command-main-delete: 'Elimina un npc.'
+command-main-entity-not-found: '&c[Adyeshach] &7El npc no se encontró.'
+command-main-entity-delete: '&c[Adyeshach] &7NPC eliminado.'
+command-main-modify: 'Modifica un npc.'
+command-main-copy: 'Clona un npc.'
+command-main-success: '&c[Adyeshach] &7Recargo perfectamente.'
+command-main-move: 'Recoge y mueve un npc.'
+command-main-move-cancel: '&c[Adyeshach] &7Por favor cancela primero el control sobre el npc.'
+command-main-movehere: 'Mueve el npc a tu posición'
+command-main-lookhere: 'Haz que el npc mire para donde están mirando tus ojos.'
+command-main-teleport: 'Tpeate junto el npc.'
+command-main-passenger: 'Modifica el passenger del npc.'
+command-main-passenger-cancel: '&c[Adyeshach] &7Por favor elige un npc diferente.'
+command-main-passenger-method-error: '&c[Adyeshach] &7El método {0} es un passenger desconocido prueba con (add,remove,reset)'
+command-main-controller: 'Modifica el control del npc.'
+command-main-controller-not-found: '&c[Adyeshach] &7El control {0} es desconocido prueba con (Gravity, LookAtPlayer, LookAtPlayerAlways, Move, RandomLookGround, RandomStrollLand o SmoothLook)'
+command-main-controller-method-error: '&c[Adyeshach] &7{0} es un método desconocido prueba con (add,remove o reset)'
+command-main-trait: 'Modifica el trait del npc.'
+command-main-trait-not-found: '&c[Adyeshach] &7{0} es un trait desconocido prueba con (Command, patrol o sit)'
+command-main-near: 'Información del npc.'
+command-main-near-header: '&c[Adyeshach] &7Información:'
+command-main-near-1: 'Público'
+command-main-near-2: 'Público temporal'
+command-main-near-3: 'Privado'
+command-main-near-4: 'Privado temporal'
+command-main-load: 'NPC recargado.'
+command-main-save: 'NPC guardado.'
+command-main-reload: 'Opciones del adyeshach recargadas.'
+command-test-verify: 'Verifica que tipo de entidades soporta Adyeshach.'
+command-test-verify-header: '&c[Adyeshach] &7Tipo de entidades:'
+command-test-migrate: 'Importa los datos de otro plugin de npc´s.'
+command-test-migrate-not-support: '&c[Adyeshach] &7El plugin {0} no es soportado por adyeshach.'
+command-test-migrate-header: '&c[Adyeshach] &7Migrando...'
+command-test-migrate-bottom: '&c[Adyeshach] &7Completado correctamente. ({0}ms)'
+command-test-mirror: 'Monitorea el rendimiento del plugin.'
+command-test-mirror-reset: '&c[Adyeshach] &7Performance monitoring has been reset.'
+command-test-mirror-header: '&c[Adyeshach] &7Creando estadísticas...'
+command-test-mirror-bottom: '&c[Adyeshach] &7---'
+command-api-edit: 'Edita el metadata'
+command-api-skin: 'Sube el archivo de skin'
+command-api-skin-header: '&c[Adyeshach] &7El archivo proporcionado no se encontró, intenta subir un archivo que este en mineskin.org.'
+command-api-skin-success: '&c[Adyeshach] &7Successfully uploaded skin and saved as &f"{0}"&7. (model: &f{1}&7)'
+command-api-skin-invalid: '&c[Adyeshach] &7¡El archivo proporcionado no es valido! ¡Por favor asegurate de que es un archivo de skin y este en .png!'
+command-script-run: 'Ejecutar script'
+command-script-stop: 'Terminar script'
+command-script-stop-all: 'Terminar todos scripts'
+command-script-list: 'Lista de scripts'
+command-script-reload: 'Todos los scripts han sido recargados'
+command-script-error:
+  - '&c[Adyeshach] &7ha ocurrido un error al iniciar el script:'
+  - '&c[Adyeshach] &7{0}'
+command-script-not-found: '&c[Adyeshach] &7El script no funciona.'
+command-script-not-running: '&c[Adyeshach] &7El script no esta funcionando.'
+command-script-list-all:
+  - '&c[Adyeshach] &7Scripts: &f{0}'
+  - '&c[Adyeshach] &7Scripts activos: &f{1}'
+command-script-reload-all:
+  - '&c[Adyeshach] &7Los scripts han sido recargados perfectamente.'
+command-argument-id: 'Id'
+command-argument-type: 'Tipo'
+command-argument-method: 'Método'
+command-argument-controller: 'Controlador'
+command-argument-trait: 'Trait'
+command-argument-reset: 'Reset'
+command-argument-script: 'Script'
+command-argument-viewer: 'Viewer'
+command-argument-var: 'Variable'
