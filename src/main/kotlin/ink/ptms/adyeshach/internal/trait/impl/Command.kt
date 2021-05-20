@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.internal.trait.Trait
 import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Commands
+import io.izzel.taboolib.util.Features
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -31,26 +32,30 @@ class Command : Trait(), Listener {
         }
     }
 
+    /**
+     * op:say 123
+     * op:say 123
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun e(e: AdyeshachEntityInteractEvent) {
         if (e.isMainHand && e.entity.uniqueId in data) {
             data.getStringList(e.entity.uniqueId).forEach {
                 when {
                     it.startsWith("op:") -> {
-                        val isOp = e.player.isOp
-                        e.player.isOp = true
-                        try {
-                            Commands.dispatchCommand(e.player, TLocale.Translate.setPlaceholders(e.player, it.substring("op:".length).replace("@player", e.player.name)))
-                        } catch (t: Throwable) {
-                            t.printStackTrace()
-                        }
-                        e.player.isOp = isOp
+                        val command = TLocale.Translate.setPlaceholders(e.player, it.substring("op:".length).replace("@player", e.player.name)).trim()
+                        Features.dispatchCommand(e.player, command, true)
                     }
                     it.startsWith("server:") -> {
-                        Commands.dispatchCommand(Bukkit.getConsoleSender(), TLocale.Translate.setPlaceholders(e.player, it.substring("server:".length).replace("@player", e.player.name)))
+                        val command = TLocale.Translate.setPlaceholders(e.player, it.substring("server:".length).replace("@player", e.player.name)).trim()
+                        Features.dispatchCommand(Bukkit.getConsoleSender(), command)
+                    }
+                    it.startsWith("console:") -> {
+                        val command = TLocale.Translate.setPlaceholders(e.player, it.substring("console:".length).replace("@player", e.player.name)).trim()
+                        Features.dispatchCommand(Bukkit.getConsoleSender(), command)
                     }
                     else -> {
-                        Commands.dispatchCommand(e.player, TLocale.Translate.setPlaceholders(e.player, it.replace("@player", e.player.name)))
+                        val command = TLocale.Translate.setPlaceholders(e.player, it.replace("@player", e.player.name)).trim()
+                        Features.dispatchCommand(e.player, command)
                     }
                 }
             }

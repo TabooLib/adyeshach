@@ -23,8 +23,8 @@ object Adyeshach : Plugin() {
     val scriptHandler = ScriptHandler
 
     override fun onLoad() {
-        if (PluginBoot.isForge() || Version.isBefore(Version.v1_9)) {
-            PluginBoot.setDisabled(true)
+        if (PluginBoot.isForgeBase() || Version.isBefore(Version.v1_9)) {
+            PluginBoot.setEnableBoot(false)
             Bukkit.getConsoleSender().sendLocale("not-support")
             try {
                 CommandBuilder.create("adyeshach", plugin)
@@ -35,7 +35,7 @@ object Adyeshach : Plugin() {
             } catch (t: Throwable) {
             }
         } else if (Version.isAfter(Version.v1_17)) {
-            PluginBoot.setDisabled(true)
+            PluginBoot.setEnableBoot(false)
             Bukkit.getConsoleSender().sendLocale("not-support-new-version")
             try {
                 CommandBuilder.create("adyeshach", plugin)

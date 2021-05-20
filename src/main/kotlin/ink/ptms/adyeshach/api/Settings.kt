@@ -43,4 +43,10 @@ object Settings {
 
     val pathfinderSync: Boolean
         get() = Adyeshach.conf.getBoolean("Settings.pathfinder-sync", true)
+
+    val enableHideName: Boolean
+        get() = Adyeshach.conf.getBoolean("Settings.enable-hide-name", true)
+
+    val editorMetaPerLine: Int
+        get() = Adyeshach.conf.getInt("Settings.editor-meta-per-line", 3)
 }

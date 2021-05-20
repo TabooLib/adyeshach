@@ -1,15 +1,20 @@
 package ink.ptms.adyeshach.common.editor
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
 import io.izzel.taboolib.Version
+import io.izzel.taboolib.kotlin.sendLocale
+import io.izzel.taboolib.module.i18n.I18n
 import io.izzel.taboolib.module.inject.PlayerContainer
+import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.module.nms.impl.Position
 import io.izzel.taboolib.module.tellraw.TellrawJson
+import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.KV
 import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.chat.ComponentSerializer
@@ -54,18 +59,18 @@ object Editor {
                     }
                 }
             editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
                     Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
                     player.inventory.addItem(
                         ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build()
                     )
-                    player.sendMessage("§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.")
+                    player.sendLocale("editor-armorstand-tool")
                     player.closeInventory()
                 }
-                .display { player, entity, meta ->
+                .display { _, entity, meta ->
                     entity.getMetadata<EulerAngle>(meta.key).run {
-                        "${Numbers.format(x)} ${Numbers.format(y)} ${Numbers.format(z)}"
+                        "${Coerce.format(x)} ${Coerce.format(y)} ${Coerce.format(z)}"
                     }
                 }
             editMethod[Int::class] = Editors.TEXT
@@ -103,19 +108,20 @@ object Editor {
     }
 
     fun openByBook(player: Player, entity: EntityInstance) {
+        val manager = if (entity.isPublic()) player.asLocale("editor-manager-public") else player.asLocale("editor-manager-private")
         val book = BookFormatter.writtenBook()
         book.addPages(
             ComponentSerializer.parse(
                 TellrawJson.create()
                     .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
-                    .append("  §1${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
+                    .append("  §1${entity.id} ${if (entity.isTemporary()) TLocale.asString(player, "editor-temporary") else ""}").newLine()
                     .append("").newLine()
-                    .append("  Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
-                    .append("  Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n"))
+                    .append("  ${player.asLocale("editor-type")} §7$manager").newLine()
+                    .append("  ${player.asLocale("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n"))
                     .newLine()
-                    .append("  Tags §7${entity.getTags().size} ").append("§c(?)").hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                    .append("  ${player.asLocale("editor-tags")} §7${entity.getTags().size} ").append("§c(?)").hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
                     .newLine()
-                    .append("  Pathfinder §7${entity.getController().size} ").append("§c(?)")
+                    .append("  ${player.asLocale("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
                     .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                     .append("").newLine()
                     .append("   §7§oX ${entity.position.x}").newLine()
@@ -132,13 +138,13 @@ object Editor {
             val editor = getEditor(meta)
             if (editor != null && editor.edit) {
                 if (hide) {
-                    page.append("  §8§m${meta.key.toDisplay()}").newLine()
+                    page.append("  §8§m${meta.key.toLocale(player)}").newLine()
                 } else {
-                    page.append("  §n${meta.key.toDisplay()}").newLine()
+                    page.append("  §n${meta.key.toLocale(player)}").newLine()
                     try {
                         page.append("   §c✘")
                             .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                            .hoverText("§nClick To Reset")
+                            .hoverText(player.asLocale("editor-click-to-reset"))
                         page.append(
                             " §7${
                                 if (editor.onDisplay != null) editor.onDisplay!!.invoke(
@@ -149,7 +155,7 @@ object Editor {
                             }"
                         )
                             .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                            .hoverText("§nClick To Edit")
+                            .hoverText(player.asLocale("editor-click-to-edit"))
                             .newLine()
                     } catch (t: Throwable) {
                         t.printStackTrace()
@@ -182,21 +188,22 @@ object Editor {
             repeat(127) { newLine() }
             send(player)
         }
+        val manager = if (entity.isPublic()) player.asLocale("editor-manager-public") else player.asLocale("editor-manager-private")
         val json = TellrawJson.create()
             .newLine()
             .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
-            .append("      §6${entity.id} ${if (entity.isTemporary()) "§7(Temporary)" else ""}").newLine()
+            .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLocale("editor-temporary") else ""}").newLine()
             .newLine()
-            .append("      Type §7${if (entity.isPublic()) "PUBLIC" else "PRIVATE"}").newLine()
-            .append("      Viewers §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
+            .append("      ${player.asLocale("editor-type")} §7${manager}").newLine()
+            .append("      ${player.asLocale("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
                 .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-            .append("      Tags §7${entity.getTags().size} ").append("§c(?)")
+            .append("      ${player.asLocale("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
                 .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
-            .append("      Pathfinder §7${entity.getController().size} ").append("§c(?)")
+            .append("      ${player.asLocale("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
                 .hoverText(entity.getController().joinToString("\n") { it.javaClass.name })
                 .append(" ")
                 .append("§a(+)")
-                .hoverText("§7CLICK TO EDIT")
+                .hoverText(player.asLocale("editor-click-to-edit"))
                 .clickCommand("/adyeshach controller ${entity.uniqueId}")
                 .newLine()
             .newLine().append("      ")
@@ -205,11 +212,11 @@ object Editor {
             val editor = getEditor(meta)
             if (editor != null && editor.edit) {
                 if (hide) {
-                    json.append("§8[§8§m${meta.key.toDisplay()}§8] ")
+                    json.append("§8[§8§m${meta.key.toLocale(player)}§8] ")
                 } else {
                     json.append("§8[")
                     try {
-                        json.append("§7${meta.key.toDisplay()}")
+                        json.append("§7${meta.key.toLocale(player)}")
                             .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
                             .hoverText(
                                 "§7${
@@ -223,7 +230,7 @@ object Editor {
                         json.append(" ")
                         json.append("§c✘")
                             .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                            .hoverText("§nClick To Reset")
+                            .hoverText(player.asLocale("editor-click-to-reset"))
                     } catch (t: Throwable) {
                         json.append("§c§o<ERROR:${t.message}>")
                         if (t is NullPointerException) {
@@ -232,7 +239,7 @@ object Editor {
                     }
                     json.append("§8] ")
                 }
-                if (++i == 3) {
+                if (++i == Adyeshach.settings.editorMetaPerLine) {
                     i = 0
                     json.newLine().append("      ")
                 }
@@ -260,6 +267,21 @@ object Editor {
         }
         return builder.toString()
     }
+
+    fun String.toLocaleKey(): String {
+        val builder = StringBuilder()
+        toString().toCharArray().forEachIndexed { _, c ->
+            when {
+                c.isUpperCase() -> builder.append("-${c.toLowerCase()}")
+                else -> builder.append(c)
+            }
+        }
+        return builder.toString()
+    }
+
+    fun String.toLocale(player: Player) = TLocale.asString(player, "editor-meta-${toLocaleKey()}")
+
+    fun Player.asLocale(node: String) = TLocale.asString(this, node)
 
     fun EntityInstance.forEachMeta(func: (EntityMetaable.Meta, Boolean) -> Unit) {
         listMetadata()

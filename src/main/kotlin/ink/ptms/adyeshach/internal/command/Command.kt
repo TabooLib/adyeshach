@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.internal.command
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.move.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -11,7 +10,10 @@ import ink.ptms.adyeshach.common.script.KnownController
 import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.KnownTraits
 import io.izzel.taboolib.kotlin.sendLocale
-import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.module.command.base.BaseCommand
+import io.izzel.taboolib.module.command.base.BaseMainCommand
+import io.izzel.taboolib.module.command.base.CommandType
+import io.izzel.taboolib.module.command.base.SubCommand
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.module.tellraw.TellrawJson
 import io.izzel.taboolib.util.Coerce
@@ -21,15 +23,14 @@ import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
 /**
- * @Author sky
- * @Since 2020-08-15 0:32
+ * @author sky
+ * @since 2020-08-15 0:32
  */
 @BaseCommand(name = "adyeshach", aliases = ["anpc", "npc"], permission = "adyeshach.command")
 class Command : BaseMainCommand(), Helper {
@@ -213,7 +214,7 @@ class Command : BaseMainCommand(), Helper {
 
     @SubCommand(
         description = "@command-main-controller",
-        arguments = ["@command-argument-id", "@command-argument-method", "@command-argument-controller?"],
+        arguments = ["@command-argument-id?", "@command-argument-method?", "@command-argument-controller?"],
         type = CommandType.PLAYER,
         priority = 1.0
     )
@@ -261,7 +262,7 @@ class Command : BaseMainCommand(), Helper {
                         sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                     }
                 }.open(sender)
-        } else {
+        } else if (args.size == 3) {
             val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender)
             if (entity == null) {
                 sender.sendLocale("command-main-entity-not-found")
@@ -294,6 +295,8 @@ class Command : BaseMainCommand(), Helper {
                     sender.sendLocale("command-main-controller-method-error", args[1])
                 }
             }
+        } else {
+            sender.sendLocale("command-main-controller-no-argument")
         }
     }
 

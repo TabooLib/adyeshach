@@ -7,8 +7,8 @@ import org.bukkit.inventory.EquipmentSlot;
 /**
  * 求你们不要改这个类，用 java 写是有原因的。
  *
- * @Author sky
- * @Since 2020-08-05 16:53
+ * @author sky
+ * @since 2020-08-05 16:53
  */
 public class BukkitUtils {
 

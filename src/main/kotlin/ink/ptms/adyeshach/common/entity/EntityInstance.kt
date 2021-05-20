@@ -81,7 +81,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     var manager: Manager? = null
         set(value) {
-            if (field != null) {
+            if (value != null && field != null) {
                 throw RuntimeException("Entity Manager has been initialized.")
             }
             field = value
@@ -122,17 +122,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                         entity.getPose().name
                     }
         }
-        registerEditor("alwaysVisible")
-                .reset { _, _ ->
-                    alwaysVisible = true
-                }
-                .modify { player, entity, _ ->
-                    alwaysVisible = !alwaysVisible
-                    Editor.open(player, entity)
-                }
-                .display { _, _, _ ->
-                    alwaysVisible.toDisplay()
-                }
         registerEditor("visibleDistance")
                 .reset { _, _ ->
                     visibleDistance = -1.0
@@ -292,10 +281,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     /**
      * 删除实体，从管理器中移除，不再接受托管，但不会销毁实体
+     * 被移除管理器后该尸体将失去所有主动行为
+     * 包括玩家类型的皮肤刷新
      */
     fun remove() {
         if (manager != null) {
             manager!!.remove(this)
+            manager = null
             AdyeshachEntityRemoveEvent(this).call()
         }
     }
@@ -738,6 +730,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     companion object {
 
-        val pool = Executors.newFixedThreadPool(16)
+        val pool = Executors.newFixedThreadPool(16)!!
     }
 }

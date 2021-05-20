@@ -70,6 +70,21 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 .display { _, _, _ ->
                     isSleeping().toDisplay()
                 }
+        registerEditor("isHideFromWorld")
+            .reset { _, _ ->
+                setName("Adyeshach NPC")
+            }
+            .modify { player, entity, _ ->
+                if (getName() == "hide_name") {
+                    setName("Adyeshach NPC")
+                } else {
+                    setName("hide_name")
+                }
+                Editor.open(player, entity)
+            }
+            .display { _, _, _ ->
+                (getName() == "hide_name").toDisplay()
+            }
         registerEditor("isHideFromTabList")
                 .reset { _, _ ->
                     isHideFromTabList = true
@@ -83,7 +98,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 }
         registerEditor("playerName")
                 .reset { _, _ ->
-                    setName("AdyHuman")
+                    setName("Adyeshach NPC")
                 }
                 .modify { player, entity, _ ->
                     Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {

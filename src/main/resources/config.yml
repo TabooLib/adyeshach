@@ -25,3 +25,7 @@ Settings:
   pathfinder: NATIVE
   # Calculate on the main thread (Very low latency, Otherwise >2000ms)
   pathfinder-sync: true
+  # If true, Will affect other plugins that use Scoreboard
+  enable-hide-name: true
+  # Display meta data per line in the editor
+  editor-meta-per-line: 3

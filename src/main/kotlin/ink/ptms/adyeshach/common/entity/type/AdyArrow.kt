@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Color
+import org.bukkit.entity.Arrow
 
 /**
  * @Author sky

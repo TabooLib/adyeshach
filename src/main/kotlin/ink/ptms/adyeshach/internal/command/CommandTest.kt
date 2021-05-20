@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.internal.command
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -11,14 +10,10 @@ import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.Coerce
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.util.Vector
 
 /**
- * @Author sky
- * @Since 2020-08-05 0:05
+ * @author sky
+ * @since 2020-08-05 0:05
  */
 @BaseCommand(name = "adyeshachtest", aliases = ["atest"], permission = "adyeshach.command")
 class CommandTest : BaseMainCommand(), Helper {
