@@ -80,6 +80,27 @@ class Command : BaseMainCommand(), Helper {
         sender.sendLocale("command-main-entity-delete")
     }
 
+    @SubCommand(description = "@command-main-rename", arguments = ["@command-argument-id", "@command-argument-id?"], priority = 0.21)
+    fun rename(sender: Player, args: Array<String>) {
+        if (args.size == 1) {
+            val entity = AdyeshachAPI.getEntityNearly(sender)
+            if (entity == null) {
+                sender.sendLocale("command-main-entity-not-found")
+                return
+            }
+            entity.id = args[0]
+            sender.sendLocale("command-main-success")
+        } else {
+            val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender)
+            if (entity == null) {
+                sender.sendLocale("command-main-entity-not-found")
+                return
+            }
+            entity.id = args[1]
+            sender.sendLocale("command-main-success")
+        }
+    }
+
     @SubCommand(description = "@command-main-modify", arguments = ["@command-argument-id?"], aliases = ["edit"], type = CommandType.PLAYER, priority = 0.3)
     fun modify(sender: Player, args: Array<String>) {
         val entity = if (args.isEmpty()) {
@@ -261,6 +282,8 @@ class Command : BaseMainCommand(), Helper {
                         }
                         sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                     }
+                }.close {
+                    Editor.open(sender, entity)
                 }.open(sender)
         } else if (args.size == 3) {
             val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender)
@@ -339,10 +362,10 @@ class Command : BaseMainCommand(), Helper {
                 it.second
             }.also { result ->
                 if (result.isNotEmpty()) {
-                    sender.info("  &f$k:")
+                    sender.info("  §f$k:")
                     result.forEach {
                         TellrawJson.create()
-                            .append("  &8- &a${Coerce.format(it.second)}m &7${it.first.id} &8(${it.first.getDisplayName()}&8)")
+                            .append("§c[Adyeshach]  §8- §a${Coerce.format(it.second)}m §7${it.first.id} §8(${it.first.getDisplayName()}§8)")
                             .hoverText("CLICK TO TELEPORT")
                             .clickCommand("/anpc tp ${it.first.uniqueId}")
                             .send(sender)
