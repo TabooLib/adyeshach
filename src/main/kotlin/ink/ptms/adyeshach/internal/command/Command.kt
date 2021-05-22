@@ -384,7 +384,7 @@ class Command : BaseMainCommand(), Helper {
             }
             AdyeshachAPI.getEntityManagerPublic().onDisable()
             AdyeshachAPI.getEntityManagerPublic().onEnable()
-            sender.sendMessage("command-main-success")
+            sender.sendLocale("command-main-success")
         }
     }
 
