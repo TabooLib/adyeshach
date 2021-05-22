@@ -5,14 +5,14 @@ plugins {
 }
 
 group = 'ink.ptms.adyeshach'
-version = '1.2.6'
+version = '1.2.9'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.7.0'
-    loaderVersion = '3.0.0'
+    tabooLibVersion = '5.7.1'
+    loaderVersion = '3.0.1'
     classifier = null
     builtin = true
 }
