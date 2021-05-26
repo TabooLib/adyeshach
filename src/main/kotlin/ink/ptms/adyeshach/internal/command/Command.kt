@@ -21,6 +21,7 @@ import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
@@ -37,11 +38,13 @@ class Command : BaseMainCommand(), Helper {
 
     override fun onTabComplete(sender: CommandSender, command: String, argument: String): List<String>? {
         return when (argument) {
-            "@command-argument-id" -> if (sender is Player) AdyeshachAPI.getEntities { it.getWorld().name == sender.world.name }.map { it.id } else null
+            "@command-argument-id" -> if (sender is Player) AdyeshachAPI.getEntities { it.getWorld().name == sender.world.name }.map { it.id }.toSet()
+                .toList() else null
             "@command-argument-type" -> EntityTypes.values().map { it.name }
             "@command-argument-method" -> listOf("add", "remove", "reset")
             "@command-argument-controller" -> Adyeshach.scriptHandler.knownControllers.keys().toList()
             "@command-argument-trait" -> KnownTraits.traits.map { it.getName() }
+            "@command-argument-world" -> Bukkit.getWorlds().map { it.name }
             else -> null
         }
     }
@@ -122,8 +125,30 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-entity-not-found")
             return
         }
-        sender.sendLocale("command-main-success")
         entity.clone(args[1], sender.location)
+        sender.sendLocale("command-main-success")
+    }
+
+    @SubCommand(
+        description = "@command-main-copy-to",
+        arguments = ["@command-argument-id", "@command-argument-id", "@command-argument-world", "@command-argument-x", "@command-argument-y", "@command-argument-z", "@command-argument-yaw?", "@command-argument-pitch?"],
+        priority = 0.41
+    )
+    fun copyto(sender: Player, args: Array<String>) {
+        val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
+        if (entity == null) {
+            sender.sendLocale("command-main-entity-not-found")
+            return
+        }
+        val world = Bukkit.getWorld(args[2])
+        if (world == null) {
+            sender.sendLocale("command-main-world-not-found")
+            return
+        }
+        val yaw = Coerce.toFloat(args.getOrNull(6) ?: entity.position.yaw)
+        val pitch = Coerce.toFloat(args.getOrNull(7) ?: entity.position.pitch)
+        entity.clone(args[1], Location(world, Coerce.toDouble(args[3]), Coerce.toDouble(args[4]), Coerce.toDouble(args[5]), yaw, pitch))
+        sender.sendLocale("command-main-success")
     }
 
     @SubCommand(description = "@command-main-move", arguments = ["@command-argument-id?"], type = CommandType.PLAYER, priority = 0.5)
@@ -141,8 +166,32 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-move-cancel")
             return
         }
-        sender.sendLocale("command-main-success")
         Picker.select(sender, entity)
+    }
+
+    @SubCommand(
+        description = "@command-main-move-to",
+        arguments = ["@command-argument-id", "@command-argument-world", "@command-argument-x", "@command-argument-y", "@command-argument-z", "@command-argument-yaw?", "@command-argument-pitch?"],
+        priority = 0.51
+    )
+    fun moveto(sender: Player, args: Array<String>) {
+        val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
+        if (entity == null) {
+            sender.sendLocale("command-main-entity-not-found")
+            return
+        }
+        val world = Bukkit.getWorld(args[1])
+        if (world == null) {
+            sender.sendLocale("command-main-world-not-found")
+            return
+        }
+        val yaw = Coerce.toFloat(args.getOrNull(5) ?: entity.position.yaw)
+        val pitch = Coerce.toFloat(args.getOrNull(6) ?: entity.position.pitch)
+        entity.teleport(Location(world, Coerce.toDouble(args[2]), Coerce.toDouble(args[3]), Coerce.toDouble(args[4]), yaw, pitch))
+        Tasks.delay(20) {
+            entity.setHeadRotation(yaw, pitch)
+        }
+        sender.sendLocale("command-main-success")
     }
 
     @SubCommand(description = "@command-main-movehere", arguments = ["@command-argument-id?"], aliases = ["tphere"], type = CommandType.PLAYER, priority = 0.6)
@@ -156,11 +205,26 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-entity-not-found")
             return
         }
-        sender.sendLocale("command-main-success")
         entity.teleport(sender.location)
         Tasks.delay(20) {
             entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
         }
+        sender.sendLocale("command-main-success")
+    }
+
+    @SubCommand(
+        description = "@command-main-look-to",
+        arguments = ["@command-argument-id", "@command-argument-x", "@command-argument-y", "@command-argument-z"],
+        priority = 0.61
+    )
+    fun lookto(sender: Player, args: Array<String>) {
+        val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
+        if (entity == null) {
+            sender.sendLocale("command-main-entity-not-found")
+            return
+        }
+        entity.controllerLook(Location(entity.getWorld(), Coerce.toDouble(args[1]), Coerce.toDouble(args[2]), Coerce.toDouble(args[3])))
+        sender.sendLocale("command-main-success")
     }
 
     @SubCommand(description = "@command-main-lookhere", arguments = ["@command-argument-id?"], type = CommandType.PLAYER, priority = 0.7)
@@ -174,8 +238,8 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-entity-not-found")
             return
         }
-        sender.sendLocale("command-main-success")
         entity.controllerLook(sender.eyeLocation)
+        sender.sendLocale("command-main-success")
     }
 
     @SubCommand(description = "@command-main-teleport", arguments = ["@command-argument-id?"], aliases = ["tp"], type = CommandType.PLAYER, priority = 0.8)
@@ -189,8 +253,8 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-entity-not-found")
             return
         }
-        sender.sendLocale("command-main-success")
         sender.teleport(entity.getLocation())
+        sender.sendLocale("command-main-success")
     }
 
     @SubCommand(
