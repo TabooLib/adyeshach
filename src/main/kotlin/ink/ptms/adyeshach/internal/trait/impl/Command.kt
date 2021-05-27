@@ -21,8 +21,8 @@ class Command : Trait(), Listener {
     }
 
     override fun edit(player: Player, entityInstance: EntityInstance) {
-        player.sendLocale("trait-command-title")
-        Inputs.bookIn(player) {
+        player.sendLocale("trait-command")
+        Inputs.bookIn(player, data.getStringList(entityInstance.uniqueId)) {
             if (it.all { line -> line.isBlank() }) {
                 data.set(entityInstance.uniqueId, null)
             } else {
