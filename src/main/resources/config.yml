@@ -1,5 +1,3 @@
-
-
 #         Powered by TabooLib 5.0         #
 
 
@@ -29,3 +27,7 @@ Settings:
   enable-hide-name: true
   # Display meta data per line in the editor
   editor-meta-per-line: 3
+  # Delete NPC files when the specified world does not exist
+  delete-file-in-unknown-world:
+    - dungeon_world_1
+    - dungeon_world_2

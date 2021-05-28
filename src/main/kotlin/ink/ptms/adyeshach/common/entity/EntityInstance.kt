@@ -23,6 +23,7 @@ import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.Tasks
+import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import io.izzel.taboolib.internal.gson.JsonParser
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.Coerce
@@ -34,6 +35,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.jvm.Throws
 import kotlin.reflect.KClass
 
 /**
@@ -709,6 +711,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 克隆实体
      */
+    @Throws(UnknownWorldException::class)
     fun clone(newId: String, location: Location): EntityInstance? {
         val json = JsonParser.parseString(toJson()).asJsonObject
         json.addProperty("id", newId)

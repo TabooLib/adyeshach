@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.manager
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -22,13 +23,16 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val file = database.download(player)
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
         conf.getKeys(false).forEach {
-            val entity = AdyeshachAPI.fromYaml(conf.getConfigurationSection(it)!!) ?: return@forEach
-            if (entity.entityType.bukkitType == null) {
-                println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
-            } else {
-                entity.manager = this
-                entity.addViewer(player)
-                activeEntity.add(entity)
+            try {
+                val entity = AdyeshachAPI.fromYaml(conf.getConfigurationSection(it)!!) ?: return@forEach
+                if (entity.entityType.bukkitType == null) {
+                    println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
+                } else {
+                    entity.manager = this
+                    entity.addViewer(player)
+                    activeEntity.add(entity)
+                }
+            } catch (ex: UnknownWorldException) {
             }
         }
     }

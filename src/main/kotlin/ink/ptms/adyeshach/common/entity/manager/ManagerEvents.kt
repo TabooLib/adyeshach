@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.Tasks
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TListener
@@ -28,6 +29,12 @@ private class ManagerEvents : Listener {
             AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
         }
         AdyeshachAPI.getEntityManagerPublic().onEnable()
+        try {
+            ScriptHandler.workspace.loadAll()
+        } catch (e: Exception) {
+            println("[Adyeshach] An error occurred while loading the script")
+            e.printStackTrace()
+        }
     }
 
     @TFunction.Cancel

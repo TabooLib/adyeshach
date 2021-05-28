@@ -4,6 +4,8 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
+import io.izzel.taboolib.kotlin.warning
 import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -26,14 +28,20 @@ class ManagerPublic : Manager() {
         activeEntity.clear()
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
             Files.read(file) {
-                val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n")) ?: return@read
-                if (entity.entityType.bukkitType == null) {
-                    println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
-                } else {
-                    entity.manager = this
-                    activeEntity.add(entity)
-                    if (entity.alwaysVisible) {
-                        Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
+                try {
+                    val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n")) ?: return@read
+                    if (entity.entityType.bukkitType == null) {
+                        println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
+                    } else {
+                        entity.manager = this
+                        activeEntity.add(entity)
+                        if (entity.alwaysVisible) {
+                            Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
+                        }
+                    }
+                } catch (ex: UnknownWorldException) {
+                    if (Adyeshach.settings.deleteFileInUnknownWorld.contains(ex.message)) {
+                        file.delete()
                     }
                 }
             }

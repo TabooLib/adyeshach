@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.script.KnownController
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
+import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
 import ink.ptms.adyeshach.internal.database.DatabaseMongodb
 import io.izzel.taboolib.internal.gson.JsonParser
@@ -24,6 +25,7 @@ import java.io.File
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.jvm.Throws
 
 object AdyeshachAPI {
 
@@ -41,7 +43,8 @@ object AdyeshachAPI {
         when (val db = Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
-            else -> CustomDatabaseEvent(db).call().database ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+            else -> CustomDatabaseEvent(db).call().database
+                ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
         }
     }
 
@@ -61,14 +64,17 @@ object AdyeshachAPI {
         return managerPrivateTemp.computeIfAbsent(player.name) { ManagerPrivateTemp(player.name) }
     }
 
+    @Throws(UnknownWorldException::class)
     fun fromYaml(section: ConfigurationSection): EntityInstance? {
         return fromJson(Converter.yamlToJson(section).toString())
     }
 
+    @Throws(UnknownWorldException::class)
     fun fromYaml(source: String): EntityInstance? {
         return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString())
     }
 
+    @Throws(UnknownWorldException::class)
     fun fromJson(inputStream: InputStream): EntityInstance? {
         var entityInstance: EntityInstance? = null
         Files.read(inputStream) {
@@ -77,6 +83,7 @@ object AdyeshachAPI {
         return entityInstance
     }
 
+    @Throws(UnknownWorldException::class)
     fun fromJson(file: File): EntityInstance? {
         var entityInstance: EntityInstance? = null
         Files.read(file) {
@@ -85,9 +92,12 @@ object AdyeshachAPI {
         return entityInstance
     }
 
+    @Throws(UnknownWorldException::class)
     fun fromJson(source: String): EntityInstance? {
         val entityType = try {
             EntityTypes.valueOf(JsonParser.parseString(source).asJsonObject.get("entityType").asString)
+        } catch (ex: UnknownWorldException) {
+            throw ex
         } catch (t: Throwable) {
             t.printStackTrace()
             return null

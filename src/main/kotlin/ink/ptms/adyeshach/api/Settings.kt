@@ -49,4 +49,7 @@ object Settings {
 
     val editorMetaPerLine: Int
         get() = Adyeshach.conf.getInt("Settings.editor-meta-per-line", 3)
+
+    val deleteFileInUnknownWorld: List<String>
+        get() = Adyeshach.conf.getStringList("delete-file-in-unknown-world")
 }

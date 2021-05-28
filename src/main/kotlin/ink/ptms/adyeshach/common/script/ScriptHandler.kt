@@ -104,16 +104,6 @@ object ScriptHandler {
         knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
     }
 
-    @TSchedule
-    fun tick() {
-        try {
-            workspace.loadAll()
-        } catch (e: Exception) {
-            println("[Adyeshach] An error occurred while loading the script")
-            e.printStackTrace()
-        }
-    }
-
     fun toEulerAngle(str: String): EulerAngle {
         val args = str.split(",")
         return EulerAngle(

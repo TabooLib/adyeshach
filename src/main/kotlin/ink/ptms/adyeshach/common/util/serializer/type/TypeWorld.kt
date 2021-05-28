@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
+import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import io.izzel.taboolib.internal.gson.*
 import org.bukkit.Bukkit
 import org.bukkit.World
@@ -17,7 +18,7 @@ class TypeWorld : JsonSerializer<World>, JsonDeserializer<World> {
         return JsonPrimitive(a.name)
     }
 
-    override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): World? {
-        return Bukkit.getWorld(a.asString)
+    override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): World {
+        return Bukkit.getWorld(a.asString) ?: throw UnknownWorldException(a.asString)
     }
 }
