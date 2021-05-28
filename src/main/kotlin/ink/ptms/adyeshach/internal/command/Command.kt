@@ -68,12 +68,12 @@ class Command : BaseMainCommand(), Helper {
         Editor.open(sender, entity)
     }
 
-    @SubCommand(description = "@command-main-delete", arguments = ["@command-argument-id?"], aliases = ["remove"], type = CommandType.PLAYER, priority = 0.2)
-    fun delete(sender: Player, args: Array<String>) {
+    @SubCommand(description = "@command-main-delete", arguments = ["@command-argument-id?"], aliases = ["remove"], priority = 0.2)
+    fun delete(sender: CommandSender, args: Array<String>) {
         val entity = if (args.isEmpty()) {
-            AdyeshachAPI.getEntityNearly(sender)
+            AdyeshachAPI.getEntityNearly(sender as? Player ?: return)
         } else {
-            AdyeshachAPI.getEntityFromUniqueIdOrId(args[0], sender)
+            AdyeshachAPI.getEntityFromUniqueIdOrId(args.getOrNull(0) ?: "null", sender as? Player)
         }
         if (entity == null) {
             sender.sendLocale("command-main-entity-not-found")
