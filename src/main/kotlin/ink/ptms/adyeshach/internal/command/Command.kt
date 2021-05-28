@@ -134,7 +134,7 @@ class Command : BaseMainCommand(), Helper {
         arguments = ["@command-argument-id", "@command-argument-id", "@command-argument-world", "@command-argument-x", "@command-argument-y", "@command-argument-z", "@command-argument-yaw?", "@command-argument-pitch?"],
         priority = 0.41
     )
-    fun copyto(sender: Player, args: Array<String>) {
+    fun copyto(sender: CommandSender, args: Array<String>) {
         val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
         if (entity == null) {
             sender.sendLocale("command-main-entity-not-found")
@@ -174,7 +174,7 @@ class Command : BaseMainCommand(), Helper {
         arguments = ["@command-argument-id", "@command-argument-world", "@command-argument-x", "@command-argument-y", "@command-argument-z", "@command-argument-yaw?", "@command-argument-pitch?"],
         priority = 0.51
     )
-    fun moveto(sender: Player, args: Array<String>) {
+    fun moveto(sender: CommandSender, args: Array<String>) {
         val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
         if (entity == null) {
             sender.sendLocale("command-main-entity-not-found")
@@ -217,7 +217,7 @@ class Command : BaseMainCommand(), Helper {
         arguments = ["@command-argument-id", "@command-argument-x", "@command-argument-y", "@command-argument-z"],
         priority = 0.61
     )
-    fun lookto(sender: Player, args: Array<String>) {
+    fun lookto(sender: CommandSender, args: Array<String>) {
         val entity = AdyeshachAPI.getEntityFromUniqueIdOrId(args[0])
         if (entity == null) {
             sender.sendLocale("command-main-entity-not-found")
