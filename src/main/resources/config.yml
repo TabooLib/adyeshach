@@ -29,5 +29,6 @@ Settings:
   editor-meta-per-line: 3
   # Delete NPC files when the specified world does not exist
   delete-file-in-unknown-world:
-    - dungeon_world_1
-    - dungeon_world_2
+    - 'dungeon_world_1'
+    - 'dungeon_world_2'
+    - 'custom?'

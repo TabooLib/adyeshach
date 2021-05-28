@@ -52,4 +52,8 @@ object Settings {
 
     val deleteFileInUnknownWorld: List<String>
         get() = Adyeshach.conf.getStringList("delete-file-in-unknown-world")
+
+    fun isSpecifiedWorld(world: String): Boolean {
+        return deleteFileInUnknownWorld.any { if (it.endsWith("?")) world.contains(it.substring(0, it.length - 1)) else world == it }
+    }
 }

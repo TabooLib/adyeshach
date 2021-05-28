@@ -40,7 +40,7 @@ class ManagerPublic : Manager() {
                         }
                     }
                 } catch (ex: UnknownWorldException) {
-                    if (Adyeshach.settings.deleteFileInUnknownWorld.contains(ex.message)) {
+                    if (Adyeshach.settings.isSpecifiedWorld(ex.message.toString())) {
                         file.delete()
                     }
                 }
