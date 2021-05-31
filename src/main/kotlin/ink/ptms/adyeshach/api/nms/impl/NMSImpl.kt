@@ -563,8 +563,7 @@ class NMSImpl : NMS() {
 
     override fun toBlockId(materialData: MaterialData): Int {
         return if (version >= 11300) {
-            val block = Blocks::class.java.asReflex().read<Block>(materialData.itemType.name)
-            Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
+            Block.getCombinedId(CraftMagicNumbers.getBlock(materialData))
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)
         }
