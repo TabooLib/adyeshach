@@ -24,7 +24,7 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
         return JsonPrimitive(controller?.key ?: a.javaClass.name)
     }
 
-    override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): Controller? {
+    override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): Controller {
         val controller = AdyeshachAPI.getKnownController().entries.firstOrNull { it.key == a.asString }
         return Controller.Pre(controller?.value ?: KnownController(ControllerNone::class) { ControllerNone(it, a.asString) })
     }

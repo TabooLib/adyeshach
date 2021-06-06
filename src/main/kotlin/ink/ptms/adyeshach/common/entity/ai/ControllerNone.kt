@@ -6,10 +6,9 @@ import io.izzel.taboolib.util.lite.Numbers
 class ControllerNone(entity: EntityInstance, val name: String) : Controller(entity) {
 
     override fun shouldExecute(): Boolean {
-        return Numbers.random(0.2)
+        return false
     }
 
     override fun onTick() {
-        println("[Adyeshach] Unknown serializable controller: $name")
     }
 }

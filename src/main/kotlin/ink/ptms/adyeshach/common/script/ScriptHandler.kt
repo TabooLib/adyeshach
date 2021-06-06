@@ -37,6 +37,18 @@ object ScriptHandler {
         Kether.addAction(id, parser, "adyeshach")
     }
 
+    @TFunction.Load
+    fun load() {
+        // 已知控制器
+        knownControllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
+        knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
+        knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class) { GeneralSmoothLook(it) }
+        knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
+        knownControllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
+        knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
+        knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
+    }
+
     @TFunction.Init
     fun init() {
         // 无参语法
@@ -94,14 +106,6 @@ object ScriptHandler {
                 writer = { k, v -> k.isCancelled = Coerce.toBoolean(v) }
             }
         }
-        // 已知控制器
-        knownControllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
-        knownControllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
-        knownControllers["SmoothLook"] = KnownController(GeneralSmoothLook::class) { GeneralSmoothLook(it) }
-        knownControllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
-        knownControllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
-        knownControllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
-        knownControllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
     }
 
     fun toEulerAngle(str: String): EulerAngle {

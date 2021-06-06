@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.manager
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
@@ -47,6 +48,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val player = Bukkit.getPlayerExact(player) ?: return
         val file = database.download(player)
         activeEntity.forEach {
+            it.unregisterController(ControllerNone::class)
             it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
         }
         database.upload(player)

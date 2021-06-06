@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import io.izzel.taboolib.kotlin.warning
 import io.izzel.taboolib.util.Files
@@ -56,6 +57,7 @@ class ManagerPublic : Manager() {
 
     override fun onSave() {
         activeEntity.forEach { entity ->
+            entity.unregisterController(ControllerNone::class)
             Files.write(Files.file(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json")) {
                 it.write(entity.toJson())
             }
