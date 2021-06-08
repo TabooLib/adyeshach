@@ -53,9 +53,9 @@ class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
             } else {
                 it.reset()
             }
-            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
-            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
-            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0.0))
+            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
+            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
+            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
             while (it.hasNext()) {
                 it.mark()
                 when (it.nextToken()) {
