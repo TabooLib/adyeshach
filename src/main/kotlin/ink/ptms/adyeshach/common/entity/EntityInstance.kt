@@ -116,29 +116,29 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (version >= 11400) {
             registerMeta(at(11400 to 6), "pose", BukkitPose.STANDING)
             registerEditor("entityPose")
-                    .from(Editors.enums(BukkitPose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
-                    .reset { entity, _ ->
-                        entity.setPose(BukkitPose.STANDING)
-                    }
-                    .display { _, entity, _ ->
-                        entity.getPose().name
-                    }
+                .from(Editors.enums(BukkitPose::class) { _, entity, meta, _, e -> "/adyeshachapi edit pose ${entity.uniqueId} ${meta.key} $e" })
+                .reset { entity, _ ->
+                    entity.setPose(BukkitPose.STANDING)
+                }
+                .display { _, entity, _ ->
+                    entity.getPose().name
+                }
         }
         registerEditor("visibleDistance")
-                .reset { _, _ ->
-                    visibleDistance = -1.0
-                }
-                .modify { player, entity, _ ->
-                    Signs.fakeSign(player, arrayOf("$visibleDistance", "", "请在第一行输入内容")) {
-                        if (it[0].isNotEmpty()) {
-                            visibleDistance = Coerce.toDouble(it[0])
-                        }
-                        Editor.open(player, entity)
+            .reset { _, _ ->
+                visibleDistance = -1.0
+            }
+            .modify { player, entity, _ ->
+                Signs.fakeSign(player, arrayOf("$visibleDistance", "", "请在第一行输入内容")) {
+                    if (it[0].isNotEmpty()) {
+                        visibleDistance = Coerce.toDouble(it[0])
                     }
+                    Editor.open(player, entity)
                 }
-                .display { _, _, _ ->
-                    visibleDistance.toString()
-                }
+            }
+            .display { _, _, _ ->
+                visibleDistance.toString()
+            }
         registerEditor("moveSpeed")
             .reset { _, _ ->
                 moveSpeed = 0.2
@@ -712,12 +712,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 克隆实体
      */
     @Throws(UnknownWorldException::class)
-    fun clone(newId: String, location: Location): EntityInstance? {
+    fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance? {
         val json = JsonParser.parseString(toJson()).asJsonObject
         json.addProperty("id", newId)
         json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
         val entity = AdyeshachAPI.fromJson(json.toString()) ?: return null
-        manager?.addEntity(entity)
+        (manager ?: this.manager)?.addEntity(entity)
         entity.tag.putAll(tag)
         entity.manager = manager
         entity.position = EntityPosition.fromLocation(location)
