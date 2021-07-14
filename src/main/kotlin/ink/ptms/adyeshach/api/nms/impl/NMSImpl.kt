@@ -12,7 +12,6 @@ import ink.ptms.adyeshach.common.bukkit.data.PositionNull
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import io.izzel.taboolib.Version
-import io.izzel.taboolib.kotlin.Reflex
 import io.izzel.taboolib.kotlin.Reflex.Companion.asReflex
 import io.izzel.taboolib.module.lite.SimpleEquip
 import io.izzel.taboolib.module.nms.impl.Position
@@ -287,32 +286,36 @@ class NMSImpl : NMS() {
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
-        if (version >= 11600) {
-            sendPacket(
-                player,
-                PacketPlayOutEntityEquipment(
-                    entityId,
-                    listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))
+        when {
+            version >= 11600 -> {
+                sendPacket(
+                    player,
+                    PacketPlayOutEntityEquipment(
+                        entityId,
+                        listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))
+                    )
                 )
-            )
-        } else if (version >= 11300) {
-            sendPacket(
-                player,
-                net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
-                    entityId,
-                    net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms),
-                    org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)
+            }
+            version >= 11300 -> {
+                sendPacket(
+                    player,
+                    net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
+                        entityId,
+                        net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms),
+                        org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)
+                    )
                 )
-            )
-        } else {
-            sendPacket(
-                player,
-                net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(
-                    entityId,
-                    net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms),
-                    org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
+            }
+            else -> {
+                sendPacket(
+                    player,
+                    net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(
+                        entityId,
+                        net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms),
+                        org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
+                    )
                 )
-            )
+            }
         }
     }
 

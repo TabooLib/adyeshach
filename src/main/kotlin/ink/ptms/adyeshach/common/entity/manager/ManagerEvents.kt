@@ -2,7 +2,9 @@ package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
+import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
 import ink.ptms.adyeshach.api.Settings
+import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.Tasks
@@ -15,6 +17,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 
 /**
  * @Author sky
@@ -104,6 +107,16 @@ private class ManagerEvents : Listener {
     fun e(e: AdyeshachPlayerJoinEvent) {
         if (Settings.spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
             spawn(e.player)
+        }
+    }
+
+    @EventHandler
+    fun e(e: PlayerRespawnEvent) {
+        Tasks.delay(20) {
+            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().toDistance(e.player.location) < 128 }.forEach {
+                it.visible(e.player, true)
+                AdyeshachEntitySpawnEvent(it).call()
+            }
         }
     }
 
