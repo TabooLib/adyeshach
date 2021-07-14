@@ -1,13 +1,12 @@
 package ink.ptms.adyeshach.common.editor.move
 
+import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.RayTrace
 import ink.ptms.adyeshach.internal.command.Helper
-import io.izzel.taboolib.module.inject.PlayerContainer
-import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.module.inject.TSchedule
+import io.izzel.taboolib.kotlin.Reflex.Companion.reflex
+import io.izzel.taboolib.module.inject.*
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.lite.Numbers
 import io.izzel.taboolib.util.lite.cooldown.Cooldown
@@ -54,13 +53,16 @@ object Picker : Helper {
         @TInject
         private val cooldown = Cooldown("Adyeshach:picker:move", 200)
 
-        @TSchedule(period = 1)
+        @TFunction.Init
         fun e() {
-            Bukkit.getOnlinePlayers().forEach {
-                val select = getSelected(it)
-                val entity = select.entityInstance ?: return@forEach
-                process(it, entity)
-            }
+            val bukkitTask = Bukkit.getScheduler().runTaskTimer(Adyeshach.plugin, Runnable {
+                Bukkit.getOnlinePlayers().forEach {
+                    val select = getSelected(it)
+                    val entity = select.entityInstance ?: return@forEach
+                    process(it, entity)
+                }
+            }, 1, 1)
+//            bukkitTask.reflex("timingName", "Picker")
         }
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

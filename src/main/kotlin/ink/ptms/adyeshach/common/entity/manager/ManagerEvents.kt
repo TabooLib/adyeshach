@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.manager
 
+import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
 import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
@@ -8,6 +9,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.Tasks
+import io.izzel.taboolib.kotlin.Reflex.Companion.reflex
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.inject.TSchedule
@@ -50,30 +52,36 @@ private class ManagerEvents : Listener {
         onSavePrivate()
     }
 
-    @TSchedule(period = 1)
+    @TFunction.Init
     fun onTickPublic() {
-        mirrorFuture("ManagerPublic:onTick") {
-            AdyeshachAPI.getEntityManagerPublic().onTick()
-            finish()
-        }
-        mirrorFuture("ManagerPublic:onTick(temporary)") {
-            AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
-            finish()
-        }
+        val bukkitTask = Bukkit.getScheduler().runTaskTimer(Adyeshach.plugin, Runnable {
+            mirrorFuture("ManagerPublic:onTick") {
+                AdyeshachAPI.getEntityManagerPublic().onTick()
+                finish()
+            }
+            mirrorFuture("ManagerPublic:onTick(temporary)") {
+                AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
+                finish()
+            }
+        }, 1, 1)
+//        bukkitTask.reflex("timingName", "Adyeshach:onTickPublic()")
     }
 
-    @TSchedule(period = 1)
+    @TFunction.Init
     fun onTickPrivate() {
-        Bukkit.getOnlinePlayers().forEach { player ->
-            mirrorFuture("ManagerPrivate:onTick") {
-                AdyeshachAPI.getEntityManagerPrivate(player).onTick()
-                finish()
+        val bukkitTask = Bukkit.getScheduler().runTaskTimer(Adyeshach.plugin, Runnable {
+            Bukkit.getOnlinePlayers().forEach { player ->
+                mirrorFuture("ManagerPrivate:onTick") {
+                    AdyeshachAPI.getEntityManagerPrivate(player).onTick()
+                    finish()
+                }
+                mirrorFuture("ManagerPrivate:onTick(temporary)") {
+                    AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
+                    finish()
+                }
             }
-            mirrorFuture("ManagerPrivate:onTick(temporary)") {
-                AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
-                finish()
-            }
-        }
+        }, 1, 1)
+//        bukkitTask.reflex("timingName", "Adyeshach:onTickPrivate()")
     }
 
     @TSchedule(period = 1200, async = true)
