@@ -22,7 +22,7 @@ class AdyBee : AdyEntityAgeable(EntityTypes.BEE) {
                 .canEdit(false)
                 .build()
         registerEditor("isAngered")
-                .reset { entity, meta ->
+                .reset { entity, _ ->
                     (entity as AdyBee).setAngered(false)
                 }
                 .modify { player, entity, _ ->

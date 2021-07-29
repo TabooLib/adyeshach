@@ -6,11 +6,11 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import io.izzel.taboolib.kotlin.warning
-import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import taboolib.common.io.newFile
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -28,22 +28,20 @@ class ManagerPublic : Manager() {
     override fun onEnable() {
         activeEntity.clear()
         File(Adyeshach.plugin.dataFolder, "npc").listFiles()?.filter { file -> file.name.endsWith(".json") }?.forEach { file ->
-            Files.read(file) {
-                try {
-                    val entity = AdyeshachAPI.fromJson(it.lines().toArray().joinToString("\n")) ?: return@read
-                    if (entity.entityType.bukkitType == null) {
-                        println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
-                    } else {
-                        entity.manager = this
-                        activeEntity.add(entity)
-                        if (entity.alwaysVisible) {
-                            Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
-                        }
+            try {
+                val entity = AdyeshachAPI.fromJson(file.readText(StandardCharsets.UTF_8)) ?: return@forEach
+                if (entity.entityType.bukkitType == null) {
+                    println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
+                } else {
+                    entity.manager = this
+                    activeEntity.add(entity)
+                    if (entity.alwaysVisible) {
+                        Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
                     }
-                } catch (ex: UnknownWorldException) {
-                    if (Adyeshach.settings.isSpecifiedWorld(ex.world)) {
-                        file.delete()
-                    }
+                }
+            } catch (ex: UnknownWorldException) {
+                if (Adyeshach.settings.isSpecifiedWorld(ex.world)) {
+                    file.delete()
                 }
             }
         }
@@ -58,9 +56,7 @@ class ManagerPublic : Manager() {
     override fun onSave() {
         activeEntity.forEach { entity ->
             entity.unregisterController(ControllerNone::class)
-            Files.write(Files.file(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json")) {
-                it.write(entity.toJson())
-            }
+            newFile(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json").writeText(entity.toJson())
         }
     }
 
@@ -74,7 +70,7 @@ class ManagerPublic : Manager() {
     override fun remove(entityInstance: EntityInstance) {
         val file = File(Adyeshach.plugin.dataFolder, "npc/${entityInstance.uniqueId}.json")
         if (file.exists()) {
-            Files.copy(file, Files.file(Adyeshach.plugin.dataFolder, "npc/trash/${entityInstance.uniqueId}.json"))
+            file.copyTo(File(Adyeshach.plugin.dataFolder, "npc/trash/${entityInstance.uniqueId}.json"))
             file.delete()
         }
         activeEntity.remove(entityInstance)

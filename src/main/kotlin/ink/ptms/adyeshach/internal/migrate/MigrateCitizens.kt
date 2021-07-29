@@ -10,6 +10,8 @@ import net.citizensnpcs.npc.skin.SkinnableEntity
 import net.citizensnpcs.util.NMS
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
+import taboolib.common.platform.severe
+import taboolib.common.platform.warning
 
 /**
  * @Author sky
@@ -24,12 +26,12 @@ class MigrateCitizens : Migrate() {
     override fun migrate() {
         CitizensAPI.getNPCRegistry().toList().forEach { npc ->
             if (npc.entity == null) {
-                println("[Adyeshach][Migrate] Citizens ${npc.name} is invalid or entity chunk not loaded.")
+                warning("[Migrate] Citizens ${npc.name} is invalid or entity chunk not loaded.")
                 return@forEach
             }
             val entityTypes = EntityTypes.fromBukkit(npc.entity.type)
             if (entityTypes == null) {
-                println("[Adyeshach][Migrate] Citizens ${npc.entity.type} not supported.")
+                warning("[Migrate] Citizens ${npc.entity.type} not supported.")
                 return@forEach
             }
             val entity = AdyeshachAPI.getEntityManagerPublic().create(entityTypes, npc.entity.location)

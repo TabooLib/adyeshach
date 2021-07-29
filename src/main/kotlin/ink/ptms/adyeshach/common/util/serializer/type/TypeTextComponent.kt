@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import io.izzel.taboolib.internal.gson.*
-import io.izzel.taboolib.util.chat.TextComponent
+import com.google.gson.*
+import net.md_5.bungee.api.chat.TextComponent
 import java.lang.reflect.Type
 
 /**

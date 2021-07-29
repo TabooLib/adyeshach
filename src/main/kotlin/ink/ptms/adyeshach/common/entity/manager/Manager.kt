@@ -56,13 +56,14 @@ abstract class Manager {
 
     protected fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: (EntityInstance) -> (Unit)): EntityInstance {
         if (entityTypes.bukkitType == null) {
-            throw RuntimeException("Entity \"${entityTypes.name}\" not supported this minecraft version.")
+            error("Entity \"${entityTypes.name}\" not supported this minecraft version.")
         }
         val entityInstance = entityTypes.newInstance()
         function.invoke(entityInstance)
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
-        val event = AdyeshachEntityCreateEvent(entityInstance, location).call()
+        val event = AdyeshachEntityCreateEvent(entityInstance, location)
+        event.call()
         if (event.isCancelled) {
             return entityInstance
         }

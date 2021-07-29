@@ -1,34 +1,27 @@
 package ink.ptms.adyeshach.common.entity.manager
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.AdyeshachAPI.mirrorFuture
 import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import ink.ptms.adyeshach.common.util.Tasks
-import io.izzel.taboolib.kotlin.Reflex.Companion.reflex
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerRespawnEvent
+import taboolib.common.LifeCycle
+import taboolib.common.platform.*
+import taboolib.common5.mirrorNow
 
 /**
  * @Author sky
  * @Since 2020-08-14 22:10
  */
-@TListener
-private class ManagerEvents : Listener {
+internal object ManagerEvents {
 
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun init() {
         Bukkit.getOnlinePlayers().forEach {
             AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
@@ -37,90 +30,78 @@ private class ManagerEvents : Listener {
         try {
             ScriptHandler.workspace.loadAll()
         } catch (e: Exception) {
-            println("[Adyeshach] An error occurred while loading the script")
+            warning("An error occurred while loading the script")
             e.printStackTrace()
         }
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun cancel() {
         Bukkit.getOnlinePlayers().forEach {
-            AdyeshachAPI.getEntityManagerPrivate(it).onDisable()
+            val manager = AdyeshachAPI.getEntityManagerPrivate(it)
+            manager.onDisable()
+            manager.onSave()
         }
-        AdyeshachAPI.getEntityManagerPublic().onDisable()
-        onSavePublic()
-        onSavePrivate()
+        val manager = AdyeshachAPI.getEntityManagerPublic()
+        manager.onDisable()
+        manager.onSave()
     }
 
-    @TFunction.Init
-    fun onTickPublic() {
-        val bukkitTask = Bukkit.getScheduler().runTaskTimer(Adyeshach.plugin, Runnable {
-            mirrorFuture("ManagerPublic:onTick") {
+    @Awake(LifeCycle.ACTIVE)
+    fun onTick() {
+        submit(period = 1) {
+            mirrorNow("ManagerPublic:onTick") {
                 AdyeshachAPI.getEntityManagerPublic().onTick()
-                finish()
             }
-            mirrorFuture("ManagerPublic:onTick(temporary)") {
+            mirrorNow("ManagerPublic:onTick(temporary)") {
                 AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
-                finish()
             }
-        }, 1, 1)
-//        bukkitTask.reflex("timingName", "Adyeshach:onTickPublic()")
-    }
-
-    @TFunction.Init
-    fun onTickPrivate() {
-        val bukkitTask = Bukkit.getScheduler().runTaskTimer(Adyeshach.plugin, Runnable {
+        }
+        submit(period = 1) {
             Bukkit.getOnlinePlayers().forEach { player ->
-                mirrorFuture("ManagerPrivate:onTick") {
+                mirrorNow("ManagerPrivate:onTick") {
                     AdyeshachAPI.getEntityManagerPrivate(player).onTick()
-                    finish()
                 }
-                mirrorFuture("ManagerPrivate:onTick(temporary)") {
+                mirrorNow("ManagerPrivate:onTick(temporary)") {
                     AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
-                    finish()
                 }
             }
-        }, 1, 1)
-//        bukkitTask.reflex("timingName", "Adyeshach:onTickPrivate()")
-    }
-
-    @TSchedule(period = 1200, async = true)
-    fun onSavePublic() {
-        mirrorFuture("ManagerPublic:onSave(async)") {
-            AdyeshachAPI.getEntityManagerPublic().onSave()
-            finish()
         }
     }
 
-    @TSchedule(period = 600, async = true)
-    fun onSavePrivate() {
-        Bukkit.getOnlinePlayers().forEach {
-            mirrorFuture("ManagerPrivate:onSave(async)") {
-                AdyeshachAPI.getEntityManagerPrivate(it).onSave()
-                finish()
+    @Awake(LifeCycle.ACTIVE)
+    fun onSave() {
+        submit(delay = 1200, period = 1200, async = true) {
+            mirrorNow("ManagerPublic:onSave(async)") {
+                AdyeshachAPI.getEntityManagerPublic().onSave()
+            }
+        }
+        submit(delay = 600, period = 600, async = true) {
+            Bukkit.getOnlinePlayers().forEach {
+                mirrorNow("ManagerPrivate:onSave(async)") {
+                    AdyeshachAPI.getEntityManagerPrivate(it).onSave()
+                }
             }
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerJoinEvent) {
         if (Settings.spawnTrigger == Settings.SpawnTrigger.JOIN) {
-           Tasks.delay(20) {
-               spawn(e.player)
-           }
+            submit(delay = 20) { spawn(e.player) }
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: AdyeshachPlayerJoinEvent) {
         if (Settings.spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
             spawn(e.player)
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerRespawnEvent) {
-        Tasks.delay(20) {
+        submit(delay = 20) {
             AdyeshachAPI.getEntities(e.player) { it.position.toLocation().toDistance(e.player.location) < 128 }.forEach {
                 it.visible(e.player, true)
                 AdyeshachEntitySpawnEvent(it).call()
@@ -128,7 +109,7 @@ private class ManagerEvents : Listener {
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerQuitEvent) {
         AdyeshachAPI.getEntityManagerPublic().getEntities().forEach {
             it.viewPlayers.viewers.remove(e.player.name)
@@ -138,9 +119,8 @@ private class ManagerEvents : Listener {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }
-        mirrorFuture("ManagerPrivate:onSave(async)") {
+        mirrorNow("ManagerPrivate:onSave(async)") {
             AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
-            finish()
         }
     }
 
@@ -151,9 +131,8 @@ private class ManagerEvents : Listener {
         AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
             it.viewPlayers.viewers.add(player.name)
         }
-        mirrorFuture("ManagerPrivate:onLoad(async)") {
+        mirrorNow("ManagerPrivate:onLoad(async)") {
             AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
-            finish()
         }
     }
 }

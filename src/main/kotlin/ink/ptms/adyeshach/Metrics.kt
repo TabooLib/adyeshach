@@ -3,34 +3,37 @@ package ink.ptms.adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import io.izzel.taboolib.metrics.BStats
-import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.module.inject.TSchedule
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.Platform
+import taboolib.common.platform.SubscribeEvent
+import taboolib.module.metrics.Metrics
+import taboolib.module.metrics.charts.AdvancedPie
+import taboolib.module.metrics.charts.SingleLineChart
+import taboolib.platform.BukkitPlugin
 
 object Metrics {
 
-    lateinit var metrics: BStats
+    lateinit var metrics: Metrics
         private set
 
     private var createdEntities = 0
 
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun init() {
-        metrics = BStats(Adyeshach.plugin)
-        metrics.addCustomChart(BStats.SingleLineChart("entities") {
+        metrics = Metrics(8827, BukkitPlugin.getInstance().description.version, Platform.BUKKIT)
+        metrics.addCustomChart(SingleLineChart("entities") {
             val sizePublic = AdyeshachAPI.getEntityManagerPublic().getEntities().size
             val sizePublicTemporary = AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().size
             sizePublic + sizePublicTemporary
         })
-        metrics.addCustomChart(BStats.SingleLineChart("scripts") {
+        metrics.addCustomChart(SingleLineChart("scripts") {
             ScriptHandler.workspace.scripts.size
         })
-        metrics.addCustomChart(BStats.SingleLineChart("entity_created") {
+        metrics.addCustomChart(SingleLineChart("entity_created") {
             createdEntities
         })
-        metrics.addCustomChart(BStats.AdvancedPie("entity_types") {
+        metrics.addCustomChart(AdvancedPie("entity_types") {
             val map = HashMap<String, Int>()
             AdyeshachAPI.getEntityManagerPublic().getEntities().forEach {
                 map[it.entityType.name] = (map[it.entityType.name] ?: 0) + 1
@@ -42,10 +45,9 @@ object Metrics {
         })
     }
 
-    @TListener
-    class MetricsListener : Listener {
+    internal object MetricsListener {
 
-        @EventHandler
+        @SubscribeEvent
         fun e(e: AdyeshachEntityCreateEvent) {
             createdEntities++
         }

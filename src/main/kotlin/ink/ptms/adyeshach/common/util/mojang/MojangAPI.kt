@@ -1,15 +1,15 @@
 package ink.ptms.adyeshach.common.util.mojang
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AshconAPI
 import ink.ptms.adyeshach.common.util.serializer.Serializer
-import io.izzel.taboolib.internal.gson.Gson
-import io.izzel.taboolib.internal.gson.JsonObject
-import io.izzel.taboolib.internal.gson.JsonParser
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import taboolib.common.io.newFile
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -26,9 +26,9 @@ object MojangAPI {
     const val CRLF = "\r\n"
 
     fun get(name: String): Texture? {
-        val file = Files.file(Adyeshach.plugin.dataFolder, "skin/$name")
+        val file = newFile(Adyeshach.plugin.dataFolder, "skin/$name")
         if (file.length() != 0L) {
-            val json = JsonParser.parseString(Files.readFromFile(file)) as JsonObject
+            val json = JsonParser().parse(file.readText(StandardCharsets.UTF_8)).asJsonObject
             return if (json.has("network")) {
                 Texture(json.get("value").asString, json.get("signature").asString)
             } else {
@@ -82,7 +82,7 @@ object MojangAPI {
                         writer.append("--").append(boundary).append("--").append(CRLF).flush()
                         when (connection.responseCode) {
                             500 -> {
-                                val error = Gson().fromJson(BufferedReader(InputStreamReader(connection.errorStream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n")), Error::class.java)
+                                val error = Gson().fromJson(BufferedReader(InputStreamReader(connection.errorStream, StandardCharsets.UTF_8)).readText(), Error::class.java)
                                 when (error.code) {
                                     403 -> {
                                         sender.sendMessage("§c[Adyeshach] §7mineskin.org denied access to that url")
@@ -103,7 +103,7 @@ object MojangAPI {
                             }
                             else -> {
                                 connection.inputStream.use { input ->
-                                    return JsonParser.parseString(BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).asJsonObject
+                                    return JsonParser().parse(BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))).asJsonObject
                                 }
                             }
                         }

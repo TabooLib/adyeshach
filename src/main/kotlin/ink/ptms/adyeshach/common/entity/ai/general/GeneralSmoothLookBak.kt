@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import io.izzel.taboolib.module.lite.SimpleCounter
+import taboolib.common5.Baffle
 
 /**
  * 纪念 a老板的初代 SmoothLook 可以退休了
@@ -37,14 +37,14 @@ private class GeneralSmoothLookBak(entity: EntityInstance) : Controller(entity) 
 
     private var deltaYaw = 0f
     private var deltaPitch = 0f
-    private var counterSmoothLook = SimpleCounter(speed, true)
+    private var counterSmoothLook = Baffle.of(speed)
 
     override fun shouldExecute(): Boolean {
         return isLooking
     }
 
     override fun onTick() {
-        if (counterSmoothLook.next()) {
+        if (counterSmoothLook.hasNext()) {
             isLooking = false
             counterSmoothLook.reset()
         } else {
@@ -55,6 +55,6 @@ private class GeneralSmoothLookBak(entity: EntityInstance) : Controller(entity) 
     private fun init() {
         deltaYaw = (yaw - entity!!.position.yaw) / speed
         deltaPitch = (pitch - entity.position.pitch) / speed
-        counterSmoothLook = SimpleCounter(speed, true)
+        counterSmoothLook = Baffle.of(speed)
     }
 }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.api
 
+import com.google.gson.JsonParser
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
@@ -12,39 +13,38 @@ import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
 import ink.ptms.adyeshach.internal.database.DatabaseMongodb
-import io.izzel.taboolib.internal.gson.JsonParser
-import io.izzel.taboolib.kotlin.Mirror
-import io.izzel.taboolib.kotlin.MirrorData
-import io.izzel.taboolib.module.db.local.SecuredFile
-import io.izzel.taboolib.module.inject.PlayerContainer
-import io.izzel.taboolib.util.Files
 import org.bukkit.Location
-import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerQuitEvent
+import taboolib.common.LifeCycle
+import taboolib.common.platform.*
+import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.configuration.SecuredFile
 import java.io.File
 import java.io.InputStream
+import java.nio.charset.StandardCharsets
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.jvm.Throws
+import kotlin.collections.ArrayList
 
 object AdyeshachAPI {
 
-    val mirror = Mirror()
-
-    @PlayerContainer
     val onlinePlayers = CopyOnWriteArrayList<String>()
 
-    @PlayerContainer
     private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
     private val managerPrivateTemp = ConcurrentHashMap<String, ManagerPrivateTemp>()
     private val managerPublic = ManagerPublic()
     private val managerPublicTemp = ManagerPublicTemp()
     private val database by lazy {
-        when (val db = Adyeshach.conf.getString("Database.method")!!.toUpperCase()) {
+        when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase(Locale.getDefault())) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
-            else -> CustomDatabaseEvent(db).call().database
-                ?: throw RuntimeException("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+            else -> {
+                val event = CustomDatabaseEvent(db)
+                event.call()
+                event.database ?: error("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+            }
         }
     }
 
@@ -76,26 +76,18 @@ object AdyeshachAPI {
 
     @Throws(UnknownWorldException::class)
     fun fromJson(inputStream: InputStream): EntityInstance? {
-        var entityInstance: EntityInstance? = null
-        Files.read(inputStream) {
-            entityInstance = fromJson(it.readLines().joinToString(""))
-        }
-        return entityInstance
+        return fromJson(inputStream.readBytes().toString(StandardCharsets.UTF_8))
     }
 
     @Throws(UnknownWorldException::class)
     fun fromJson(file: File): EntityInstance? {
-        var entityInstance: EntityInstance? = null
-        Files.read(file) {
-            entityInstance = fromJson(it.readLines().joinToString(""))
-        }
-        return entityInstance
+        return fromJson(file.readText(StandardCharsets.UTF_8))
     }
 
     @Throws(UnknownWorldException::class)
     fun fromJson(source: String): EntityInstance? {
         val entityType = try {
-            EntityTypes.valueOf(JsonParser.parseString(source).asJsonObject.get("entityType").asString)
+            EntityTypes.valueOf(JsonParser().parse(source).asJsonObject.get("entityType").asString)
         } catch (ex: UnknownWorldException) {
             throw ex
         } catch (t: Throwable) {
@@ -142,7 +134,7 @@ object AdyeshachAPI {
     }
 
     fun registerKnownController(name: String, event: KnownController) {
-        ScriptHandler.knownControllers[name] = event
+        ScriptHandler.controllers[name] = event
     }
 
     fun getKnownController(name: String): KnownController? {
@@ -150,7 +142,7 @@ object AdyeshachAPI {
     }
 
     fun getKnownController(): Map<String, KnownController> {
-        return ScriptHandler.knownControllers
+        return ScriptHandler.controllers
     }
 
     fun Location.toDistance(loc: Location): Double {
@@ -161,11 +153,19 @@ object AdyeshachAPI {
         }
     }
 
-    fun mirrorFuture(id: String, func: Mirror.MirrorFuture.() -> Unit) {
-        mirror.mirrorFuture(id, func)
+    @Awake(LifeCycle.DISABLE)
+    private fun e() {
+        onlinePlayers().forEach { database.push(it.cast()) }
     }
 
-    fun mirrorFinish(id: String, time: Long) {
-        mirror.dataMap.computeIfAbsent(id) { MirrorData() }.finish(time)
+    @SubscribeEvent
+    private fun e(e: PlayerQuitEvent) {
+        onlinePlayers.remove(e.player.name)
+        managerPrivate.remove(e.player.name)
+        managerPrivateTemp.remove(e.player.name)
+        submit(async = true) {
+            database.push(e.player)
+            database.release(e.player)
+        }
     }
 }

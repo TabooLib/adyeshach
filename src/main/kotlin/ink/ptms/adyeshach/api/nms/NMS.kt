@@ -6,23 +6,20 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.kotlin.Reflex.Companion.asReflex
-import io.izzel.taboolib.module.inject.TInject
-import io.izzel.taboolib.module.nms.impl.Position
-import io.izzel.taboolib.module.packet.TPacketHandler
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
-import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import org.bukkit.entity.TropicalFish
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import org.bukkit.util.Vector
+import taboolib.common.util.Vector
+import taboolib.module.nms.nmsProxy
 import java.util.*
 
 /**
@@ -75,9 +72,9 @@ abstract class NMS {
 
     abstract fun getMetaEntityByte(index: Int, value: Byte): Any
 
-    abstract fun getMetaEntityVector(index: Int, value: EulerAngle): Any
+    abstract fun getMetaEntityEulerAngle(index: Int, value: EulerAngle): Any
 
-    abstract fun getMetaEntityPosition(index: Int, value: Position?): Any
+    abstract fun getMetaEntityVector(index: Int, value: Vector?): Any
 
     abstract fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any
 
@@ -97,8 +94,6 @@ abstract class NMS {
 
     abstract fun getParticleNMS(bukkitParticles: BukkitParticles): Any
 
-    abstract fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position>
-
     abstract fun getEntityDataWatcher(entity: Entity): Any
 
     abstract fun toBlockId(materialData: MaterialData): Int
@@ -106,8 +101,6 @@ abstract class NMS {
     abstract fun getEntity(world: World, id: Int): Entity?
 
     abstract fun parseVec3d(obj: Any): Vector
-
-    abstract fun generateRandomPosition(entity: Creature, inWater: Boolean): Vector?
 
     abstract fun getBlockHeight(block: Block): Double
 
@@ -117,24 +110,14 @@ abstract class NMS {
 
     abstract fun sendPlayerSleeping(player: Player, id: Int, location: Location)
 
-    abstract fun addEntity(location: Location, clazz: Class<out Entity>, function: (Entity) -> Unit): Entity
+    abstract fun getTropicalFishPattern(data: Int): TropicalFish.Pattern
+
+    abstract fun getTropicalFishDataValue(pattern: TropicalFish.Pattern): Int
 
     companion object {
 
-        @TInject(asm = "ink.ptms.adyeshach.api.nms.impl.NMSImpl")
-        lateinit var INSTANCE: NMS
-
-        fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any?>) {
-            TPacketHandler.sendPacket(player, setFields(packet, *fields))
-        }
-
-        fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
-            fields.forEach { (key, value) ->
-                if (value != null) {
-                    any.javaClass.asReflex(any).write(key, value)
-                }
-            }
-            return any
+        val INSTANCE by lazy {
+            nmsProxy<NMS>()
         }
     }
 }

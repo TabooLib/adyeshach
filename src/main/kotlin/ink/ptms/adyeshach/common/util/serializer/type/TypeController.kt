@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
+import com.google.gson.*
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.script.KnownController
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import io.izzel.taboolib.internal.gson.*
 import java.lang.reflect.Type
 
 /**

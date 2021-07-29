@@ -2,22 +2,19 @@ package ink.ptms.adyeshach.common.script.action
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.script.ScriptHandler.setManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
 import org.bukkit.entity.Player
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionUse(val manager: String, val temporary: Boolean) : QuestAction<Void>() {
+class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val s = frame.script()
         if (manager == "private" && s.sender !is Player) {
-            throw RuntimeException("The private manager required a player viewer.")
+            error("The private manager required a player viewer.")
         }
         s.setManager(when (manager) {
             "public" -> {
@@ -39,13 +36,10 @@ class ActionUse(val manager: String, val temporary: Boolean) : QuestAction<Void>
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun toString(): String {
-        return "ActionUse(manager='$manager', temporary=$temporary)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["use"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             val manager = it.nextToken()
             var temporary = false
             if (it.hasNext()) {

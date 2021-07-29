@@ -24,18 +24,18 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
                 .build()
         registerEditor("horseColor")
                 .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setColor(Horse.Color.WHITE)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getColor().name
                 }.build()
         registerEditor("horseStyle")
                 .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setStyle(Horse.Style.NONE)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getStyle().name
                 }.build()
     }
@@ -52,7 +52,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
         return if (version < 11600) {
             Horse.Style.values()[(getVariant() ushr 8) % hs]
         } else {
-            Horse.Style.values()[((getVariant() and '\uff00'.toInt()) shr 8) % hs]
+            Horse.Style.values()[((getVariant() and '\uff00'.code) shr 8) % hs]
         }
     }
 
@@ -68,7 +68,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
         if (version < 11600) {
             setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8)
         } else {
-            setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8 and '\uff00'.toInt())
+            setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8 and '\uff00'.code)
         }
     }
 

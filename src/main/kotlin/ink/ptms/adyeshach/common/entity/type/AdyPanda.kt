@@ -52,28 +52,28 @@ class AdyPanda : AdyEntityAgeable(EntityTypes.PANDA) {
 
     fun isSitting(): Boolean {
         if (version < 11600) {
-            throw RuntimeException("Metadata \"isSitting\" not supported this minecraft version.")
+            error("Metadata \"isSitting\" not supported this minecraft version.")
         }
         return getMetadata("isSitting")
     }
 
     fun setSitting(value: Boolean) {
         if (version < 11600) {
-            throw RuntimeException("Metadata \"isSitting\" not supported this minecraft version.")
+            error("Metadata \"isSitting\" not supported this minecraft version.")
         }
         setMetadata("isSitting", value)
     }
 
     fun isOnBack(): Boolean {
         if (version < 11600) {
-            throw RuntimeException("Metadata \"isOnBack\" not supported this minecraft version.")
+            error("Metadata \"isOnBack\" not supported this minecraft version.")
         }
         return getMetadata("isOnBack")
     }
 
     fun setIsOnBack(value: Boolean) {
         if (version < 11600) {
-            throw RuntimeException("Metadata \"isOnBack\" not supported this minecraft version.")
+            error("Metadata \"isOnBack\" not supported this minecraft version.")
         }
         setMetadata("isOnBack", value)
     }

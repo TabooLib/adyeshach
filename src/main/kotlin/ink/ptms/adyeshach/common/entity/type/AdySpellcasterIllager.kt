@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Spellcaster
 
 /**
@@ -18,7 +17,7 @@ abstract class AdySpellcasterIllager(entityTypes: EntityTypes) : AdyRaider(entit
         registerMeta(at(11400 to 16, 11200 to 15, 11100 to 13), "spell", Spellcaster.Spell.NONE.ordinal)
                 .from(Editors.enums(Spellcaster.Spell::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesIllagerSpell()[entity.getMetadata("spell")].name
+                    Spellcaster.Spell.values()[entity.getMetadata("spell")].name
                 }.build()
     }
 
@@ -27,6 +26,6 @@ abstract class AdySpellcasterIllager(entityTypes: EntityTypes) : AdyRaider(entit
     }
 
     fun getSpell(): Spellcaster.Spell {
-        return BukkitUtils.valuesIllagerSpell()[getMetadata("spell")]
+        return Spellcaster.Spell.values()[getMetadata("spell")]
     }
 }

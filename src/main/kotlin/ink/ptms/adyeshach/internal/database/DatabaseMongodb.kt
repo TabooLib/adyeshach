@@ -1,12 +1,11 @@
 package ink.ptms.adyeshach.internal.database
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.common.util.Tasks
-import io.izzel.taboolib.cronus.bridge.CronusBridge
-import io.izzel.taboolib.cronus.bridge.database.IndexType
-import io.izzel.taboolib.module.nms.NMS
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import taboolib.common.platform.adaptPlayer
+import taboolib.library.configuration.FileConfiguration
+import taboolib.module.database.bridge.Index
+import taboolib.module.database.bridge.createBridgeCollection
 
 /**
  * @Author sky
@@ -14,24 +13,26 @@ import org.bukkit.entity.Player
  */
 class DatabaseMongodb : Database() {
 
-    val collection = CronusBridge.get(Adyeshach.conf.getString("Database.url.client"), Adyeshach.conf.getString("Database.url.database"), Adyeshach.conf.getString("Database.url.collection"), IndexType.UUID)!!
+    val collection = createBridgeCollection(
+        Adyeshach.conf.getString("Database.url.client"),
+        Adyeshach.conf.getString("Database.url.database"),
+        Adyeshach.conf.getString("Database.url.collection"),
+        Index.UUID
+    )
 
-    override fun download(player: Player): FileConfiguration {
-        return collection.get(player.uniqueId.toString()).run {
-            if (this.contains("username")) {
-                this.set("username", player.name)
+    override fun pull(player: Player): FileConfiguration {
+        return collection[adaptPlayer(player)].also {
+            if (it.contains("username")) {
+                it.set("username", player.name)
             }
-            this
         }
     }
 
-    override fun upload(player: Player) {
-        if (NMS.handle().isRunning) {
-            Tasks.task(true) {
-                collection.update(player.uniqueId.toString())
-            }
-        } else {
-            collection.update(player.uniqueId.toString())
-        }
+    override fun push(player: Player) {
+        collection.update(player.uniqueId.toString())
     }
- }
+
+    override fun release(player: Player) {
+        collection.release(player.uniqueId.toString())
+    }
+}

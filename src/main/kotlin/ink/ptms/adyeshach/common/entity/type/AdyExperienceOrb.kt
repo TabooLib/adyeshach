@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.entity.Player
 import org.bukkit.util.NumberConversions
+import taboolib.module.nms.inputSign
 
 /**
  * @author sky
@@ -19,20 +19,18 @@ class AdyExperienceOrb : AdyEntity(EntityTypes.EXPERIENCE_ORB) {
 
     init {
         registerEditor("amount")
-                .reset { entity, meta ->
-                    amount = 1
-                }
-                .modify { player, entity, meta ->
-                    Signs.fakeSign(player, arrayOf("$amount", "", "请在第一行输入内容")) {
-                        if (it[0].isNotEmpty()) {
-                            amount = NumberConversions.toInt(it[0])
-                        }
-                        Editor.open(player, entity)
+            .reset { _, _ ->
+                amount = 1
+            }
+            .modify { player, entity, _ ->
+                player.inputSign(arrayOf("$amount", "", "请在第一行输入内容")) {
+                    if (it[0].isNotEmpty()) {
+                        amount = NumberConversions.toInt(it[0])
                     }
+                    Editor.open(player, entity)
                 }
-                .display { _, entity, meta ->
-                    "$amount"
-                }
+            }
+            .display { _, _, _ -> "$amount" }
     }
 
     override fun visible(viewer: Player, visible: Boolean) {

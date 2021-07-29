@@ -1,48 +1,42 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
+import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
 import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
+import taboolib.module.kether.*
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionSelect(val value: ParsedAction<*>, val byId: Boolean) : QuestAction<Void>() {
+class ActionSelect(val value: ParsedAction<*>, val byId: Boolean): ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val s = frame.script()
         if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+            error("No manager selected.")
         }
-        return context.newFrame(value).run<Any>().thenAccept {
+        return frame.newFrame(value).run<Any>().thenAccept {
             s.setEntities(if (byId) s.getManager()!!.getEntityById(it.toString()) else listOf(s.getManager()!!.getEntityByUniqueId(it.toString())))
         }
     }
 
-    override fun toString(): String {
-        return "ActionSelect(value='$value', byId=$byId)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        @Suppress("UnstableApiUsage")
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["select"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             val value = it.next(ArgTypes.ACTION)
             var byId = true
             if (it.hasNext()) {
                 it.mark()
                 if (it.nextToken() == "by" && it.hasNext()) {
-                    byId = when (val type = it.nextToken().toLowerCase()) {
+                    byId = when (val type = it.nextToken().lowercase(Locale.getDefault())) {
                         "id" -> true
                         "uniqueid", "uuid" -> false
-                        else -> throw ScriptHandler.loadError("Unknown select type $type")
+                        else -> throw loadError("Unknown select type $type")
                     }
                 } else {
                     it.reset()

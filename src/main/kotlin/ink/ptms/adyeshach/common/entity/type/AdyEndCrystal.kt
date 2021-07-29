@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.bukkit.data.PositionNull
+import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.module.nms.impl.Position
+import taboolib.common.util.Vector
 
 /**
  * @author sky
@@ -26,17 +26,17 @@ class AdyEndCrystal : AdyEntity(EntityTypes.END_CRYSTAL) {
         6 ->Show bottom
 
          */
-        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", PositionNull())
+        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", VectorNull())
         registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
     }
 
-    fun setBeamTarget(position: Position?) {
-        setMetadata("beamTarget", position ?: PositionNull())
+    fun setBeamTarget(position: Vector?) {
+        setMetadata("beamTarget", position ?: VectorNull())
     }
 
-    fun getBeamTarget(): Position? {
-        val position = getMetadata<Position>("beamTarget")
-        return if (position is PositionNull) null else position
+    fun getBeamTarget(): Vector? {
+        val position = getMetadata<Vector>("beamTarget")
+        return if (position is VectorNull) null else position
     }
 
     fun isShowBottom(): Boolean {

@@ -3,24 +3,21 @@ package ink.ptms.adyeshach.common.script.action
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionDestroy : QuestAction<Void>() {
+class ActionDestroy: ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val s = frame.script()
         if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+            error("No manager selected.")
         }
         if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
+            error("No entity selected.")
         }
         s.getEntities()!!.filterNotNull().forEach {
             it.destroy()
@@ -28,13 +25,10 @@ class ActionDestroy : QuestAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun toString(): String {
-        return "ActionDestroy()"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["destroy"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             ActionDestroy()
         }
     }

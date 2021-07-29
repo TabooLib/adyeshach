@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
-import io.izzel.taboolib.internal.gson.annotations.Expose
+import com.google.gson.annotations.Expose
 import org.bukkit.GameMode
 
 /**

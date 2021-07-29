@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.util.serializer
 
-import io.izzel.taboolib.cronus.CronusUtils
-import io.izzel.taboolib.internal.gson.*
-import org.bukkit.configuration.ConfigurationSection
+import com.google.gson.*
+import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.kether.isInt
 
 /**
  * @Author sky
@@ -38,7 +38,7 @@ object Converter {
     }
 
     fun jsonToYaml(source: String, section: ConfigurationSection) {
-        JsonParser.parseString(source).asJsonObject.entrySet().forEach {
+        JsonParser().parse(source).asJsonObject.entrySet().forEach {
             jsonToYaml(section, it.key, it.value)
         }
     }
@@ -63,7 +63,7 @@ object Converter {
     fun convert(value: Any): JsonPrimitive {
         return when (value) {
             is Number -> {
-                if (CronusUtils.isInt(value.toString())) {
+                if (value.isInt()) {
                     JsonPrimitive(value.toInt())
                 } else {
                     JsonPrimitive(value)
@@ -78,7 +78,7 @@ object Converter {
     fun convert(value: JsonPrimitive): Any {
         return when {
             value.isNumber -> {
-                if (CronusUtils.isInt(value.asNumber.toString())) {
+                if (value.asNumber.isInt()) {
                     value.asNumber.toInt()
                 } else {
                     value.asNumber.toDouble()

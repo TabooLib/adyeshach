@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.internal.database
 
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import taboolib.library.configuration.FileConfiguration
 
 /**
  * @Author sky
@@ -9,8 +9,10 @@ import org.bukkit.entity.Player
  */
 abstract class Database {
 
-    abstract fun download(player: Player): FileConfiguration
+    abstract fun pull(player: Player): FileConfiguration
 
-    abstract fun upload(player: Player)
+    abstract fun push(player: Player)
+
+    abstract fun release(player: Player)
 
 }

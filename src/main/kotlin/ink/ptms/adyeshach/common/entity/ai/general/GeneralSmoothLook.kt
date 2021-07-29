@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.general
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import io.izzel.taboolib.module.lite.SimpleCounter
+import taboolib.common5.Baffle
 
 /**
  * @Author sky
@@ -29,14 +29,14 @@ class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
     private var t = 0f
     private var y = 0f
     private var i = true
-    private var counter = SimpleCounter(2)
+    private var counter = Baffle.of(2)
 
     override fun shouldExecute(): Boolean {
         return isLooking && !entity!!.isControllerMoving()
     }
 
     override fun onTick() {
-        if (counter.next()) {
+        if (counter.hasNext()) {
             t = entity!!.position.yaw
             if (isReset) {
                 isReset = false

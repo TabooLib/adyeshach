@@ -2,28 +2,26 @@ package ink.ptms.adyeshach.common.script.action
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
+import taboolib.module.kether.*
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionAnimation(val animation: BukkitAnimation) : QuestAction<Void>() {
+class ActionAnimation(val animation: BukkitAnimation): ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val s = frame.script()
         if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+            error("No manager selected.")
         }
         if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
+            error("No entity selected.")
         }
         s.getEntities()!!.filterNotNull().forEach {
             it.displayAnimation(animation)
@@ -31,16 +29,12 @@ class ActionAnimation(val animation: BukkitAnimation) : QuestAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun toString(): String {
-        return "ActionAnimation(animation=$animation)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["animation"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             val type = it.nextToken()
-            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.toUpperCase()).orNull()
-                ?: throw ScriptHandler.loadError("Unknown animation $type")
+            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.uppercase(Locale.getDefault())).orNull() ?: throw loadError("Unknown animation $type")
             ActionAnimation(animation)
         }
     }

@@ -12,7 +12,7 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
-import ink.ptms.adyeshach.common.util.Tasks
+
 import ink.ptms.adyeshach.common.util.mojang.Model
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import io.izzel.taboolib.kotlin.sendLocale
@@ -27,6 +27,7 @@ import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.util.NumberConversions
 import java.io.File
+import java.util.*
 
 /**
  * @Author sky
@@ -160,10 +161,10 @@ class CommandAPI : BaseMainCommand(), Helper {
 
     @SubCommand(description = "@command-api-skin", arguments = ["@command-argument-file", "@command-argument-model"], priority = 0.1)
     fun uploadskin(sender: CommandSender, args: Array<String>) {
-        val model = Enums.getIfPresent(Model::class.java, args[1].toUpperCase()).or(Model.DEFAULT)
+        val model = Enums.getIfPresent(Model::class.java, args[1].uppercase(Locale.getDefault())).or(Model.DEFAULT)
         val file = File(Adyeshach.plugin.dataFolder, "skin/upload/${args[0]}")
         if (file.name.endsWith(".png")) {
-            Tasks.task(true) {
+            submit(async = true) {
                 sender.sendLocale("command-api-skin-header")
                 val repose = MojangAPI.upload(file, model, sender)
                 if (repose != null) {

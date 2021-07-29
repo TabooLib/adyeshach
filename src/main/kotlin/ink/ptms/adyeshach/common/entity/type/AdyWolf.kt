@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.DyeColor
 
 /**
@@ -16,7 +15,7 @@ class AdyWolf : AdyEntityTameable(EntityTypes.WOLF) {
         registerMeta(at(11400 to 19, 11000 to 17, 10900 to 16), "collarColor", DyeColor.RED.ordinal)
                 .from(Editors.enums(DyeColor::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesDyeColor()[entity.getMetadata("collarColor")].name
+                    DyeColor.values()[entity.getMetadata("collarColor")].name
                 }.build()
     }
 
@@ -33,6 +32,6 @@ class AdyWolf : AdyEntityTameable(EntityTypes.WOLF) {
     }
 
     fun getCollarColor(): DyeColor {
-        return BukkitUtils.valuesDyeColor()[getMetadata("color")]
+        return DyeColor.values()[getMetadata("color")]
     }
 }

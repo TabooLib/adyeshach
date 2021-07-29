@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Rabbit
 
 /**
@@ -25,7 +24,7 @@ class AdyRabbit : AdyEntityAgeable(EntityTypes.RABBIT) {
         registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "type", Rabbit.Type.BLACK.ordinal)
                 .from(Editors.enums(Rabbit.Type::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesRabbitType()[entity.getMetadata("type")].name
+                    Rabbit.Type.values()[entity.getMetadata("type")].name
                 }.build()
     }
 
@@ -34,6 +33,6 @@ class AdyRabbit : AdyEntityAgeable(EntityTypes.RABBIT) {
     }
 
     fun getType(): Rabbit.Type {
-        return BukkitUtils.valuesRabbitType()[getMetadata("type")]
+        return Rabbit.Type.values()[getMetadata("type")]
     }
 }

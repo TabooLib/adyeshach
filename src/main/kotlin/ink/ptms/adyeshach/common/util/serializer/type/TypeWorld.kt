@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.util.serializer.type
 
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import io.izzel.taboolib.internal.gson.*
+import com.google.gson.*
 import org.bukkit.Bukkit
 import org.bukkit.World
 import java.lang.reflect.Type

@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.internal.gson.annotations.Expose
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -23,18 +23,18 @@ class AdyPainting : AdyEntity(EntityTypes.PAINTING) {
     init {
         registerEditor("painting")
                 .from(Editors.enums(BukkitPaintings::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_painting ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setPainting(BukkitPaintings.KEBAB)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getPainting().name
                 }.build()
         registerEditor("direction")
                 .from(Editors.enums(BukkitDirection::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_direction ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setDirection(BukkitDirection.NORTH)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getDirection().name
                 }.build()
     }

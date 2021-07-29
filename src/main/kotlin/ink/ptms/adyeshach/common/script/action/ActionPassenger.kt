@@ -1,32 +1,29 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionPassenger(val symbol: Symbol, val passenger: String?) : QuestAction<Void>() {
+class ActionPassenger(val symbol: Symbol, val passenger: String?): ScriptAction<Void>() {
 
     enum class Symbol {
 
         ADD, REMOVE, RESET
     }
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val s = frame.script()
         if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+            error("No manager selected.")
         }
         if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
+            error("No entity selected.")
         }
         s.getEntities()!!.filterNotNull().forEach {
             when (symbol) {
@@ -46,18 +43,15 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?) : QuestAction<
         return CompletableFuture.completedFuture(null)
     }
 
-    override fun toString(): String {
-        return "ActionPassenger(symbol=$symbol, passenger=$passenger)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["passenger"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             val symbol = when (val type = it.nextToken()) {
                 "add" -> Symbol.ADD
                 "remove" -> Symbol.REMOVE
                 "reset" -> Symbol.RESET
-                else -> throw ScriptHandler.loadError("Unknown passanger operator $type")
+                else -> throw loadError("Unknown passanger operator $type")
             }
             ActionPassenger(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }

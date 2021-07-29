@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.util
 
-import io.izzel.taboolib.util.lite.Numbers
+import taboolib.common.util.random
 
 /**
  * @Author sky
@@ -8,7 +8,7 @@ import io.izzel.taboolib.util.lite.Numbers
  */
 object Indexs {
 
-    var index = 449599 + Numbers.getRandomInteger(0, 702)
+    var index = 449599 + random(0, 702)
 
     /**
      * int 最大值           2,147,483,647

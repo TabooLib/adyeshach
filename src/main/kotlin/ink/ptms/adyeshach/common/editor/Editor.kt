@@ -1,42 +1,31 @@
 package ink.ptms.adyeshach.common.editor
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.bukkit.data.PositionNull
+import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.listener.ListenerArmorStand
-import io.izzel.taboolib.Version
-import io.izzel.taboolib.kotlin.sendLocale
-import io.izzel.taboolib.module.i18n.I18n
-import io.izzel.taboolib.module.inject.PlayerContainer
-import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.module.nms.impl.Position
-import io.izzel.taboolib.module.tellraw.TellrawJson
-import io.izzel.taboolib.util.Coerce
-import io.izzel.taboolib.util.KV
-import io.izzel.taboolib.util.book.BookFormatter
-import io.izzel.taboolib.util.chat.ComponentSerializer
-import io.izzel.taboolib.util.chat.TextComponent
-import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.lite.Materials
-import io.izzel.taboolib.util.lite.Numbers
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import taboolib.common.platform.adaptCommandSender
+import taboolib.common.util.Vector
+import taboolib.common5.Coerce
+import taboolib.library.xseries.XMaterial
+import taboolib.module.chat.TellrawJson
+import taboolib.module.nms.MinecraftVersion
+import taboolib.platform.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 object Editor {
 
-    val version = Version.getCurrentVersionInt()
+    val version = MinecraftVersion.majorLegacy
     val editMethod = HashMap<KClass<*>, EntityMetaable.MetaEditor>()
-
-    @PlayerContainer
-    val editArmorStand = ConcurrentHashMap<String, KV<AdyArmorStand, ListenerArmorStand.Angle?>>()
+    val editArmorStand = ConcurrentHashMap<String, Pair<AdyArmorStand, ListenerArmorStand.Angle?>>()
 
     init {
         try {
@@ -48,24 +37,29 @@ object Editor {
                 .display { _, entity, meta ->
                     entity.getMetadata<Boolean>(meta.key).toDisplay()
                 }
-            editMethod[Position::class] = EntityMetaable.MetaEditor()
+            editMethod[Vector::class] = EntityMetaable.MetaEditor()
                 .modify { player, entity, meta ->
-                    entity.setMetadata(meta.key, Position(player.location.blockX, player.location.blockY, player.location.blockZ))
+                    entity.setMetadata(meta.key, Vector(player.location.blockX, player.location.blockY, player.location.blockZ))
                     open(player, entity)
                 }
                 .display { _, entity, meta ->
-                    entity.getMetadata<Position>(meta.key).run {
-                        if (this is PositionNull) "_" else "$x $y $z"
+                    entity.getMetadata<Vector>(meta.key).run {
+                        if (this is VectorNull) "_" else "$x $y $z"
                     }
                 }
             editMethod[EulerAngle::class] = EntityMetaable.MetaEditor()
                 .modify { player, entity, _ ->
-                    editArmorStand[player.name] = KV(entity as AdyArmorStand, null)
-                    Items.takeItem(player.inventory, { Items.hasLore(it, "Adyeshach Tool") }, 99)
+                    editArmorStand[player.name] = entity as AdyArmorStand to null
+                    player.inventory.takeItem(99) { it.hasLore("Adyeshach Tool") }
                     player.inventory.addItem(
-                        ItemBuilder(Materials.REDSTONE_TORCH.parseItem()).name("&7Angle: &fNONE").lore("&8Adyeshach Tool").shiny().colored().build()
+                        buildItem(XMaterial.REDSTONE_TORCH) {
+                            name = "&7Angle: &fNONE"
+                            lore += "&8Adyeshach Tool"
+                            shiny()
+                            colored()
+                        }
                     )
-                    player.sendLocale("editor-armorstand-tool")
+                    player.sendLang("editor-armorstand-tool")
                     player.closeInventory()
                 }
                 .display { _, entity, meta ->
@@ -108,20 +102,21 @@ object Editor {
     }
 
     fun openByBook(player: Player, entity: EntityInstance) {
-        val manager = if (entity.isPublic()) player.asLocale("editor-manager-public") else player.asLocale("editor-manager-private")
-        val book = BookFormatter.writtenBook()
-        book.addPages(
-            ComponentSerializer.parse(
-                TellrawJson.create()
+        val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
+        player.sendBook {
+            writeRaw(
+                TellrawJson()
                     .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
-                    .append("  §1${entity.id} ${if (entity.isTemporary()) TLocale.asString(player, "editor-temporary") else ""}").newLine()
+                    .append("  §1${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
                     .append("").newLine()
-                    .append("  ${player.asLocale("editor-type")} §7$manager").newLine()
-                    .append("  ${player.asLocale("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)").hoverText(entity.viewPlayers.viewers.joinToString("\n"))
+                    .append("  ${player.asLangText("editor-type")} §7$manager").newLine()
+                    .append("  ${player.asLangText("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
+                    .hoverText(entity.viewPlayers.viewers.joinToString("\n"))
                     .newLine()
-                    .append("  ${player.asLocale("editor-tags")} §7${entity.getTags().size} ").append("§c(?)").hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                    .append("  ${player.asLangText("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
+                    .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
                     .newLine()
-                    .append("  ${player.asLocale("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
+                    .append("  ${player.asLangText("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
                     .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
                     .append("").newLine()
                     .append("   §7§oX ${entity.position.x}").newLine()
@@ -129,83 +124,74 @@ object Editor {
                     .append("   §7§oZ ${entity.position.z}").newLine()
                     .append("   §7§oYaw ${entity.position.yaw}").newLine()
                     .append("   §7§oPitch ${entity.position.pitch}").newLine()
-                    .toRawMessage(player)
+                    .toRawMessage()
             )
-        )
-        var page = TellrawJson.create()
-        var i = 0
-        entity.forEachMeta { meta, hide ->
-            val editor = getEditor(meta)
-            if (editor != null && editor.edit) {
-                if (hide) {
-                    page.append("  §8§m${meta.key.toLocale(player)}").newLine()
-                } else {
-                    page.append("  §n${meta.key.toLocale(player)}").newLine()
-                    try {
-                        page.append("   §c✘")
-                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                            .hoverText(player.asLocale("editor-click-to-reset"))
-                        page.append(
-                            " §7${
-                                if (editor.onDisplay != null) editor.onDisplay!!.invoke(
-                                    player,
-                                    entity,
-                                    meta
-                                ) else entity.getMetadata<Any>(meta.key)
-                            }"
-                        )
-                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                            .hoverText(player.asLocale("editor-click-to-edit"))
-                            .newLine()
-                    } catch (t: Throwable) {
-                        t.printStackTrace()
-                        page.append(" §c§o<ERROR:${t.message}>").newLine()
+            var page = TellrawJson()
+            var i = 0
+            entity.forEachMeta { meta, hide ->
+                val editor = getEditor(meta)
+                if (editor != null && editor.edit) {
+                    if (hide) {
+                        page.append("  §8§m${meta.key.toLocale(player)}").newLine()
+                    } else {
+                        page.append("  §n${meta.key.toLocale(player)}").newLine()
+                        try {
+                            val display = if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)
+                            page.append("   §c✘")
+                                .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
+                                .hoverText(player.asLangText("editor-click-to-reset").toString())
+                            page.append(" §7$display")
+                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                                .hoverText(player.asLangText("editor-click-to-edit").toString())
+                                .newLine()
+                        } catch (t: Throwable) {
+                            t.printStackTrace()
+                            page.append(" §c§o<ERROR:${t.message}>").newLine()
+                        }
+                    }
+                    if (++i == 6) {
+                        i = 0
+                        try {
+                            writeRaw(page.toRawMessage())
+                        } catch (t: Throwable) {
+                            writeRaw(TellrawJson().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()).toRawMessage())
+                        }
+                        page = TellrawJson()
                     }
                 }
-                if (++i == 6) {
-                    i = 0
-                    try {
-                        book.addPage(page)
-                    } catch (t: Throwable) {
-                        book.addPage(TellrawJson.create().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
-                    }
-                    page = TellrawJson.create()
+            }
+            if (i > 0) {
+                try {
+                    writeRaw(page.toRawMessage())
+                } catch (t: Throwable) {
+                    writeRaw(TellrawJson().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()).toRawMessage())
                 }
             }
         }
-        if (i > 0) {
-            try {
-                book.addPage(page)
-            } catch (t: Throwable) {
-                book.addPage(TellrawJson.create().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
-            }
-        }
-        book.open(player)
     }
 
     fun openByChat(player: Player, entity: EntityInstance) {
-        TellrawJson.create().run {
-            repeat(127) { newLine() }
-            send(player)
+        TellrawJson().sendTo(adaptCommandSender(player)) {
+            repeat(64) { newLine() }
         }
-        val manager = if (entity.isPublic()) player.asLocale("editor-manager-public") else player.asLocale("editor-manager-private")
-        val json = TellrawJson.create()
+        val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
+        val json = TellrawJson()
             .newLine()
             .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
-            .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLocale("editor-temporary") else ""}").newLine()
+            .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
             .newLine()
-            .append("      ${player.asLocale("editor-type")} §7${manager}").newLine()
-            .append("      ${player.asLocale("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
-                .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
-            .append("      ${player.asLocale("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
-                .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
-            .append("      ${player.asLocale("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
-                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name })
-                .append(" ")
-                .append("§a(+)")
-                .hoverText(player.asLocale("editor-click-to-edit"))
-                .clickCommand("/adyeshach controller ${entity.uniqueId}")
-                .newLine()
+            .append("      ${player.asLangText("editor-type")} §7${manager}").newLine()
+            .append("      ${player.asLangText("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
+            .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
+            .append("      ${player.asLangText("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
+            .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
+            .append("      ${player.asLangText("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
+            .hoverText(entity.getController().joinToString("\n") { it.javaClass.name })
+            .append(" ")
+            .append("§a(+)")
+            .hoverText(player.asLangText("editor-click-to-edit").toString())
+            .runCommand("/adyeshach controller ${entity.uniqueId}")
+            .newLine()
             .newLine().append("      ")
         var i = 0
         entity.forEachMeta { meta, hide ->
@@ -216,26 +202,19 @@ object Editor {
                 } else {
                     json.append("§8[")
                     try {
+                        val display = if (editor.onDisplay != null) editor.onDisplay!!.invoke(player, entity, meta) else entity.getMetadata<Any>(meta.key)
                         json.append("§7${meta.key.toLocale(player)}")
-                            .clickCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                            .hoverText(
-                                "§7${
-                                    if (editor.onDisplay != null) editor.onDisplay!!.invoke(
-                                        player,
-                                        entity,
-                                        meta
-                                    ) else entity.getMetadata<Any>(meta.key)
-                                }"
-                            )
+                            .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                            .hoverText("§7$display")
                         json.append(" ")
                         json.append("§c✘")
-                            .clickCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                            .hoverText(player.asLocale("editor-click-to-reset"))
+                            .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
+                            .hoverText(player.asLangText("editor-click-to-reset").toString())
+                    } catch (t: NullPointerException) {
+                        json.append("§c§o<ERROR_NULL:${meta.key}>").hoverText(meta.toString())
+                        t.printStackTrace()
                     } catch (t: Throwable) {
-                        json.append("§c§o<ERROR:${t.message}>")
-                        if (t is NullPointerException) {
-                            t.printStackTrace()
-                        }
+                        json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
                     }
                     json.append("§8] ")
                 }
@@ -245,7 +224,7 @@ object Editor {
                 }
             }
         }
-        json.newLine().send(player)
+        json.newLine().sendTo(adaptCommandSender(player))
     }
 
     fun toSimple(source: String): String {
@@ -260,7 +239,7 @@ object Editor {
         val builder = StringBuilder()
         toString().toCharArray().forEachIndexed { index, c ->
             when {
-                index == 0 -> builder.append(c.toUpperCase())
+                index == 0 -> builder.append(c.uppercaseChar())
                 c.isUpperCase() -> builder.append(" $c")
                 else -> builder.append(c)
             }
@@ -272,16 +251,16 @@ object Editor {
         val builder = StringBuilder()
         toString().toCharArray().forEachIndexed { _, c ->
             when {
-                c.isUpperCase() -> builder.append("-${c.toLowerCase()}")
+                c.isUpperCase() -> builder.append("-${c.lowercaseChar()}")
                 else -> builder.append(c)
             }
         }
         return builder.toString()
     }
 
-    fun String.toLocale(player: Player) = TLocale.asString(player, "editor-meta-${toLocaleKey()}")
-
-    fun Player.asLocale(node: String) = TLocale.asString(this, node)
+    fun String.toLocale(player: Player): String {
+        return player.asLangText("editor-meta-${toLocaleKey()}").toString()
+    }
 
     fun EntityInstance.forEachMeta(func: (EntityMetaable.Meta, Boolean) -> Unit) {
         listMetadata()

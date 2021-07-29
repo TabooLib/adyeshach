@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import io.izzel.taboolib.internal.gson.*
+import com.google.gson.*
 import org.bukkit.util.EulerAngle
 import java.lang.reflect.Type
 

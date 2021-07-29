@@ -3,10 +3,10 @@ package ink.ptms.adyeshach.common.entity.ai.general
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.FallingBlock
+import taboolib.common5.Baffle
 
 /**
  * @Author sky
@@ -19,7 +19,7 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
     private var z = 0.99
     private var b: Block? = null
     private var by = 0.0
-    private var c = SimpleCounter(5)
+    private var c = Baffle.of(5)
 
     var isGravity = true
     var isOnGround = true
@@ -55,7 +55,7 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
                 this
             })
             p = 0.1
-        } else if (c.next()) {
+        } else if (c.hasNext()) {
             x = 0.99
             z = 0.99
         }

@@ -88,14 +88,14 @@ abstract class AdyHorseBase(entityTypes: EntityTypes) : AdyEntityAgeable(entityT
 
     open fun setHasChest(value: Boolean) {
         if (version >= 11300) {
-            throw RuntimeException("Metadata \"hasChest\" not supported this minecraft version.")
+            error("Metadata \"hasChest\" not supported this minecraft version.")
         }
         setMetadata("hasChest", value)
     }
 
     open fun isHasChest(): Boolean {
         if (version >= 11300) {
-            throw RuntimeException("Metadata \"hasChest\" not supported this minecraft version.")
+            error("Metadata \"hasChest\" not supported this minecraft version.")
         }
         return getMetadata("hasChest")
     }

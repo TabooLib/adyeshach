@@ -1,19 +1,16 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
+import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionTag(val key: String, val symbol: Symbol, val value: String?) : QuestAction<Any?>() {
+class ActionTag(val key: String, val symbol: Symbol, val value: String?): ScriptAction<Any?>() {
 
     enum class Symbol {
 
@@ -21,13 +18,13 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun process(context: QuestContext.Frame): CompletableFuture<Any?> {
-        val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Any?> {
+        val s = frame.script()
         if (s.getManager() == null) {
-            throw RuntimeException("No manager selected.")
+            error("No manager selected.")
         }
         if (!s.entitySelected()) {
-            throw RuntimeException("No entity selected.")
+            error("No entity selected.")
         }
         return when (symbol) {
             Symbol.REMOVE -> {
@@ -55,19 +52,16 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?) : Quest
         }
     }
 
-    override fun toString(): String {
-        return "ActionTag(key='$key', symbol=$symbol, value=$value)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["tags"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             val symbol = when (val type = it.nextToken()) {
                 "set" -> Symbol.SET
                 "get" -> Symbol.GET
                 "has" -> Symbol.HAS
                 "remove" -> Symbol.REMOVE
-                else -> throw ScriptHandler.loadError("Unknown tag operator $type")
+                else -> throw loadError("Unknown tag operator $type")
             }
             val key = it.nextToken()
             val value = if (symbol == Symbol.SET) {

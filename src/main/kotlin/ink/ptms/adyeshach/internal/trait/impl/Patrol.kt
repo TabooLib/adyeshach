@@ -1,34 +1,30 @@
 package ink.ptms.adyeshach.internal.trait.impl
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.createHologram
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
+import ink.ptms.adyeshach.common.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
-import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.internal.trait.Trait
-import io.izzel.taboolib.internal.xseries.XMaterial
-import io.izzel.taboolib.kotlin.sendLocale
-import io.izzel.taboolib.module.hologram.THologram
-import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.lite.Effects
 import org.bukkit.*
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.EquipmentSlot
+import taboolib.common.platform.SubscribeEvent
+import taboolib.common.platform.adaptPlayer
+import taboolib.common.platform.submit
+import taboolib.library.xseries.XMaterial
+import taboolib.platform.util.*
 
-class Patrol : Trait(), Listener {
+object Patrol : Trait() {
 
     val edit = HashMap<String, EntityInstance>()
 
     init {
-        Tasks.timer(0, 5, true) {
+        submit(period = 5, async = true) {
             data.getKeys(false).forEach {
                 val entityInstance = AdyeshachAPI.getEntityFromUniqueId(it)
                 if (entityInstance != null
@@ -52,7 +48,7 @@ class Patrol : Trait(), Listener {
                 }
             }
         }
-        Tasks.timer(0, 40, true) {
+        submit(period = 40, async = true) {
             Bukkit.getOnlinePlayers().forEach { player ->
                 if (player.name in edit) {
                     val nodes = edit[player.name]!!.nodes()
@@ -60,40 +56,35 @@ class Patrol : Trait(), Listener {
                         var p = nodes[0]
                         nodes.forEachIndexed { i, node ->
                             if (i > 0) {
-                                PathFinderProxy.request(p, node, edit[player.name]!!.entityType.getPathType()) { r ->
+                                PathFinderHandler.request(p, node, edit[player.name]!!.entityType.getPathType()) { r ->
                                     (r as ResultNavigation).pointList.forEachIndexed { index, p ->
-                                        Tasks.delay(index * 2L) {
-                                            Effects.create(Particle.FLAME, Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
-                                                .count(5)
-                                                .player(player)
-                                                .play()
+                                        submit(delay = index * 2L) {
+                                            val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
+                                            player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
                                         }
                                     }
                                 }
                                 p = node
                             }
                             if (i > 1 && i + 1 == nodes.size) {
-                                PathFinderProxy.request(node, nodes[0], edit[player.name]!!.entityType.getPathType()) { r ->
+                                PathFinderHandler.request(node, nodes[0], edit[player.name]!!.entityType.getPathType()) { r ->
                                     (r as ResultNavigation).pointList.forEachIndexed { index, p ->
-                                        Tasks.delay(index * 2L) {
-                                            Effects.create(Particle.FLAME, Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5))
-                                                .count(5)
-                                                .player(player)
-                                                .play()
+                                        submit(delay = index * 2L) {
+                                            val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
+                                            player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
                                         }
                                     }
                                 }
                             }
-                            THologram.create(Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), "#${i + 1}", player)
-                                .deleteOn(40)
-                            Effects.create(Particle.VILLAGER_HAPPY, Location(player.world, node.x + 0.5, node.y + 0.5, node.z + 0.5))
-                                .offset(doubleArrayOf(0.0, 1.0, 0.0))
-                                .count(20)
-                                .player(player)
-                                .play()
+                            val hologram = player.createHologram(Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), listOf("#${i + 1}"))
+                            submit(delay = 40) {
+                                hologram.delete()
+                            }
+                            val pos = Location(player.world, node.x + 0.5, node.y + 0.5, node.z + 0.5)
+                            player.spawnParticle(Particle.VILLAGER_HAPPY, pos, 20, 0.0, 1.0, 0.0, 0.0)
                         }
                     }
-                    player.sendLocale("trait-patrol", nodes.size)
+                    player.sendLang("trait-patrol", nodes.size)
                 }
             }
         }
@@ -124,28 +115,28 @@ class Patrol : Trait(), Listener {
         return data.getInt("$uniqueId.index")
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerQuitEvent) {
         edit.remove(e.player.name)
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerSwapHandItemsEvent) {
         if (e.player.name in edit) {
             e.isCancelled = true
             e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             if (e.player.isSneaking) {
                 edit[e.player.name]?.nodes(emptyList())
-                TLocale.Display.sendTitle(e.player, "", "§7Path Nodes: §80", 0, 40, 0)
+                adaptPlayer(e.player).sendTitle("", "§7Path Nodes: §80", 0, 40, 0)
             } else {
                 edit.remove(e.player.name)?.edit(false)
-                Items.takeItem(e.player.inventory, { Items.hasName(e.player.itemInHand, "Patrol Tool") }, 999)
-                TLocale.Display.sendTitle(e.player, "", "", 0, 40, 0)
+                adaptPlayer(e.player).sendTitle("", "", 0, 40, 0)
+                e.player.inventory.takeItem(999) { it.hasName("Patrol Tool") }
             }
         }
     }
 
-    @EventHandler
+    @SubscribeEvent
     fun e(e: PlayerInteractEvent) {
         if (e.player.name in edit && e.hand == EquipmentSlot.HAND) {
             val entity = edit[e.player.name]!!
@@ -164,7 +155,7 @@ class Patrol : Trait(), Listener {
                     it.toList()
                 })
             }
-            TLocale.Display.sendTitle(e.player, "", "§7Path Nodes: §8${entity.nodes().size}", 0, 40, 0)
+            adaptPlayer(e.player).sendTitle("", "§7Path Nodes: §8${entity.nodes().size}", 0, 40, 0)
         }
     }
 
@@ -175,8 +166,11 @@ class Patrol : Trait(), Listener {
     override fun edit(player: Player, entityInstance: EntityInstance) {
         edit[player.name] = entityInstance
         entityInstance.edit(true)
-        player.inventory.addItem(
-            ItemBuilder(XMaterial.BLAZE_ROD).name("§bPatrol Tool").lore("", "§7Left-Click to add path node and Right-Click to remove.").shiny().build()
-        )
+        player.giveItem(buildItem(XMaterial.BLAZE_ROD) {
+            name = "§bPatrol Tool"
+            lore += ""
+            lore += "§7Left-Click to add path node and Right-Click to remove."
+            shiny()
+        })
     }
 }

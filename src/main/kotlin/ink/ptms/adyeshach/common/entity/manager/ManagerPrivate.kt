@@ -21,7 +21,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
     override fun onEnable() {
         activeEntity.clear()
         val player = Bukkit.getPlayerExact(player)!!
-        val file = database.download(player)
+        val file = database.pull(player)
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
         conf.getKeys(false).forEach {
             try {
@@ -46,12 +46,12 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
 
     override fun onSave() {
         val player = Bukkit.getPlayerExact(player) ?: return
-        val file = database.download(player)
+        val file = database.pull(player)
         activeEntity.forEach {
             it.unregisterController(ControllerNone::class)
             it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
         }
-        database.upload(player)
+        database.push(player)
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> (Unit)): EntityInstance {
@@ -63,7 +63,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
 
     override fun remove(entityInstance: EntityInstance) {
         val player = Bukkit.getPlayerExact(player)!!
-        val file = database.download(player)
+        val file = database.pull(player)
         file.set("AdyeshachNPC.${entityInstance.uniqueId}", null)
         activeEntity.remove(entityInstance)
     }

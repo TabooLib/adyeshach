@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
+import com.google.gson.JsonParser
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.Settings
 import ink.ptms.adyeshach.api.event.*
@@ -17,22 +18,21 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
 import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
-import ink.ptms.adyeshach.common.entity.path.PathFinderProxy
+import ink.ptms.adyeshach.common.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
-import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import io.izzel.taboolib.internal.gson.JsonParser
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.util.Coerce
-import io.izzel.taboolib.util.chat.TextComponent
-import io.izzel.taboolib.util.lite.Signs
+import com.google.gson.annotations.Expose
 import io.netty.util.internal.ConcurrentSet
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import taboolib.common.platform.submit
+import taboolib.common5.Coerce
+import taboolib.module.nms.inputSign
 import java.util.*
 import java.util.concurrent.Executors
 import kotlin.jvm.Throws
@@ -62,7 +62,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     var alwaysVisible = true
         set(value) {
             if (!isPublic()) {
-                throw RuntimeException("Entity Manager not public.")
+                error("Entity Manager not public.")
             }
             if (!value) {
                 clearViewer()
@@ -84,7 +84,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     var manager: Manager? = null
         set(value) {
             if (value != null && field != null) {
-                throw RuntimeException("Entity Manager has been initialized.")
+                error("Entity Manager has been initialized.")
             }
             field = value
         }
@@ -129,7 +129,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 visibleDistance = -1.0
             }
             .modify { player, entity, _ ->
-                Signs.fakeSign(player, arrayOf("$visibleDistance", "", "请在第一行输入内容")) {
+                player.inputSign(arrayOf("$visibleDistance", "", "请在第一行输入内容")) {
                     if (it[0].isNotEmpty()) {
                         visibleDistance = Coerce.toDouble(it[0])
                     }
@@ -144,7 +144,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 moveSpeed = 0.2
             }
             .modify { player, entity, _ ->
-                Signs.fakeSign(player, arrayOf("$moveSpeed", "", "请在第一行输入内容")) {
+                player.inputSign(arrayOf("$moveSpeed", "", "请在第一行输入内容")) {
                     if (it[0].isNotEmpty()) {
                         moveSpeed = Coerce.toDouble(it[0])
                     }
@@ -165,14 +165,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 内部调用方法，用于第三方事件处理
      */
     protected fun spawn(viewer: Player, spawn: () -> (Unit)) {
-        if (AdyeshachEntityVisibleEvent(this, viewer, true).call().nonCancelled()) {
+        if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
             spawn.invoke()
             // 更新单位属性
             updateMetadata(viewer)
             // 更新单位视角
             setHeadRotation(position.yaw, position.pitch)
             // 关联实体初始化
-            Tasks.delay(5) {
+            submit(delay = 5) {
                 refreshPassenger(viewer)
             }
         }
@@ -182,7 +182,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 内部调用方法
      */
     protected fun destroy(viewer: Player, destroy: () -> (Unit)) {
-        if (AdyeshachEntityVisibleEvent(this, viewer, false).call().nonCancelled()) {
+        if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
             destroy.invoke()
         }
     }
@@ -306,7 +306,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置
      */
     fun teleport(location: Location) {
-        val event = AdyeshachEntityTeleportEvent(this, location).call()
+        val event = AdyeshachEntityTeleportEvent(this, location)
+        event.call()
         if (event.isCancelled) {
             return
         }
@@ -412,21 +413,18 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (hasVehicle()) {
             return
         }
-        if (pathType.supportVersion > version) {
-            throw RuntimeException("PathType \"$pathType\" not supported this minecraft version.")
-        }
         if (pathType == PathType.FLY) {
             if (controller.none { it is GeneralMove }) {
-                throw RuntimeException("Entity flying movement requires GeneralMove.")
+                error("Entity flying movement requires GeneralMove.")
             }
         } else {
             if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
-                throw RuntimeException("Entity walking movement requires GeneralMove and GeneralGravity.")
+                error("Entity walking movement requires GeneralMove and GeneralGravity.")
             }
         }
         val move = getController(GeneralMove::class)!!
         setTag("tryMoving", "true")
-        PathFinderProxy.request(position.toLocation(), location, pathType) {
+        PathFinderHandler.request(position.toLocation(), location, pathType) {
             if ((it as ResultNavigation).pointList.isEmpty()) {
                 return@request
             }
@@ -470,14 +468,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun addPassenger(vararg entity: EntityInstance) {
         if (manager == null || entity.any { it.manager == null }) {
-            throw RuntimeException("Entity Manager not initialized.")
+            error("Entity Manager not initialized.")
         }
         if (entity.any { it.manager != manager }) {
-            throw RuntimeException("Entity Manager not identical.")
+            error("Entity Manager not identical.")
         }
         entity.forEach {
             it.removePassenger(this)
-            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+            if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
                 passengers.add(it.uniqueId)
             }
         }
@@ -486,13 +484,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun removePassenger(vararg entity: EntityInstance) {
         if (manager == null || entity.any { it.manager == null }) {
-            throw RuntimeException("Entity Manager not initialized.")
+            error("Entity Manager not initialized.")
         }
         if (entity.any { it.manager != manager }) {
-            throw RuntimeException("Entity Manager not identical.")
+            error("Entity Manager not identical.")
         }
         entity.forEach {
-            AdyeshachEntityVehicleEnterEvent(it, this).call().nonCancelled {
+            if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
                 passengers.remove(it.uniqueId)
             }
         }
@@ -501,7 +499,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun removePassenger(vararg id: String) {
         if (manager == null) {
-            throw RuntimeException("Entity Manager not initialized.")
+            error("Entity Manager not initialized.")
         }
         removePassenger(*getPassengers().filter { it.id in id }.toTypedArray())
     }
@@ -515,7 +513,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun refreshPassenger(viewer: Player) {
         if (manager == null) {
-            throw RuntimeException("Entity Manager not initialized.")
+            error("Entity Manager not initialized.")
         }
         NMS.INSTANCE.updatePassengers(viewer, index, *getPassengers().map { e -> e.index }.toIntArray())
         getVehicle()?.refreshPassenger(viewer)
@@ -523,7 +521,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
 
     fun refreshPassenger() {
         if (manager == null) {
-            throw RuntimeException("Entity Manager not initialized.")
+            error("Entity Manager not initialized.")
         }
         forViewers {
             NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
@@ -657,7 +655,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 getName()
             }
             getCustomName().isEmpty() -> {
-                entityType.name.toLowerCase().toDisplay()
+                entityType.name.lowercase(Locale.getDefault()).toDisplay()
             }
             else -> {
                 getCustomName()
@@ -669,11 +667,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 实体计算（async）
      */
     fun onTick() {
-        if (AdyeshachEntityTickEvent(this).call().isCancelled) {
+        if (!AdyeshachEntityTickEvent(this).call()) {
             return
         }
         // 确保客户端显示实体正常
-        if (viewPlayers.visibleLock.next()) {
+        if (viewPlayers.visibleLock.hasNext()) {
             // 复活
             viewPlayers.getOutsidePlayers().forEach { player ->
                 if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
@@ -713,7 +711,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     @Throws(UnknownWorldException::class)
     fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance? {
-        val json = JsonParser.parseString(toJson()).asJsonObject
+        val json = JsonParser().parse(toJson()).asJsonObject
         json.addProperty("id", newId)
         json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
         val entity = AdyeshachAPI.fromJson(json.toString()) ?: return null

@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
-import io.izzel.taboolib.module.inject.TInject
 
 /**
  * @Author sky
@@ -14,16 +13,12 @@ import io.izzel.taboolib.module.inject.TInject
  */
 class MigrateServerNPC : Migrate() {
 
-    @TInject("ServerNPC")
-    lateinit var plugin: Main
-        private set
-
     override fun depend(): String {
         return "ServerNPC"
     }
 
     override fun migrate() {
-        plugin.npcManager.npcList.forEach {
+        getPlugin<Main>().npcManager.npcList.forEach {
             val entity = AdyeshachAPI.getEntityManagerPublic().create(EntityTypes.PLAYER, it.location) as AdyHuman
             entity.id = "servernpc_${it.name}"
             if (!it.gameProfile.properties.isEmpty) {

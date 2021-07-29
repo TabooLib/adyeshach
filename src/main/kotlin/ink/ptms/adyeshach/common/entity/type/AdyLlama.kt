@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.DyeColor
 import org.bukkit.entity.Llama
 
@@ -34,12 +33,12 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
         registerMeta(at(11500 to 20, 11400 to 19, 11100 to 17), "carpetColor", -1)
                 .from(Editors.enums(DyeColor::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesDyeColor()[entity.getMetadata("carpetColor")].name
+                    DyeColor.values()[entity.getMetadata("carpetColor")].name
                 }.build()
         registerMeta(at(11500 to 21, 11400 to 20, 11100 to 18), "color", Llama.Color.CREAMY.ordinal)
                 .from(Editors.enums(Llama.Color::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesLlamaColor()[entity.getMetadata("color")].name
+                    Llama.Color.values()[entity.getMetadata("color")].name
                 }.build()
     }
 
@@ -49,7 +48,7 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
 
     fun setCarpetColor(): DyeColor? {
         val color = getMetadata<Int>("carpetColor")
-        return if (color == -1) null else BukkitUtils.valuesDyeColor()[color]
+        return if (color == -1) null else DyeColor.values()[color]
     }
 
     fun setType(type: Llama.Color) {
@@ -57,6 +56,6 @@ open class AdyLlama(entityTypes: EntityTypes) : AdyHorseChested(entityTypes) {
     }
 
     fun getType(): Llama.Color {
-        return BukkitUtils.valuesLlamaColor()[getMetadata("color")]
+        return Llama.Color.values()[getMetadata("color")]
     }
 }

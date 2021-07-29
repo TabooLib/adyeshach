@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.DyeColor
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftTropicalFish
 import org.bukkit.entity.TropicalFish
 
 /**
@@ -18,26 +18,26 @@ class AdyTropicalFish : AdyFish(EntityTypes.TROPICAL_FISH) {
                 .build()
         registerEditor("patternColor")
                 .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern_color ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setPatternColor(DyeColor.WHITE)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getPatternColor().name
                 }.build()
         registerEditor("bodyColor")
                 .from(Editors.enums(DyeColor::class) { _, entity, meta, _, e -> "/adyeshachapi edit body_color ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setBodyColor(DyeColor.WHITE)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getBodyColor().name
                 }.build()
         registerEditor("pattern")
                 .from(Editors.enums(TropicalFish.Pattern::class) { _, entity, meta, _, e -> "/adyeshachapi edit pattern ${entity.uniqueId} ${meta.key} $e" })
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     setPattern(TropicalFish.Pattern.KOB)
                 }
-                .display { _, entity, _ ->
+                .display { _, _, _ ->
                     getPattern().name
                 }.build()
     }
@@ -75,7 +75,7 @@ class AdyTropicalFish : AdyFish(EntityTypes.TROPICAL_FISH) {
     }
 
     private fun getData(patternColor: DyeColor, bodyColor: DyeColor, type: TropicalFish.Pattern): Int {
-        return patternColor.woolData.toInt() shl 24 or (bodyColor.woolData.toInt() shl 16) or CraftTropicalFish.CraftPattern.values()[type.ordinal].dataValue
+        return patternColor.woolData.toInt() shl 24 or (bodyColor.woolData.toInt() shl 16) or NMS.INSTANCE.getTropicalFishDataValue(type)
     }
 
     private fun getPatternColor(data: Int): DyeColor {
@@ -87,6 +87,6 @@ class AdyTropicalFish : AdyFish(EntityTypes.TROPICAL_FISH) {
     }
 
     private fun getPattern(data: Int): TropicalFish.Pattern {
-        return CraftTropicalFish.CraftPattern.fromData(data and '\uffff'.toInt())
+        return NMS.INSTANCE.getTropicalFishPattern(data and '\uffff'.code)
     }
 }

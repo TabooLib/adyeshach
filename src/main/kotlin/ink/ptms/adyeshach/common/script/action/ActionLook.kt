@@ -3,32 +3,29 @@ package ink.ptms.adyeshach.common.script.action
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.actions.LiteralAction
-import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
-import io.izzel.taboolib.util.Coerce
 import org.bukkit.Location
+import taboolib.common5.Coerce
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
+import taboolib.library.kether.actions.LiteralAction
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val smooth: Boolean) : QuestAction<Void>() {
+class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val smooth: Boolean): ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        return context.newFrame(x).run<Any>().thenAccept { x ->
-            context.newFrame(y).run<Any>().thenAccept { y ->
-                context.newFrame(z).run<Any>().thenAccept { z ->
-                    val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        frame.newFrame(x).run<Any>().thenAccept { x ->
+            frame.newFrame(y).run<Any>().thenAccept { y ->
+                frame.newFrame(z).run<Any>().thenAccept { z ->
+                    val s = frame.script()
                     if (s.getManager() == null) {
-                        throw RuntimeException("No manager selected.")
+                        error("No manager selected.")
                     }
                     if (!s.entitySelected()) {
-                        throw RuntimeException("No entity selected.")
+                        error("No entity selected.")
                     }
                     s.getEntities()!!.filterNotNull().forEach {
                         it.controllerLook(Location(it.position.world, Coerce.toDouble(x), Coerce.toDouble(y), Coerce.toDouble(z)), smooth)
@@ -36,16 +33,13 @@ class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
                 }
             }
         }
+        return CompletableFuture.completedFuture(null)
     }
 
-    override fun toString(): String {
-        return "ActionLook(x=$x, y=$y, z=$z, smooth=$smooth)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        @Suppress("UNCHECKED_CAST")
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["look"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             var smooth = false
             it.mark()
             if (it.nextToken() == "smooth") {
@@ -53,9 +47,9 @@ class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
             } else {
                 it.reset()
             }
-            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
-            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
-            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>("0"))
+            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
+            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
+            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
             while (it.hasNext()) {
                 it.mark()
                 when (it.nextToken()) {

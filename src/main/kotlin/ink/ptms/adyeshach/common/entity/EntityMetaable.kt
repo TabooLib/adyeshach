@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.event.AdyeshachMaskedMetaGenerateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
@@ -7,15 +8,14 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.DataWatcher
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import io.izzel.taboolib.Version
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.module.nms.impl.Position
-import io.izzel.taboolib.util.Strings
-import io.izzel.taboolib.util.chat.TextComponent
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
+import taboolib.common.io.digest
+import taboolib.module.nms.MinecraftVersion
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass
@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
 abstract class EntityMetaable {
 
     protected val meta = CopyOnWriteArrayList<Meta>()
-    protected val version = Version.getCurrentVersionInt()
+    protected val version = MinecraftVersion.majorLegacy
 
     protected val tag = ConcurrentHashMap<String, String>()
 
@@ -43,7 +43,7 @@ abstract class EntityMetaable {
     }
 
     protected fun getByteMaskKey(index: Int): String {
-        return "\$${Strings.hashKeyForDisk(meta.firstOrNull { it.index == index }!!.key).substring(0, 8)}"
+        return "\$${meta.firstOrNull { it.index == index }!!.key.digest("md5").substring(0, 8)}"
     }
 
     fun registerEditor(id: String): MetaEditor {
@@ -81,19 +81,18 @@ abstract class EntityMetaable {
     }
 
     fun setMetadata(key: String, value: Any) {
-        val registerMeta = meta.firstOrNull { it.key == key } ?: throw RuntimeException("Metadata \"$key\" not registered.")
+        val registerMeta = meta.firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
         if (registerMeta.index == -1) {
-            throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
+            error("Metadata \"$key\" not supported this minecraft version.")
         }
         if (registerMeta.index == -2) {
-            throw RuntimeException("Metadata \"$key\" not allowed.")
+            error("Metadata \"$key\" not allowed.")
         }
         if (registerMeta is MetaMasked) {
             metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = value as Boolean
         } else {
             metadata[key] = value
         }
-
         if (this is EntityInstance) {
             registerMeta.update(this)
         }
@@ -101,9 +100,9 @@ abstract class EntityMetaable {
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getMetadata(key: String): T {
-        val registerMeta = meta.firstOrNull { it.key == key } ?: throw RuntimeException("Metadata \"$key\" not registered.")
+        val registerMeta = meta.firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
         if (registerMeta.index == -1) {
-            throw RuntimeException("Metadata \"$key\" not supported this minecraft version.")
+            error("Metadata \"$key\" not supported this minecraft version.")
         }
         return if (registerMeta is MetaMasked) {
             (metadataMask[getByteMaskKey(registerMeta.index)]?.get(key) ?: registerMeta.def) as T
@@ -205,7 +204,7 @@ abstract class EntityMetaable {
                 is Float -> DataWatcher.DataFloat()
                 is String -> DataWatcher.DataString()
                 is Boolean -> DataWatcher.DataBoolean()
-                is Position -> DataWatcher.DataPosition()
+                is Vector -> DataWatcher.DataPosition()
                 is ItemStack -> DataWatcher.DataItemStack()
                 is EulerAngle -> DataWatcher.DataVector()
                 is MaterialData -> DataWatcher.DataBlockData()
@@ -222,7 +221,8 @@ abstract class EntityMetaable {
                 return null
             }
             val obj = entityInstance.metadata[key] ?: return null
-            val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this, obj).call()
+            val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this, obj)
+            event.call()
             return dataWatcher?.getMetadata(index, event.value)
         }
 

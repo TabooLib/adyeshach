@@ -21,15 +21,14 @@ class ControllerLookAtPlayerAlways(entity: EntityInstance) : Controller(entity) 
 
     override fun onTick() {
         entity!!.viewPlayers.getViewPlayers()
-                .filterNot {
-                    it.hasPotionEffect(PotionEffectType.INVISIBILITY)
-                            || it.gameMode == GameMode.SPECTATOR
-                            || it.isInvulnerable
+            .filterNot {
+                it.hasPotionEffect(PotionEffectType.INVISIBILITY) || it.gameMode == GameMode.SPECTATOR || it.isInvulnerable
+            }.minByOrNull {
+                it.location.distance(entity.position.toLocation())
+            }?.let {
+                if (it.location.distance(entity.position.toLocation()) < 16) {
+                    entity.controllerLook(it.eyeLocation)
                 }
-                .minByOrNull { it.location.distance(entity.position.toLocation()) }?.let {
-                    if (it.location.distance(entity.position.toLocation()) < 16) {
-                        entity.controllerLook(it.eyeLocation)
-                    }
-                }
+            }
     }
 }

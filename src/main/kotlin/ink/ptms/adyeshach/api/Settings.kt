@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.api
 
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.editor.EditorMode
+import java.util.*
 
 object Settings {
 
@@ -20,7 +21,7 @@ object Settings {
 
     val editorMode: EditorMode
         get() = try {
-            EditorMode.valueOf(Adyeshach.conf.getString("Settings.editor-mode", "BOOK")!!.toUpperCase())
+            EditorMode.valueOf(Adyeshach.conf.getString("Settings.editor-mode", "BOOK")!!.uppercase(Locale.getDefault()))
         } catch (t: Throwable) {
             EditorMode.BOOK
         }
@@ -33,12 +34,6 @@ object Settings {
             "KEEP_ALIVE" -> SpawnTrigger.KEEP_ALIVE
             "JOIN" -> SpawnTrigger.JOIN
             else -> SpawnTrigger.KEEP_ALIVE
-        }
-
-    val pathfinder: Pathfinder
-        get() = when (Adyeshach.conf.getString("Settings.pathfinder")) {
-            "PROXY" -> Pathfinder.PROXY
-            else -> Pathfinder.NATIVE
         }
 
     val pathfinderSync: Boolean

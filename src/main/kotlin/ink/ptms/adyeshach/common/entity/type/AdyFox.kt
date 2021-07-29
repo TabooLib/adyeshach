@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Fox
 
 /**
@@ -43,7 +42,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
         registerMeta(at(11500 to 16, 11400 to 15), "type", Fox.Type.RED.ordinal)
                 .from(Editors.enums(Fox.Type::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesFoxType()[entity.getMetadata("type")].name
+                    Fox.Type.values()[entity.getMetadata("type")].name
                 }.build()
         registerMetaByteMask(at(11500 to 17, 11400 to 16), "isSitting", 0x01, false)
         registerMetaByteMask(at(11500 to 17, 11400 to 16), "isCrouching", 0x04, false)
@@ -55,7 +54,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun getType(): Fox.Type {
-        return BukkitUtils.valuesFoxType()[getMetadata("type")]
+        return Fox.Type.values()[getMetadata("type")]
     }
 
     fun setType(type: Fox.Type) {

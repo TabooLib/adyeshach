@@ -5,8 +5,8 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
-import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
+import taboolib.common5.Baffle
 
 /**
  * 实体移动逻辑
@@ -17,7 +17,7 @@ import org.bukkit.Location
 class GeneralMove(entity: EntityInstance) : Controller(entity) {
 
     private var i = 0
-    private var counterLook = SimpleCounter(2)
+    private var counterLook = Baffle.of(2)
     private var counterJump = 0
 
     var speed = 0.0
@@ -58,7 +58,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         val positionNext = resultNavigation!!.pointList[i].run {
             Location(entity.position.world, x.toDouble() + 0.55, y.toDouble(), z.toDouble() + 0.5)
         }
-        if (counterLook.next()) {
+        if (counterLook.hasNext()) {
             entity.controllerLook(positionNext.clone().run {
                 y = positionEntity.y + (entity.entityType.entitySize.height * 0.9)
                 this

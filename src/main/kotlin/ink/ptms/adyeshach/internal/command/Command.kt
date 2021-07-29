@@ -4,11 +4,11 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.move.Picker
+import ink.ptms.adyeshach.common.editor.Picker
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.KnownController
-import ink.ptms.adyeshach.common.util.Tasks
-import ink.ptms.adyeshach.internal.trait.KnownTraits
+
+import ink.ptms.adyeshach.internal.trait.TraitFactory
 import io.izzel.taboolib.kotlin.sendLocale
 import io.izzel.taboolib.module.command.base.BaseCommand
 import io.izzel.taboolib.module.command.base.BaseMainCommand
@@ -42,8 +42,8 @@ class Command : BaseMainCommand(), Helper {
                 .toList() else null
             "@command-argument-type" -> EntityTypes.values().map { it.name }
             "@command-argument-method" -> listOf("add", "remove", "reset")
-            "@command-argument-controller" -> Adyeshach.scriptHandler.knownControllers.keys().toList()
-            "@command-argument-trait" -> KnownTraits.traits.map { it.getName() }
+            "@command-argument-controller" -> Adyeshach.scriptHandler.controllers.keys().toList()
+            "@command-argument-trait" -> TraitFactory.traits.map { it.getName() }
             "@command-argument-world" -> Bukkit.getWorlds().map { it.name }
             else -> null
         }
@@ -51,7 +51,7 @@ class Command : BaseMainCommand(), Helper {
 
     @SubCommand(description = "@command-main-create", arguments = ["@command-argument-id", "@command-argument-type"], type = CommandType.PLAYER, priority = 0.1)
     fun create(sender: Player, args: Array<String>) {
-        val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].toUpperCase()).orNull()
+        val entityType = Enums.getIfPresent(EntityTypes::class.java, args[1].uppercase(Locale.getDefault())).orNull()
         if (entityType == null) {
             sender.sendLocale("command-main-entity-not-support", args[1])
             return
@@ -188,7 +188,7 @@ class Command : BaseMainCommand(), Helper {
         val yaw = Coerce.toFloat(args.getOrNull(5) ?: entity.position.yaw)
         val pitch = Coerce.toFloat(args.getOrNull(6) ?: entity.position.pitch)
         entity.teleport(Location(world, Coerce.toDouble(args[2]), Coerce.toDouble(args[3]), Coerce.toDouble(args[4]), yaw, pitch))
-        Tasks.delay(20) {
+        submit(delay = 20) {
             entity.setHeadRotation(yaw, pitch)
         }
         sender.sendLocale("command-main-success")
@@ -206,7 +206,7 @@ class Command : BaseMainCommand(), Helper {
             return
         }
         entity.teleport(sender.location)
-        Tasks.delay(20) {
+        submit(delay = 20) {
             entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
         }
         sender.sendLocale("command-main-success")
@@ -399,7 +399,7 @@ class Command : BaseMainCommand(), Helper {
             sender.sendLocale("command-main-entity-not-found")
             return
         }
-        val trait = KnownTraits.traits.firstOrNull { it.getName().equals(args[1], true) }
+        val trait = TraitFactory.traits.firstOrNull { it.getName().equals(args[1], true) }
         if (trait == null) {
             sender.sendLocale("command-main-trait-not-found", args[1])
             return
@@ -441,7 +441,7 @@ class Command : BaseMainCommand(), Helper {
 
     @SubCommand(description = "@command-main-load", priority = 1.3)
     fun load(sender: CommandSender, args: Array<String>) {
-        Tasks.task(true) {
+        submit(async = true) {
             Bukkit.getOnlinePlayers().forEach {
                 AdyeshachAPI.getEntityManagerPrivate(it).onDisable()
                 AdyeshachAPI.getEntityManagerPrivate(it).onEnable()
@@ -454,7 +454,7 @@ class Command : BaseMainCommand(), Helper {
 
     @SubCommand(description = "@command-main-save", priority = 1.4)
     fun save(sender: CommandSender, args: Array<String>) {
-        Tasks.task(true) {
+        submit(async = true) {
             Bukkit.getOnlinePlayers().forEach {
                 AdyeshachAPI.getEntityManagerPrivate(it).onSave()
             }

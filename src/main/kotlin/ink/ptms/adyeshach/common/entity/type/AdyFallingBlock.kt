@@ -1,18 +1,17 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.Adyeshach
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.module.i18n.I18n
-import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.item.inventory.MenuBuilder
-import io.izzel.taboolib.util.lite.Materials
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.library.xseries.XMaterial
+import taboolib.module.nms.getName
+import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
+import taboolib.platform.util.isNotAir
 import java.util.*
 
 /**
@@ -35,30 +34,29 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
                 material = Material.STONE
                 data = 0.toByte()
             }
-            .modify { player, entity, meta ->
-                MenuBuilder.builder(Adyeshach.plugin)
-                    .title("Adyeshach Editor : Input")
-                    .rows(1)
-                    .items("####@####")
-                    .put('#', ItemBuilder(Materials.BLACK_STAINED_GLASS_PANE.parseItem()).name("§f").build())
-                    .put('@', ItemStack(material, 1, data.toShort()))
-                    .event {
-                        if (it.slot == '#') {
-                            it.isCancelled = true
-                        }
-                    }.close {
+            .modify { player, entity, _ ->
+                player.openMenu<Basic>("Adyeshach Editor : Input") {
+                    rows(1)
+                    map("####@####")
+                    set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
+                        name = "§f"
+                    }
+                    set('@', ItemStack(material, 1, data.toShort()))
+                    onClick('#')
+                    onClose {
                         val item = it.inventory.getItem(4)
-                        if (Items.nonNull(item)) {
+                        if (item.isNotAir()) {
                             material = item!!.type
                             data = item.durability.toByte()
                         }
                         destroy()
                         spawn(getLocation())
                         Editor.open(player, entity)
-                    }.open(player)
+                    }
+                }
             }
             .display { player, _, _ ->
-                I18n.get().getName(player, ItemStack(material, 1, data.toShort()))
+                ItemStack(material, 1, data.toShort()).getName(player)
             }
     }
 

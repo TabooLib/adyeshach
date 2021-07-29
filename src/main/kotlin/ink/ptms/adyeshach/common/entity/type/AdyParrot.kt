@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
 import org.bukkit.entity.Parrot
 
 /**
@@ -15,7 +14,7 @@ class AdyParrot : AdyEntityTameable(EntityTypes.PARROT) {
         registerMeta(at(11500 to 18, 11400 to 17, 11200 to 15), "color", Parrot.Variant.RED.ordinal)
                 .from(Editors.enums(Parrot.Variant::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
                 .display { _, entity, _ ->
-                    BukkitUtils.valuesParrotVariant()[entity.getMetadata("color")].name
+                    Parrot.Variant.values()[entity.getMetadata("color")].name
                 }.build()
     }
 
@@ -24,6 +23,6 @@ class AdyParrot : AdyEntityTameable(EntityTypes.PARROT) {
     }
 
     fun getColor(): Parrot.Variant {
-        return BukkitUtils.valuesParrotVariant()[getMetadata("color")]
+        return Parrot.Variant.values()[getMetadata("color")]
     }
 }

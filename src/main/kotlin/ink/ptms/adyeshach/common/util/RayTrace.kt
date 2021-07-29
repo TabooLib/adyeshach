@@ -25,5 +25,4 @@ class RayTrace(val origin: Vector, val direction: Vector) {
     fun distance(distance: Double): Vector {
         return origin.clone().add(direction.clone().multiply(distance))
     }
-
 }

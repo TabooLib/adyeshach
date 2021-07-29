@@ -7,5 +7,4 @@ package ink.ptms.adyeshach.common.util.serializer
  * @author sky
  * @since 2021/5/29 12:27 上午
  */
-class UnknownWorldException(val world: String) : Exception(world) {
-}
+class UnknownWorldException(val world: String) : Exception(world)

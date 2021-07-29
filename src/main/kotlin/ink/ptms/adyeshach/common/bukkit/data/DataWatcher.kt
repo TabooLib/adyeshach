@@ -5,15 +5,15 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.util.serializer.Serializer
-import io.izzel.taboolib.module.nms.impl.Position
-import io.izzel.taboolib.util.chat.TextComponent
-import io.izzel.taboolib.util.item.Items
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Material
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.NumberConversions
+import taboolib.common.util.Vector
+import taboolib.library.xseries.XMaterial
 
 abstract class DataWatcher {
 
@@ -100,7 +100,7 @@ abstract class DataWatcher {
         }
 
         override fun getMetadata(index: Int, value: Any): Any {
-            return NMS.INSTANCE.getMetaEntityVector(index, parse(value) as EulerAngle)
+            return NMS.INSTANCE.getMetaEntityEulerAngle(index, parse(value) as EulerAngle)
         }
     }
 
@@ -145,7 +145,12 @@ abstract class DataWatcher {
     class DataBlockData : DataWatcher() {
 
         override fun parse(value: Any): Any {
-            return if (value is Map<*, *>) MaterialData(Items.asMaterial(value["type"].toString()), value["data"]!!.toByte()) else value as MaterialData
+            return if (value is Map<*, *>) {
+                val material = XMaterial.matchXMaterial(value["type"].toString()).orElse(XMaterial.STONE).parseMaterial()!!
+                MaterialData(material, value["data"]!!.toByte())
+            } else {
+                value as MaterialData
+            }
         }
 
         override fun getMetadata(index: Int, value: Any): Any {
@@ -174,17 +179,17 @@ abstract class DataWatcher {
         override fun parse(value: Any): Any {
             return if (value is Map<*, *>) {
                 if (value["empty"] as Boolean) {
-                    PositionNull()
+                    VectorNull()
                 } else {
-                    Position(value["x"]!!.toInt(), value["y"]!!.toInt(), value["z"]!!.toInt())
+                    Vector(value["x"]!!.toInt(), value["y"]!!.toInt(), value["z"]!!.toInt())
                 }
             } else {
-                value as Position
+                value as Vector
             }
         }
 
         override fun getMetadata(index: Int, value: Any): Any {
-            return NMS.INSTANCE.getMetaEntityPosition(index, parse(value) as Position)
+            return NMS.INSTANCE.getMetaEntityVector(index, parse(value) as Vector)
         }
     }
 }

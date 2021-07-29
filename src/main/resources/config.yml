@@ -1,7 +1,10 @@
-#         Powered by TabooLib 5.0         #
+
+
+#         Powered by TabooLib 6.0         #
 
 
 Database:
+  # LOCAL, MONGODB
   method: LOCAL
   url:
     client: 'mongodb://localhost:3307'
@@ -18,13 +21,8 @@ Settings:
   # JOIN: When player joined the server
   # KEEP_ALIVE: When player sent first position packet
   spawn-event: KEEP_ALIVE
-  # PROXY: Legacy Version
-  # NATIVE: Recode by Minecraft 1.16.5
-  pathfinder: NATIVE
   # Calculate on the main thread (Very low latency, Otherwise >2000ms)
   pathfinder-sync: true
-  # If true, Will affect other plugins that use Scoreboard
-  enable-hide-name: false
   # Display meta data per line in the editor
   editor-meta-per-line: 3
   # Delete NPC files when the specified world does not exist

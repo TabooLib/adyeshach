@@ -3,28 +3,25 @@ package ink.ptms.adyeshach.common.script.action
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import io.izzel.taboolib.kotlin.kether.ScriptContext
-import io.izzel.taboolib.kotlin.kether.ScriptParser
-import io.izzel.taboolib.kotlin.kether.common.api.ParsedAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestAction
-import io.izzel.taboolib.kotlin.kether.common.api.QuestContext
-import io.izzel.taboolib.kotlin.kether.common.loader.types.ArgTypes
 import org.bukkit.Location
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
+import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionTeleport(val location: ParsedAction<*>) : QuestAction<Void>() {
+class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
 
-    override fun process(context: QuestContext.Frame): CompletableFuture<Void> {
-        return context.newFrame(location).run<Location>().thenAccept { loc ->
-            val s = (context.context() as ScriptContext)
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        return frame.newFrame(location).run<Location>().thenAccept { loc ->
+            val s = frame.script()
             if (s.getManager() == null) {
-                throw RuntimeException("No manager selected.")
+                error("No manager selected.")
             }
             if (!s.entitySelected()) {
-                throw RuntimeException("No entity selected.")
+                error("No entity selected.")
             }
             s.getEntities()!!.filterNotNull().forEach {
                 it.teleport(loc)
@@ -32,13 +29,10 @@ class ActionTeleport(val location: ParsedAction<*>) : QuestAction<Void>() {
         }
     }
 
-    override fun toString(): String {
-        return "ActionTeleport(location=$location)"
-    }
+    internal object Parser {
 
-    companion object {
-
-        fun parser() = ScriptParser.parser {
+        @KetherParser(["teleport"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
             ActionTeleport(it.next(ArgTypes.ACTION))
         }
     }

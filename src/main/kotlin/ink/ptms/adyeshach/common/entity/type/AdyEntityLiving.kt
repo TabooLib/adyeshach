@@ -1,19 +1,19 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.BukkitUtils
-import ink.ptms.adyeshach.common.util.Tasks
-import io.izzel.taboolib.internal.gson.annotations.Expose
+
 import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.submit
 import java.util.*
 
 /**
@@ -68,10 +68,10 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             spawn(viewer) {
                 NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, UUID.randomUUID(), position.toLocation())
             }
-            Tasks.delay(1) {
+            submit(delay = 1) {
                 updateEquipment()
             }
-            Tasks.delay(5) {
+            submit(delay = 5) {
                 if (isDie) {
                     die(viewer = viewer)
                 }
@@ -175,7 +175,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     fun updateEquipment() {
         forViewers {
-            BukkitUtils.valuesEquipmentSlot().forEach { equipment ->
+            EquipmentSlot.values().forEach { equipment ->
                 NMS.INSTANCE.updateEquipment(it, index, equipment, getEquipment(equipment) ?: return@forEach)
             }
         }
@@ -210,7 +210,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         isDie = die
         if (isDie) {
             setHealth(-1f)
-            Tasks.delay(15) {
+            submit(delay = 15) {
                 if (isDie) {
                     setHealth(1f)
                 }
@@ -227,7 +227,7 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         if (die) {
             val registerMeta = meta.firstOrNull { it.key == "health" }!!
             NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(-1)))
-            Tasks.delay(15) {
+            submit(delay = 15) {
                 NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(1)))
             }
         } else {

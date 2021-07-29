@@ -16,6 +16,11 @@ abstract class Migrate {
         return Bukkit.getPluginManager().isPluginEnabled(depend())
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T> getPlugin(): T {
+        return Bukkit.getPluginManager().getPlugin(depend()) as T
+    }
+
     companion object {
 
         val migrates = HashMap<String, Migrate>()

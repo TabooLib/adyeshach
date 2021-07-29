@@ -1,10 +1,12 @@
 package ink.ptms.adyeshach.common.entity
 
+import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.Location
+import org.bukkit.World
+import taboolib.library.configuration.ConfigurationSection
 import java.util.*
 
 /**
@@ -30,9 +32,28 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
         protected set
         get() = field.clone()
 
-    fun getWorld() = position.world
+    val x: Double
+        get() = position.x
 
-    fun getLocation() = position.toLocation()
+    val y: Double
+        get() = position.y
+
+    val z: Double
+        get() = position.z
+
+    val yaw: Float
+        get() = position.yaw
+
+    val pitch: Float
+        get() = position.pitch
+
+    fun getWorld(): World {
+        return position.world
+    }
+
+    fun getLocation(): Location {
+        return position.toLocation()
+    }
 
     fun toJson(): String {
         return Serializer.gson.toJson(this)

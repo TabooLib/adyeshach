@@ -51,14 +51,14 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
 
     fun setElderly(value: Boolean) {
         if (version >= 11100) {
-            throw RuntimeException("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
+            error("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
         }
         setMetadata("isElderly", value)
     }
 
     fun isElderly(): Boolean {
         if (version >= 11100) {
-            throw RuntimeException("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
+            error("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
         }
         return getMetadata("isElderly")
     }

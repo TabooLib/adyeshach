@@ -1,22 +1,15 @@
-package ink.ptms.adyeshach.api.nms.impl
+package ink.ptms.adyeshach.api.nms
 
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.bukkit.data.PositionNull
-import ink.ptms.adyeshach.common.bukkit.data.VillagerData
+import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import io.izzel.taboolib.Version
-import io.izzel.taboolib.kotlin.Reflex.Companion.asReflex
-import io.izzel.taboolib.module.lite.SimpleEquip
-import io.izzel.taboolib.module.nms.impl.Position
-import net.minecraft.server.v1_11_R1.BlockTorch
-import net.minecraft.server.v1_11_R1.IBlockAccess
+import it.unimi.dsi.fastutil.ints.IntLists
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_9_R2.WorldSettings
@@ -25,21 +18,25 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftTropicalFish
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
-import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
-import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import org.bukkit.util.Vector
+import taboolib.common.reflect.Reflex.Companion.getProperty
+import taboolib.common.reflect.Reflex.Companion.invokeMethod
+import taboolib.common.reflect.Reflex.Companion.setProperty
+import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.common.util.Vector
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
 /**
@@ -48,70 +45,147 @@ import java.util.*
  */
 class NMSImpl : NMS() {
 
-    val version = Version.getCurrentVersionInt()
+    val isUniversal = MinecraftVersion.isUniversal
+
+    val majorLegacy = MinecraftVersion.majorLegacy
+
+    fun Player.sendPacket(packet: Any, vararg fields: Pair<String, Any?>) {
+        sendPacket(setFields(packet, *fields))
+    }
+
+    fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
+        fields.forEach { (key, value) ->
+            if (value != null) {
+                any.setProperty(key, value)
+            }
+        }
+        return any
+    }
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
-        sendPacket(
-            player,
-            PacketPlayOutSpawnEntity(),
-            "a" to entityId,
-            "b" to uuid,
-            "c" to location.x,
-            "d" to location.y,
-            "e" to location.z,
-            "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-            "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-            "k" to if (version <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
-        )
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutSpawnEntity::class.java.unsafeInstance(),
+                "id" to entityId,
+                "uuid" to uuid,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "xa" to 0,
+                "ya" to 0,
+                "za" to 0,
+                "xRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "yRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "type" to getEntityTypeNMS(entityType),
+                "data" to 0
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutSpawnEntity(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "k" to if (majorLegacy <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
+            )
+        }
     }
 
     override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
-        if (entityType == EntityTypes.ARMOR_STAND && version < 11300) {
+        if (entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
-        sendPacket(
-            player,
-            PacketPlayOutSpawnEntityLiving(),
-            "a" to entityId,
-            "b" to uuid,
-            "c" to when {
-                version >= 11400 -> IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_16_R1.EntityTypes<*>)
-                version == 11300 -> net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
-                else -> entityType.bukkitId
-            },
-            "d" to location.x,
-            "e" to location.y,
-            "f" to location.z,
-            "g" to 0,
-            "h" to 0,
-            "i" to 0,
-            "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-            "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
-            "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-            "m" to if (version >= 11500) null else DataWatcher(null)
-        )
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutSpawnEntityLiving::class.java.unsafeInstance(),
+                "id" to entityId,
+                "uuid" to uuid,
+                "type" to IRegistry.ENTITY_TYPE.invokeMethod<Int>("getId", getEntityTypeNMS(entityType))!!,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "xd" to 0,
+                "yd" to 0,
+                "zd" to 0,
+                "yRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "xRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "yHeadRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte()
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutSpawnEntityLiving(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to when {
+                    majorLegacy >= 11400 -> IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_16_R1.EntityTypes<*>)
+                    majorLegacy == 11300 -> net.minecraft.server.v1_13_R2.IRegistry.ENTITY_TYPE.a(getEntityTypeNMS(entityType) as net.minecraft.server.v1_13_R2.EntityTypes<*>)
+                    else -> entityType.bukkitId
+                },
+                "d" to location.x,
+                "e" to location.y,
+                "f" to location.z,
+                "g" to 0,
+                "h" to 0,
+                "i" to 0,
+                "j" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "k" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "l" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "m" to if (majorLegacy >= 11500) null else DataWatcher(null)
+            )
+        }
     }
 
     override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
-        sendPacket(
-            player,
-            PacketPlayOutNamedEntitySpawn(),
-            "a" to entityId,
-            "b" to uuid,
-            "c" to location.x,
-            "d" to location.y,
-            "e" to location.z,
-            "f" to (location.yaw * 256 / 360).toInt().toByte(),
-            "g" to (location.pitch * 256 / 360).toInt().toByte(),
-            "h" to if (version >= 11500) null else DataWatcher(null),
-        )
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutNamedEntitySpawn::class.java.unsafeInstance(),
+                "entityId" to entityId,
+                "playerId" to uuid,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "yRot" to (location.yaw * 256 / 360).toInt().toByte(),
+                "xRot" to (location.pitch * 256 / 360).toInt().toByte()
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutNamedEntitySpawn(),
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to (location.yaw * 256 / 360).toInt().toByte(),
+                "g" to (location.pitch * 256 / 360).toInt().toByte(),
+                "h" to if (majorLegacy >= 11500) null else DataWatcher(null),
+            )
+        }
     }
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
-        if (version >= 11300) {
-            val block = Blocks::class.java.asReflex().read<Block>(material.name)
-            sendPacket(
-                player,
+        if (isUniversal) {
+            val block = Blocks::class.java.getProperty<Any>(material.name, fixed = true)
+            player.sendPacket(
+                PacketPlayOutSpawnEntity::class.java.unsafeInstance(),
+                "id" to entityId,
+                "uuid" to uuid,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "xa" to 0,
+                "ya" to 0,
+                "za" to 0,
+                "xRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "yRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "type" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
+                "data" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
+            )
+        } else if (majorLegacy >= 11300) {
+            val block = Blocks::class.java.getProperty<Any>(material.name, fixed = true)
+            player.sendPacket(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
@@ -124,8 +198,7 @@ class NMSImpl : NMS() {
                 "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             )
         } else {
-            sendPacket(
-                player,
+            player.sendPacket(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
@@ -141,21 +214,39 @@ class NMSImpl : NMS() {
     }
 
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
-        sendPacket(
-            player,
-            PacketPlayOutSpawnEntityExperienceOrb(),
-            "a" to entityId,
-            "b" to location.x,
-            "c" to location.y,
-            "d" to location.z,
-            "e" to amount,
-        )
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutSpawnEntityExperienceOrb::class.java.unsafeInstance(),
+                "id" to entityId,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "value" to amount,
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutSpawnEntityExperienceOrb(),
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to amount,
+            )
+        }
     }
 
     override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
-        if (version > 11300) {
-            sendPacket(
-                player,
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutSpawnEntityPainting::class.java.unsafeInstance(),
+                "id" to entityId,
+                "uuid" to uuid,
+                "pos" to getBlockPositionNMS(location),
+                "direction" to Enums.getIfPresent(EnumDirection::class.java, direction.name).get(),
+                "motive" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
+            )
+        } else if (majorLegacy > 11300) {
+            player.sendPacket(
                 PacketPlayOutSpawnEntityPainting(),
                 "a" to entityId,
                 "b" to uuid,
@@ -164,8 +255,7 @@ class NMSImpl : NMS() {
                 "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else {
-            sendPacket(
-                player,
+            player.sendPacket(
                 net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting(),
                 "a" to entityId,
                 "b" to uuid,
@@ -181,10 +271,23 @@ class NMSImpl : NMS() {
         if (texture.size == 2) {
             profile.properties.put("textures", Property("textures", texture[0], texture[1]))
         }
-        if (version >= 11000) {
+        if (isUniversal) {
+            val infoData = PacketPlayOutPlayerInfo::class.java.unsafeInstance() as PacketPlayOutPlayerInfo
+            player.sendPacket(
+                infoData,
+                "action" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
+                "entries" to listOf(
+                    infoData.PlayerInfoData(
+                        profile,
+                        ping,
+                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
+                        CraftChatMessage.fromString(name).firstOrNull()
+                    )
+                )
+            )
+        } else if (majorLegacy >= 11000) {
             val infoData = PacketPlayOutPlayerInfo()
-            sendPacket(
-                player,
+            player.sendPacket(
                 infoData,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(
@@ -198,8 +301,7 @@ class NMSImpl : NMS() {
             )
         } else {
             val infoData = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
-            sendPacket(
-                player,
+            player.sendPacket(
                 infoData,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(
@@ -215,37 +317,63 @@ class NMSImpl : NMS() {
     }
 
     override fun removePlayerInfo(player: Player, uuid: UUID) {
-        val infoData = PacketPlayOutPlayerInfo()
-        sendPacket(
-            player,
-            infoData,
-            "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-            "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
-        )
+        if (isUniversal) {
+            val infoData = PacketPlayOutPlayerInfo::class.java.unsafeInstance() as PacketPlayOutPlayerInfo
+            player.sendPacket(
+                infoData,
+                "action" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                "entries" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
+            )
+        } else {
+            val infoData = PacketPlayOutPlayerInfo()
+            player.sendPacket(
+                infoData,
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
+            )
+        }
     }
 
     override fun destroyEntity(player: Player, entityId: Int) {
-        sendPacket(player, PacketPlayOutEntityDestroy(entityId))
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutEntityDestroy::class.java.unsafeInstance(),
+                "entityIds" to IntLists.singleton(entityId)
+            )
+        } else {
+            player.sendPacket(PacketPlayOutEntityDestroy(entityId))
+        }
     }
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location) {
-        sendPacket(
-            player,
-            PacketPlayOutEntityTeleport(),
-            "a" to entityId,
-            "b" to location.x,
-            "c" to location.y,
-            "d" to location.z,
-            "e" to (location.yaw * 256 / 360).toInt().toByte(),
-            "f" to (location.pitch * 256 / 360).toInt().toByte(),
-            "g" to false // onGround
-        )
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutEntityTeleport::class.java.unsafeInstance(),
+                "id" to entityId,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "yRot" to (location.yaw * 256 / 360).toInt().toByte(),
+                "xRot" to (location.pitch * 256 / 360).toInt().toByte(),
+                "onGround" to false
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutEntityTeleport(),
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to (location.yaw * 256 / 360).toInt().toByte(),
+                "f" to (location.pitch * 256 / 360).toInt().toByte(),
+                "g" to false // onGround
+            )
+        }
     }
 
     override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {
-        if (version >= 11400) {
-            sendPacket(
-                player,
+        if (majorLegacy >= 11400) {
+            player.sendPacket(
                 PacketPlayOutEntity.PacketPlayOutRelEntityMove(
                     entityId,
                     (x * 4096).toInt().toShort(),
@@ -255,27 +383,33 @@ class NMSImpl : NMS() {
                 )
             )
         } else {
-            sendPacket(player, net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
+            player.sendPacket(net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
         }
     }
 
     override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
-        if (version >= 11400) {
-            sendPacket(player, PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
+        if (majorLegacy >= 11400) {
+            player.sendPacket(PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
         } else {
-            sendPacket(player, net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
+            player.sendPacket(net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
         }
     }
 
     override fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
-        sendPacket(
-            player,
-            PacketPlayOutEntityHeadRotation(),
-            "a" to entityId,
-            "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
-        )
-        sendPacket(
-            player,
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutEntityHeadRotation::class.java.unsafeInstance(),
+                "entityId" to entityId,
+                "yHeadRot" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutEntityHeadRotation(),
+                "a" to entityId,
+                "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+            )
+        }
+        player.sendPacket(
             PacketPlayOutEntity.PacketPlayOutEntityLook(
                 entityId,
                 MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
@@ -286,33 +420,36 @@ class NMSImpl : NMS() {
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
+        val major = MinecraftVersion.major
         when {
-            version >= 11600 -> {
-                sendPacket(
-                    player,
+            major >= 8 -> {
+                player.sendPacket(
                     PacketPlayOutEntityEquipment(
                         entityId,
-                        listOf(com.mojang.datafixers.util.Pair(EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms), CraftItemStack.asNMSCopy(itemStack)))
+                        listOf(com.mojang.datafixers.util.Pair(when (slot) {
+                            EquipmentSlot.HAND -> EnumItemSlot.MAINHAND
+                            EquipmentSlot.OFF_HAND -> EnumItemSlot.OFFHAND
+                            EquipmentSlot.FEET -> EnumItemSlot.FEET
+                            EquipmentSlot.LEGS -> EnumItemSlot.LEGS
+                            EquipmentSlot.CHEST -> EnumItemSlot.CHEST
+                            EquipmentSlot.HEAD -> EnumItemSlot.HEAD
+                        }, CraftItemStack.asNMSCopy(itemStack)))
                     )
                 )
             }
-            version >= 11300 -> {
-                sendPacket(
-                    player,
+            major >= 1 -> {
+                player.sendPacket(
                     net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
                         entityId,
-                        net.minecraft.server.v1_13_R2.EnumItemSlot.fromName(SimpleEquip.fromBukkit(slot).nms),
+                        when (slot) {
+                            EquipmentSlot.HAND -> net.minecraft.server.v1_13_R2.EnumItemSlot.MAINHAND
+                            EquipmentSlot.OFF_HAND -> net.minecraft.server.v1_13_R2.EnumItemSlot.OFFHAND
+                            EquipmentSlot.FEET -> net.minecraft.server.v1_13_R2.EnumItemSlot.FEET
+                            EquipmentSlot.LEGS -> net.minecraft.server.v1_13_R2.EnumItemSlot.LEGS
+                            EquipmentSlot.CHEST -> net.minecraft.server.v1_13_R2.EnumItemSlot.CHEST
+                            EquipmentSlot.HEAD -> net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
+                        },
                         org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)
-                    )
-                )
-            }
-            else -> {
-                sendPacket(
-                    player,
-                    net.minecraft.server.v1_12_R1.PacketPlayOutEntityEquipment(
-                        entityId,
-                        net.minecraft.server.v1_12_R1.EnumItemSlot.a(SimpleEquip.fromBukkit(slot).nms),
-                        org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
                     )
                 )
             }
@@ -320,11 +457,35 @@ class NMSImpl : NMS() {
     }
 
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
-        sendPacket(player, PacketPlayOutMount(), "a" to entityId, "b" to passengers)
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutMount::class.java.unsafeInstance(),
+                "vehicle" to entityId,
+                "passengers" to passengers
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutMount(),
+                "a" to entityId,
+                "b" to passengers
+            )
+        }
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-        sendPacket(player, PacketPlayOutEntityMetadata(), "a" to entityId, "b" to objects.map { it as DataWatcher.Item<*> }.toList())
+        if (isUniversal) {
+            player.sendPacket(
+                PacketPlayOutEntityMetadata::class.java.unsafeInstance(),
+                "id" to entityId,
+                "packedItems" to objects.map { it as DataWatcher.Item<*> }.toList()
+            )
+        } else {
+            player.sendPacket(
+                PacketPlayOutEntityMetadata(),
+                "a" to entityId,
+                "b" to objects.map { it as DataWatcher.Item<*> }.toList()
+            )
+        }
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
@@ -340,7 +501,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityBoolean(index: Int, value: Boolean): Any {
-        return if (version >= 11300) {
+        return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
         } else {
             net.minecraft.server.v1_11_R1.DataWatcher.Item(
@@ -360,8 +521,8 @@ class NMSImpl : NMS() {
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.a), value)
     }
 
-    override fun getMetaEntityVector(index: Int, value: EulerAngle): Any {
-        return if (version >= 11300) {
+    override fun getMetaEntityEulerAngle(index: Int, value: EulerAngle): Any {
+        return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(
@@ -373,17 +534,17 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun getMetaEntityPosition(index: Int, value: Position?): Any {
-        return if (version >= 11300) {
+    override fun getMetaEntityVector(index: Int, value: Vector?): Any {
+        return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(
                 DataWatcherObject(index, DataWatcherRegistry.m),
-                Optional.ofNullable(if (value == null || value is PositionNull) null else BlockPosition(value.x, value.y, value.z))
+                Optional.ofNullable(if (value == null || value is VectorNull) null else BlockPosition(value.x, value.y, value.z))
             )
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(
                 net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
                 com.google.common.base.Optional.fromNullable(
-                    if (value == null || value is PositionNull) null else net.minecraft.server.v1_12_R1.BlockPosition(
+                    if (value == null || value is VectorNull) null else net.minecraft.server.v1_12_R1.BlockPosition(
                         value.x,
                         value.y,
                         value.z
@@ -394,7 +555,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any {
-        return if (version >= 11300) {
+        return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(
                 DataWatcherObject(index, DataWatcherRegistry.h),
                 Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value))
@@ -417,7 +578,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any {
-        return if (version >= 11300) {
+        return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item<Optional<IChatBaseComponent>>(
                 DataWatcherObject(index, DataWatcherRegistry.f),
                 Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first())
@@ -433,11 +594,12 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaItem(index: Int, itemStack: ItemStack): Any {
+        val major = MinecraftVersion.major
         return when {
-            version >= 11300 -> {
+            major >= 5 -> {
                 DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.g), CraftItemStack.asNMSCopy(itemStack))
             }
-            version >= 11200 -> {
+            major >= 4 -> {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
                     net.minecraft.server.v1_12_R1.DataWatcherObject(
                         6,
@@ -456,7 +618,7 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun getMetaVillagerData(index: Int, villagerData: VillagerData): Any {
+    override fun getMetaVillagerData(index: Int, villagerData: ink.ptms.adyeshach.common.bukkit.data.VillagerData): Any {
         return DataWatcher.Item(
             DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(
                 when (villagerData.type) {
@@ -493,9 +655,8 @@ class NMSImpl : NMS() {
     }
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
-        return if (version >= 11300) {
-            net.minecraft.server.v1_16_R1.EntityTypes::class.java.asReflex()
-                .read<net.minecraft.server.v1_16_R1.EntityTypes<*>>(entityTypes.internalName ?: entityTypes.name)!!
+        return if (MinecraftVersion.major >= 5) {
+            net.minecraft.server.v1_16_R1.EntityTypes::class.java.getProperty(entityTypes.internalName ?: entityTypes.name, fixed = true)!!
         } else {
             entityTypes.bukkitId
         }
@@ -506,8 +667,8 @@ class NMSImpl : NMS() {
     }
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
-        return if (version >= 11300) {
-            Paintings::class.java.asReflex().read<Paintings>(bukkitPaintings.index.toString())!!
+        return if (MinecraftVersion.major >= 5) {
+            Paintings::class.java.getProperty(bukkitPaintings.index.toString(), fixed = true)!!
         } else {
             bukkitPaintings.legacy
         }
@@ -515,11 +676,12 @@ class NMSImpl : NMS() {
 
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
-            version >= 11400 -> {
-                Particles::class.java.asReflex().read<Any>(bukkitParticles.name) ?: Particles.FLAME
+            majorLegacy >= 11400 -> {
+                Particles::class.java.getProperty(bukkitParticles.name, fixed = true) ?: Particles.FLAME
             }
-            version == 11300 -> {
-                val p = IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.toLowerCase())) ?: net.minecraft.server.v1_13_R2.Particles.y
+            majorLegacy == 11300 -> {
+                val p =
+                    IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.lowercase(Locale.getDefault()))) ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
                 } else {
@@ -530,42 +692,12 @@ class NMSImpl : NMS() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-    override fun getNavigationPathList(mob: Creature, location: Location): MutableList<Position> {
-        if (version >= 11400) {
-            val pathEntity =
-                (mob as CraftCreature).handle.navigation.a(BlockPosition(location.blockX, location.blockY, location.blockZ), 1) ?: return mutableListOf()
-            val pathPoint = PathEntity::class.java.asReflex(pathEntity).read<List<PathPoint>>("a")!!
-            return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
-        } else {
-            val pathEntity = if (version >= 11200) {
-                (mob as org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature).handle.navigation.b(
-                    net.minecraft.server.v1_12_R1.BlockPosition(
-                        location.blockX,
-                        location.blockY,
-                        location.blockZ
-                    )
-                ) ?: return mutableListOf()
-            } else {
-                (mob as org.bukkit.craftbukkit.v1_9_R2.entity.CraftCreature).handle.navigation.a(
-                    net.minecraft.server.v1_9_R2.BlockPosition(
-                        location.blockX,
-                        location.blockY,
-                        location.blockZ
-                    )
-                ) ?: return mutableListOf()
-            }
-            val pathPoint = PathEntity::class.java.asReflex(pathEntity).read<Array<PathPoint>>("a")!!
-            return pathPoint.map { Position(it.a, it.b, it.c) }.toMutableList()
-        }
-    }
-
     override fun getEntityDataWatcher(entity: Entity): Any {
         return (entity as CraftEntity).handle.dataWatcher
     }
 
     override fun toBlockId(materialData: MaterialData): Int {
-        return if (version >= 11300) {
+        return if (MinecraftVersion.major >= 5) {
             Block.getCombinedId(CraftMagicNumbers.getBlock(materialData))
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)
@@ -580,34 +712,21 @@ class NMSImpl : NMS() {
         return Vector((obj as Vec3D).x, obj.y, obj.z)
     }
 
-    override fun generateRandomPosition(entity: Creature, inWater: Boolean): Vector? {
-        val vec3d = if (inWater) {
-            RandomPositionGenerator.b((entity as CraftCreature).handle, 15, 7) ?: RandomPositionGenerator.a(entity.handle, 10, 7)
-        } else {
-            RandomPositionGenerator.a((entity as CraftCreature).handle, 10, 7)
-        } ?: return null
-        return Vector(vec3d.x, vec3d.y, vec3d.z)
-    }
-
     override fun getBlockHeight(block: org.bukkit.block.Block): Double {
-        return if (version >= 11300) {
+        return if (MinecraftVersion.major >= 5) {
             if (block.type.isSolid) {
                 (block.boundingBox.maxY - block.y).coerceAtLeast(0.0)
             } else {
                 0.0
             }
         } else {
-            when (version) {
+            when (majorLegacy) {
                 11200 -> {
                     val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
                     if (block.type.isSolid) {
                         val a = b.d((block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle, p)
-                        if (a != null) {
-                            a.e
-                        } else {
-                            0.0
-                        }
+                        a?.e ?: 0.0
                     } else {
                         0.0
                     }
@@ -615,14 +734,9 @@ class NMSImpl : NMS() {
                 11100 -> {
                     val p = net.minecraft.server.v1_11_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle.getType(p)
-                    (b.block as BlockTorch).a(b, (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle as IBlockAccess, p)
                     if (block.type.isSolid) {
                         val a = b.c((block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle, p)
-                        if (a != null) {
-                            a.e
-                        } else {
-                            0.0
-                        }
+                        a?.e ?: 0.0
                     } else {
                         0.0
                     }
@@ -635,11 +749,7 @@ class NMSImpl : NMS() {
                         val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
                         if (block.type.isSolid) {
                             val a = b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)
-                            if (a != null) {
-                                a.e
-                            } else {
-                                0.0
-                            }
+                            a?.e ?: 0.0
                         } else {
                             0.0
                         }
@@ -650,25 +760,30 @@ class NMSImpl : NMS() {
     }
 
     override fun sendAnimation(player: Player, id: Int, type: Int) {
-        sendPacket(player, PacketPlayOutAnimation(), "a" to id, "b" to type)
+        if (isUniversal) {
+            player.sendPacket(PacketPlayOutAnimation::class.java.unsafeInstance(), "id" to id, "action" to type)
+        } else {
+            player.sendPacket(PacketPlayOutAnimation(), "a" to id, "b" to type)
+        }
     }
 
     override fun sendAttachEntity(player: Player, attached: Int, holding: Int) {
-        sendPacket(player, PacketPlayOutAttachEntity(), "a" to attached, "b" to holding)
+        if (isUniversal) {
+            player.sendPacket(PacketPlayOutAttachEntity::class.java.unsafeInstance(), "sourceId" to attached, "destId" to holding)
+        } else {
+            player.sendPacket(PacketPlayOutAttachEntity(), "a" to attached, "b" to holding)
+        }
     }
 
     override fun sendPlayerSleeping(player: Player, id: Int, location: Location) {
-        sendPacket(player, PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
+        player.sendPacket(PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
     }
 
-    override fun addEntity(location: Location, clazz: Class<out Entity>, function: (Entity) -> Unit): Entity {
-        val world = (location.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld)
-        val entity = world.createEntity(location, clazz)!!
-        if (entity is net.minecraft.server.v1_9_R2.EntityInsentient) {
-            entity.prepare(world.handle.D(net.minecraft.server.v1_9_R2.BlockPosition(entity)), null)
-        }
-        function.invoke(entity.bukkitEntity)
-        world.handle.addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM)
-        return entity.bukkitEntity
+    override fun getTropicalFishPattern(data: Int): TropicalFish.Pattern {
+        return CraftTropicalFish.CraftPattern.fromData(data and '\uffff'.code)
+    }
+
+    override fun getTropicalFishDataValue(pattern: TropicalFish.Pattern): Int {
+        return CraftTropicalFish.CraftPattern.values()[pattern.ordinal].dataValue
     }
 }

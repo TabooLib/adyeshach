@@ -9,15 +9,15 @@ import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.Tasks
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
-import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.util.lite.Signs
+import com.google.gson.annotations.Expose
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.submit
+import taboolib.module.chat.colored
+import taboolib.module.nms.inputSign
 import java.util.*
 
 /**
@@ -101,7 +101,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                     setName("Adyeshach NPC")
                 }
                 .modify { player, entity, _ ->
-                    Signs.fakeSign(player, arrayOf(getName(), "", "请在第一行输入内容")) {
+                    player.inputSign(arrayOf(getName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             val name = "${it[0]}${it[1]}"
                             setName(if (name.length > 16) name.substring(0, 16) else name)
@@ -117,7 +117,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                     setPing(60)
                 }
                 .modify { player, entity, _ ->
-                    Signs.fakeSign(player, arrayOf("${getPing()}", "", "请在第一行输入内容")) {
+                    player.inputSign(arrayOf("${getPing()}", "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setPing(NumberConversions.toInt(it[0]))
                         }
@@ -132,7 +132,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                     resetTexture()
                 }
                 .modify { player, entity, _ ->
-                    Signs.fakeSign(player, arrayOf(getTextureName(), "", "请在第一行输入内容")) {
+                    player.inputSign(arrayOf(getTextureName(), "", "请在第一行输入内容")) {
                         if (it[0].isNotEmpty()) {
                             setTexture(it[0])
                         }
@@ -163,10 +163,10 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
             spawn(viewer) {
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
             }
-            Tasks.delay(1) {
+            submit(delay = 1) {
                 updateEquipment()
             }
-            Tasks.delay(5) {
+            submit(delay = 5) {
                 if (isDie) {
                     die(viewer)
                 }
@@ -186,7 +186,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     fun setName(name: String) {
-        gameProfile.name = TLocale.Translate.setColored(name)
+        gameProfile.name = name.colored()
         respawn()
     }
 
@@ -214,7 +214,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
     fun setTexture(name: String) {
         gameProfile.textureName = name
-        Tasks.task(true) {
+        submit(async = true) {
             try {
                 MojangAPI.get(name)?.run {
                     setTexture(value, signature)
@@ -330,7 +330,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     fun refreshPlayerInfo(viewer: Player) {
         removePlayerInfo(viewer)
         addPlayerInfo(viewer)
-        Tasks.delay(5) {
+        submit(delay = 5) {
             if (isHideFromTabList) {
                 removePlayerInfo(viewer)
             }
@@ -338,7 +338,8 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     private fun addPlayerInfo(viewer: Player) {
-        val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone()).call()
+        val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone())
+        event.call()
         NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.gameMode, event.gameProfile.texture)
     }
 

@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.common.entity
 
-import io.izzel.taboolib.module.lite.SimpleCounter
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import taboolib.common5.Baffle
 
 /**
  * @Author sky
@@ -21,7 +21,7 @@ class ViewPlayers {
      */
     val visible = ConcurrentSet<String>()
 
-    val visibleLock = SimpleCounter(20)
+    val visibleLock = Baffle.of(20)
 
     /**
      * 获取允许看到且在可视范围内的所有玩家
