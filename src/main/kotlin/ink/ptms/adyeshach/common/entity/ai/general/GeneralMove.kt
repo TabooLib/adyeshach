@@ -18,7 +18,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
 
     private var i = 0
     private var counterLook = SimpleCounter(2)
-    private var counterJump = SimpleCounter(5, true)
+    private var counterJump = 0
 
     var speed = 0.0
         set(value) {
@@ -37,11 +37,11 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
             return
         }
         if (entity.isControllerJumping()) {
-            if (counterJump.next()) {
+            if (counterJump-- == 0) {
                 entity.removeTag("isJumping")
                 getGravity().isGravity = true
             } else {
-                entity.teleport(entity.position.x, entity.position.y + 0.25, entity.position.z)
+                entity.teleport(entity.position.x, entity.position.y + 0.35, entity.position.z)
             }
             return
         }
@@ -56,7 +56,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         }
         val positionEntity = entity.position.toLocation()
         val positionNext = resultNavigation!!.pointList[i].run {
-            Location(entity.position.world, x.toDouble() + 0.5, y.toDouble(), z.toDouble() + 0.5)
+            Location(entity.position.world, x.toDouble() + 0.55, y.toDouble(), z.toDouble() + 0.5)
         }
         if (counterLook.next()) {
             entity.controllerLook(positionNext.clone().run {
@@ -70,11 +70,19 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
             }
         }
         val plan = positionEntity.clone().add(next.clone().subtract(positionEntity).toVector().normalize().multiply(speed))
-        if (NMS.INSTANCE.getBlockHeight(plan.block) == 0.0) {
+        val heightFrom = NMS.INSTANCE.getBlockHeight(entity.getLocation().block)
+        val heightTo = NMS.INSTANCE.getBlockHeight(plan.block)
+        if (heightTo == 0.0 || heightTo == heightFrom) {
             entity.teleport(plan.x, plan.y, plan.z)
-        } else if (pathType != PathType.FLY) {
-            entity.setTag("isJumping", "true")
-            getGravity().isGravity = false
+        } else {
+            val diff = (plan.blockY + heightTo) - entity.position.y
+            if (diff > 0.5) {
+                counterJump = 3
+                entity.setTag("isJumping", "true")
+                getGravity().isGravity = false
+            } else {
+                entity.teleport(plan.x, plan.y + heightTo, plan.z)
+            }
         }
         if (entity.position.toLocation().distance(next) < speed) {
             i++

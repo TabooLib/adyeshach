@@ -65,7 +65,7 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
         if (loc.y < 1) {
             return null
         }
-        val block = loc.subtract(0.0, 1.0, 0.0).block
+        val block = loc.subtract(0.0, 0.5, 0.0).block
         return if (NMS.INSTANCE.getBlockHeight(block) == 0.0) getHeightBlock(block.location) else block
     }
 }

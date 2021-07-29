@@ -28,7 +28,7 @@ class Patrol : Trait(), Listener {
     val edit = HashMap<String, EntityInstance>()
 
     init {
-        Tasks.timer(0, 1, true) {
+        Tasks.timer(0, 5, true) {
             data.getKeys(false).forEach {
                 val entityInstance = AdyeshachAPI.getEntityFromUniqueId(it)
                 if (entityInstance != null
