@@ -6,10 +6,8 @@ import org.bukkit.entity.Creature
 import org.bukkit.util.Vector
 import taboolib.common.platform.submit
 import taboolib.common5.mirrorFuture
-import taboolib.module.navigation.NodeEntity
-import taboolib.module.navigation.NodeReader
-import taboolib.module.navigation.PathFinder
-import taboolib.module.navigation.RandomPositionGenerator
+import taboolib.common5.mirrorNow
+import taboolib.module.navigation.*
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -29,18 +27,17 @@ object PathFinderHandler {
         submit(async = !Settings.pathfinderSync) {
             val startTime = System.currentTimeMillis()
             if (request == Request.NAVIGATION) {
-                mirrorFuture<Unit>("PathFinderProxy:Native:Navigation") {
+                mirrorNow("PathFinderProxy:Native:Navigation") {
                     val time = System.currentTimeMillis()
-                    val pathFinder = PathFinder(NodeReader(NodeEntity(start, pathType.height, pathType.width)))
+                    val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
                     val path = pathFinder.findPath(target, distance = 32f)
-                    finish(null)
                     if (Settings.debug) {
                         path?.nodes?.forEach { it.display(target.world!!) }
                     }
                     call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
                 }
             } else {
-                mirrorFuture<Unit>("PathFinderProxy:Native:RandomPosition") {
+                mirrorNow("PathFinderProxy:Native:RandomPosition") {
                     val time = System.currentTimeMillis()
                     var vec: Vector? = null
                     repeat(10) {
@@ -48,7 +45,6 @@ object PathFinderHandler {
                             vec = RandomPositionGenerator.generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
                         }
                     }
-                    finish(null)
                     if (vec != null) {
                         call(ResultRandomPosition(vec, startTime, time))
                     }

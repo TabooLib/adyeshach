@@ -19,7 +19,7 @@ taboolib {
     install("module-nms-util")
     install("module-ui")
     install("platform-bukkit")
-    version = "6.0.0-pre10"
+    version = "6.0.0-pre13"
 }
 
 repositories {
