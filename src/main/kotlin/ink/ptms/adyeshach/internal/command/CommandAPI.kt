@@ -30,7 +30,7 @@ import taboolib.platform.util.sendLang
 import java.io.File
 
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.admin")
-object CommandAPI {
+internal object CommandAPI {
 
     @CommandBody
     val verify = subCommand {

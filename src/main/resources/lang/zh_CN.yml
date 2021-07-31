@@ -13,7 +13,7 @@ trait-patrol:
     fadein: 0
     stay: 60
     fadeout: 0
-  - type: ACTION
+  - type: ACTIONBAR
     text: '&7按下 &fF &7键保存该 NPC 的路径节点 &8| &7按下 &fSHIFT + F &7重置.'
 
 trait-command-finish: '&c[Adyeshach] &7特性编辑.'
@@ -34,7 +34,7 @@ armor-stand-editor-1:
     stay: 40
     fadeout: 0
 armor-stand-editor-2:
-  - type: ACTION
+  - type: ACTIONBAR
     text: '&7按下 &fSHIFT + LEFT-CLICK &7增加角度 &8| &7按下 &fSHIFT + RIGHT-CLICK &7减少角度'
 
 command-main-entity-not-support: '&c[Adyeshach] &7抱歉, 插件不支持 &f"{0}" &7类型.'

@@ -11,23 +11,23 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.manager.Manager
-import openapi.kether.ScriptProperty
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.util.EulerAngle
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.SkipTo
 import taboolib.common.platform.getDataFolder
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.Kether
-import taboolib.module.kether.KetherProperty
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.Workspace
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
+@SkipTo(LifeCycle.ENABLE)
 object ScriptHandler {
 
     val workspace = Workspace(File(getDataFolder(), "npc/script"), ".ady", listOf("adyeshach"))

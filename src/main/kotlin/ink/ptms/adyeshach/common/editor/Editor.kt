@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.editor
 
 import ink.ptms.adyeshach.Adyeshach
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
@@ -95,7 +96,7 @@ object Editor {
     }
 
     fun open(player: Player, entity: EntityInstance) {
-        when (Adyeshach.settings.editorMode) {
+        when (AdyeshachSettings.editorMode) {
             EditorMode.BOOK -> openByBook(player, entity)
             EditorMode.CHAT -> openByChat(player, entity)
         }
@@ -218,7 +219,7 @@ object Editor {
                     }
                     json.append("§8] ")
                 }
-                if (++i == Adyeshach.settings.editorMetaPerLine) {
+                if (++i == AdyeshachSettings.editorMetaPerLine) {
                     i = 0
                     json.newLine().append("      ")
                 }

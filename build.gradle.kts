@@ -5,13 +5,25 @@ plugins {
 }
 
 taboolib {
+    description {
+        contributors {
+            name("坏黑")
+            name("Arasple")
+            name("zhanshi123")
+        }
+        dependencies {
+            name("Zaphkiel").optional(true)
+            name("Citizens").optional(true)
+            name("ServerNPC").optional(true)
+        }
+    }
     install("common")
     install("common-5")
-    install("module-chat")
     install("module-database")
     install("module-database-mongodb")
     install("module-configuration")
     install("module-kether")
+    install("module-chat")
     install("module-lang")
     install("module-metrics")
     install("module-navigation")
@@ -19,7 +31,8 @@ taboolib {
     install("module-nms-util")
     install("module-ui")
     install("platform-bukkit")
-    version = "6.0.0-pre14"
+    classifier = null
+    version = "6.0.0-pre18"
 }
 
 repositories {

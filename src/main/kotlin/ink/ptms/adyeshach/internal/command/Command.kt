@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.common.editor.Picker
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.KnownController
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.error
 import ink.ptms.adyeshach.common.util.info
 import ink.ptms.adyeshach.internal.trait.TraitFactory
@@ -27,7 +28,7 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.*
 
 @CommandHeader(name = "adyeshach", aliases = ["npc", "anpc"], permission = "adyeshach.admin")
-object Command {
+internal object Command {
 
     @CommandBody
     val create = subCommand {
@@ -297,7 +298,7 @@ object Command {
             literal("add", optional = true) {
                 dynamic {
                     suggestion<CommandSender> { _, _ ->
-                        Adyeshach.scriptHandler.controllers.keys().toList()
+                        ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
@@ -307,7 +308,7 @@ object Command {
             literal("remove", optional = true) {
                 dynamic {
                     suggestion<CommandSender> { _, _ ->
-                        Adyeshach.scriptHandler.controllers.keys().toList()
+                        ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
@@ -538,7 +539,7 @@ object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
-            val controller = Adyeshach.scriptHandler.getKnownController(name)
+            val controller = ScriptHandler.getKnownController(name)
             if (controller == null) {
                 sender.sendLang("command-main-controller-not-found", name)
                 return
@@ -552,7 +553,7 @@ object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
-            val controller = Adyeshach.scriptHandler.getKnownController(name)
+            val controller = ScriptHandler.getKnownController(name)
             if (controller == null) {
                 sender.sendLang("command-main-controller-not-found", name)
                 return

@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity
 
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.Settings
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
@@ -53,7 +53,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     @Expose
     var visibleDistance = -1.0
         get() = if (field == -1.0) {
-            Settings.visibleDistance
+            AdyeshachSettings.visibleDistance
         } else {
             field
         }

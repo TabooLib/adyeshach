@@ -1,16 +1,12 @@
 package ink.ptms.adyeshach.common.entity.path
 
-import ink.ptms.adyeshach.api.Settings
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import org.bukkit.Location
-import org.bukkit.entity.Creature
 import org.bukkit.util.Vector
 import taboolib.common.platform.submit
-import taboolib.common5.mirrorFuture
 import taboolib.common5.mirrorNow
 import taboolib.module.navigation.*
 import taboolib.module.nms.MinecraftVersion
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @Author sky
@@ -24,14 +20,14 @@ object PathFinderHandler {
         if (start.world!!.name != target.world!!.name) {
             error("cannot request navigation in different worlds.")
         }
-        submit(async = !Settings.pathfinderSync) {
+        submit(async = !AdyeshachSettings.pathfinderSync) {
             val startTime = System.currentTimeMillis()
             if (request == Request.NAVIGATION) {
                 mirrorNow("PathFinderProxy:Native:Navigation") {
                     val time = System.currentTimeMillis()
                     val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
                     val path = pathFinder.findPath(target, distance = 32f)
-                    if (Settings.debug) {
+                    if (AdyeshachSettings.debug) {
                         path?.nodes?.forEach { it.display(target.world!!) }
                     }
                     call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))

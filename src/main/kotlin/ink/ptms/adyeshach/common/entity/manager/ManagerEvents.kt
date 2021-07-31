@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
-import ink.ptms.adyeshach.api.Settings
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
@@ -87,14 +87,14 @@ internal object ManagerEvents {
 
     @SubscribeEvent
     fun e(e: PlayerJoinEvent) {
-        if (Settings.spawnTrigger == Settings.SpawnTrigger.JOIN) {
+        if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.JOIN) {
             submit(delay = 20) { spawn(e.player) }
         }
     }
 
     @SubscribeEvent
     fun e(e: AdyeshachPlayerJoinEvent) {
-        if (Settings.spawnTrigger == Settings.SpawnTrigger.KEEP_ALIVE) {
+        if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.KEEP_ALIVE) {
             spawn(e.player)
         }
     }

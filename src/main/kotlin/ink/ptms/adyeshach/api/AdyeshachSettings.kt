@@ -7,7 +7,7 @@ import taboolib.module.configuration.ConfigNode
 import java.lang.Exception
 import java.util.*
 
-object Settings {
+object AdyeshachSettings {
 
     enum class SpawnTrigger {
 

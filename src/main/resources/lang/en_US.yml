@@ -13,7 +13,7 @@ trait-patrol:
     fadein: 0
     stay: 60
     fadeout: 0
-  - type: ACTION
+  - type: ACTIONBAR
     text: '&7Press &fF &7to save entity''s path node &8| &7Press &fSHIFT + F &7to reset'
 
 trait-command-finish: '&c[Adyeshach] &7Trait Edited.'
@@ -34,7 +34,7 @@ armor-stand-editor-1:
     stay: 40
     fadeout: 0
 armor-stand-editor-2:
-  - type: ACTION
+  - type: ACTIONBAR
     text: '&7Press &fSHIFT + LEFT-CLICK &7to increment &8| &7Press &fSHIFT + RIGHT-CLICK &7to decrement'
 
 command-main-entity-not-support: '&c[Adyeshach] &7Entity &f"{0}" &7not supported.'

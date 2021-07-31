@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.ControllerNone
@@ -40,7 +41,7 @@ class ManagerPublic : Manager() {
                     }
                 }
             } catch (ex: UnknownWorldException) {
-                if (Adyeshach.settings.isSpecifiedWorld(ex.world)) {
+                if (AdyeshachSettings.isSpecifiedWorld(ex.world)) {
                     file.delete()
                 }
             }

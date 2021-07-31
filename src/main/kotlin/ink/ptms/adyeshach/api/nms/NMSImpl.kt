@@ -656,7 +656,7 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (MinecraftVersion.major >= 5) {
-            net.minecraft.server.v1_16_R1.EntityTypes::class.java.getProperty(entityTypes.internalName ?: entityTypes.name, fixed = true)!!
+            net.minecraft.server.v1_16_R1.EntityTypes::class.java.getProperty<Any>(entityTypes.internalName ?: entityTypes.name, fixed = true)!!
         } else {
             entityTypes.bukkitId
         }
@@ -668,7 +668,7 @@ class NMSImpl : NMS() {
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
         return if (MinecraftVersion.major >= 5) {
-            Paintings::class.java.getProperty(bukkitPaintings.index.toString(), fixed = true)!!
+            Paintings::class.java.getProperty<Any>(bukkitPaintings.index.toString(), fixed = true)!!
         } else {
             bukkitPaintings.legacy
         }
@@ -677,7 +677,7 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             majorLegacy >= 11400 -> {
-                Particles::class.java.getProperty(bukkitParticles.name, fixed = true) ?: Particles.FLAME
+                Particles::class.java.getProperty<Any>(bukkitParticles.name, fixed = true) ?: Particles.FLAME
             }
             majorLegacy == 11300 -> {
                 val p =
