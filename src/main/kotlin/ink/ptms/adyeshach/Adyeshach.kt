@@ -7,6 +7,7 @@ import taboolib.common.platform.Plugin
 import taboolib.common.platform.console
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.SecuredFile
+import taboolib.module.lang.registerLanguage
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.BukkitPlugin
@@ -17,10 +18,11 @@ object Adyeshach : Plugin() {
     lateinit var conf: SecuredFile
         private set
 
-    val plugin = BukkitPlugin.getInstance()
+    val plugin by lazy {
+        BukkitPlugin.getInstance()
+    }
 
-    var settings = Settings
-        private set
+    val settings = Settings
 
     val scriptHandler = ScriptHandler
 
@@ -29,6 +31,10 @@ object Adyeshach : Plugin() {
             console().sendLang("not-support")
             Bukkit.getPluginManager().disablePlugin(plugin)
         }
+    }
+
+    override fun onEnable() {
+        registerLanguage("es_ES")
     }
 
     fun reload() {

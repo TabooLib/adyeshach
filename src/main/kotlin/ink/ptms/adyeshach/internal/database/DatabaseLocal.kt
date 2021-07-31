@@ -36,7 +36,7 @@ class DatabaseLocal : Database() {
     override fun pull(player: Player): FileConfiguration {
         return cache.computeIfAbsent(player.name) {
             table.workspace(dataSource) {
-                select { "user" eq player.name }
+                select { where { "user" eq player.name } }
             }.firstOrNull {
                 SecuredFile.loadConfiguration(getString("data"))
             } ?: SecuredFile()
@@ -45,7 +45,7 @@ class DatabaseLocal : Database() {
 
     override fun push(player: Player) {
         val file = cache[player.name] ?: return
-        if (table.workspace(dataSource) { select { "user" eq player.name } }.find()) {
+        if (table.workspace(dataSource) { select { where { "user" eq player.name } } }.find()) {
             table.workspace(dataSource) {
                 update {
                     set("data", file.saveToString())
