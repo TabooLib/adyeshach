@@ -12,6 +12,6 @@ import org.bukkit.inventory.ItemStack
 class AdySmallFireball : AdyEntity(EntityTypes.SMALL_FIREBALL), EntityFireball {
 
     init {
-        registerMeta(at(11600 to 7), "item", ItemStack(Material.FIRE_CHARGE))
+        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.FIRE_CHARGE))
     }
 }

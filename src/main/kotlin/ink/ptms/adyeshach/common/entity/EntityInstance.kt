@@ -124,6 +124,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                     entity.getPose().name
                 }
         }
+        if (version >= 11700) {
+            registerMeta(at(11700 to 7), "ticksFrozenInPowderedSnow", 0)
+        }
         registerEditor("visibleDistance")
             .reset { _, _ ->
                 visibleDistance = -1.0
@@ -626,25 +629,39 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         return getMetadata("pose")
     }
 
+    var ticksFrozenInPowderedSnow: Int
+        get() = getMetadata("ticksFrozenInPowderedSnow")
+        set(value) {
+            setMetadata("ticksFrozenInPowderedSnow", value)
+        }
+
     /**
      * 单位是否在尝试移动（等待寻路的过程）
      */
-    fun isTryMoving() = hasTag("tryMoving")
+    fun isTryMoving(): Boolean {
+        return hasTag("tryMoving")
+    }
 
     /**
      * 单位是否在移动状态
      */
-    fun isControllerMoving() = hasTag("isMoving")
+    fun isControllerMoving(): Boolean {
+        return hasTag("isMoving")
+    }
 
     /**
      * 单位是否在跳跃状态
      */
-    fun isControllerJumping() = hasTag("isJumping")
+    fun isControllerJumping(): Boolean {
+        return hasTag("isJumping")
+    }
 
     /**
      * 单位是否在地表（依赖 Gravity 控制器）
      */
-    fun isControllerOnGround() = getController(GeneralGravity::class)?.isOnGround ?: error("no gravity")
+    fun isControllerOnGround(): Boolean {
+        return getController(GeneralGravity::class)?.isOnGround ?: error("no gravity")
+    }
 
     /**
      * 获取单位展示名称（没有 customName 则获取 EntityType 名称）

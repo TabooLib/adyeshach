@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * @Author sky
@@ -20,9 +21,13 @@ open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
          *
          * 1.9, 1.10 -> no zombie villager
          */
-        registerMeta(at(11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
-        registerMeta(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
-        registerMeta(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
+        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
+        if (MinecraftVersion.majorLegacy >= 11700) {
+            registerMeta(at(11700 to 18), "isBecomingDrowned", false)
+        } else {
+            registerMeta(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
+            registerMeta(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
+        }
         registerMeta(at(11400 to -1, 11200 to 14, 11000 to 15, 10900 to 14), "isHandsHeldUp", false)
         registerMeta(at(11100 to -1, 11000 to 13, 10900 to 12), "zombieType", 0)
     }
@@ -59,11 +64,17 @@ open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
         return getMetadata("zombieType")
     }
 
-    open fun setConverting(value: Boolean) {
+    fun setConverting(value: Boolean) {
         return setMetadata("isConverting", value)
     }
 
-    open fun isConverting(): Boolean {
+    fun isConverting(): Boolean {
         return getMetadata("isConverting")
     }
+
+    var isBecomingDrowned: Boolean
+        get() = getMetadata("isBecomingDrowned")
+        set(value) {
+            setMetadata("isBecomingDrowned", value)
+        }
 }

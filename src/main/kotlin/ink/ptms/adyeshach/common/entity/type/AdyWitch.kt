@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyWitch : AdyRaider(EntityTypes.WITCH) {
 
     init {
-        registerMeta(at(11500 to 16, 11400 to 15, 11300 to 12), "isDrinkingPotion", false)
+        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 12), "isDrinkingPotion", false)
     }
 
     fun isDrinkingPotion(): Boolean {

@@ -14,7 +14,7 @@ abstract class AdyHorseChested(entityTypes: EntityTypes) : AdyHorseBase(entityTy
          * 1.14 -> 17
          * 1.11 -> 15
          */
-        registerMeta(at(11500 to 18, 11400 to 17, 11100 to 15), "hasChest", false)
+        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11100 to 15), "hasChest", false)
     }
 
     override fun setHasChest(value: Boolean) {

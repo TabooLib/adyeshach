@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyPiglin : AdyEntityLiving(EntityTypes.PIGLIN) {
 
     init {
-        val index = at(11600 to 15)
+        val index = at(11700 to 16, 11600 to 15)
         registerMeta(index + 0, "isImmuneToZombification", false)
         registerMeta(index + 1, "isBaby", false)
         registerMeta(index + 2, "isChargingCrossbow", false)

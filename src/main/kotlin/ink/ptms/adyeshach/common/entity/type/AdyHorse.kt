@@ -19,7 +19,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
          * 1.10 -> 15
          * 1.9 -> 14
          */
-        registerMeta(at(11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
+        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
                 .canEdit(false)
                 .build()
         registerEditor("horseColor")

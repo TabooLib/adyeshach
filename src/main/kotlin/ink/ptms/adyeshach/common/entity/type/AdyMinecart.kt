@@ -26,11 +26,11 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
     private var customBlockData: Byte = 0
 
     init {
-        registerMeta(at(11400 to 10, 11000 to 9, 10900 to 8), "customBlock", 0)
+        registerMeta(at(11700 to 11, 11400 to 10, 11000 to 9, 10900 to 8), "customBlock", 0)
                 .canEdit(false)
                 .build()
-        registerMeta(at(11400 to 11, 11000 to 10, 10900 to 9), "customBlockPosition", 6)
-        registerMeta(at(11400 to 12, 11000 to 11, 10900 to 10), "showCustomBlock", false)
+        registerMeta(at(11700 to 12, 11400 to 11, 11000 to 10, 10900 to 9), "customBlockPosition", 6)
+        registerMeta(at(11700 to 13, 11400 to 12, 11000 to 11, 10900 to 10), "showCustomBlock", false)
         registerEditor("block")
                 .reset { _, _ ->
                     setCustomBlock(MaterialData(Material.AIR, 0))

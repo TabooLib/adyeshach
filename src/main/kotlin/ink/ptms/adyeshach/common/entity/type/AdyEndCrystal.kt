@@ -26,8 +26,8 @@ class AdyEndCrystal : AdyEntity(EntityTypes.END_CRYSTAL) {
         6 ->Show bottom
 
          */
-        registerMeta(at(11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", VectorNull())
-        registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
+        registerMeta(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", VectorNull())
+        registerMeta(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
     }
 
     fun setBeamTarget(position: Vector?) {

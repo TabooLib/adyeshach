@@ -13,7 +13,7 @@ import org.bukkit.entity.TropicalFish
 class AdyTropicalFish : AdyFish(EntityTypes.TROPICAL_FISH) {
 
     init {
-        registerMeta(at(11500 to 16, 11400 to 15, 11300 to 13), "variant", 0)
+        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "variant", 0)
                 .canEdit(false)
                 .build()
         registerEditor("patternColor")

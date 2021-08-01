@@ -15,7 +15,7 @@ abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyMob(entityTypes) 
          * 1.10 -> 12
          * 1.9 -> 11
          */
-        registerMeta(at(11500 to 15, 11400 to 14, 11100 to 12, 10900 to 11), "isBaby", false)
+        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 12, 10900 to 11), "isBaby", false)
     }
 
     open fun setBaby(value: Boolean) {

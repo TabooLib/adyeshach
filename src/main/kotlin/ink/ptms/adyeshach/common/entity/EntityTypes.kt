@@ -334,9 +334,12 @@ enum class EntityTypes(
     MAGMA_CUBE(
             Enums.getIfPresent(EntityType::class.java, "MAGMA_CUBE").orNull(),
             62,
-            EntitySize(0.51000005, 0.51000005), // * size
+            EntitySize(0.51000005, 0.51000005),
             AdyMagmaCube::class.java
     ),
+
+    // 1.17+
+    // The marker entity (marked in red) must not be spawned, as it is server-side only
 
     MINECART(
             Enums.getIfPresent(EntityType::class.java, "MINECART").orNull(),

@@ -28,8 +28,11 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     protected var isDie = false
 
     init {
-        registerMeta(at(11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
-        registerMeta(at(11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
+        registerMetaByteMask(at(11700 to 8), "isHandActive", 0x01)
+        registerMetaByteMask(at(11700 to 8), "activeHand", 0x02)
+        registerMetaByteMask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
+        registerMeta(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
+        registerMeta(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
                 .from(Editors.COLOR)
                 .build()
         registerEditor("equipmentHelmet")
@@ -51,16 +54,18 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
                 .from(Editors.equip(EquipmentSlot.OFF_HAND))
                 .build()
         registerEditor("isDie")
-                .reset { entity, meta ->
+                .reset { _, _ ->
                     die(die = false)
                 }
-                .modify { player, entity, meta ->
+                .modify { player, entity, _ ->
                     die(die = !isDie)
                     Editor.open(player, entity)
                 }
-                .display { _, entity, meta ->
+                .display { _, _, _ ->
                     isDie.toDisplay()
                 }
+        registerMeta(at(11700 to 12, 11600 to 11), "arrowsInEntity", 0)
+        registerMeta(at(11700 to 13, 11600 to 12), "beeStingersInEntity", 0)
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
@@ -234,4 +239,34 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             visible(viewer, true)
         }
     }
+
+    var isHandActive: Boolean
+        get() = getMetadata("isHandActive")
+        set(value) {
+            setMetadata("isHandActive", value)
+        }
+
+    var activeHand: Boolean
+        get() = getMetadata("activeHand")
+        set(value) {
+            setMetadata("activeHand", value)
+        }
+
+    var isInRiptideSpinAttack: Boolean
+        get() = getMetadata("isInRiptideSpinAttack")
+        set(value) {
+            setMetadata("isInRiptideSpinAttack", value)
+        }
+
+    var arrowsInEntity: Int
+        get() = getMetadata("arrowsInEntity")
+        set(value) {
+            setMetadata("arrowsInEntity", value)
+        }
+
+    var beeStingersInEntity: Int
+        get() = getMetadata("beeStingersInEntity")
+        set(value) {
+            setMetadata("beeStingersInEntity", value)
+        }
 }

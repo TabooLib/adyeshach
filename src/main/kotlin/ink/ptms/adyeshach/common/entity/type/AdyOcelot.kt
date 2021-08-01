@@ -29,7 +29,7 @@ class AdyOcelot : AdyEntityAgeable(EntityTypes.OCELOT) {
         registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isTamed", 0x04)
 
         if (version >= 11400) {
-            registerMeta(at(11500 to 16, 11400 to 15), "isTrusting", false)
+            registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "isTrusting", false)
         } else {
             registerMeta(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
                     .from(Editors.enums(BukkitOcelotType::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })

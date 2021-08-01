@@ -14,11 +14,11 @@ class AdyBee : AdyEntityAgeable(EntityTypes.BEE) {
      * 1.15+ 一致
      */
     init {
-        registerMetaByteMask(at(11500 to 16), "unUsed", 0x01)
-        registerMetaByteMask(at(11500 to 16), "isFlip", 0x02)
-        registerMetaByteMask(at(11500 to 16), "hasStung", 0x04)
-        registerMetaByteMask(at(11500 to 16), "hasNectar", 0x08)
-        registerMeta(at(11500 to 17), "angerTicks", 0)
+        registerMetaByteMask(at(11700 to 17, 11500 to 16), "unUsed", 0x01)
+        registerMetaByteMask(at(11700 to 17, 11500 to 16), "isFlip", 0x02)
+        registerMetaByteMask(at(11700 to 17, 11500 to 16), "hasStung", 0x04)
+        registerMetaByteMask(at(11700 to 17, 11500 to 16), "hasNectar", 0x08)
+        registerMeta(at(11700 to 18, 11500 to 17), "angerTicks", 0)
                 .canEdit(false)
                 .build()
         registerEditor("isAngered")

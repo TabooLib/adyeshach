@@ -24,7 +24,7 @@ class AdyPig : AdyEntityAgeable(EntityTypes.PIG) {
         1.9
         12 ->Has saddle
          */
-        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "hasSaddle", false)
+        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "hasSaddle", false)
     }
 
     fun setSaddle(value: Boolean) {

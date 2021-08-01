@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyPolarBear : AdyEntityAgeable(EntityTypes.POLAR_BEAR) {
 
     init {
-        registerMeta(at(11500 to 16, 11400 to 15, 11000 to 13), "isStanding", false)
+        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13), "isStanding", false)
     }
 
     fun isStanding(): Boolean {

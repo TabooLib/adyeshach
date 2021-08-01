@@ -15,12 +15,12 @@ class AdyAreaEffectCloud : AdyEntity(EntityTypes.AREA_EFFECT_CLOUD) {
         /**
          * 仅 1.16 有属性
          */
-        registerMeta(at(11600 to 7), "radius", 0.5f)
-        registerMeta(at(11600 to 8), "color", 0)
+        registerMeta(at(11700 to 8, 11600 to 7), "radius", 0.5f)
+        registerMeta(at(11700 to 9, 11600 to 8), "color", 0)
                 .from(Editors.COLOR)
                 .build()
-        registerMeta(at(11600 to 9), "ignoreRadius", false)
-        registerMeta(at(11600 to 10), "particle", BukkitParticles.EFFECT)
+        registerMeta(at(11700 to 10, 11600 to 9), "ignoreRadius", false)
+        registerMeta(at(11700 to 11, 11600 to 10), "particle", BukkitParticles.EFFECT)
                 .from(Editors.enums(BukkitParticles::class) { _, entity, meta, _, e -> "/adyeshachapi edit particle ${entity.uniqueId} ${meta.key} $e" })
                 .display { _, entity, _ ->
                     entity.getMetadata<BukkitParticles>("particle").name

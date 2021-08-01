@@ -16,7 +16,7 @@ abstract class AdyRaider(entityTypes: EntityTypes) : AdyMob(entityTypes) {
         14
         1.13 -
          */
-        registerMeta(at(11500 to 15, 11400 to 14), "isCelebrating", false)
+        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14), "isCelebrating", false)
     }
 
     fun isCelebrating(): Boolean {
