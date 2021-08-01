@@ -332,8 +332,13 @@ internal object Command {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
-            execute<Player> { sender, _, argument ->
-                commandTrait(AdyeshachAPI.getEntityFromUniqueIdOrId(argument, sender as? Player), sender, argument)
+            dynamic {
+                suggestion<Player> { _, _ ->
+                    TraitFactory.traits.map { it.getName() }
+                }
+                execute<Player> { sender, context, argument ->
+                    commandTrait(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                }
             }
         }
     }

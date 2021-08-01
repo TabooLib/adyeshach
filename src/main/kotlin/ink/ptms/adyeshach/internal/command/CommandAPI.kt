@@ -108,6 +108,7 @@ internal object CommandAPI {
                 // value
                 dynamic {
                     execute<Player> { sender, context, argument ->
+                        println("argument ${context.arguments().toList()}")
                         val args = argument.split(" ")
                         val entity = AdyeshachAPI.getEntityFromUniqueId(context.argument(-1), sender) ?: return@execute
                         try {
