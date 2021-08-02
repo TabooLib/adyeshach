@@ -4,10 +4,11 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
-import org.bukkit.Location
+import taboolib.common.util.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
+import taboolib.platform.util.toBukkitLocation
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -19,7 +20,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val manager = frame.script().getManager() ?: error("No manager selected.")
         return frame.newFrame(location).run<Location>().thenAccept {
-            manager.create(type, it).id = id
+            manager.create(type, it.toBukkitLocation()).id = id
         }
     }
 
