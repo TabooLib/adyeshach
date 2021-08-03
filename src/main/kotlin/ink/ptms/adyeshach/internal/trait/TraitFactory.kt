@@ -13,7 +13,7 @@ object TraitFactory {
     fun init() {
         runningClasses.forEach {
             if (Trait::class.java.isAssignableFrom(it) && Trait::class.java != it) {
-                val trait = it.getInstance() as? Trait
+                val trait = it.getInstance()?.get() as? Trait
                 if (trait != null) {
                     traits.add(trait)
                 }

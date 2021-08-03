@@ -267,24 +267,22 @@ class NMSImpl : NMS() {
         }
     }
 
-    override fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>) {
+    override fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, texture: Array<String>) {
         val profile = GameProfile(uuid, name)
         if (texture.size == 2) {
             profile.properties.put("textures", Property("textures", texture[0], texture[1]))
         }
         if (isUniversal) {
-            val infoData = PacketPlayOutPlayerInfo::class.java.unsafeInstance() as PacketPlayOutPlayerInfo
+            val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
+            val infoData = PacketPlayOutPlayerInfo.PlayerInfoData::class.java.unsafeInstance()
+            infoData.setProperty("a", ping)
+            infoData.setProperty("b", EnumGamemode.values()[0])
+            infoData.setProperty("c", profile)
+            infoData.setProperty("d", CraftChatMessage.fromString(name).firstOrNull())
             player.sendPacketI(
-                infoData,
-                "action" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                "entries" to listOf(
-                    infoData.PlayerInfoData(
-                        profile,
-                        ping,
-                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
-                        CraftChatMessage.fromString(name).firstOrNull()
-                    )
-                )
+                info,
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
+                "b" to listOf(infoData)
             )
         } else if (majorLegacy >= 11000) {
             val infoData = PacketPlayOutPlayerInfo()
@@ -295,7 +293,7 @@ class NMSImpl : NMS() {
                     infoData.PlayerInfoData(
                         profile,
                         ping,
-                        Enums.getIfPresent(EnumGamemode::class.java, gameMode.name).or(EnumGamemode.NOT_SET),
+                        EnumGamemode.values()[0],
                         CraftChatMessage.fromString(name).firstOrNull()
                     )
                 )
@@ -309,7 +307,7 @@ class NMSImpl : NMS() {
                     infoData.PlayerInfoData(
                         profile,
                         ping,
-                        Enums.getIfPresent(WorldSettings.EnumGamemode::class.java, gameMode.name).or(WorldSettings.EnumGamemode.NOT_SET),
+                        WorldSettings.EnumGamemode.values()[0],
                         org.bukkit.craftbukkit.v1_9_R2.util.CraftChatMessage.fromString(name).firstOrNull()
                     )
                 )
@@ -319,11 +317,14 @@ class NMSImpl : NMS() {
 
     override fun removePlayerInfo(player: Player, uuid: UUID) {
         if (isUniversal) {
-            val infoData = PacketPlayOutPlayerInfo::class.java.unsafeInstance() as PacketPlayOutPlayerInfo
+            val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
+            val infoData = PacketPlayOutPlayerInfo.PlayerInfoData::class.java.unsafeInstance()
+            infoData.setProperty("a", -1)
+            infoData.setProperty("c", GameProfile(uuid, ""))
             player.sendPacketI(
-                infoData,
-                "action" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                "entries" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
+                info,
+                "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
+                "b" to listOf(infoData)
             )
         } else {
             val infoData = PacketPlayOutPlayerInfo()

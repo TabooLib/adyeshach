@@ -91,12 +91,12 @@ object Patrol : Trait() {
     }
 
     fun EntityInstance.nodes(nodes: List<Location>) {
-        data.set("$uniqueId.nodes", nodes)
+        data.set("$uniqueId.nodes", nodes.map { it.serialize() })
     }
 
     @Suppress("UNCHECKED_CAST")
     fun EntityInstance.nodes(): List<Location> {
-        return data.getList("$uniqueId.nodes", ArrayList<Location>()) as List<Location>
+        return data.getList("$uniqueId.nodes").map { Location.deserialize(it as MutableMap<String, Any>) }
     }
 
     fun EntityInstance.edit(value: Boolean) {

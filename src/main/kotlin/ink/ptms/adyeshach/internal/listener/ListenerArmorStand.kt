@@ -9,6 +9,7 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.SubscribeEvent
@@ -62,7 +63,7 @@ object ListenerArmorStand {
                             val angle = Angle.values()[it.rawSlot]
                             Editor.editArmorStand[e.player.name] = bind to angle
                             e.player.closeInventory()
-                            e.player.inventory.setItemInMainHand(e.player.inventory.itemInMainHand.modifyMeta {
+                            e.player.inventory.setItemInMainHand(e.player.inventory.itemInMainHand.modifyMeta<ItemMeta> {
                                 setDisplayName("&7Angle: &f${angle.name}".colored())
                             })
                             e.player.sendLang("armor-stand-editor-1", angle.name)

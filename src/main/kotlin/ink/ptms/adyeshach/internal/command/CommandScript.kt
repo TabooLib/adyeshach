@@ -31,11 +31,11 @@ internal object CommandScript {
                 // ver
                 dynamic(optional = true) {
                     execute<CommandSender> { sender, context, argument ->
-                        commandRun(sender, context.argument(-2), context.argument(-1), argument.split(" ").toTypedArray())
+                        commandRun(sender, context.argument(-2)!!, context.argument(-1), argument.split(" ").toTypedArray())
                     }
                 }
                 execute<CommandSender> { sender, context, argument ->
-                    commandRun(sender, context.argument(-1), argument)
+                    commandRun(sender, context.argument(-1)!!, argument)
                 }
             }
             execute<CommandSender> { sender, _, argument ->

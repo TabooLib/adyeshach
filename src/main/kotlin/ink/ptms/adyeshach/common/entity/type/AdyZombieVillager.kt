@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitProfession
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
+import ink.ptms.adyeshach.common.entity.EntityVillager.Companion.registerVillagerEditor
 import org.bukkit.entity.Villager
 
 /**
@@ -21,7 +22,7 @@ class AdyZombieVillager : AdyZombie(EntityTypes.ZOMBIE_VILLAGER), EntityVillager
                     .canEdit(false)
                     .build()
         }
-        registerEditor(this)
+        registerVillagerEditor(this)
     }
 
     override fun setVillagerData(villagerData: VillagerData) {

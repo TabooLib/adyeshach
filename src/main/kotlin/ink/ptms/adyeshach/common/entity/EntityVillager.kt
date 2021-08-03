@@ -20,9 +20,11 @@ interface EntityVillager {
 
     fun getLegacyProfession(): BukkitProfession
 
-    fun registerEditor(entityInstance: EntityInstance) {
-        if (Editor.version >= 11400) {
-            entityInstance.registerEditor("villagerType")
+    companion object {
+
+        fun EntityVillager.registerVillagerEditor(entityInstance: EntityInstance) {
+            if (Editor.version >= 11400) {
+                entityInstance.registerEditor("villagerType")
                     .from(Editors.enums(Villager.Type::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_type ${entity.uniqueId} ${meta.key} $e" })
                     .reset { _, _ ->
                         setVillagerData(VillagerData(Villager.Type.PLAINS, getVillagerData().profession))
@@ -30,7 +32,7 @@ interface EntityVillager {
                     .display { _, entity, _ ->
                         entity.getMetadata<VillagerData>("villagerData").type.name
                     }.build()
-            entityInstance.registerEditor("villagerProfession")
+                entityInstance.registerEditor("villagerProfession")
                     .from(Editors.enums(Villager.Profession::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession ${entity.uniqueId} ${meta.key} $e" })
                     .reset { _, _ ->
                         setVillagerData(VillagerData(getVillagerData().type, Villager.Profession.NONE))
@@ -38,8 +40,8 @@ interface EntityVillager {
                     .display { _, entity, _ ->
                         entity.getMetadata<VillagerData>("villagerData").profession.name
                     }.build()
-        } else {
-            entityInstance.registerEditor("villagerProfession")
+            } else {
+                entityInstance.registerEditor("villagerProfession")
                     .from(Editors.enums(BukkitProfession::class) { _, entity, meta, _, e -> "/adyeshachapi edit villager_profession_legacy ${entity.uniqueId} ${meta.key} $e" })
                     .reset { _, _ ->
                         setLegacyProfession(BukkitProfession.FARMER)
@@ -47,6 +49,7 @@ interface EntityVillager {
                     .display { _, entity, _ ->
                         BukkitProfession.values()[entity.getMetadata("profession")].name
                     }.build()
+            }
         }
     }
 }

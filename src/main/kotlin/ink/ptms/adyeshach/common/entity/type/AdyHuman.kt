@@ -203,15 +203,6 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         return gameProfile.ping
     }
 
-    fun setGameMode(gameMode: GameMode) {
-        gameProfile.gameMode = gameMode
-        respawn()
-    }
-
-    fun getGameMode(): GameMode {
-        return gameProfile.gameMode
-    }
-
     fun setTexture(name: String) {
         gameProfile.textureName = name
         submit(async = true) {
@@ -340,7 +331,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     private fun addPlayerInfo(viewer: Player) {
         val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone())
         event.call()
-        NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.gameMode, event.gameProfile.texture)
+        NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.texture)
     }
 
     private fun removePlayerInfo(viewer: Player) {

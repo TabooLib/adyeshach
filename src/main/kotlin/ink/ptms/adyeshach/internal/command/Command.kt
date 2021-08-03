@@ -41,7 +41,7 @@ internal object Command {
                     EntityTypes.values().map { it.name }
                 }
                 execute<Player> { sender, context, argument ->
-                    commandCreate(argument, sender, context.argument(-1))
+                    commandCreate(argument, sender, context.argument(-1)!!)
                 }
             }
         }
@@ -70,7 +70,7 @@ internal object Command {
             }
             dynamic {
                 execute<CommandSender> { sender, context, argument ->
-                    commandRename(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                    commandRename(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
                 }
             }
         }
@@ -105,16 +105,16 @@ internal object Command {
                     sender.suggestEntityId()
                 }
                 execute<Player> { sender, context, argument ->
-                    commandCopy(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                    commandCopy(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
                 }
                 literal("to", optional = true) {
                     dynamicLocation({
                         execute<CommandSender> { sender, context, argument ->
                             commandCopy(
-                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5), sender as? Player),
+                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5)!!, sender as? Player),
                                 sender,
-                                context.argument(-4),
-                                context.argument(-3),
+                                context.argument(-4)!!,
+                                context.argument(-3)!!,
                                 Vector(
                                     Coerce.toDouble(context.argument(-2)),
                                     Coerce.toDouble(context.argument(-1)),
@@ -127,10 +127,10 @@ internal object Command {
                     }, {
                         execute<CommandSender> { sender, context, argument ->
                             commandCopy(
-                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7), sender as? Player),
+                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7)!!, sender as? Player),
                                 sender,
-                                context.argument(-6),
-                                context.argument(-5),
+                                context.argument(-6)!!,
+                                context.argument(-5)!!,
                                 Vector(
                                     Coerce.toDouble(context.argument(-4)),
                                     Coerce.toDouble(context.argument(-3)),
@@ -162,9 +162,9 @@ internal object Command {
                 dynamicLocation({
                     execute<CommandSender> { sender, context, argument ->
                         commandMove(
-                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-4), sender as? Player),
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-4)!!, sender as? Player),
                             sender,
-                            context.argument(-3),
+                            context.argument(-3)!!,
                             Vector(
                                 Coerce.toDouble(context.argument(-2)),
                                 Coerce.toDouble(context.argument(-1)),
@@ -177,9 +177,9 @@ internal object Command {
                 }, {
                     execute<CommandSender> { sender, context, argument ->
                         commandMove(
-                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-6), sender as? Player),
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-6)!!, sender as? Player),
                             sender,
-                            context.argument(-5),
+                            context.argument(-5)!!,
                             Vector(
                                 Coerce.toDouble(context.argument(-4)),
                                 Coerce.toDouble(context.argument(-3)),
@@ -193,7 +193,7 @@ internal object Command {
             }
             literal("here", optional = true) {
                 execute<Player> { sender, context, _ ->
-                    commandMovehere(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender)
+                    commandMovehere(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender)
                 }
             }
         }
@@ -212,9 +212,9 @@ internal object Command {
                 dynamicLocation({
                     execute<CommandSender> { sender, context, argument ->
                         commandLook(
-                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-4), sender as? Player),
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-4)!!, sender as? Player),
                             sender,
-                            context.argument(-3),
+                            context.argument(-3)!!,
                             Vector(
                                 Coerce.toDouble(context.argument(-2)),
                                 Coerce.toDouble(context.argument(-1)),
@@ -227,7 +227,7 @@ internal object Command {
             literal("here") {
                 execute<Player> { sender, context, _ ->
                     commandLook(
-                        AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
+                        AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player),
                         sender,
                         sender.world.name,
                         sender.location.toProxyLocation().toVector()
@@ -264,7 +264,7 @@ internal object Command {
                         sender.suggestEntityId()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandPassengerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2), sender as? Player), sender, argument)
+                        commandPassengerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
                     }
                 }
             }
@@ -274,13 +274,13 @@ internal object Command {
                         sender.suggestEntityId()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandPassengerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2), sender as? Player), sender, argument)
+                        commandPassengerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
                     }
                 }
             }
             literal("reset") {
                 execute<CommandSender> { sender, context, _ ->
-                    commandPassengerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2), sender as? Player), sender)
+                    commandPassengerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender)
                 }
             }
         }
@@ -301,7 +301,7 @@ internal object Command {
                         ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                        commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
                     }
                 }
             }
@@ -311,13 +311,13 @@ internal object Command {
                         ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                        commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
                     }
                 }
             }
             literal("reset", optional = true) {
                 execute<CommandSender> { sender, context, _ ->
-                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender)
+                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender)
                 }
             }
         }
@@ -337,7 +337,7 @@ internal object Command {
                     TraitFactory.traits.map { it.getName() }
                 }
                 execute<Player> { sender, context, argument ->
-                    commandTrait(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
+                    commandTrait(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
                 }
             }
         }

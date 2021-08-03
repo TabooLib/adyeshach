@@ -40,7 +40,7 @@ abstract class NMS {
 
     abstract fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings)
 
-    abstract fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, gameMode: GameMode, texture: Array<String>)
+    abstract fun addPlayerInfo(player: Player, uuid: UUID, name: String, ping: Int, texture: Array<String>)
 
     abstract fun removePlayerInfo(player: Player, uuid: UUID)
 
