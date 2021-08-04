@@ -301,7 +301,7 @@ internal object Command {
                         ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
+                        commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
                     }
                 }
             }
@@ -311,13 +311,13 @@ internal object Command {
                         ScriptHandler.controllers.keys().toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
-                        commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender, argument)
+                        commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
                     }
                 }
             }
             literal("reset", optional = true) {
                 execute<CommandSender> { sender, context, _ ->
-                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player), sender)
+                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender)
                 }
             }
         }

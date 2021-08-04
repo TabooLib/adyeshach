@@ -49,9 +49,7 @@ class NMSImpl : NMS() {
 
     val majorLegacy = MinecraftVersion.majorLegacy
 
-    val classPlayerInfoData by lazy {
-        nmsClass("PacketPlayOutPlayerInfo\$PlayerInfoData")
-    }
+    val classPlayerInfoData = nmsClass("PacketPlayOutPlayerInfo\$PlayerInfoData")
 
     fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>) {
         sendPacket(setFields(packet, *fields))
@@ -721,8 +719,8 @@ class NMSImpl : NMS() {
                 0.0
             }
         } else {
-            when (majorLegacy) {
-                11200 -> {
+            when {
+                majorLegacy > 11200 -> {
                     val p = net.minecraft.server.v1_12_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_12_R1.CraftWorld).handle.getType(p)
                     if (block.type.isSolid) {
@@ -732,7 +730,7 @@ class NMSImpl : NMS() {
                         0.0
                     }
                 }
-                11100 -> {
+                majorLegacy > 11100 -> {
                     val p = net.minecraft.server.v1_11_R1.BlockPosition(block.x, block.y, block.z)
                     val b = (block.world as org.bukkit.craftbukkit.v1_11_R1.CraftWorld).handle.getType(p)
                     if (block.type.isSolid) {
@@ -789,6 +787,6 @@ class NMSImpl : NMS() {
     }
 
     private fun craftChatMessageFromString(message: String): Any? {
-        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message)!![0]
+        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, fixed = true)!![0]
     }
 }
