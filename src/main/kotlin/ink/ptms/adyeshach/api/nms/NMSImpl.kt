@@ -12,8 +12,6 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import it.unimi.dsi.fastutil.ints.IntLists
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
-import net.minecraft.server.v1_9_R2.WorldSettings
-import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -21,7 +19,6 @@ import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftTropicalFish
 import org.bukkit.craftbukkit.v1_16_R1.inventory.CraftItemStack
-import org.bukkit.craftbukkit.v1_16_R1.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -37,6 +34,8 @@ import taboolib.common.reflect.Reflex.Companion.setProperty
 import taboolib.common.reflect.Reflex.Companion.unsafeInstance
 import taboolib.common.util.Vector
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.nmsClass
+import taboolib.module.nms.obcClass
 import taboolib.module.nms.sendPacket
 import java.util.*
 
@@ -49,6 +48,10 @@ class NMSImpl : NMS() {
     val isUniversal = MinecraftVersion.isUniversal
 
     val majorLegacy = MinecraftVersion.majorLegacy
+
+    val classPlayerInfoData by lazy {
+        nmsClass("PacketPlayOutPlayerInfo\$PlayerInfoData")
+    }
 
     fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>) {
         sendPacket(setFields(packet, *fields))
@@ -272,53 +275,47 @@ class NMSImpl : NMS() {
         if (texture.size == 2) {
             profile.properties.put("textures", Property("textures", texture[0], texture[1]))
         }
+        val infoData = classPlayerInfoData.unsafeInstance()
         if (isUniversal) {
             val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
-            val infoData = PacketPlayOutPlayerInfo.PlayerInfoData::class.java.unsafeInstance()
             infoData.setProperty("a", ping)
             infoData.setProperty("b", EnumGamemode.values()[0])
             infoData.setProperty("c", profile)
-            infoData.setProperty("d", CraftChatMessage.fromString(name).firstOrNull())
+            infoData.setProperty("d", craftChatMessageFromString(name))
             player.sendPacketI(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(infoData)
             )
         } else if (majorLegacy >= 11000) {
-            val infoData = PacketPlayOutPlayerInfo()
+            val info = PacketPlayOutPlayerInfo()
+            infoData.setProperty("b", ping)
+            infoData.setProperty("c", EnumGamemode.values()[0])
+            infoData.setProperty("d", profile)
+            infoData.setProperty("e", craftChatMessageFromString(name))
             player.sendPacketI(
-                infoData,
+                info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                "b" to listOf(
-                    infoData.PlayerInfoData(
-                        profile,
-                        ping,
-                        EnumGamemode.values()[0],
-                        CraftChatMessage.fromString(name).firstOrNull()
-                    )
-                )
+                "b" to listOf(infoData)
             )
         } else {
-            val infoData = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
+            val info = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
+            infoData.setProperty("b", ping)
+            infoData.setProperty("c", EnumGamemode.values()[0])
+            infoData.setProperty("d", profile)
+            infoData.setProperty("e", craftChatMessageFromString(name))
             player.sendPacketI(
-                infoData,
+                info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                "b" to listOf(
-                    infoData.PlayerInfoData(
-                        profile,
-                        ping,
-                        WorldSettings.EnumGamemode.values()[0],
-                        org.bukkit.craftbukkit.v1_9_R2.util.CraftChatMessage.fromString(name).firstOrNull()
-                    )
-                )
+                "b" to listOf(infoData)
             )
         }
     }
 
     override fun removePlayerInfo(player: Player, uuid: UUID) {
+        val infoData = classPlayerInfoData.unsafeInstance()
         if (isUniversal) {
             val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
-            val infoData = PacketPlayOutPlayerInfo.PlayerInfoData::class.java.unsafeInstance()
             infoData.setProperty("a", -1)
             infoData.setProperty("c", GameProfile(uuid, ""))
             player.sendPacketI(
@@ -327,11 +324,13 @@ class NMSImpl : NMS() {
                 "b" to listOf(infoData)
             )
         } else {
-            val infoData = PacketPlayOutPlayerInfo()
+            val info = PacketPlayOutPlayerInfo()
+            infoData.setProperty("b", -1)
+            infoData.setProperty("d", GameProfile(uuid, ""))
             player.sendPacketI(
-                infoData,
+                info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                "b" to listOf(infoData.PlayerInfoData(GameProfile(uuid, ""), -1, null, null))
+                "b" to listOf(infoData)
             )
         }
     }
@@ -583,7 +582,7 @@ class NMSImpl : NMS() {
         return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item<Optional<IChatBaseComponent>>(
                 DataWatcherObject(index, DataWatcherRegistry.f),
-                Optional.ofNullable(if (name == null) null else CraftChatMessage.fromString(name).first())
+                Optional.ofNullable(if (name == null) null else (craftChatMessageFromString(name) as IChatBaseComponent))
             )
         } else {
             net.minecraft.server.v1_12_R1.DataWatcher.Item(
@@ -787,5 +786,9 @@ class NMSImpl : NMS() {
 
     override fun getTropicalFishDataValue(pattern: TropicalFish.Pattern): Int {
         return CraftTropicalFish.CraftPattern.values()[pattern.ordinal].dataValue
+    }
+
+    private fun craftChatMessageFromString(message: String): Any? {
+        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message)!![0]
     }
 }
