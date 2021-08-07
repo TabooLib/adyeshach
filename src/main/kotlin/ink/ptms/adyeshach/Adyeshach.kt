@@ -8,6 +8,7 @@ import taboolib.module.configuration.SecuredFile
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.BukkitPlugin
+import java.io.File
 
 object Adyeshach : Plugin() {
 
@@ -28,7 +29,7 @@ object Adyeshach : Plugin() {
 
     @Awake(LifeCycle.INIT)
     fun checkVersion() {
-        if (getDataFolder().exists()) {
+        if (File(getDataFolder(), "npc").listFiles()?.isNotEmpty() == true) {
             if (newFile(getDataFolder(), "version", create = true).readText() == "1.3") {
                 return
             }
