@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.script.action
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
 import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
-import taboolib.library.kether.ArgTypes
-import taboolib.library.kether.ParsedAction
+import openapi.kether.ArgTypes
+import openapi.kether.ParsedAction
 import taboolib.module.kether.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
