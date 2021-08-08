@@ -9,12 +9,13 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import it.unimi.dsi.fastutil.ints.IntLists
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList
+import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntLists
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftTropicalFish
@@ -334,14 +335,7 @@ class NMSImpl : NMS() {
     }
 
     override fun destroyEntity(player: Player, entityId: Int) {
-        if (isUniversal) {
-            player.sendPacketI(
-                PacketPlayOutEntityDestroy::class.java.unsafeInstance(),
-                "entityIds" to IntLists.singleton(entityId)
-            )
-        } else {
-            player.sendPacketI(PacketPlayOutEntityDestroy(entityId))
-        }
+        player.sendPacketI(PacketPlayOutEntityDestroy(entityId))
     }
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location) {
