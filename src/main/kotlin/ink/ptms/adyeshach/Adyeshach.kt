@@ -1,17 +1,13 @@
 package ink.ptms.adyeshach
 
-import org.bukkit.event.player.PlayerJoinEvent
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
 import taboolib.common.platform.*
-import taboolib.module.chat.TellrawJson
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.SecuredFile
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.PacketSendEvent
 import taboolib.platform.BukkitPlugin
-import taboolib.platform.util.sendBook
 import java.io.File
 
 object Adyeshach : Plugin() {

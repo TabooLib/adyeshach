@@ -33,11 +33,10 @@ taboolib {
     install("module-ui")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.0-pre37"
+    version = "6.0.0-pre38"
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 

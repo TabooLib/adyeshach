@@ -5,8 +5,8 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import org.bukkit.Location
 import taboolib.common5.Coerce
-import openapi.kether.ArgTypes
-import openapi.kether.ParsedAction
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
 import taboolib.library.kether.actions.LiteralAction
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture

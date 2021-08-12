@@ -4,8 +4,8 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import taboolib.common.util.Location
-import openapi.kether.ArgTypes
-import openapi.kether.ParsedAction
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
 import taboolib.platform.util.toBukkitLocation
 import java.util.concurrent.CompletableFuture

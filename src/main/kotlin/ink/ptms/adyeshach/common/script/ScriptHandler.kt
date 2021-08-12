@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.common.script
 
-import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
@@ -11,7 +9,6 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.manager.Manager
-import openapi.kether.LocalizedException
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.util.EulerAngle
@@ -21,7 +18,7 @@ import taboolib.common.platform.SkipTo
 import taboolib.common.platform.getDataFolder
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
-import taboolib.module.kether.Kether
+import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.Workspace
 import java.io.File
@@ -43,9 +40,6 @@ object ScriptHandler {
         controllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
         controllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
         controllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
-        // 监听器
-        Kether.addEvent<AdyeshachEntityDamageEvent>("npc_damage")
-        Kether.addEvent<AdyeshachEntityInteractEvent>("npc_interact")
     }
 
     fun toEulerAngle(str: String): EulerAngle {

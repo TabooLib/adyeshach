@@ -5,8 +5,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
 import taboolib.common.util.Location
-import openapi.kether.ArgTypes
-import openapi.kether.ParsedAction
+import taboolib.library.kether.ArgTypes
+import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
 import taboolib.platform.util.toBukkitLocation
 import java.util.*
