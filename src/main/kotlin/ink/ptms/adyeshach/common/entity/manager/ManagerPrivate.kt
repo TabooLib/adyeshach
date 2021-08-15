@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 
 /**
  * @Author sky
@@ -54,7 +55,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         database.push(player)
     }
 
-    override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> (Unit)): EntityInstance {
+    override fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance {
         return create(entityTypes, location, listOf(Bukkit.getPlayerExact(player)!!), function).run {
             activeEntity.add(this)
             this

@@ -18,7 +18,9 @@ import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.*
+import taboolib.common.platform.command.*
+import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.function.submit
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
@@ -549,7 +551,7 @@ internal object Command {
                 sender.sendLang("command-main-controller-not-found", name)
                 return
             }
-            entity.registerController(controller.get(entity))
+            entity.registerController(controller.get.apply(entity))
             sender.sendLang("command-main-success")
         }
     }
@@ -605,7 +607,7 @@ internal object Command {
                     if (slots.containsKey(it.rawSlot)) {
                         val controller = AdyeshachAPI.getKnownController(slots[it.rawSlot]!!)!!
                         if (entity.getController(controller.controllerClass) == null) {
-                            entity.registerController(controller.get(entity))
+                            entity.registerController(controller.get.apply(entity))
                             it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
                         } else {
                             entity.unregisterController(controller.controllerClass)

@@ -13,6 +13,7 @@ import taboolib.common.io.newFile
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 
 /**
  * @Author sky
@@ -61,7 +62,7 @@ class ManagerPublic : Manager() {
         }
     }
 
-    override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> Unit): EntityInstance {
+    override fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance {
         return create(entityTypes, location, Bukkit.getOnlinePlayers().toList(), function).run {
             activeEntity.add(this)
             this

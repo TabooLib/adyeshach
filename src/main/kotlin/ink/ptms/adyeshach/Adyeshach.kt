@@ -3,6 +3,10 @@ package ink.ptms.adyeshach
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
 import taboolib.common.platform.*
+import taboolib.common.platform.function.console
+import taboolib.common.platform.function.disablePlugin
+import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.warning
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.SecuredFile
 import taboolib.module.lang.sendLang

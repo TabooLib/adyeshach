@@ -14,6 +14,10 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.*
+import taboolib.common.platform.event.EventPriority
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
 import taboolib.common5.Coerce
 import java.util.concurrent.ConcurrentHashMap

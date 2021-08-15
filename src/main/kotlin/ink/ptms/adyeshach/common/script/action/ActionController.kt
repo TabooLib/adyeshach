@@ -31,7 +31,7 @@ class ActionController(val symbol: Symbol, val controller: String?): ScriptActio
                 Symbol.ADD -> {
                     String
                     val controller = ScriptHandler.getKnownController(controller!!) ?: error("Unknown controller $controller")
-                    it.registerController(controller.get(it))
+                    it.registerController(controller.get.apply(it))
                 }
                 Symbol.REMOVE -> {
                     val controller = ScriptHandler.getKnownController(controller!!) ?: error("Unknown controller $controller")

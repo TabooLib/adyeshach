@@ -18,7 +18,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.*
-import taboolib.common.util.each
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.onlinePlayers
+import taboolib.common.platform.function.submit
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.SecuredFile
 import java.io.File
@@ -27,7 +29,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.collections.ArrayList
+import java.util.function.Function
 
 object AdyeshachAPI {
 
@@ -118,18 +120,18 @@ object AdyeshachAPI {
         return getEntity(player) { it.id == id || it.uniqueId == id }
     }
 
-    fun getEntity(player: Player? = null, filter: (EntityInstance) -> Boolean): EntityInstance? {
+    fun getEntity(player: Player? = null, filter: Function<EntityInstance, Boolean>): EntityInstance? {
         val entity = getEntities(player, filter)
         return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
     }
 
-    fun getEntities(player: Player? = null, filter: (EntityInstance) -> Boolean): List<EntityInstance> {
+    fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
         val entity = ArrayList<EntityInstance>()
-        entity.addAll(getEntityManagerPublic().getEntities().filter { filter(it) })
-        entity.addAll(getEntityManagerPublicTemporary().getEntities().filter { filter(it) })
+        entity.addAll(getEntityManagerPublic().getEntities().filter { filter.apply(it) })
+        entity.addAll(getEntityManagerPublicTemporary().getEntities().filter { filter.apply(it) })
         if (player != null) {
-            entity.addAll(getEntityManagerPrivate(player).getEntities().filter { filter(it) })
-            entity.addAll(getEntityManagerPrivateTemporary(player).getEntities().filter { filter(it) })
+            entity.addAll(getEntityManagerPrivate(player).getEntities().filter { filter.apply(it) })
+            entity.addAll(getEntityManagerPrivateTemporary(player).getEntities().filter { filter.apply(it) })
         }
         return entity
     }

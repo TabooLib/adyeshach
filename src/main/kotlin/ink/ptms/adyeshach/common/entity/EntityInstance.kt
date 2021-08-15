@@ -30,11 +30,12 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import taboolib.common.platform.submit
+import taboolib.common.platform.function.submit
 import taboolib.common5.Coerce
 import taboolib.module.nms.inputSign
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.function.Consumer
 import kotlin.jvm.Throws
 import kotlin.reflect.KClass
 
@@ -167,9 +168,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 内部调用方法，用于第三方事件处理
      */
-    protected fun spawn(viewer: Player, spawn: () -> (Unit)) {
+    protected fun spawn(viewer: Player, spawn: Runnable) {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
-            spawn.invoke()
+            spawn.run()
             // 更新单位属性
             updateMetadata(viewer)
             // 更新单位视角
@@ -184,14 +185,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 内部调用方法
      */
-    protected fun destroy(viewer: Player, destroy: () -> (Unit)) {
+    protected fun destroy(viewer: Player, destroy: Runnable) {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
-            destroy.invoke()
+            destroy.run()
         }
     }
 
-    fun forViewers(viewer: (Player) -> (Unit)) {
-        viewPlayers.getViewPlayers().forEach { viewer.invoke(it) }
+    fun forViewers(viewer: Consumer<Player>) {
+        viewPlayers.getViewPlayers().forEach { viewer.accept(it) }
     }
 
     /**
@@ -708,7 +709,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         controller.filter { it.shouldExecute() }.forEach {
             when {
                 it is Controller.Pre -> {
-                    controller.add(it.controller.get(this))
+                    controller.add(it.controller.get.apply(this))
                     controller.remove(it)
                 }
                 it.isAsync() -> {

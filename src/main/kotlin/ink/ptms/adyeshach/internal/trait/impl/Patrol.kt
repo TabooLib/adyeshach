@@ -13,9 +13,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.EquipmentSlot
-import taboolib.common.platform.SubscribeEvent
-import taboolib.common.platform.adaptPlayer
-import taboolib.common.platform.submit
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.*
 

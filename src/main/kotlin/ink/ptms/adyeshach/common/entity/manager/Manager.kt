@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.util.function.Consumer
 
 /**
  * @Author sky
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player
  */
 abstract class Manager {
 
-    abstract fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> (Unit)): EntityInstance
+    abstract fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance
 
     abstract fun remove(entityInstance: EntityInstance)
 
@@ -54,12 +55,12 @@ abstract class Manager {
         return create(entityTypes, location, player) { }
     }
 
-    protected fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: (EntityInstance) -> (Unit)): EntityInstance {
+    protected fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
         if (entityTypes.bukkitType == null) {
             error("Entity \"${entityTypes.name}\" not supported this minecraft version.")
         }
         val entityInstance = entityTypes.newInstance()
-        function.invoke(entityInstance)
+        function.accept(entityInstance)
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
         val event = AdyeshachEntityCreateEvent(entityInstance, location)

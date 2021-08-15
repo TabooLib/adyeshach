@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import taboolib.common.platform.adaptCommandSender
+import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial

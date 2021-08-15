@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.12"
+    id("io.izzel.taboolib") version "1.16"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
@@ -33,7 +33,7 @@ taboolib {
     install("module-ui")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.0-pre39"
+    version = "6.0.0-pre42"
 }
 
 repositories {

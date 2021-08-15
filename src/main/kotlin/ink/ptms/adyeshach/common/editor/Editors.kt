@@ -12,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.library.xseries.XMaterial
 import taboolib.module.nms.getName
 import taboolib.module.nms.inputSign
@@ -19,7 +20,6 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
-import taboolib.platform.util.dispatchCommand
 import taboolib.platform.util.inventoryCenterSlots
 import kotlin.reflect.KClass
 
@@ -121,7 +121,7 @@ object Editors {
                     }
                     onClick { e, obj ->
                         val str = command(player, entity, meta, inventoryCenterSlots.indexOf(e.rawSlot) + (enums.size * page), obj)
-                        dispatchCommand(player, str.substring(1))
+                        adaptPlayer(player).performCommand(str.substring(1))
                     }
                     onGenerate { _, element, _, _ ->
                         if (element is DyeColor && Editor.version >= 11600) {

@@ -3,10 +3,10 @@ package ink.ptms.adyeshach.internal.command
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
-import taboolib.common.platform.CommandBody
-import taboolib.common.platform.CommandHeader
-import taboolib.common.platform.adaptCommandSender
-import taboolib.common.platform.subCommand
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.command.subCommand
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.printKetherErrorMessage
 import taboolib.platform.util.sendLang

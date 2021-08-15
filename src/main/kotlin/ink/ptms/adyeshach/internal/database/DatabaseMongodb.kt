@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.internal.database
 
 import ink.ptms.adyeshach.Adyeshach
 import org.bukkit.entity.Player
-import taboolib.common.platform.adaptPlayer
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.library.configuration.FileConfiguration
 import taboolib.module.database.bridge.Index
 import taboolib.module.database.bridge.createBridgeCollection

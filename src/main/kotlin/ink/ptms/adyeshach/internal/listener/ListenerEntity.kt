@@ -4,10 +4,10 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import taboolib.common.platform.EventPriority
-import taboolib.common.platform.SubscribeEvent
-import taboolib.common.platform.submit
-import taboolib.common.platform.warning
+import taboolib.common.platform.event.EventPriority
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.warning
 import taboolib.common.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent

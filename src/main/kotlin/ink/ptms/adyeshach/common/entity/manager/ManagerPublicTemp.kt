@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 
 /**
  * @Author sky
@@ -30,7 +31,7 @@ class ManagerPublicTemp : Manager() {
     override fun onSave() {
     }
 
-    override fun create(entityTypes: EntityTypes, location: Location, function: (EntityInstance) -> Unit): EntityInstance {
+    override fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance {
         return create(entityTypes, location, Bukkit.getOnlinePlayers().toList(), function).run {
             activeEntity.add(this)
             this

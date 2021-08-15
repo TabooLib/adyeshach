@@ -15,7 +15,7 @@ import org.bukkit.util.EulerAngle
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.SkipTo
-import taboolib.common.platform.getDataFolder
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.kether.LocalizedException

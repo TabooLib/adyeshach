@@ -15,7 +15,7 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.NumberConversions
-import taboolib.common.platform.submit
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
 import java.util.*

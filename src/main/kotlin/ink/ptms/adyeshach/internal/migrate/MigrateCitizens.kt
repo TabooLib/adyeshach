@@ -10,8 +10,7 @@ import net.citizensnpcs.npc.skin.SkinnableEntity
 import net.citizensnpcs.util.NMS
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
-import taboolib.common.platform.severe
-import taboolib.common.platform.warning
+import taboolib.common.platform.function.warning
 
 /**
  * @Author sky

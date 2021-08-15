@@ -23,7 +23,9 @@ import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
-import taboolib.common.platform.*
+import taboolib.common.platform.command.*
+import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.function.submit
 import taboolib.common5.Coerce
 import taboolib.common5.Mirror
 import taboolib.platform.util.sendLang

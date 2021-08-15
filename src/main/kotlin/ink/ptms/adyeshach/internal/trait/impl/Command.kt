@@ -6,10 +6,11 @@ import ink.ptms.adyeshach.common.util.Inputs.inputBook
 import ink.ptms.adyeshach.internal.trait.Trait
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import taboolib.common.platform.EventPriority
-import taboolib.common.platform.SubscribeEvent
+import taboolib.common.platform.event.EventPriority
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.console
 import taboolib.platform.compat.replacePlaceholder
-import taboolib.platform.util.dispatchCommand
 import taboolib.platform.util.sendLang
 
 object Command : Trait() {
@@ -43,20 +44,20 @@ object Command : Trait() {
                         val isOp = e.player.isOp
                         e.player.isOp = true
                         try {
-                            dispatchCommand(e.player, it.substring("op:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
+                            adaptPlayer(e.player).performCommand(it.substring("op:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
                         } catch (ex: Throwable) {
                             ex.printStackTrace()
                         }
                         e.player.isOp = isOp
                     }
                     it.startsWith("server:") -> {
-                        dispatchCommand(Bukkit.getConsoleSender(), it.substring("server:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
+                        console().performCommand(it.substring("server:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
                     it.startsWith("console:") -> {
-                        dispatchCommand(Bukkit.getConsoleSender(), it.substring("console:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
+                        console().performCommand(it.substring("console:".length).replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
                     else -> {
-                        dispatchCommand(e.player, it.replace("@player", e.player.name).replacePlaceholder(e.player))
+                        adaptPlayer(e.player).performCommand(it.replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
                 }
             }

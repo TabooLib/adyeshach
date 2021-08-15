@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.internal.database
 
 import org.bukkit.entity.Player
-import taboolib.common.platform.getDataFolder
+import taboolib.common.platform.function.getDataFolder
 import taboolib.library.configuration.FileConfiguration
 import taboolib.module.configuration.SecuredFile
 import taboolib.module.database.ColumnOptionSQLite

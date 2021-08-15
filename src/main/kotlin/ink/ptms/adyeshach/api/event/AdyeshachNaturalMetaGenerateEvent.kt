@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.api.event
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import org.bukkit.entity.Player
-import taboolib.common.platform.ProxyEvent
+import taboolib.platform.type.BukkitProxyEvent
 
 /**
  * @Author sky
@@ -14,7 +14,7 @@ class AdyeshachNaturalMetaGenerateEvent(
     val player: Player,
     val meta: EntityMetaable.MetaNatural<*>,
     var value: Any,
-) : ProxyEvent() {
+) : BukkitProxyEvent() {
 
     override val allowCancelled: Boolean
         get() = false

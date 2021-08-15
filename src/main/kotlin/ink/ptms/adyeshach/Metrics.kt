@@ -6,7 +6,7 @@ import ink.ptms.adyeshach.common.script.ScriptHandler
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
-import taboolib.common.platform.SubscribeEvent
+import taboolib.common.platform.event.SubscribeEvent
 import taboolib.module.metrics.Metrics
 import taboolib.module.metrics.charts.AdvancedPie
 import taboolib.module.metrics.charts.SingleLineChart

@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.entity.path
 import ink.ptms.adyeshach.api.AdyeshachSettings
 import org.bukkit.Location
 import org.bukkit.util.Vector
-import taboolib.common.platform.submit
+import taboolib.common.platform.function.submit
 import taboolib.common5.mirrorNow
 import taboolib.module.navigation.*
 import taboolib.module.nms.MinecraftVersion

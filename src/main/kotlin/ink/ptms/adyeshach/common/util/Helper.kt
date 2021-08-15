@@ -4,7 +4,7 @@ import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
-import taboolib.common.platform.SubscribeEvent
+import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.util.random
 import taboolib.common5.Baffle
 import java.util.concurrent.TimeUnit
