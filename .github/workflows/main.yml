@@ -1,23 +1,19 @@
 name: build
-on: [ release ]
+on: [ push ]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: [ 8.0 ]
-        os: [ ubuntu-20.04 ]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: checkout repository
         uses: actions/checkout@v2
       - name: validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: setup jdk ${{ matrix.java }}
+      - name: setup jdk 8.0
         uses: actions/setup-java@v2
         with:
           distribution: adopt
-          java-version: ${{ matrix.java }}
+          java-version: 8.0
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
