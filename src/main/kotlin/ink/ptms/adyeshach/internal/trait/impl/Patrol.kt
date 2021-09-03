@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.internal.trait.impl
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.createHologram
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
@@ -76,7 +75,7 @@ object Patrol : Trait() {
                                     }
                                 }
                             }
-                            val hologram = player.createHologram(Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), listOf("#${i + 1}"))
+                            val hologram = AdyeshachAPI.createHologram(player, Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), listOf("#${i + 1}"))
                             submit(delay = 40) {
                                 hologram.delete()
                             }

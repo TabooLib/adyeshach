@@ -156,13 +156,44 @@ object AdyeshachAPI {
         }
     }
 
+    /**
+     * 创建全息
+     */
+    fun createHologram(player: Player, location: Location, content: List<String>): Hologram<*> {
+        return Hologram.AdyeshachImpl().also {
+            it.create(player, location, content)
+        }
+    }
+
+    /**
+     * 以全息形式发送位于世界中的提示信息
+     *
+     * @param location 坐标
+     * @param stay 停留时间
+     * @param transfer 过渡转换
+     * @param message 内容
+     */
+    fun createHolographic(player: Player, location: Location, stay: Long = 40L, transfer: Function<String, String> = Function { it }, vararg message: String) {
+        val key = "${location.world!!.name},${location.x},${location.y},${location.z}"
+        val messages = HolographicCache.holographicMap.computeIfAbsent(player.name) { ConcurrentHashMap() }
+        if (messages.containsKey(key)) {
+            return
+        }
+        val holographic = Holographic(player, location, message.toList()) { transfer.apply(it) }
+        messages[key] = holographic
+        submit(delay = stay) {
+            messages.remove(key)
+            holographic.cancel()
+        }
+    }
+
     @Awake(LifeCycle.DISABLE)
-    private fun e() {
+    internal fun e() {
         onlinePlayers().forEach { database.push(it.cast()) }
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerQuitEvent) {
+    internal fun e(e: PlayerQuitEvent) {
         onlinePlayers.remove(e.player.name)
         managerPrivate.remove(e.player.name)
         managerPrivateTemp.remove(e.player.name)
