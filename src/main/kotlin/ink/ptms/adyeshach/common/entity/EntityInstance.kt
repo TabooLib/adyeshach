@@ -98,9 +98,14 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 冻结实体
      */
-    var freeze: Boolean
+    var isFreeze: Boolean
         set(value) = setTag("isFreeze", value.toString())
         get() = hasTag("isFreeze")
+
+    /**
+     * 是否被删除
+     */
+    var isDeleted = false
 
     init {
         registerMetaByteMask(0, "onFire", 0x01)
@@ -302,6 +307,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 删除实体，并销毁
      */
     fun delete() {
+        isDeleted = true
         destroy()
         remove()
     }
