@@ -165,6 +165,10 @@ object AdyeshachAPI {
         }
     }
 
+    fun createHolographic(player: Player, location: Location, vararg message: String) {
+        createHolographic(player, location, 40, { it }, *message)
+    }
+
     /**
      * 以全息形式发送位于世界中的提示信息
      *
