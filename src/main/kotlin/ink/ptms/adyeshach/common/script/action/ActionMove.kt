@@ -44,7 +44,7 @@ class ActionMove(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
 
     internal object Parser {
 
-        @KetherParser(["meta"], namespace = "adyeshach", shared = true)
+        @KetherParser(["move"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
             var relative = false
             it.mark()

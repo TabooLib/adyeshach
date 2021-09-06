@@ -33,7 +33,7 @@ taboolib {
     install("module-ui")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.0-44"
+    version = "6.0.1-3"
 }
 
 repositories {
