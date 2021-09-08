@@ -5,8 +5,8 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.printKetherErrorMessage
 import taboolib.platform.util.sendLang
@@ -90,7 +90,7 @@ internal object CommandScript {
                 if (viewer != null) {
                     val player = Bukkit.getPlayerExact(viewer)
                     if (player != null) {
-                        this.sender = adaptCommandSender(player)
+                        this.sender = adaptPlayer(player)
                     }
                 }
                 var i = 0
@@ -100,7 +100,7 @@ internal object CommandScript {
                 }
             }
             try {
-                workspace.runScript(args[0], context)
+                workspace.runScript(file, context)
             } catch (t: Throwable) {
                 sender.sendLang("command-script-error", t.localizedMessage)
                 t.printKetherErrorMessage()
