@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.script.ScriptHandler.setManager
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyPlayer
+import taboolib.common.util.orNull
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 

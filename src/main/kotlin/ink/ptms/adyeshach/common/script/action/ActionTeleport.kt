@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.script.action
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import taboolib.common.util.Location
+import org.bukkit.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -25,7 +25,7 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
                 error("No entity selected.")
             }
             s.getEntities()!!.filterNotNull().forEach {
-                it.teleport(loc.toBukkitLocation())
+                it.teleport(loc)
             }
         }
     }

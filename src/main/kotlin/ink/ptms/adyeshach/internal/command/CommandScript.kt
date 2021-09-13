@@ -7,6 +7,8 @@ import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.command.subCommand
+import taboolib.module.kether.Kether
+import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.printKetherErrorMessage
 import taboolib.platform.util.sendLang
@@ -19,17 +21,17 @@ internal object CommandScript {
     @CommandBody
     val run = subCommand {
         // script
-        dynamic {
+        dynamic(commit = "file") {
             suggestion<CommandSender> { _, _ ->
                 workspace.scripts.map { it.value.id }
             }
             // viewer
-            dynamic(optional = true) {
+            dynamic(commit = "viewer", optional = true) {
                 suggestion<CommandSender> { _, _ ->
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 // ver
-                dynamic(optional = true) {
+                dynamic(commit = "args", optional = true) {
                     execute<CommandSender> { sender, context, argument ->
                         commandRun(sender, context.argument(-2)!!, context.argument(-1), argument.split(" ").toTypedArray())
                     }
@@ -46,7 +48,7 @@ internal object CommandScript {
 
     @CommandBody
     val stop = subCommand {
-        dynamic(optional = true) {
+        dynamic(commit = "file", optional = true) {
             suggestion<CommandSender> { _, _ ->
                 workspace.scripts.map { it.value.id }
             }
@@ -83,6 +85,31 @@ internal object CommandScript {
         }
     }
 
+    @CommandBody
+    val debug = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            sender.sendMessage("§c[System] §7RegisteredActions:")
+            Kether.scriptRegistry.registeredNamespace.forEach {
+                sender.sendMessage("§c[System] §7  ${it}: §r${Kether.scriptRegistry.getRegisteredActions(it)}")
+            }
+        }
+    }
+
+    @CommandBody
+    val invoke = subCommand {
+        dynamic(commit = "script") {
+            execute<CommandSender> { sender, _, argument ->
+                try {
+                    KetherShell.eval(argument, sender = adaptCommandSender(sender)).thenApply { v ->
+                        sender.sendMessage("§c[System] §7Result: $v")
+                    }
+                } catch (ex: Throwable) {
+                    ex.printKetherErrorMessage()
+                }
+            }
+        }
+    }
+
     internal fun commandRun(sender: CommandSender, file: String, viewer: String? = null, args: Array<String> = emptyArray()) {
         val script = workspace.scripts[file]
         if (script != null) {
@@ -100,7 +127,7 @@ internal object CommandScript {
                 }
             }
             try {
-                workspace.runScript(args[0], context)
+                workspace.runScript(file, context)
             } catch (t: Throwable) {
                 sender.sendLang("command-script-error", t.localizedMessage)
                 t.printKetherErrorMessage()
