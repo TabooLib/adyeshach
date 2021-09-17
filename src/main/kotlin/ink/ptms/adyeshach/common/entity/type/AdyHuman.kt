@@ -15,6 +15,7 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
@@ -70,21 +71,6 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 .display { _, _, _ ->
                     isSleeping().toDisplay()
                 }
-        registerEditor("isHideFromWorld")
-            .reset { _, _ ->
-                setName("Adyeshach NPC")
-            }
-            .modify { player, entity, _ ->
-                if (getName() == "hide_name") {
-                    setName("Adyeshach NPC")
-                } else {
-                    setName("hide_name")
-                }
-                Editor.open(player, entity)
-            }
-            .display { _, _, _ ->
-                (getName() == "hide_name").toDisplay()
-            }
         registerEditor("isHideFromTabList")
                 .reset { _, _ ->
                     isHideFromTabList = true
@@ -143,18 +129,15 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                     if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
                 }
         // refresh skin
-        object : BukkitRunnable() {
-
-            override fun run() {
-                if (manager != null) {
-                    forViewers {
-                        refreshPlayerInfo(it)
-                    }
-                } else {
-                    cancel()
+        submit(async = true, delay = 200, period = 200) {
+            if (manager != null) {
+                forViewers {
+                    refreshPlayerInfo(it)
                 }
+            } else {
+                cancel()
             }
-        }.runTaskTimerAsynchronously(Adyeshach.plugin, 200, 200)
+        }
     }
 
     override fun visible(viewer: Player, visible: Boolean) {

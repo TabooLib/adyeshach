@@ -31,11 +31,7 @@ object AshconAPI {
     }
 
     fun readFromURL(url: String): String {
-        try {
-            URL(url).openStream().readBytes().toString(StandardCharsets.UTF_8)
-        } catch (ignored: Throwable) {
-        }
-        return "{}"
+        return URL(url).openStream().readBytes().toString(StandardCharsets.UTF_8)
     }
 
     @SubscribeEvent
