@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.info
 import java.io.*
+import java.lang.NullPointerException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
@@ -36,12 +37,19 @@ object MojangAPI {
             return if (json.has("network")) {
                 Texture(json.get("value").asString, json.get("signature").asString)
             } else {
-                val texture = json.getAsJsonObject("members")
+                try {
+                    // legacy version
+                    val texture = json.getAsJsonObject("members")
                         .getAsJsonObject("data")
                         .getAsJsonObject("members")
                         .getAsJsonObject("texture")
                         .getAsJsonObject("members")
-                Texture(texture.getAsJsonObject("value").get("value").asString, texture.getAsJsonObject("signature").get("value").asString)
+                    Texture(texture.getAsJsonObject("value").get("value").asString, texture.getAsJsonObject("signature").get("value").asString)
+                } catch (ignored: NullPointerException) {
+                    // new version 2021/9/19
+                    val texture = json.getAsJsonObject("data").getAsJsonObject("texture")
+                    Texture(texture["value"].asString, texture["signature"].asString)
+                }
             }
         } else {
             val json = AshconAPI.getProfile(name)
