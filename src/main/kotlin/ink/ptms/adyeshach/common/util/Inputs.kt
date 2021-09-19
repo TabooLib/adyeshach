@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.util
 
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -21,6 +22,7 @@ object Inputs {
         inventory.takeItem(99) { it.hasLore("§7Adyeshach Inputs") }
         giveItem(buildBook {
             write(lines.joinToString("\n"))
+            material = Material.WRITABLE_BOOK
             name = "§fAdyeshach Book"
             lore += "§7Adyeshach Inputs"
         })

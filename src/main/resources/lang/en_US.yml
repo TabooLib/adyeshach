@@ -9,12 +9,31 @@ trait-sit-create: '&c[Adyeshach] &7Sitting.'
 
 trait-patrol:
   - type: TITLE
+    title: ''
     subtitle: '&7Path Nodes: &8{0}'
     fadein: 0
     stay: 60
     fadeout: 0
   - type: ACTIONBAR
     text: '&7Press &fF &7to save entity''s path node &8| &7Press &fSHIFT + F &7to reset'
+trait-patrol-update:
+  - type: TITLE
+    title: ''
+    subtitle: '&7Path Nodes: &8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+trait-patrol-tool-name: '&bPatrol Tool'
+trait-patrol-tool-lore: '&7Left-Click to add path node and Right-Click to remove.'
+
+trait-title-finish: '&c[Adyeshach] &7Trait Edited.'
+trait-title:
+  - type: TITLE
+    title: '&3&lTitle Traits'
+    subtitle: '&7Open book and input title content'
+    fadein: 10
+    stay: 40
+    fadeout: 10
 
 trait-command-finish: '&c[Adyeshach] &7Trait Edited.'
 trait-command:
@@ -75,7 +94,7 @@ command-script-list-all:
   - '&c[Adyeshach] &7Scripts Running: &f{1}'
 command-script-reload-all:
   - '&c[Adyeshach] &7Scripts has been reloaded.'
-editor-armorstand-tool: '§c[Adyeshach] §7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.'
+editor-armorstand-tool: '&c[Adyeshach] &7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.'
 editor-temporary: '&7(Temporary)'
 editor-type: 'Type'
 editor-tags: 'Tags'
@@ -247,3 +266,4 @@ editor-meta-is-lying: 'Is Lying'
 editor-meta-is-relaxed: 'Is Relaxed'
 editor-meta-is-charging: 'Is Charging'
 editor-meta-is-becoming-drowned: 'Is Becoming Drowned'
+editor-meta-head-shake-timer: 'Head Shake Timer'

@@ -8,6 +8,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
+import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
@@ -39,12 +40,12 @@ internal object ListenerEntity {
                         }
                         // INTERACT_AT
                         "e" -> {
-                            val location = e.packet.read<Any>("location")
+                            val location = action.getProperty<Any>("location")
                             submit {
                                 AdyeshachEntityInteractEvent(
                                     entity,
                                     e.player,
-                                    e.packet.read<Any>("hand").toString() == "MAIN_HAND",
+                                    action.getProperty<Any>("hand").toString() == "MAIN_HAND",
                                     if (location == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(location)
                                 ).call()
                             }

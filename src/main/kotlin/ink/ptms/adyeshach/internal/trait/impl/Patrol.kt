@@ -21,32 +21,31 @@ import taboolib.platform.util.*
 object Patrol : Trait() {
 
     val edit = HashMap<String, EntityInstance>()
+    val nodesCacheMap = HashMap<String, List<Location>>()
 
     init {
+        // 巡逻触发周期
         submit(period = 5, async = true) {
             data.getKeys(false).forEach {
-                val entityInstance = AdyeshachAPI.getEntityFromUniqueId(it)
-                if (entityInstance != null
-                    && !entityInstance.isEditing()
-                    && !entityInstance.isControllerMoving()
-                    && !entityInstance.hasTag("tryMoving")
-                    && entityInstance.hasViewer()
-                ) {
-                    val index = entityInstance.index()
-                    val nodes = entityInstance.nodes()
+                val entity = AdyeshachAPI.getEntityFromUniqueId(it)
+                // 触发巡逻的前提：不在编辑模式、不在移动、不在准备移动、存在观察者
+                if (entity != null && !entity.isEditing() && !entity.isControllerMoving() && !entity.hasTag("tryMoving") && entity.hasViewer()) {
+                    val index = entity.index()
+                    val nodes = entity.nodes()
                     if (index < nodes.size) {
                         try {
-                            entityInstance.controllerMove(nodes[index])
-                            entityInstance.index(index + 1)
+                            entity.controllerMove(nodes[index])
+                            entity.index(index + 1)
                         } catch (e: Exception) {
                             println("[Adyeshach] Patrol Error: $e")
                         }
                     } else {
-                        entityInstance.index(0)
+                        entity.index(0)
                     }
                 }
             }
         }
+        // 编辑模式展示
         submit(period = 40, async = true) {
             Bukkit.getOnlinePlayers().forEach { player ->
                 if (player.name in edit) {
@@ -91,11 +90,14 @@ object Patrol : Trait() {
 
     fun EntityInstance.nodes(nodes: List<Location>) {
         data.set("$uniqueId.nodes", nodes.map { it.serialize() })
+        nodesCacheMap[uniqueId] = nodes.toList()
     }
 
     @Suppress("UNCHECKED_CAST")
     fun EntityInstance.nodes(): List<Location> {
-        return data.getList("$uniqueId.nodes").map { Location.deserialize(it as MutableMap<String, Any>) }
+        return nodesCacheMap.computeIfAbsent(uniqueId) {
+            data.getList("$uniqueId.nodes")?.map { Location.deserialize(it as MutableMap<String, Any>) } ?: emptyList()
+        }
     }
 
     fun EntityInstance.edit(value: Boolean) {
@@ -126,11 +128,11 @@ object Patrol : Trait() {
             e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             if (e.player.isSneaking) {
                 edit[e.player.name]?.nodes(emptyList())
-                adaptPlayer(e.player).sendTitle("", "§7Path Nodes: §80", 0, 40, 0)
+                e.player.sendLang("trait-patrol", 0)
             } else {
                 edit.remove(e.player.name)?.edit(false)
                 adaptPlayer(e.player).sendTitle("", "", 0, 40, 0)
-                e.player.inventory.takeItem(999) { it.hasName("Patrol Tool") }
+                e.player.inventory.takeItem(999) { it.hasName(e.player.asLangText("trait-patrol-tool-name")) }
             }
         }
     }
@@ -154,7 +156,7 @@ object Patrol : Trait() {
                     it.toList()
                 })
             }
-            adaptPlayer(e.player).sendTitle("", "§7Path Nodes: §8${entity.nodes().size}", 0, 40, 0)
+            e.player.sendLang("trait-patrol", entity.nodes().size)
         }
     }
 
@@ -166,9 +168,9 @@ object Patrol : Trait() {
         edit[player.name] = entityInstance
         entityInstance.edit(true)
         player.giveItem(buildItem(XMaterial.BLAZE_ROD) {
-            name = "§bPatrol Tool"
+            name = player.asLangText("trait-patrol-tool-name")
             lore += ""
-            lore += "§7Left-Click to add path node and Right-Click to remove."
+            lore += player.asLangText("trait-patrol-tool-lore")
             shiny()
         })
     }

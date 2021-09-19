@@ -340,7 +340,7 @@ internal object Command {
         }
     }
 
-//    @CommandBody
+    @CommandBody
     val trait = subCommand {
         dynamic(commit = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
