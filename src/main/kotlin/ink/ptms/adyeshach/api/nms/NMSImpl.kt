@@ -14,8 +14,6 @@ import net.minecraft.server.v1_16_R1.*
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntArrayList
-import org.bukkit.craftbukkit.libs.it.unimi.dsi.fastutil.ints.IntLists
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftTropicalFish
@@ -412,36 +410,54 @@ class NMSImpl : NMS() {
         )
     }
 
+    @Suppress("LiftReturnOrAssignment")
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         val major = MinecraftVersion.major
         when {
             major >= 8 -> {
+                val enumItemSlot: EnumItemSlot
+                if (slot == EquipmentSlot.HAND) {
+                    enumItemSlot = EnumItemSlot.MAINHAND
+                } else if (slot == EquipmentSlot.OFF_HAND) {
+                    enumItemSlot = EnumItemSlot.OFFHAND
+                } else if (slot == EquipmentSlot.FEET) {
+                    enumItemSlot = EnumItemSlot.FEET
+                } else if (slot == EquipmentSlot.LEGS) {
+                    enumItemSlot = EnumItemSlot.LEGS
+                } else if (slot == EquipmentSlot.CHEST) {
+                    enumItemSlot = EnumItemSlot.CHEST
+                } else if (slot == EquipmentSlot.HEAD) {
+                    enumItemSlot = EnumItemSlot.HEAD
+                } else {
+                    error("out of case")
+                }
                 player.sendPacketI(
-                    PacketPlayOutEntityEquipment(
-                        entityId,
-                        listOf(com.mojang.datafixers.util.Pair(when (slot) {
-                            EquipmentSlot.HAND -> EnumItemSlot.MAINHAND
-                            EquipmentSlot.OFF_HAND -> EnumItemSlot.OFFHAND
-                            EquipmentSlot.FEET -> EnumItemSlot.FEET
-                            EquipmentSlot.LEGS -> EnumItemSlot.LEGS
-                            EquipmentSlot.CHEST -> EnumItemSlot.CHEST
-                            EquipmentSlot.HEAD -> EnumItemSlot.HEAD
-                        }, CraftItemStack.asNMSCopy(itemStack)))
+                    PacketPlayOutEntityEquipment(entityId,
+                        listOf(com.mojang.datafixers.util.Pair(enumItemSlot, CraftItemStack.asNMSCopy(itemStack)))
                     )
                 )
             }
             major >= 1 -> {
+                val enumItemSlot: net.minecraft.server.v1_13_R2.EnumItemSlot
+                if (slot == EquipmentSlot.HAND) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.MAINHAND
+                } else if (slot == EquipmentSlot.OFF_HAND) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.OFFHAND
+                } else if (slot == EquipmentSlot.FEET) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.FEET
+                } else if (slot == EquipmentSlot.LEGS) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.LEGS
+                } else if (slot == EquipmentSlot.CHEST) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.CHEST
+                } else if (slot == EquipmentSlot.HEAD) {
+                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
+                } else {
+                    error("out of case")
+                }
                 player.sendPacketI(
                     net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
                         entityId,
-                        when (slot) {
-                            EquipmentSlot.HAND -> net.minecraft.server.v1_13_R2.EnumItemSlot.MAINHAND
-                            EquipmentSlot.OFF_HAND -> net.minecraft.server.v1_13_R2.EnumItemSlot.OFFHAND
-                            EquipmentSlot.FEET -> net.minecraft.server.v1_13_R2.EnumItemSlot.FEET
-                            EquipmentSlot.LEGS -> net.minecraft.server.v1_13_R2.EnumItemSlot.LEGS
-                            EquipmentSlot.CHEST -> net.minecraft.server.v1_13_R2.EnumItemSlot.CHEST
-                            EquipmentSlot.HEAD -> net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
-                        },
+                        enumItemSlot,
                         org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack.asNMSCopy(itemStack)
                     )
                 )

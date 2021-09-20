@@ -182,7 +182,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             setHeadRotation(position.yaw, position.pitch)
             // 关联实体初始化
             submit(delay = 5) {
-                refreshPassenger(viewer)
+                refreshPassenger(viewer, error = false)
             }
         }
     }
@@ -521,9 +521,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         removePassenger(*getPassengers().toTypedArray())
     }
 
-    fun refreshPassenger(viewer: Player) {
+    fun refreshPassenger(viewer: Player, error: Boolean = true) {
         if (manager == null) {
-            error("Entity Manager not initialized.")
+            if (error) {
+                error("Entity Manager not initialized.")
+            }
         }
         NMS.INSTANCE.updatePassengers(viewer, index, *getPassengers().map { e -> e.index }.toIntArray())
         getVehicle()?.refreshPassenger(viewer)
