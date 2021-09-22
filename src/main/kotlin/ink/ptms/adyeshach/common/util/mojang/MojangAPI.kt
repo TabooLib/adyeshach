@@ -58,6 +58,9 @@ object MojangAPI {
             }
             return if (json.has("uuid")) {
                 val texture = Texture(AshconAPI.getTextureValue(name), AshconAPI.getTextureSignature(name))
+                if (!file.exists()) {
+                    file.createNewFile()
+                }
                 file.writeText(Serializer.gson.toJson(texture))
                 texture
             } else {
