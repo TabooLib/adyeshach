@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
+import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.buildBook
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.hasLore
@@ -22,7 +23,7 @@ object Inputs {
         inventory.takeItem(99) { it.hasLore("§7Adyeshach Inputs") }
         giveItem(buildBook {
             write(lines.joinToString("\n"))
-            material = Material.WRITABLE_BOOK
+            material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
             name = "§fAdyeshach Book"
             lore += "§7Adyeshach Inputs"
         })
