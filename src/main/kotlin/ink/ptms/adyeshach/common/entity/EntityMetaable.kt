@@ -2,7 +2,9 @@ package ink.ptms.adyeshach.common.entity
 
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.event.AdyeshachMaskedMetaGenerateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachMetaUpdateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
@@ -88,13 +90,16 @@ abstract class EntityMetaable {
         if (registerMeta.index == -2) {
             error("Metadata \"$key\" not allowed.")
         }
-        if (registerMeta is MetaMasked) {
-            metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = value as Boolean
-        } else {
-            metadata[key] = value
-        }
-        if (this is EntityInstance) {
-            registerMeta.update(this)
+        val event = AdyeshachMetaUpdateEvent(this, registerMeta, key, value)
+        if (event.call()) {
+            if (registerMeta is MetaMasked) {
+                metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = event.value as Boolean
+            } else {
+                metadata[key] = event.value
+            }
+            if (this is EntityInstance) {
+                registerMeta.update(this)
+            }
         }
     }
 
@@ -141,11 +146,25 @@ abstract class EntityMetaable {
     }
 
     fun setTag(key: String, value: String) {
-        tag[key] = value
+        val event = AdyeshachTagUpdateEvent(this, key, value)
+        if (event.call()) {
+            if (event.value != null) {
+                tag[key] = event.value!!
+            } else {
+                tag.remove(key)
+            }
+        }
     }
 
     fun removeTag(key: String) {
-        tag.remove(key)
+        val event = AdyeshachTagUpdateEvent(this, key, null)
+        if (event.call()) {
+            if (event.value != null) {
+                tag[key] = event.value!!
+            } else {
+                tag.remove(key)
+            }
+        }
     }
 
     abstract class Meta(val index: Int, val key: String, val def: Any) {

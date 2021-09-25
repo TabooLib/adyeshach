@@ -1,12 +1,11 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.entity.EntityFireball
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntityThrowable
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.*
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @Author sky
@@ -17,7 +16,11 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntity(viewer, entityType, index, UUID.randomUUID(), position.toLocation().let {
+                val clientId = UUID.randomUUID()
+                // 创建客户端对应表
+                AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
+                // 生成实体
+                NMS.INSTANCE.spawnEntity(viewer, entityType, index, clientId, position.toLocation().let {
                     // 火焰弹单位初始化，取消客户端向量计算
                     if (this is EntityFireball) {
                         it.yaw = 0f
@@ -32,7 +35,10 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
             }
         } else {
             destroy(viewer) {
+                // 销毁实体
                 NMS.INSTANCE.destroyEntity(viewer, index)
+                // 移除客户端对应表
+                AdyeshachAPI.clientEntityMap[viewer.name]?.remove(index)
             }
         }
     }

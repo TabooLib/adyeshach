@@ -71,6 +71,9 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                         meta.key == "entityPose" -> {
                             it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase(Locale.getDefault())).get())
                         }
+                        meta.key == "modelEngineName" -> {
+                            it.modelEngineName = value.toString()
+                        }
                         meta.key == "visibleDistance" -> {
                             it.visibleDistance = Coerce.toDouble(value)
                         }

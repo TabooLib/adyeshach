@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.api.nms
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -37,6 +38,7 @@ import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass
 import taboolib.module.nms.sendPacket
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Arasple

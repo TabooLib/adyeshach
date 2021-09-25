@@ -1,13 +1,16 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author sky
@@ -42,11 +45,14 @@ class AdyPainting : AdyEntity(EntityTypes.PAINTING) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityPainting(viewer, index, UUID.randomUUID(), position.toLocation(), direction, painting)
+                val clientId = UUID.randomUUID()
+                AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
+                NMS.INSTANCE.spawnEntityPainting(viewer, index, clientId, position.toLocation(), direction, painting)
             }
         } else {
             destroy(viewer) {
                 NMS.INSTANCE.destroyEntity(viewer, index)
+                AdyeshachAPI.clientEntityMap[viewer.name]?.remove(index)
             }
         }
     }

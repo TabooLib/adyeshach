@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.internal.listener
 
+import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
@@ -21,8 +22,8 @@ internal object ListenerEntity {
 
     @SubscribeEvent
     fun e(e: PacketReceiveEvent) {
-        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in AdyeshachAPI.onlinePlayers) {
-            AdyeshachAPI.onlinePlayers.add(e.player.name)
+        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in AdyeshachAPI.onlinePlayerMap) {
+            AdyeshachAPI.onlinePlayerMap.add(e.player.name)
             AdyeshachPlayerJoinEvent(e.player).call()
         }
         if (e.packet.name == "PacketPlayInUseEntity") {

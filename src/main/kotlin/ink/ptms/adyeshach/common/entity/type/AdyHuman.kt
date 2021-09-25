@@ -11,6 +11,8 @@ import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
@@ -20,6 +22,7 @@ import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @Author sky
@@ -144,11 +147,16 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         if (visible) {
             addPlayerInfo(viewer)
             spawn(viewer) {
+                // 创建客户端对应表
+                AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, playerUUID)
+                // 生成实体
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
             }
+            // 更新装备
             submit(delay = 1) {
                 updateEquipment()
             }
+            // 更新死亡信息以及玩家类型专属属性
             submit(delay = 5) {
                 if (isDie) {
                     die(viewer)
@@ -163,7 +171,10 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         } else {
             removePlayerInfo(viewer)
             destroy(viewer) {
+                // 销毁实体
                 NMS.INSTANCE.destroyEntity(viewer, index)
+                // 移除客户端对应表
+                AdyeshachAPI.clientEntityMap[viewer.name]?.remove(index)
             }
         }
     }

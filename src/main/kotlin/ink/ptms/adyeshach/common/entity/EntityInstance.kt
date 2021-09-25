@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.entity
 
 import com.google.gson.JsonParser
+import com.google.gson.annotations.Expose
+import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.api.event.*
@@ -16,28 +18,28 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemp
-import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemp
+import ink.ptms.adyeshach.common.entity.manager.ManagerPrivateTemporary
+import ink.ptms.adyeshach.common.entity.manager.ManagerPublicTemporary
 import ink.ptms.adyeshach.common.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import com.google.gson.annotations.Expose
 import io.netty.util.internal.ConcurrentSet
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.warning
 import taboolib.common5.Coerce
 import taboolib.module.nms.inputSign
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
-import kotlin.jvm.Throws
 import kotlin.reflect.KClass
+
 
 /**
  * @Author sky
@@ -71,8 +73,26 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             field = value
         }
 
+    /**
+     * 移动速度
+     */
     @Expose
     var moveSpeed = 0.2
+
+    /**
+     * 模型名称
+     */
+    @Expose
+    var modelEngineName = ""
+        set(value) {
+            field = value
+            refreshModelEngine()
+        }
+
+    /**
+     * 模型序号
+     */
+    var modelEngineUniqueId: UUID? = null
 
     /**
      * 实体序号
@@ -119,6 +139,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         registerMeta(2, "customName", TextComponent(""))
         registerMeta(3, "isCustomNameVisible", false)
         registerMeta(at(11000 to 5), "noGravity", false)
+        // 实体姿态
         if (version >= 11400) {
             registerMeta(at(11400 to 6), "pose", BukkitPose.STANDING)
             registerEditor("entityPose")
@@ -130,9 +151,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                     entity.getPose().name
                 }
         }
+        // 细雪中的冻结时间（暂无效果）
         if (version >= 11700) {
             registerMeta(at(11700 to 7), "ticksFrozenInPowderedSnow", 0)
         }
+        // 可视距离
         registerEditor("visibleDistance")
             .reset { _, _ ->
                 visibleDistance = -1.0
@@ -148,6 +171,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             .display { _, _, _ ->
                 visibleDistance.toString()
             }
+        // 移动速度（巡逻特性）
         registerEditor("moveSpeed")
             .reset { _, _ ->
                 moveSpeed = 0.2
@@ -163,6 +187,24 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             .display { _, _, _ ->
                 moveSpeed.toString()
             }
+        // ModuleEngine
+        if (AdyeshachAPI.modelEngineHooked) {
+            registerEditor("modelEngine")
+                .reset { _, _ ->
+                    modelEngineName = ""
+                }
+                .modify { player, entity, _ ->
+                    player.inputSign(arrayOf(modelEngineName, "", "请在第一行输入内容")) {
+                        if (it[0].isNotEmpty()) {
+                            modelEngineName = it[0]
+                        }
+                        Editor.open(player, entity)
+                    }
+                }
+                .display { _, _, _ ->
+                    modelEngineName.ifEmpty { "无" }
+                }
+        }
     }
 
     /**
@@ -175,7 +217,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     protected fun spawn(viewer: Player, spawn: Runnable) {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
-            spawn.run()
+            // 若未生成 ModelEngine 模型则发送原版数据包
+            // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
+            if (!showModelEngine(viewer)) {
+                spawn.run()
+            }
             // 更新单位属性
             updateMetadata(viewer)
             // 更新单位视角
@@ -192,7 +238,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     protected fun destroy(viewer: Player, destroy: Runnable) {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
-            destroy.run()
+            // 销毁模型
+            if (!hideModelEngine(viewer)) {
+                destroy.run()
+            }
         }
     }
 
@@ -211,7 +260,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 是否为临时实体，即非持久化储存
      */
     fun isTemporary(): Boolean {
-        return manager is ManagerPublicTemp || manager is ManagerPrivateTemp
+        return manager is ManagerPublicTemporary || manager is ManagerPrivateTemporary
     }
 
     /**
@@ -439,6 +488,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 return@request
             }
             move.speed = speed
+            move.target = location
             move.pathType = pathType
             move.resultNavigation = it
             removeTag("tryMoving")
@@ -547,6 +597,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     fun displayAnimation(animation: BukkitAnimation) {
         forViewers {
             NMS.INSTANCE.sendAnimation(it, index, animation.id)
+            // 模型效果
+            if (AdyeshachAPI.modelEngineHooked && modelEngineUniqueId != null) {
+                ModelEngineAPI.api.modelManager.getModeledEntity(modelEngineUniqueId)?.hurt()
+            }
         }
     }
 
@@ -753,6 +807,97 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             entity.addViewer(it)
         }
         return entity
+    }
+
+    fun showModelEngine(viewer: Player): Boolean {
+        if (AdyeshachAPI.modelEngineHooked) {
+            val modelManager = ModelEngineAPI.api.modelManager
+            if (modelEngineUniqueId != null) {
+                modelManager.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
+                destroy()
+                return true
+            } else if (modelEngineName.isNotBlank()) {
+                return refreshModelEngine()
+            }
+        }
+        return false
+    }
+
+    fun hideModelEngine(viewer: Player): Boolean {
+        if (AdyeshachAPI.modelEngineHooked) {
+            val modelManager = ModelEngineAPI.api.modelManager
+            if (modelEngineUniqueId != null) {
+                modelManager.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
+                return true
+            }
+        }
+        return false
+    }
+
+    fun refreshModelEngine(): Boolean {
+        if (AdyeshachAPI.modelEngineHooked) {
+            val modelManager = ModelEngineAPI.api.modelManager
+            // 删除模型
+            if (modelEngineUniqueId != null) {
+                val modeledEntity = modelManager.getModeledEntity(modelEngineUniqueId)
+                if (modeledEntity != null) {
+                    modeledEntity.clearModels()
+                    forViewers {
+                        modeledEntity.removePlayer(it)
+                    }
+                    modelManager.removeModeledEntity(modelEngineUniqueId)
+                    modelEngineUniqueId = null
+                    // 是否恢复单位
+                    if (modelEngineName.isBlank()) {
+                        respawn()
+                    }
+                }
+            }
+            // 创建模型
+            if (modelEngineName.isNotBlank()) {
+                val entityModeled = EntityModeled(this)
+                val model = modelManager.createActiveModel(modelEngineName)
+                if (model == null) {
+                    respawn()
+                    warning("Failed to load model: $modelEngineName")
+                    return false
+                }
+                val modeledEntity = modelManager.createModeledEntity(entityModeled)
+                if (modeledEntity == null) {
+                    respawn()
+                    warning("Failed to create modeled entity")
+                    return false
+                }
+                try {
+                    modeledEntity.addActiveModel(model)
+                } catch (ex: NullPointerException) {
+                    respawn()
+                    warning("Failed to load model: $modelEngineName (${ex.message})")
+                    return false
+                }
+                destroy()
+                modeledEntity.isInvisible = true
+                modeledEntity.setNametag(getCustomName())
+                modeledEntity.setNametagVisible(isCustomNameVisible())
+                modelEngineUniqueId = entityModeled.modelUniqueId
+                forViewers {
+                    modeledEntity.addPlayer(it)
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    fun updateModelEngineNameTag() {
+        if (AdyeshachAPI.modelEngineHooked) {
+            val modelManager = ModelEngineAPI.api.modelManager
+            if (modelEngineUniqueId != null) {
+                val modeledEntity = modelManager.getModeledEntity(modelEngineUniqueId) ?: return
+                modeledEntity.setNametag(getCustomName())
+                modeledEntity.setNametagVisible(isCustomNameVisible())
+            }
+        }
     }
 
     companion object {

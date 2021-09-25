@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.api
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.manager.*
@@ -13,6 +14,7 @@ import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.database.DatabaseLocal
 import ink.ptms.adyeshach.internal.database.DatabaseMongodb
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
@@ -33,20 +35,25 @@ import java.util.function.Function
 
 object AdyeshachAPI {
 
-    val onlinePlayers = CopyOnWriteArrayList<String>()
+    internal val modelEngineHooked by lazy { Bukkit.getPluginManager().getPlugin("ModelEngine") != null }
 
-    private val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
-    private val managerPrivateTemp = ConcurrentHashMap<String, ManagerPrivateTemp>()
-    private val managerPublic = ManagerPublic()
-    private val managerPublicTemp = ManagerPublicTemp()
-    private val database by lazy {
+    internal val onlinePlayerMap = CopyOnWriteArrayList<String>()
+    internal val clientEntityMap = ConcurrentHashMap<String, MutableMap<Int, ClientEntity>>()
+
+    internal val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
+    internal val managerPrivateTemporary = ConcurrentHashMap<String, ManagerPrivateTemporary>()
+
+    internal val managerPublic = ManagerPublic()
+    internal val managerPublicTemporary = ManagerPublicTemporary()
+
+    internal val database by lazy {
         when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase(Locale.getDefault())) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
             else -> {
                 val event = CustomDatabaseEvent(db)
                 event.call()
-                event.database ?: error("Storage method \"${Adyeshach.conf.getString("Database.method")}\" not supported.")
+                event.database ?: error("\"${Adyeshach.conf.getString("Database.method")}\" not supported.")
             }
         }
     }
@@ -56,7 +63,7 @@ object AdyeshachAPI {
     }
 
     fun getEntityManagerPublicTemporary(): Manager {
-        return managerPublicTemp
+        return managerPublicTemporary
     }
 
     fun getEntityManagerPrivate(player: Player): Manager {
@@ -64,7 +71,7 @@ object AdyeshachAPI {
     }
 
     fun getEntityManagerPrivateTemporary(player: Player): Manager {
-        return managerPrivateTemp.computeIfAbsent(player.name) { ManagerPrivateTemp(player.name) }
+        return managerPrivateTemporary.computeIfAbsent(player.name) { ManagerPrivateTemporary(player.name) }
     }
 
     @Throws(UnknownWorldException::class)
@@ -102,6 +109,10 @@ object AdyeshachAPI {
 
     fun getEntityNearly(player: Player): EntityInstance? {
         return getEntity(player) { true }
+    }
+
+    fun getEntityFromClientUniqueId(player: Player, uniqueId: UUID): EntityInstance? {
+        return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == uniqueId }?.entity
     }
 
     fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance? {
@@ -198,9 +209,10 @@ object AdyeshachAPI {
 
     @SubscribeEvent
     internal fun e(e: PlayerQuitEvent) {
-        onlinePlayers.remove(e.player.name)
+        clientEntityMap.remove(e.player.name)
+        onlinePlayerMap.remove(e.player.name)
         managerPrivate.remove(e.player.name)
-        managerPrivateTemp.remove(e.player.name)
+        managerPrivateTemporary.remove(e.player.name)
         submit(async = true) {
             database.push(e.player)
             database.release(e.player)

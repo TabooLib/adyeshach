@@ -9,15 +9,11 @@ import java.util.function.Consumer
 
 /**
  * @Author sky
- * @Since 2020-08-14 19:08
+ * @Since 2020-08-14 14:25
  */
-class ManagerPublicTemp : Manager() {
+class ManagerPrivateTemporary(val player: String): Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
-
-    override fun isPublic(): Boolean {
-        return true
-    }
 
     override fun onEnable() {
     }
@@ -32,7 +28,7 @@ class ManagerPublicTemp : Manager() {
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance {
-        return create(entityTypes, location, Bukkit.getOnlinePlayers().toList(), function).run {
+        return create(entityTypes, location, listOf(Bukkit.getPlayerExact(player)!!), function).run {
             activeEntity.add(this)
             this
         }

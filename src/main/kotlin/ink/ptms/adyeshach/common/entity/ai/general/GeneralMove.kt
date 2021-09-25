@@ -25,6 +25,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
             field = value.coerceAtMost(1.0)
         }
 
+    var target: Location? = null
     var pathType: PathType? = null
     var resultNavigation: ResultNavigation? = null
 
@@ -56,7 +57,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         }
         val positionEntity = entity.position.toLocation()
         val positionNext = resultNavigation!!.pointList[i].run {
-            Location(entity.position.world, x.toDouble() + 0.55, y.toDouble(), z.toDouble() + 0.5)
+            Location(entity.position.world, x + 0.55, y, z + 0.5)
         }
         if (counterLook.hasNext()) {
             entity.controllerLook(positionNext.clone().run {

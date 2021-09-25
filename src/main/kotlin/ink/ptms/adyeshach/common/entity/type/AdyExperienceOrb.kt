@@ -1,12 +1,16 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Player
 import org.bukkit.util.NumberConversions
 import taboolib.module.nms.inputSign
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author sky

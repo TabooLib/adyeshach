@@ -1,10 +1,12 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
@@ -15,6 +17,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @Author sky
@@ -71,11 +74,17 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, UUID.randomUUID(), position.toLocation())
+                val clientId = UUID.randomUUID()
+                // 创建客户端对应表
+                AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
+                // 生成实体
+                NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, clientId, position.toLocation())
             }
+            // 更新装备
             submit(delay = 1) {
                 updateEquipment()
             }
+            // 更新死亡状态
             submit(delay = 5) {
                 if (isDie) {
                     die(viewer = viewer)
@@ -83,7 +92,10 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             }
         } else {
             destroy(viewer) {
+                // 销毁实体
                 NMS.INSTANCE.destroyEntity(viewer, index)
+                // 移除客户端对应表
+                AdyeshachAPI.clientEntityMap[viewer.name]?.remove(index)
             }
         }
     }

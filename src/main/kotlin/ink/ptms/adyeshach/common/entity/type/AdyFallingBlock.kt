@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -13,6 +15,7 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.isNotAir
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author sky
@@ -63,11 +66,14 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {
-                NMS.INSTANCE.spawnEntityFallingBlock(viewer, index, UUID.randomUUID(), position.toLocation(), material, data)
+                val clientId = UUID.randomUUID()
+                AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
+                NMS.INSTANCE.spawnEntityFallingBlock(viewer, index, clientId, position.toLocation(), material, data)
             }
         } else {
             destroy(viewer) {
                 NMS.INSTANCE.destroyEntity(viewer, index)
+                AdyeshachAPI.clientEntityMap[viewer.name]?.remove(index)
             }
         }
     }
