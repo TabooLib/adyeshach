@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.entity.path
 
 /**
- * @Author sky
- * @Since 2020-08-13 16:34
+ * @author sky
+ * @since 2020-08-13 16:34
  */
 open class Result(
         /**

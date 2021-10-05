@@ -3,8 +3,6 @@ package ink.ptms.adyeshach.common.script.action
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.bukkit.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityVillager
 import ink.ptms.adyeshach.common.entity.type.*
 import ink.ptms.adyeshach.common.script.ScriptHandler
@@ -33,7 +31,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionMeta(val key: String, val symbol: Symbol, val value: String?): ScriptAction<Void>() {
+class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : ScriptAction<Void>() {
 
     val zaphkielHook = Bukkit.getPluginManager().isPluginEnabled("Zaphkiel")
 
@@ -52,6 +50,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
 
     @Suppress("UNCHECKED_CAST")
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        // TODO: 2021/10/5
         val s = frame.script()
         if (s.getManager() == null) {
             error("No manager selected.")
@@ -60,9 +59,9 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
             error("No entity selected.")
         }
         s.getEntities()!!.filterNotNull().forEach {
-            val meta = it.listMetadata().firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
-            val editor = Editor.getEditor(meta) ?: error("Metadata is not editable. (0)")
-            if (!editor.edit) {
+            val meta = it.getEditableEntityMeta().firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
+            val editor = meta.editor ?: error("Metadata is not editable. (0)")
+            if (!editor.editable) {
                 error("Metadata is not editable. (1)")
             }
             when (symbol) {
@@ -78,7 +77,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                             it.visibleDistance = Coerce.toDouble(value)
                         }
                         meta.key == "alwaysVisible" -> {
-                            it.alwaysVisible = Coerce.toBoolean(value)
+                            it.visibleAfterLoaded = Coerce.toBoolean(value)
                         }
                         meta.key == "moveSpeed" -> {
                             it.moveSpeed = Coerce.toDouble(value)
@@ -174,11 +173,11 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                         meta.key == "block" && it is AdyMinecart -> {
                             it.setCustomBlock(getItem(value.toString()).data!!)
                         }
-                        editor.enum != null -> {
-                            val enum = Editors.getEnums(editor.enum!!).firstOrNull { e -> e.toString().equals(value.toString(), true) }
-                                ?: error("Enum type \"${value}\" not found.")
-                            it.setMetadata(meta.key, (enum as Enum<*>).ordinal)
-                        }
+//                        editor.enum != null -> {
+//                            val enum = Editors.getEnums(editor.enum!!).firstOrNull { e -> e.toString().equals(value.toString(), true) }
+//                                ?: error("Enum type \"${value}\" not found.")
+//                            it.setMetadata(meta.key, (enum as Enum<*>).ordinal)
+//                        }
                         else -> {
                             when (meta.def.javaClass.kotlin) {
                                 Int::class, Byte::class, Float::class, Double::class, String::class, TextComponent::class -> it.setMetadata(
@@ -199,8 +198,8 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                     }
                 }
                 Symbol.RESET -> {
-                    if (meta.editor?.onReset != null) {
-                        meta.editor!!.onReset!!.invoke(it, meta)
+                    if (meta.editor?.resetMethod != null) {
+                        meta.editor!!.resetMethod!!.invoke(s.sender!!.cast(), it)
                     } else {
                         it.setMetadata(meta.key, meta.def)
                     }

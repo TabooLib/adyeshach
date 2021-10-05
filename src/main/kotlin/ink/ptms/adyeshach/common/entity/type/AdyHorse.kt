@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Horse
 
@@ -19,25 +18,25 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
          * 1.10 -> 15
          * 1.9 -> 14
          */
-        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
-                .canEdit(false)
-                .build()
-        registerEditor("horseColor")
-                .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
-                .reset { _, _ ->
-                    setColor(Horse.Color.WHITE)
-                }
-                .display { _, _, _ ->
-                    getColor().name
-                }.build()
-        registerEditor("horseStyle")
-                .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
-                .reset { _, _ ->
-                    setStyle(Horse.Style.NONE)
-                }
-                .display { _, _, _ ->
-                    getStyle().name
-                }.build()
+//        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
+//                .canEdit(false)
+//                .build()
+//        registerEditor("horseColor")
+//                .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
+//                .reset { _, _ ->
+//                    setColor(Horse.Color.WHITE)
+//                }
+//                .display { _, _, _ ->
+//                    getColor().name
+//                }.build()
+//        registerEditor("horseStyle")
+//                .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
+//                .reset { _, _ ->
+//                    setStyle(Horse.Style.NONE)
+//                }
+//                .display { _, _, _ ->
+//                    getStyle().name
+//                }.build()
     }
 
     fun getVariant(): Int {
@@ -49,7 +48,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
     }
 
     fun getStyle(): Horse.Style {
-        return if (version < 11600) {
+        return if (minecraftVersion < 11600) {
             Horse.Style.values()[(getVariant() ushr 8) % hs]
         } else {
             Horse.Style.values()[((getVariant() and '\uff00'.code) shr 8) % hs]
@@ -65,7 +64,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
     }
 
     fun setColorAndStyle(color: Horse.Color, style: Horse.Style) {
-        if (version < 11600) {
+        if (minecraftVersion < 11600) {
             setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8)
         } else {
             setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8 and '\uff00'.code)

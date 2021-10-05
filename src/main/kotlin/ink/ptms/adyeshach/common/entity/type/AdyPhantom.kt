@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyPhantom : AdyMob(EntityTypes.PHANTOM) {
 
     init {
-        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 12), "size", 0)
+//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 12), "size", 0)
     }
 
     fun setSize(size: Int) {

@@ -5,7 +5,7 @@ import org.bukkit.Location
 import taboolib.platform.type.BukkitProxyEvent
 
 /**
- * @Author sky
- * @Since 2020-08-14 19:21
+ * @author sky
+ * @since 2020-08-14 19:21
  */
 class AdyeshachEntityCreateEvent(val entity: EntityInstance, var location: Location) : BukkitProxyEvent()

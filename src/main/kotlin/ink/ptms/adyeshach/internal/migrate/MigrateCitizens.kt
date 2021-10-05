@@ -13,8 +13,8 @@ import org.bukkit.inventory.EquipmentSlot
 import taboolib.common.platform.function.warning
 
 /**
- * @Author sky
- * @Since 2020-08-14 18:18
+ * @author sky
+ * @since 2020-08-14 18:18
  */
 class MigrateCitizens : Migrate() {
 

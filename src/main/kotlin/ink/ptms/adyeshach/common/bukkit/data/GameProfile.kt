@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose
 import org.bukkit.GameMode
 
 /**
- * @Author sky
- * @Since 2020-08-05 18:31
+ * @author sky
+ * @since 2020-08-05 18:31
  */
 class GameProfile {
 

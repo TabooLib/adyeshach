@@ -9,8 +9,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdySnowGolem : AdyMob(EntityTypes.SNOW_GOLEM) {
 
     init {
-        registerMetaByteMask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "hasPumpkinHat", 0x10, true)
-        registerMetaByteMask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "hasNoPumpkinHat", 0x00)
+//        registerMetaByteMask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "hasPumpkinHat", 0x10, true)
+//        registerMetaByteMask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "hasNoPumpkinHat", 0x00)
     }
 
     fun setPumpkinHat(value: Boolean) {

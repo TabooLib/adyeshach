@@ -8,10 +8,10 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 /**
- * @Author sky
- * @Since 2020-08-14 14:25
+ * @author sky
+ * @since 2020-08-14 14:25
  */
-class ManagerPrivateTemporary(val player: String): Manager() {
+class ManagerPrivateTemp(val player: String): Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 

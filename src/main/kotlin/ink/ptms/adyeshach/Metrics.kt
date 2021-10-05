@@ -45,11 +45,8 @@ object Metrics {
         })
     }
 
-    internal object MetricsListener {
-
-        @SubscribeEvent
-        fun e(e: AdyeshachEntityCreateEvent) {
-            createdEntities++
-        }
+    @SubscribeEvent
+    fun e(e: AdyeshachEntityCreateEvent) {
+        createdEntities++
     }
 }

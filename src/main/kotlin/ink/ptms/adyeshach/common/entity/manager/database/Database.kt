@@ -1,11 +1,11 @@
-package ink.ptms.adyeshach.internal.database
+package ink.ptms.adyeshach.common.entity.manager.database
 
 import org.bukkit.entity.Player
 import taboolib.library.configuration.FileConfiguration
 
 /**
- * @Author sky
- * @Since 2020-08-14 14:38
+ * @author sky
+ * @since 2020-08-14 14:38
  */
 abstract class Database {
 

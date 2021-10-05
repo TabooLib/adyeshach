@@ -7,8 +7,8 @@ import org.bukkit.material.MaterialData
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = MaterialData::class)
 class TypeMaterialData : JsonSerializer<MaterialData>, JsonDeserializer<MaterialData> {

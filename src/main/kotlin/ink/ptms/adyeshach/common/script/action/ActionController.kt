@@ -30,12 +30,12 @@ class ActionController(val symbol: Symbol, val controller: String?): ScriptActio
             when (symbol) {
                 Symbol.ADD -> {
                     String
-                    val controller = ScriptHandler.getKnownController(controller!!) ?: error("Unknown controller $controller")
-                    it.registerController(controller.get.apply(it))
+                    val controller = ScriptHandler.getControllerGenerator(controller!!) ?: error("Unknown controller $controller")
+                    it.registerController(controller.generator.apply(it))
                 }
                 Symbol.REMOVE -> {
-                    val controller = ScriptHandler.getKnownController(controller!!) ?: error("Unknown controller $controller")
-                    it.unregisterController(controller.controllerClass)
+                    val controller = ScriptHandler.getControllerGenerator(controller!!) ?: error("Unknown controller $controller")
+                    it.unregisterController(controller.type)
                 }
                 Symbol.RESET -> it.resetController()
             }

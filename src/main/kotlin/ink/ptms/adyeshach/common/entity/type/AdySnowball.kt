@@ -12,6 +12,6 @@ import org.bukkit.inventory.ItemStack
 class AdySnowball : AdyEntity(EntityTypes.SNOWBALL), EntityThrowable {
 
     init {
-        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.SNOWBALL))
+//        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.SNOWBALL))
     }
 }

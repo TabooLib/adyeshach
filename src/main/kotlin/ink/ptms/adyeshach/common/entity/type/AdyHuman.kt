@@ -1,23 +1,17 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.ClientEntity
-import org.bukkit.GameMode
 import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.NumberConversions
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
@@ -25,8 +19,8 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * @Author sky
- * @Since 2020-08-04 15:44
+ * @author sky
+ * @since 2020-08-04 15:44
  */
 class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
@@ -56,81 +50,81 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
          * 1.10 -> 13
          * 1.9 -> 12
          */
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
-        registerEditor("isSleepingLegacy")
-                .reset { _, _ ->
-                    setSleeping(false)
-                }
-                .modify { player, entity, _ ->
-                    setSleeping(!isSleeping())
-                    Editor.open(player, entity)
-                }
-                .display { _, _, _ ->
-                    isSleeping().toDisplay()
-                }
-        registerEditor("isHideFromTabList")
-                .reset { _, _ ->
-                    isHideFromTabList = true
-                }
-                .modify { player, entity, _ ->
-                    isHideFromTabList = !isHideFromTabList
-                    Editor.open(player, entity)
-                }
-                .display { _, _, _ ->
-                    isHideFromTabList.toDisplay()
-                }
-        registerEditor("playerName")
-                .reset { _, _ ->
-                    setName("Adyeshach NPC")
-                }
-                .modify { player, entity, _ ->
-                    player.inputSign(arrayOf(getName(), "", "请在第一行输入内容")) {
-                        if (it[0].isNotEmpty()) {
-                            val name = "${it[0]}${it[1]}"
-                            setName(if (name.length > 16) name.substring(0, 16) else name)
-                        }
-                        Editor.open(player, entity)
-                    }
-                }
-                .display { _, _, _ ->
-                    if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
-                }
-        registerEditor("playerPing")
-                .reset { _, _ ->
-                    setPing(60)
-                }
-                .modify { player, entity, _ ->
-                    player.inputSign(arrayOf("${getPing()}", "", "请在第一行输入内容")) {
-                        if (it[0].isNotEmpty()) {
-                            setPing(NumberConversions.toInt(it[0]))
-                        }
-                        Editor.open(player, entity)
-                    }
-                }
-                .display { _, _, _ ->
-                    getPing().toString()
-                }
-        registerEditor("playerTexture")
-                .reset { _, _ ->
-                    resetTexture()
-                }
-                .modify { player, entity, _ ->
-                    player.inputSign(arrayOf(getTextureName(), "", "请在第一行输入内容")) {
-                        if (it[0].isNotEmpty()) {
-                            setTexture(it[0])
-                        }
-                        Editor.open(player, entity)
-                    }
-                }
-                .display { _, _, _ ->
-                    if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
-                }
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
+//        registerEditor("isSleepingLegacy")
+//                .reset { _, _ ->
+//                    setSleeping(false)
+//                }
+//                .modify { player, entity, _ ->
+//                    setSleeping(!isSleeping())
+//                    entity.openEditor(player)
+//                }
+//                .display { _, _, _ ->
+//                    isSleeping().toDisplay()
+//                }
+//        registerEditor("isHideFromTabList")
+//                .reset { _, _ ->
+//                    isHideFromTabList = true
+//                }
+//                .modify { player, entity, _ ->
+//                    isHideFromTabList = !isHideFromTabList
+//                    entity.openEditor(player)
+//                }
+//                .display { _, _, _ ->
+//                    isHideFromTabList.toDisplay()
+//                }
+//        registerEditor("playerName")
+//                .reset { _, _ ->
+//                    setName("Adyeshach NPC")
+//                }
+//                .modify { player, entity, _ ->
+//                    player.inputSign(arrayOf(getName(), "", "请在第一行输入内容")) {
+//                        if (it[0].isNotEmpty()) {
+//                            val name = "${it[0]}${it[1]}"
+//                            setName(if (name.length > 16) name.substring(0, 16) else name)
+//                        }
+//                        entity.openEditor(player)
+//                    }
+//                }
+//                .display { _, _, _ ->
+//                    if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
+//                }
+//        registerEditor("playerPing")
+//                .reset { _, _ ->
+//                    setPing(60)
+//                }
+//                .modify { player, entity, _ ->
+//                    player.inputSign(arrayOf("${getPing()}", "", "请在第一行输入内容")) {
+//                        if (it[0].isNotEmpty()) {
+//                            setPing(NumberConversions.toInt(it[0]))
+//                        }
+//                        entity.openEditor(player)
+//                    }
+//                }
+//                .display { _, _, _ ->
+//                    getPing().toString()
+//                }
+//        registerEditor("playerTexture")
+//                .reset { _, _ ->
+//                    resetTexture()
+//                }
+//                .modify { player, entity, _ ->
+//                    player.inputSign(arrayOf(getTextureName(), "", "请在第一行输入内容")) {
+//                        if (it[0].isNotEmpty()) {
+//                            setTexture(it[0])
+//                        }
+//                        entity.openEditor(player)
+//                    }
+//                }
+//                .display { _, _, _ ->
+//                    if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
+//                }
         // refresh skin
         submit(async = true, delay = 200, period = 200) {
             if (manager != null) {
@@ -286,7 +280,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
     fun setSleeping(value: Boolean) {
         if (value) {
-            if (version >= 11400) {
+            if (minecraftVersion >= 11400) {
                 setPose(BukkitPose.SLEEPING)
             } else {
                 forViewers {
@@ -294,7 +288,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 }
             }
         } else {
-            if (version >= 11400) {
+            if (minecraftVersion >= 11400) {
                 setPose(BukkitPose.STANDING)
             } else {
                 displayAnimation(BukkitAnimation.LEAVE_BED)
@@ -305,7 +299,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     fun isSleeping(): Boolean {
-        return if (version >= 11400) {
+        return if (minecraftVersion >= 11400) {
             getPose() == BukkitPose.SLEEPING
         } else {
             isSleepingLegacy

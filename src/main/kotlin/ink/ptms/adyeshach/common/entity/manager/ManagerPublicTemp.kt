@@ -8,10 +8,10 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 /**
- * @Author sky
- * @Since 2020-08-14 19:08
+ * @author sky
+ * @since 2020-08-14 19:08
  */
-class ManagerPublicTemporary : Manager() {
+class ManagerPublicTemp : Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 

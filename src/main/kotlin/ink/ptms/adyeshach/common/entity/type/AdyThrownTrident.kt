@@ -10,8 +10,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyThrownTrident : AdyEntity(EntityTypes.THROWN_TRIDENT), EntityThrowable {
 
     init {
-        registerMeta(at(11400 to 10, 11300 to 10), "loyaltyLevel", 0)
-        registerMeta(at(11500 to 11), "hasEnchantmentGlint", false)
+//        registerMeta(at(11400 to 10, 11300 to 10), "loyaltyLevel", 0)
+//        registerMeta(at(11500 to 11), "hasEnchantmentGlint", false)
     }
 
     fun setLoyaltyLevel(loyaltyLevel: Int) {

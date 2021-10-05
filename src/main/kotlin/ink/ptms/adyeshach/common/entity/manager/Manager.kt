@@ -8,12 +8,37 @@ import org.bukkit.entity.Player
 import java.util.function.Consumer
 
 /**
- * @Author sky
- * @Since 2020-08-14 14:24
+ * @author sky
+ * @since 2020-08-14 14:24
  */
 abstract class Manager {
 
     abstract fun create(entityTypes: EntityTypes, location: Location, function: Consumer<EntityInstance>): EntityInstance
+
+    fun create(entityTypes: EntityTypes, location: Location): EntityInstance {
+        return create(entityTypes, location) { }
+    }
+
+    fun create(entityTypes: EntityTypes, location: Location, player: List<Player>): EntityInstance {
+        return create(entityTypes, location, player) { }
+    }
+
+    fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
+        if (entityTypes.bukkitType == null) {
+            error("Entity \"${entityTypes.name}\" not supported this minecraft version.")
+        }
+        val entityInstance = entityTypes.newInstance()
+        function.accept(entityInstance)
+        entityInstance.manager = this
+        entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
+        val event = AdyeshachEntityCreateEvent(entityInstance, location)
+        event.call()
+        if (event.isCancelled) {
+            return entityInstance
+        }
+        entityInstance.spawn(event.location)
+        return entityInstance
+    }
 
     abstract fun remove(entityInstance: EntityInstance)
 
@@ -32,43 +57,15 @@ abstract class Manager {
     }
 
     open fun onEnable() {
-
     }
 
     open fun onDisable() {
-
     }
 
     open fun onSave() {
-
     }
 
     open fun onTick() {
         getEntities().forEach { it.onTick() }
-    }
-
-    open fun create(entityTypes: EntityTypes, location: Location): EntityInstance {
-        return create(entityTypes, location) { }
-    }
-
-    protected fun create(entityTypes: EntityTypes, location: Location, player: List<Player>): EntityInstance {
-        return create(entityTypes, location, player) { }
-    }
-
-    protected fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
-        if (entityTypes.bukkitType == null) {
-            error("Entity \"${entityTypes.name}\" not supported this minecraft version.")
-        }
-        val entityInstance = entityTypes.newInstance()
-        function.accept(entityInstance)
-        entityInstance.manager = this
-        entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
-        val event = AdyeshachEntityCreateEvent(entityInstance, location)
-        event.call()
-        if (event.isCancelled) {
-            return entityInstance
-        }
-        entityInstance.spawn(event.location)
-        return entityInstance
     }
 }

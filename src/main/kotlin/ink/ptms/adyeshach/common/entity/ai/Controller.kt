@@ -1,11 +1,10 @@
 package ink.ptms.adyeshach.common.entity.ai
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.script.KnownController
 
 /**
- * @Author sky
- * @Since 2020-08-19 21:07
+ * @author sky
+ * @since 2020-08-19 21:07
  */
 abstract class Controller(val entity: EntityInstance? = null) {
 
@@ -17,7 +16,7 @@ abstract class Controller(val entity: EntityInstance? = null) {
         return false
     }
 
-    class Pre(val controller: KnownController): Controller() {
+    class Pre(val controller: ControllerGenerator): Controller() {
 
         override fun shouldExecute(): Boolean {
             return true

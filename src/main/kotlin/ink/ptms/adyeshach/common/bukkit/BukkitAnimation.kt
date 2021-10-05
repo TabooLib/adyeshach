@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.bukkit
 
 /**
- * @Author sky
- * @Since 2020-08-28 1:49
+ * @author sky
+ * @since 2020-08-28 1:49
  */
 enum class BukkitAnimation(val id: Int) {
 

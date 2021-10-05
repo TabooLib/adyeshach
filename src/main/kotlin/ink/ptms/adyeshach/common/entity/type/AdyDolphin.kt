@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
- * @Author sky
- * @Since 2020-08-04 19:30
+ * @author sky
+ * @since 2020-08-04 19:30
  */
 class AdyDolphin : AdyMob(EntityTypes.DOLPHIN) {
 
@@ -14,8 +14,8 @@ class AdyDolphin : AdyMob(EntityTypes.DOLPHIN) {
          * 1.14 -> 15, 16
          * 1.13 -> 13, 14
          */
-        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "findTreasure", false)
-        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
+//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "findTreasure", false)
+//        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
     }
 
     fun setFindTreasure(value: Boolean) {

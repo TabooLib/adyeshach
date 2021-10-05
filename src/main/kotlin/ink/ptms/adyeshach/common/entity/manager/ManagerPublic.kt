@@ -16,8 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 /**
- * @Author sky
- * @Since 2020-08-14 19:08
+ * @author sky
+ * @since 2020-08-14 19:08
  */
 class ManagerPublic : Manager() {
 
@@ -37,7 +37,7 @@ class ManagerPublic : Manager() {
                 } else {
                     entity.manager = this
                     activeEntity.add(entity)
-                    if (entity.alwaysVisible) {
+                    if (entity.visibleAfterLoaded) {
                         Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
                     }
                 }
@@ -57,7 +57,7 @@ class ManagerPublic : Manager() {
 
     override fun onSave() {
         activeEntity.forEach { entity ->
-            entity.unregisterController(ControllerNone::class)
+            entity.unregisterController(ControllerNone::class.java)
             newFile(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json").writeText(entity.toJson())
         }
     }

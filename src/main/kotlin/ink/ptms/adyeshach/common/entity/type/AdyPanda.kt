@@ -27,11 +27,11 @@ class AdyPanda : AdyEntityAgeable(EntityTypes.PANDA) {
         0x08	Is sitting [1.16 only]
         0x10	Is on back [1.16 only]
          */
-        val index = at(11700 to 22, 11500 to 21, 11400 to 20)
-        registerMetaByteMask(index, "isSneezing", 0x02)
-        registerMetaByteMask(index, "isEating", 0x04)
-        registerMetaByteMask(index, "isSitting", 0x08)
-        registerMetaByteMask(index, "isOnBack", 0x10)
+//        val index = at(11700 to 22, 11500 to 21, 11400 to 20)
+//        registerMetaByteMask(index, "isSneezing", 0x02)
+//        registerMetaByteMask(index, "isEating", 0x04)
+//        registerMetaByteMask(index, "isSitting", 0x08)
+//        registerMetaByteMask(index, "isOnBack", 0x10)
     }
 
     fun isSneezing(): Boolean {
@@ -51,28 +51,28 @@ class AdyPanda : AdyEntityAgeable(EntityTypes.PANDA) {
     }
 
     fun isSitting(): Boolean {
-        if (version < 11600) {
+        if (minecraftVersion < 11600) {
             error("Metadata \"isSitting\" not supported this minecraft version.")
         }
         return getMetadata("isSitting")
     }
 
     fun setSitting(value: Boolean) {
-        if (version < 11600) {
+        if (minecraftVersion < 11600) {
             error("Metadata \"isSitting\" not supported this minecraft version.")
         }
         setMetadata("isSitting", value)
     }
 
     fun isOnBack(): Boolean {
-        if (version < 11600) {
+        if (minecraftVersion < 11600) {
             error("Metadata \"isOnBack\" not supported this minecraft version.")
         }
         return getMetadata("isOnBack")
     }
 
     fun setIsOnBack(value: Boolean) {
-        if (version < 11600) {
+        if (minecraftVersion < 11600) {
             error("Metadata \"isOnBack\" not supported this minecraft version.")
         }
         setMetadata("isOnBack", value)

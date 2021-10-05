@@ -8,8 +8,8 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
 

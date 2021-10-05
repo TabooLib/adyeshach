@@ -3,13 +3,10 @@ package ink.ptms.adyeshach.common.entity.type
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Editor.toDisplay
-import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
-
+import ink.ptms.adyeshach.common.entity.editor.Editors
 import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -20,55 +17,86 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), EntityEquipable {
 
     @Expose
     protected val equipment = HashMap<EquipmentSlot, ItemStack>()
+
     @Expose
     protected var isDie = false
 
+    var isHandActive: Boolean
+        get() = getMetadata("isHandActive")
+        set(value) {
+            setMetadata("isHandActive", value)
+        }
+
+    var activeHand: Boolean
+        get() = getMetadata("activeHand")
+        set(value) {
+            setMetadata("activeHand", value)
+        }
+
+    var isInRiptideSpinAttack: Boolean
+        get() = getMetadata("isInRiptideSpinAttack")
+        set(value) {
+            setMetadata("isInRiptideSpinAttack", value)
+        }
+
+    var arrowsInEntity: Int
+        get() = getMetadata("arrowsInEntity")
+        set(value) {
+            setMetadata("arrowsInEntity", value)
+        }
+
+    var beeStingersInEntity: Int
+        get() = getMetadata("beeStingersInEntity")
+        set(value) {
+            setMetadata("beeStingersInEntity", value)
+        }
+
     init {
-        registerMetaByteMask(at(11700 to 8), "isHandActive", 0x01)
-        registerMetaByteMask(at(11700 to 8), "activeHand", 0x02)
-        registerMetaByteMask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
-        registerMeta(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
-        registerMeta(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
-                .from(Editors.COLOR)
-                .build()
-        registerEditor("equipmentHelmet")
-                .from(Editors.equip(EquipmentSlot.HEAD))
-                .build()
-        registerEditor("equipmentChestplate")
-                .from(Editors.equip(EquipmentSlot.CHEST))
-                .build()
-        registerEditor("equipmentLeggings")
-                .from(Editors.equip(EquipmentSlot.LEGS))
-                .build()
-        registerEditor("equipmentBoots")
-                .from(Editors.equip(EquipmentSlot.FEET))
-                .build()
-        registerEditor("equipmentHand")
-                .from(Editors.equip(EquipmentSlot.HAND))
-                .build()
-        registerEditor("equipmentOffhand")
-                .from(Editors.equip(EquipmentSlot.OFF_HAND))
-                .build()
-        registerEditor("isDie")
-                .reset { _, _ ->
-                    die(die = false)
-                }
-                .modify { player, entity, _ ->
-                    die(die = !isDie)
-                    Editor.open(player, entity)
-                }
-                .display { _, _, _ ->
-                    isDie.toDisplay()
-                }
-        registerMeta(at(11700 to 12, 11600 to 11), "arrowsInEntity", 0)
-        registerMeta(at(11700 to 13, 11600 to 12), "beeStingersInEntity", 0)
+//        registerMetaByteMask(at(11700 to 8), "isHandActive", 0x01)
+//        registerMetaByteMask(at(11700 to 8), "activeHand", 0x02)
+//        registerMetaByteMask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
+//        registerMeta(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
+//        registerMeta(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
+//            .from(Editors.COLOR)
+//            .build()
+//        registerEditor("equipmentHelmet")
+//            .from(Editors.equip(EquipmentSlot.HEAD))
+//            .build()
+//        registerEditor("equipmentChestplate")
+//            .from(Editors.equip(EquipmentSlot.CHEST))
+//            .build()
+//        registerEditor("equipmentLeggings")
+//            .from(Editors.equip(EquipmentSlot.LEGS))
+//            .build()
+//        registerEditor("equipmentBoots")
+//            .from(Editors.equip(EquipmentSlot.FEET))
+//            .build()
+//        registerEditor("equipmentHand")
+//            .from(Editors.equip(EquipmentSlot.HAND))
+//            .build()
+//        registerEditor("equipmentOffhand")
+//            .from(Editors.equip(EquipmentSlot.OFF_HAND))
+//            .build()
+//        registerEditor("isDie")
+//            .reset { _, _ ->
+//                die(die = false)
+//            }
+//            .modify { player, entity, _ ->
+//                die(die = !isDie)
+//                entity.openEditor(player)
+//            }
+//            .display { _, _, _ ->
+//                isDie.toDisplay()
+//            }
+//        registerMeta(at(11700 to 12, 11600 to 11), "arrowsInEntity", 0)
+//        registerMeta(at(11700 to 13, 11600 to 12), "beeStingersInEntity", 0)
     }
 
     override fun visible(viewer: Player, visible: Boolean) {
@@ -174,30 +202,6 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         equipment.clear()
     }
 
-    fun setHealth(value: Float) {
-        setMetadata("health", value)
-    }
-
-    fun getHealth(): Float {
-        return getMetadata("health")
-    }
-
-    fun setPotionEffectColor(value: Color) {
-        setMetadata("potionEffectColor", value.asRGB())
-    }
-
-    fun getPotionEffectColor(): Color {
-        return Color.fromRGB(getMetadata("potionEffectColor"))
-    }
-
-    fun updateEquipment() {
-        forViewers {
-            EquipmentSlot.values().forEach { equipment ->
-                NMS.INSTANCE.updateEquipment(it, index, equipment, getEquipment(equipment) ?: return@forEach)
-            }
-        }
-    }
-
     fun setEquipment(equipmentSlot: EquipmentSlot, itemStack: ItemStack) {
         when (equipmentSlot) {
             EquipmentSlot.HAND -> setItemInMainHand(itemStack)
@@ -217,6 +221,12 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             EquipmentSlot.LEGS -> getLeggings()
             EquipmentSlot.CHEST -> getChestplate()
             EquipmentSlot.HEAD -> getHelmet()
+        }
+    }
+
+    fun updateEquipment() {
+        forViewers {
+            EquipmentSlot.values().forEach { e -> NMS.INSTANCE.updateEquipment(it, index, e, getEquipment(e) ?: return@forEach) }
         }
     }
 
@@ -242,43 +252,29 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
      */
     fun die(viewer: Player, die: Boolean = true) {
         if (die) {
-            val registerMeta = meta.firstOrNull { it.key == "health" }!!
-            NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(-1)))
+            val healthMeta = getAvailableEntityMeta().firstOrNull { it.key == "health" }!!
+            NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(healthMeta.index, NumberConversions.toFloat(-1)))
             submit(delay = 15) {
-                NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(registerMeta.index, NumberConversions.toFloat(1)))
+                NMS.INSTANCE.updateEntityMetadata(viewer, index, NMS.INSTANCE.getMetaEntityFloat(healthMeta.index, NumberConversions.toFloat(1)))
             }
         } else {
             visible(viewer, true)
         }
     }
 
-    var isHandActive: Boolean
-        get() = getMetadata("isHandActive")
-        set(value) {
-            setMetadata("isHandActive", value)
-        }
+    fun setHealth(value: Float) {
+        setMetadata("health", value)
+    }
 
-    var activeHand: Boolean
-        get() = getMetadata("activeHand")
-        set(value) {
-            setMetadata("activeHand", value)
-        }
+    fun getHealth(): Float {
+        return getMetadata("health")
+    }
 
-    var isInRiptideSpinAttack: Boolean
-        get() = getMetadata("isInRiptideSpinAttack")
-        set(value) {
-            setMetadata("isInRiptideSpinAttack", value)
-        }
+    fun setPotionEffectColor(value: Color) {
+        setMetadata("potionEffectColor", value.asRGB())
+    }
 
-    var arrowsInEntity: Int
-        get() = getMetadata("arrowsInEntity")
-        set(value) {
-            setMetadata("arrowsInEntity", value)
-        }
-
-    var beeStingersInEntity: Int
-        get() = getMetadata("beeStingersInEntity")
-        set(value) {
-            setMetadata("beeStingersInEntity", value)
-        }
+    fun getPotionEffectColor(): Color {
+        return Color.fromRGB(getMetadata("potionEffectColor"))
+    }
 }

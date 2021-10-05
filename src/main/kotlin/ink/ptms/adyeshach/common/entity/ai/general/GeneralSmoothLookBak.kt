@@ -7,8 +7,8 @@ import taboolib.common5.Baffle
 /**
  * 纪念 a老板的初代 SmoothLook 可以退休了
  *
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 private class GeneralSmoothLookBak(entity: EntityInstance) : Controller(entity) {
 

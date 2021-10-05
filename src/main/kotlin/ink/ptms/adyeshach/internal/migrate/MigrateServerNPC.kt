@@ -8,8 +8,8 @@ import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 
 /**
- * @Author sky
- * @Since 2020-08-14 18:18
+ * @author sky
+ * @since 2020-08-14 18:18
  */
 class MigrateServerNPC : Migrate() {
 

@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.AdyeshachAPI.toDistance
 import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
+import ink.ptms.adyeshach.common.util.toDistance
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
@@ -19,8 +19,8 @@ import taboolib.common.platform.function.warning
 import taboolib.common5.mirrorNow
 
 /**
- * @Author sky
- * @Since 2020-08-14 22:10
+ * @author sky
+ * @since 2020-08-14 22:10
  */
 internal object ManagerEvents {
 
@@ -105,7 +105,7 @@ internal object ManagerEvents {
     @SubscribeEvent
     fun e(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().toDistance(e.player.location) < 128 }.forEach {
+            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().toDistance(e.player.location) < it.visibleDistance }.forEach {
                 it.visible(e.player, true)
                 AdyeshachEntitySpawnEvent(it).call()
             }
@@ -128,10 +128,10 @@ internal object ManagerEvents {
     }
 
     fun spawn(player: Player) {
-        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
+        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
             it.viewPlayers.viewers.add(player.name)
         }
-        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.alwaysVisible }.forEach {
+        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
             it.viewPlayers.viewers.add(player.name)
         }
         mirrorNow("ManagerPrivate:onLoad(async)") {

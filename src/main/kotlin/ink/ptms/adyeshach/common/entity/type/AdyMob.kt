@@ -10,8 +10,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 abstract class AdyMob(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
 
     init {
-        registerMetaByteMask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11), "isLeftHanded", 0x02)
-        registerMetaByteMask(at(11700 to 15, 11600 to 14), "isAgressive", 0x04)
+//        registerMetaByteMask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11), "isLeftHanded", 0x02)
+//        registerMetaByteMask(at(11700 to 15, 11600 to 14), "isAgressive", 0x04)
     }
 
     fun setLeftHanded(leftHanded: Boolean) {

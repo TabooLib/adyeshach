@@ -10,8 +10,8 @@ import taboolib.library.configuration.ConfigurationSection
 import java.util.*
 
 /**
- * @Author sky
- * @Since 2020-08-04 12:47
+ * @author sky
+ * @since 2020-08-04 12:47
  */
 abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable() {
 

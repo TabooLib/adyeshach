@@ -6,8 +6,8 @@ import org.bukkit.GameMode
 import org.bukkit.potion.PotionEffectType
 
 /**
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class ControllerLookAtPlayerAlways(entity: EntityInstance) : Controller(entity) {
 

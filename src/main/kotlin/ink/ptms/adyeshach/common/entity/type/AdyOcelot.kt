@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitOcelotType
-import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Ocelot
 
@@ -24,86 +24,86 @@ class AdyOcelot : AdyEntityAgeable(EntityTypes.OCELOT) {
         1.9
         14 ->Type
          */
-        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isSitting", 0x01)
-        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isAngry", 0x02)
-        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isTamed", 0x04)
-
-        if (version >= 11400) {
-            registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "isTrusting", false)
-        } else {
-            registerMeta(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
-                    .from(Editors.enums(BukkitOcelotType::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-                    .display { _, entity, _ ->
-                        BukkitOcelotType.values()[entity.getMetadata("type")].name
-                    }.build()
-        }
+//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isSitting", 0x01)
+//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isAngry", 0x02)
+//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isTamed", 0x04)
+//
+//        if (minecraftVersion >= 11400) {
+//            registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "isTrusting", false)
+//        } else {
+//            registerMeta(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
+//                    .from(Editors.enums(BukkitOcelotType::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+//                    .display { _, entity, _ ->
+//                        BukkitOcelotType.values()[entity.getMetadata("type")].name
+//                    }.build()
+//        }
     }
 
     fun setTrusting(value: Boolean) {
-        if (version < 11400) {
+        if (minecraftVersion < 11400) {
             error("Metadata \"isTrusting\" not supported this minecraft version.")
         }
         setMetadata("isTrusting", value)
     }
 
     fun isTrusting(): Boolean {
-        if (version < 11400) {
+        if (minecraftVersion < 11400) {
             error("Metadata \"isTrusting\" not supported this minecraft version.")
         }
         return getMetadata("isTrusting")
     }
 
     fun setType(type: Ocelot.Type) {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"type\" not supported this minecraft version.")
         }
         setMetadata("type", type.ordinal)
     }
 
     fun getType(): BukkitOcelotType {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"type\" not supported this minecraft version.")
         }
         return BukkitOcelotType.of(getMetadata("type"))
     }
 
     fun setSitting(value: Boolean) {
-        if (version >= 11100) {
+        if (minecraftVersion >= 11100) {
             error("Metadata \"isSitting\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         setMetadata("isSitting", value)
     }
 
     fun isSitting(): Boolean {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"isSitting\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         return getMetadata("isSitting")
     }
 
     fun setAngry(value: Boolean) {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"isAngry\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         setMetadata("isAngry", value)
     }
 
     fun isAngry(): Boolean {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"isAngry\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         return getMetadata("isAngry")
     }
 
     fun setTamed(value: Boolean) {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"isTamed\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         setMetadata("isTamed", value)
     }
 
     fun isTamed(): Boolean {
-        if (version >= 11400) {
+        if (minecraftVersion >= 11400) {
             error("Metadata \"isTamed\" not supported this minecraft version. Use \"AdyCat\" instead")
         }
         return getMetadata("isTamed")

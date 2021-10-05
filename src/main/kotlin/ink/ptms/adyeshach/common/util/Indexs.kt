@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.util
 import taboolib.common.util.random
 
 /**
- * @Author sky
- * @Since 2020-08-04 13:00
+ * @author sky
+ * @since 2020-08-04 13:00
  */
 object Indexs {
 

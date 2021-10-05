@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.internal.database
+package ink.ptms.adyeshach.common.entity.manager.database
 
 import ink.ptms.adyeshach.Adyeshach
 import org.bukkit.entity.Player
@@ -8,8 +8,8 @@ import taboolib.module.database.bridge.Index
 import taboolib.module.database.bridge.createBridgeCollection
 
 /**
- * @Author sky
- * @Since 2020-08-14 14:46
+ * @author sky
+ * @since 2020-08-14 14:46
  */
 class DatabaseMongodb : Database() {
 

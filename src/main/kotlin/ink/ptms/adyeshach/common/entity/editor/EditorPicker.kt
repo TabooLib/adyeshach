@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.editor
+package ink.ptms.adyeshach.common.entity.editor
 
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
@@ -12,12 +12,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
-import taboolib.common.LifeCycle
 import taboolib.common.platform.*
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
-import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
 import taboolib.common5.Coerce
 import java.util.concurrent.ConcurrentHashMap
@@ -27,32 +25,32 @@ import java.util.concurrent.TimeUnit
  * @author Arasple
  * @date 2020/8/25 14:08
  */
-object Picker {
+object EditorPicker {
+
+    class Handler(var entity: EntityInstance?, var distance: Double)
 
     private val cooldown = Baffle.of(200, TimeUnit.MILLISECONDS)
     private val playerSelected = ConcurrentHashMap<String, Handler>()
 
-    @Awake(LifeCycle.ACTIVE)
-    fun e() {
-        submit(period = 1) {
-            Bukkit.getOnlinePlayers().forEach {
-                val select = getSelected(it)
-                val entity = select.entityInstance ?: return@forEach
-                process(it, entity)
-            }
+    @Schedule(period = 1)
+    private fun e() {
+        Bukkit.getOnlinePlayers().forEach {
+            val select = getSelected(it)
+            val entity = select.entity ?: return@forEach
+            process(it, entity)
         }
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun e(e: PlayerQuitEvent) {
         cooldown.reset(e.player.name)
         playerSelected.remove(e.player.name)
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun e(e: PlayerItemHeldEvent) {
+    private fun e(e: PlayerItemHeldEvent) {
         val select = getSelected(e.player)
-        val entity = select.entityInstance ?: return
+        val entity = select.entity ?: return
         val amount = if (e.player.isSneaking) 1.0 else 0.1
         if (e.newSlot < e.previousSlot) {
             if (select.distance <= 50.0) select.distance += amount
@@ -66,8 +64,8 @@ object Picker {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun e(e: PlayerSwapHandItemsEvent) {
-        val entity = getSelected(e.player).entityInstance ?: return
+    private fun e(e: PlayerSwapHandItemsEvent) {
+        val entity = getSelected(e.player).entity ?: return
         e.isCancelled = true
         if (e.player.isSneaking) {
             entity.teleport(e.player.location)
@@ -108,7 +106,7 @@ object Picker {
 
     fun select(player: Player, entityInstance: EntityInstance?) {
         getSelected(player).let {
-            it.entityInstance = entityInstance
+            it.entity = entityInstance
             it.distance = 1.0
             if (entityInstance != null) {
                 val adaptPlayer = adaptPlayer(player)
@@ -121,6 +119,4 @@ object Picker {
     fun getSelected(player: Player): Handler {
         return playerSelected.computeIfAbsent(player.name) { Handler(null, 0.0) }
     }
-
-    class Handler(var entityInstance: EntityInstance?, var distance: Double)
 }

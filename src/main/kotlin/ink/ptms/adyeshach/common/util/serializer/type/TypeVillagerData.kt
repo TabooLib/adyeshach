@@ -8,8 +8,8 @@ import org.bukkit.entity.Villager
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = VillagerData::class)
 class TypeVillagerData : JsonSerializer<VillagerData>, JsonDeserializer<VillagerData> {

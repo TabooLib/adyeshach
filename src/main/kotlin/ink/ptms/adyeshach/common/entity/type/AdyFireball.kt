@@ -18,7 +18,7 @@ class AdyFireball : AdyEntity(EntityTypes.FIREBALL), EntityFireball {
         1.15,1.14,1.13,1.12,1.11,1.10,1.9
         null
          */
-        registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
+//        registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
     }
 
     fun getItem(): ItemStack {

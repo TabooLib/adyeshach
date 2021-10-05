@@ -12,8 +12,8 @@ import taboolib.common.util.random
  * 随机移动（实体会不断远离出生点）
  * 基于基础移动逻辑
  *
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class ControllerRandomStrollLand(entity: EntityInstance) : Controller(entity) {
 

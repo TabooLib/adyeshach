@@ -1,13 +1,23 @@
 package ink.ptms.adyeshach.internal.trait.impl
 
+import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.internal.trait.Trait
 import org.bukkit.entity.Player
+import taboolib.common.platform.event.SubscribeEvent
 import taboolib.platform.util.sendLang
 
-object Sit : Trait() {
+object TraitSit : Trait() {
+
+    @SubscribeEvent
+    fun e(e: AdyeshachEntityRemoveEvent) {
+        val vehicle = e.entity.getVehicle() ?: return
+        if (vehicle.getCustomName() == "trait_sit_npc") {
+            vehicle.delete()
+        }
+    }
 
     override fun getName(): String {
         return "sit"

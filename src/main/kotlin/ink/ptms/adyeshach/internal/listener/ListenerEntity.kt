@@ -15,8 +15,8 @@ import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 
 /**
- * @Author sky
- * @Since 2020-08-15 15:53
+ * @author sky
+ * @since 2020-08-15 15:53
  */
 internal object ListenerEntity {
 

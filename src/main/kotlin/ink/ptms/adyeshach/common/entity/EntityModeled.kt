@@ -38,7 +38,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getVelocity(): Vector {
-        return entityInstance.getController(GeneralMove::class)?.target?.toVector()?.normalize() ?: Vector(0, 0, 0)
+        return entityInstance.getController(GeneralMove::class.java)?.target?.toVector()?.normalize() ?: Vector(0, 0, 0)
     }
 
     override fun isOnGround(): Boolean {
@@ -162,15 +162,15 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getWantedX(): Double {
-        return entityInstance.getController(GeneralMove::class)?.target?.x ?: 0.0
+        return entityInstance.getController(GeneralMove::class.java)?.target?.x ?: 0.0
     }
 
     override fun getWantedY(): Double {
-        return entityInstance.getController(GeneralMove::class)?.target?.y ?: 0.0
+        return entityInstance.getController(GeneralMove::class.java)?.target?.y ?: 0.0
     }
 
     override fun getWantedZ(): Double {
-        return entityInstance.getController(GeneralMove::class)?.target?.z ?: 0.0
+        return entityInstance.getController(GeneralMove::class.java)?.target?.z ?: 0.0
     }
 
     override fun saveModelList(models: MutableMap<String, ActiveModel>) {

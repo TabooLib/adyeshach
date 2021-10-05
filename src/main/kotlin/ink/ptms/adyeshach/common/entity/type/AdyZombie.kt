@@ -1,15 +1,14 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import taboolib.module.nms.MinecraftVersion
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
 
-    constructor(): this(EntityTypes.ZOMBIE)
+    constructor() : this(EntityTypes.ZOMBIE)
 
     init {
         /**
@@ -21,15 +20,15 @@ open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
          *
          * 1.9, 1.10 -> no zombie villager
          */
-        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
-        if (MinecraftVersion.majorLegacy >= 11700) {
-            registerMeta(at(11700 to 18), "isBecomingDrowned", false)
-        } else {
-            registerMeta(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
-            registerMeta(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
-        }
-        registerMeta(at(11400 to -1, 11200 to 14, 11000 to 15, 10900 to 14), "isHandsHeldUp", false)
-        registerMeta(at(11100 to -1, 11000 to 13, 10900 to 12), "zombieType", 0)
+//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
+//        if (MinecraftVersion.majorLegacy >= 11700) {
+//            registerMeta(at(11700 to 18), "isBecomingDrowned", false)
+//        } else {
+//            registerMeta(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
+//            registerMeta(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
+//        }
+//        registerMeta(at(11400 to -1, 11200 to 14, 11000 to 15, 10900 to 14), "isHandsHeldUp", false)
+//        registerMeta(at(11100 to -1, 11000 to 13, 10900 to 12), "zombieType", 0)
     }
 
     fun setBaby(value: Boolean) {
@@ -65,7 +64,7 @@ open class AdyZombie(entityTypes: EntityTypes) : AdyMob(entityTypes) {
     }
 
     fun setConverting(value: Boolean) {
-        return setMetadata("isConverting", value)
+        setMetadata("isConverting", value)
     }
 
     fun isConverting(): Boolean {

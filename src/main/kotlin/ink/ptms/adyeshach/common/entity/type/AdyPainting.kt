@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.editor.Editors
 import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Player
@@ -24,22 +24,22 @@ class AdyPainting : AdyEntity(EntityTypes.PAINTING) {
     private var direction: BukkitDirection = BukkitDirection.NORTH
 
     init {
-        registerEditor("painting")
-                .from(Editors.enums(BukkitPaintings::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_painting ${entity.uniqueId} ${meta.key} $e" })
-                .reset { _, _ ->
-                    setPainting(BukkitPaintings.KEBAB)
-                }
-                .display { _, _, _ ->
-                    getPainting().name
-                }.build()
-        registerEditor("direction")
-                .from(Editors.enums(BukkitDirection::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_direction ${entity.uniqueId} ${meta.key} $e" })
-                .reset { _, _ ->
-                    setDirection(BukkitDirection.NORTH)
-                }
-                .display { _, _, _ ->
-                    getDirection().name
-                }.build()
+//        registerEditor("painting")
+//                .from(Editors.enums(BukkitPaintings::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_painting ${entity.uniqueId} ${meta.key} $e" })
+//                .reset { _, _ ->
+//                    setPainting(BukkitPaintings.KEBAB)
+//                }
+//                .display { _, _, _ ->
+//                    getPainting().name
+//                }.build()
+//        registerEditor("direction")
+//                .from(Editors.enums(BukkitDirection::class) { _, entity, meta, _, e -> "/adyeshachapi edit painting_direction ${entity.uniqueId} ${meta.key} $e" })
+//                .reset { _, _ ->
+//                    setDirection(BukkitDirection.NORTH)
+//                }
+//                .display { _, _, _ ->
+//                    getDirection().name
+//                }.build()
     }
 
     override fun visible(viewer: Player, visible: Boolean) {

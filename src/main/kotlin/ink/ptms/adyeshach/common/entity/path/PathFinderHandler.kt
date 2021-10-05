@@ -9,8 +9,8 @@ import taboolib.module.navigation.*
 import taboolib.module.nms.MinecraftVersion
 
 /**
- * @Author sky
- * @Since 2020-08-13 16:31
+ * @author sky
+ * @since 2020-08-13 16:31
  */
 object PathFinderHandler {
 

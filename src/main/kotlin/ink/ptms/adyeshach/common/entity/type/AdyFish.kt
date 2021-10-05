@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 abstract class AdyFish(entityTypes: EntityTypes) : AdyMob(entityTypes) {
 
@@ -14,7 +14,7 @@ abstract class AdyFish(entityTypes: EntityTypes) : AdyMob(entityTypes) {
          * 1.14 -> 14
          * 1.13 -> 12
          */
-        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 12), "fromBucket", false)
+//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 12), "fromBucket", false)
     }
 
     fun setFromBucket(value: Boolean) {

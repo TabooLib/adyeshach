@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitBoat
-import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
@@ -16,17 +16,17 @@ class AdyBoat : AdyEntity(EntityTypes.BOAT) {
      * 1.9 ->  Index 5-10 和 1.12 对应
      */
     init {
-        registerMeta(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5), "sinceLastHit", 0)
-        registerMeta(at(11700 to 9, 11600 to 8, 11000 to 7, 10900 to 6), "forwardDirection", 1)
-        registerMeta(at(11700 to 10, 11600 to 9, 11000 to 8, 10900 to 7), "damageTaken", 0f)
-        registerMeta(at(11700 to 11, 11600 to 10, 11000 to 9, 10900 to 8), "type", BukkitBoat.OAK.ordinal)
-                .from(Editors.enums(BukkitBoat::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-                .display { _, entity, _ ->
-                    BukkitBoat.values()[entity.getMetadata("type")].name
-                }.build()
-        registerMeta(at(11700 to 12, 11600 to 11, 11000 to 11, 10900 to 10), "leftPaddleTurning", false)
-        registerMeta(at(11700 to 13, 11600 to 12, 11000 to 10, 10900 to 9), "rightPaddleTurning", false)
-        registerMeta(at(11700 to 14, 11600 to 13, 11300 to 12), "splashTimer", 0)
+//        registerMeta(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5), "sinceLastHit", 0)
+//        registerMeta(at(11700 to 9, 11600 to 8, 11000 to 7, 10900 to 6), "forwardDirection", 1)
+//        registerMeta(at(11700 to 10, 11600 to 9, 11000 to 8, 10900 to 7), "damageTaken", 0f)
+//        registerMeta(at(11700 to 11, 11600 to 10, 11000 to 9, 10900 to 8), "type", BukkitBoat.OAK.ordinal)
+//                .from(Editors.enums(BukkitBoat::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+//                .display { _, entity, _ ->
+//                    BukkitBoat.values()[entity.getMetadata("type")].name
+//                }.build()
+//        registerMeta(at(11700 to 12, 11600 to 11, 11000 to 11, 10900 to 10), "leftPaddleTurning", false)
+//        registerMeta(at(11700 to 13, 11600 to 12, 11000 to 10, 10900 to 9), "rightPaddleTurning", false)
+//        registerMeta(at(11700 to 14, 11600 to 13, 11300 to 12), "splashTimer", 0)
     }
 
     fun setTimeSinceLastHit(time: Int) {

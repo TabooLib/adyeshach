@@ -4,8 +4,8 @@ import org.bukkit.entity.*
 import taboolib.module.nms.MinecraftVersion
 
 /**
- * @Author sky
- * @Since 2020-08-13 16:54
+ * @author sky
+ * @since 2020-08-13 16:54
  */
 enum class PathType(val height: Double, val width: Double) {
 

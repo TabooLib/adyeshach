@@ -27,9 +27,9 @@ class AdyEnderman : AdyMob(EntityTypes.ENDERMAN) {
         11 ->Carried block
         12 ->Is screaming
          */
-        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "carriedBlock", MaterialData(Material.AIR))
-        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isScreaming", false)
-        registerMeta(at(11700 to 18, 11500 to 17), "isStaring", false)
+//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "carriedBlock", MaterialData(Material.AIR))
+//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isScreaming", false)
+//        registerMeta(at(11700 to 18, 11500 to 17), "isStaring", false)
     }
 
     fun setCarriedBlock(materialData: MaterialData) {

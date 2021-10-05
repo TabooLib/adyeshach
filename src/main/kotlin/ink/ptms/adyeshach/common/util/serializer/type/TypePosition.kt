@@ -7,8 +7,8 @@ import taboolib.common.util.Vector
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = Vector::class)
 class TypePosition : JsonSerializer<Vector>, JsonDeserializer<Vector> {

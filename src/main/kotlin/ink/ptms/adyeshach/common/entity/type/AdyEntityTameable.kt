@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.common.entity.type
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 abstract class AdyEntityTameable(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes) {
 
@@ -15,9 +15,9 @@ abstract class AdyEntityTameable(entityTypes: EntityTypes) : AdyEntityAgeable(en
          * 1.14 -> 15
          * 1.15 -> 16
          */
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isSitting", 0x01)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isAngry", 0x02)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isTamed", 0x04)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isSitting", 0x01)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isAngry", 0x02)
+//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isTamed", 0x04)
     }
 
     fun setSitting(value: Boolean) {

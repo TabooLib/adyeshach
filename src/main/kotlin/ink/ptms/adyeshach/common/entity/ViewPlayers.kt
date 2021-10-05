@@ -6,8 +6,8 @@ import org.bukkit.entity.Player
 import taboolib.common5.Baffle
 
 /**
- * @Author sky
- * @Since 2020-08-14 21:57
+ * @author sky
+ * @since 2020-08-14 21:57
  */
 class ViewPlayers {
 
@@ -21,7 +21,10 @@ class ViewPlayers {
      */
     val visible = ConcurrentSet<String>()
 
-    val visibleLock = Baffle.of(20)
+    /**
+     * 用于控制单位显示距离的阻断器
+     */
+    val visibleRefreshLocker = Baffle.of(20)
 
     /**
      * 获取允许看到且在可视范围内的所有玩家

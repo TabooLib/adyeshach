@@ -4,8 +4,8 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
 /**
- * @Author sky
- * @Since 2020-08-04 15:30
+ * @author sky
+ * @since 2020-08-04 15:30
  */
 interface EntityEquipable {
 

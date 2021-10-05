@@ -2,11 +2,10 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
-import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.DyeColor
 import taboolib.common.util.Vector
-import java.util.*
 
 /**
  * @author sky
@@ -40,18 +39,18 @@ class AdyShulker : AdyMob(EntityTypes.SHULKER) {
         12 ->Attachment position
         13 ->Shield height
          */
-        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "attachFace", BukkitDirection.DOWN.ordinal)
-                .from(Editors.enums(BukkitDirection::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-                .display { _, entity, _ ->
-                    BukkitDirection.values()[entity.getMetadata("attachFace")].name
-                }.build()
-        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", VectorNull())
-        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "shieldHeight", 0.toByte())
-        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11100 to 15), "color", DyeColor.PURPLE.ordinal)
-                .from(Editors.enums(DyeColor::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-                .display { _, entity, _ ->
-                    DyeColor.values()[entity.getMetadata("color")].name
-                }.build()
+//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "attachFace", BukkitDirection.DOWN.ordinal)
+//                .from(Editors.enums(BukkitDirection::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+//                .display { _, entity, _ ->
+//                    BukkitDirection.values()[entity.getMetadata("attachFace")].name
+//                }.build()
+//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", VectorNull())
+//        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "shieldHeight", 0.toByte())
+//        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11100 to 15), "color", DyeColor.PURPLE.ordinal)
+//                .from(Editors.enums(DyeColor::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
+//                .display { _, entity, _ ->
+//                    DyeColor.values()[entity.getMetadata("color")].name
+//                }.build()
     }
 
     fun setAttachFace(value: BukkitDirection) {

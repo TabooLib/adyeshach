@@ -6,8 +6,8 @@ import org.bukkit.Location
 import org.bukkit.World
 
 /**
- * @Author sky
- * @Since 2020-08-04 13:09
+ * @author sky
+ * @since 2020-08-04 13:09
  */
 class EntityPosition(
         @Expose
