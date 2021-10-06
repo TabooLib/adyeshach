@@ -232,8 +232,8 @@ object EditorHandler {
                 entity.setMetadata(it.meta.key, !entity.getMetadata<Boolean>(it.meta.key))
                 entity.openEditor(player)
             }
-            it.display { _, entity ->
-                entity.getMetadata<Boolean>(it.meta.key).toDisplay()
+            it.display { player, entity ->
+                entity.getMetadata<Boolean>(it.meta.key).toDisplay(player)
             }
         }
         // 物品

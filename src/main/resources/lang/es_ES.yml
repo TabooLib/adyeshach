@@ -108,6 +108,19 @@ editor-sign-input: 'please enter content'
 editor-item-input: '放入物品'
 editor-text-input-name: '&f打开并输入内容'
 editor-text-input-lore: '&7单位编辑器'
+editor-picker-tick:
+  - type: TITLE
+    title: '&3&l移动实体'
+    subtitle: '&7距离: &8{0}'
+    fadein: 0
+    stay: 20
+    fadeout: 0
+  - type: ACTIONBAR
+    text: '&7按下 &fF &7放下实体 &8| &7按下 &fSHIFT + F &7重置距离'
+editor-picker-settle: '&c[Adyeshach] &7实体已放置。'
+editor-picker-ground: '&7当前单位与 &f地面 &7的距离为 &f{0}&7.'
+editor-meta-true: '&a是'
+editor-meta-false: '&c否'
 editor-meta-is-dancing: 'Is Dancing'
 editor-meta-is-faceplanted: 'Is Faceplanted'
 editor-meta-skin-jacket: 'Skin Jacket'

@@ -11,6 +11,11 @@ import taboolib.module.nms.inputSign
 import taboolib.platform.util.asLangText
 
 internal val minecraftVersion = MinecraftVersion.majorLegacy
+internal val cacheEnums = HashMap<String, Array<out Any>>()
+
+internal fun Class<*>.enums(): Array<out Any> {
+    return cacheEnums.computeIfAbsent(name) { enumConstants }
+}
 
 internal fun <T> at(vararg index: Pair<Int, T>): T {
     return (index.firstOrNull { minecraftVersion >= it.first }?.second ?: -1) as T
@@ -24,8 +29,8 @@ internal fun String.minimize(): String {
     return if (length > 16) substring(0, length - (length - 10)) + "..." + substring(length - 7) else this
 }
 
-internal fun Boolean?.toDisplay(): String {
-    return if (this == true) "§aTrue" else "§cFalse"
+internal fun Boolean?.toDisplay(player: Player): String {
+    return if (this == true) player.asLangText("editor-meta-true") else player.asLangText("editor-meta-false")
 }
 
 internal fun String?.toDisplay(): String {

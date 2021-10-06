@@ -25,13 +25,6 @@ import kotlin.reflect.KClass
 
 object Editors {
 
-    private val cacheEnums = HashMap<String, Array<out Any>>()
-    private val cacheEquipment = HashMap<EquipmentSlot, MetaEditor>()
-
-    fun getEnums(enum: KClass<*>): Array<out Any> {
-        return cacheEnums.computeIfAbsent(enum.java.name) { enum.java.enumConstants }
-    }
-
 //    val COLOR = EntityMetaable.MetaEditor()
 //        .modify { player, entity, meta ->
 //            player.inputSign(arrayOf(meta.editor!!.onDisplay!!.invoke(player, entity, meta), "", "请在第一行输入内容")) {

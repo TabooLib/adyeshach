@@ -88,7 +88,7 @@ command-script-list-all:
   - '&c[Adyeshach] &7运行脚本: &f{1}'
 command-script-reload-all:
   - '&c[Adyeshach] &7重载完成.'
-editor-armorstand-tool: '§c[Adyeshach] §7使用角度工具来 (红石火把) 来编辑盔甲架单位'
+editor-armorstand-tool: '&c[Adyeshach] &7使用角度工具来 (红石火把) 来编辑盔甲架单位'
 editor-armorstand-tool-name: '当前: {0}'
 editor-armorstand-tool-lore: '盔甲架角度调整工具'
 editor-temporary: '&7(临时)'
@@ -104,6 +104,19 @@ editor-sign-input: '请在第一行输入内容'
 editor-item-input: '放入物品'
 editor-text-input-name: '&f打开并输入内容'
 editor-text-input-lore: '&7单位编辑器'
+editor-picker-tick:
+  - type: TITLE
+    title: '&3&l移动实体'
+    subtitle: '&7距离: &8{0}'
+    fadein: 0
+    stay: 20
+    fadeout: 0
+  - type: ACTIONBAR
+    text: '&7按下 &fF &7放下实体 &8| &7按下 &fSHIFT + F &7重置距离'
+editor-picker-settle: '&c[Adyeshach] &7实体已放置。'
+editor-picker-ground: '&7当前单位与 &f地面 &7的距离为 &f{0}&7.'
+editor-meta-true: '&a是'
+editor-meta-false: '&c否'
 editor-meta-is-dancing: '跳舞'
 editor-meta-is-faceplanted: '脸部埋入地下'
 editor-meta-skin-jacket: '皮肤上衣'

@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.common.entity.editor
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.RayTrace
-import ink.ptms.adyeshach.common.util.info
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -12,12 +11,14 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
-import taboolib.common.platform.*
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Baffle
 import taboolib.common5.Coerce
+import taboolib.platform.util.asLangText
+import taboolib.platform.util.sendLang
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -57,9 +58,7 @@ object EditorPicker {
         } else if (select.distance >= amount) {
             select.distance -= amount
         }
-        val adaptPlayer = adaptPlayer(e.player)
-        adaptPlayer.sendTitle("§3§lMove Entity", "§7Adjust Distance: §8${Coerce.format(select.distance)}", 0, 20, 0)
-        adaptPlayer.sendActionBar("§7Press §fF §7to settled entity's position §8| §7Press §fSHIFT + F §7to reset")
+        e.player.sendLang("editor-picker-tick", Coerce.format(select.distance))
         process(e.player, entity)
     }
 
@@ -73,7 +72,7 @@ object EditorPicker {
         } else {
             entity.let {
                 select(e.player, null)
-                e.player.info("Entity settled.")
+                e.player.sendLang("editor-picker-settle")
             }
         }
     }
@@ -89,7 +88,7 @@ object EditorPicker {
                 val distance = entity.position.y - maxY
                 if (distance < 0.5 && cooldown.hasNext(player.name)) {
                     player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.1f, 2f)
-                    adaptPlayer(player).sendActionBar("§7The distance between the §fNPC §7and the §fGround §7is §f${Coerce.format(distance)}§7.")
+                    adaptPlayer(player).sendActionBar(player.asLangText("editor-picker-ground", Coerce.format(distance)))
                 }
             }
         }
@@ -109,9 +108,7 @@ object EditorPicker {
             it.entity = entityInstance
             it.distance = 1.0
             if (entityInstance != null) {
-                val adaptPlayer = adaptPlayer(player)
-                adaptPlayer.sendTitle("§3§lMove Entity", "§7Adjust Distance: §8${Coerce.format(it.distance)}", 0, 20, 0)
-                adaptPlayer.sendActionBar("§7Press §fF §7to settled entity's position §8| §7Press §fSHIFT + F §7to reset")
+                player.sendLang("editor-picker-tick", Coerce.format(it.distance))
             }
         }
     }
