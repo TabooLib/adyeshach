@@ -12,8 +12,8 @@ import taboolib.platform.type.BukkitProxyEvent
 class AdyeshachMaskedMetaGenerateEvent(
     val entity: EntityInstance,
     val player: Player,
-    val meta: MetaMasked,
-    val byteMask: MutableMap<MetaMasked, Boolean>,
+    val meta: MetaMasked<*>,
+    val byteMask: MutableMap<MetaMasked<*>, Boolean>,
 ) : BukkitProxyEvent() {
 
     override val allowCancelled: Boolean

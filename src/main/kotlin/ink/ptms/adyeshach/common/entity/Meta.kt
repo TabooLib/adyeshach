@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.common.bukkit.data.DataWatcher
 import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import org.bukkit.entity.Player
 
-abstract class Meta(val index: Int, val key: String, val def: Any, var editor: MetaEditor<*>? = null) {
+abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val def: Any, var editor: MetaEditor<T>? = null) {
 
     lateinit var dataWatcher: DataWatcher
         protected set

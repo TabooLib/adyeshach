@@ -14,6 +14,10 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
 
     constructor() : this(EntityTypes.VILLAGER)
 
+    init {
+        testing = true
+    }
+
     override fun setVillagerData(villagerData: VillagerData) {
         setMetadata("villagerData", villagerData)
     }

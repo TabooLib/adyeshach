@@ -12,7 +12,7 @@ import taboolib.platform.type.BukkitProxyEvent
  */
 class AdyeshachMetaUpdateEvent(
     val entity: EntityMetaable,
-    val meta: Meta,
+    val meta: Meta<*>,
     val key: String,
     var value: Any,
 ) : BukkitProxyEvent()

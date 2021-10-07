@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitCreeperState
-import ink.ptms.adyeshach.common.entity.editor.Editors
+
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**

@@ -32,6 +32,8 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
         protected set
         get() = field.clone()
 
+    var testing = false
+
     val x: Double
         get() = position.x
 

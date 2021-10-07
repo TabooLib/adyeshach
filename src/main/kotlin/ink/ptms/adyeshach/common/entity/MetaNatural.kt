@@ -15,7 +15,7 @@ import org.bukkit.util.Vector
 /**
  * @param index -1 = 不可用，-2 = 伪造
  */
-open class MetaNatural<T>(index: Int, key: String, def: T) : Meta(index, key, def!!) {
+open class MetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T) : Meta<E>(index, key, def!!) {
 
     init {
         dataWatcher = when (def) {
@@ -36,12 +36,13 @@ open class MetaNatural<T>(index: Int, key: String, def: T) : Meta(index, key, de
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun generateMetadata(player: Player, entityInstance: EntityInstance): Any? {
         if (index == -1) {
             return null
         }
         val obj = entityInstance.metadata[key] ?: return null
-        val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this, obj)
+        val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this as MetaNatural<*, EntityInstance>, obj)
         event.call()
         return dataWatcher.createMetadata(index, event.value)
     }

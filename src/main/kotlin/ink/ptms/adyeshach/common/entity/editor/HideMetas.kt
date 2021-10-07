@@ -20,7 +20,7 @@ enum class HideMetas(val clazz: KClass<*>, val key: String) {
 
     companion object {
 
-        fun isHideMeta(entity: EntityMetaable, meta: Meta): Boolean {
+        fun isHideMeta(entity: EntityMetaable, meta: Meta<*>): Boolean {
             return values().any { it.clazz.isInstance(entity) && it.key == meta.key }
         }
     }

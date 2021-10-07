@@ -11,6 +11,10 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
  */
 class AdyZombieVillager : AdyZombie(EntityTypes.ZOMBIE_VILLAGER), EntityVillager {
 
+    init {
+        testing = true
+    }
+
     override fun setVillagerData(villagerData: VillagerData) {
         setMetadata("villagerData", villagerData)
     }

@@ -38,10 +38,6 @@ object AdyeshachSettings {
     var pathfinderSync = true
         private set
 
-    @ConfigNode("Settings.editor-meta-per-line")
-    var editorMetaPerLine = 3
-        private set
-
     @ConfigNode("Settings.delete-file-in-unknown-world")
     var deleteFileInUnknownWorld = emptyList<String>()
 

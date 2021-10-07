@@ -48,7 +48,7 @@ object AdyeshachAPI {
     internal val managerPublic = ManagerPublic()
     internal val managerPublicTemporary = ManagerPublicTemp()
 
-    internal val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta>>()
+    internal val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
     internal val registeredControllerGenerator = ConcurrentHashMap<String, ControllerGenerator>()
 
     internal val database by lazy {
@@ -156,10 +156,10 @@ object AdyeshachAPI {
      * 注册元数据模型（布尔值）
      */
     fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean = false) {
-        val meta = MetaMasked(index, key, mask, def)
+        val meta = MetaMasked<EntityInstance>(index, key, mask, def)
         val ge = EditorHandler.editorGenerator[Boolean::class.java]
         if (ge != null) {
-            meta.editor = MetaEditor<EntityInstance>(meta).also { ge.accept(it) }
+            meta.editor = MetaEditor(meta).also { ge.accept(it) }
         }
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
     }
@@ -168,10 +168,10 @@ object AdyeshachAPI {
      * 注册元数据模型（专业类型）
      */
     fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any, editor: Consumer<MetaEditor<*>>? = null) {
-        val meta = MetaNatural(index, key, def)
+        val meta = MetaNatural<Any, EntityInstance>(index, key, def)
         val ge = editor ?: EditorHandler.editorGenerator[type]
         if (ge != null) {
-            meta.editor = MetaEditor<EntityInstance>(meta).also { ge.accept(it) }
+            meta.editor = MetaEditor(meta).also { ge.accept(it) }
         }
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
     }

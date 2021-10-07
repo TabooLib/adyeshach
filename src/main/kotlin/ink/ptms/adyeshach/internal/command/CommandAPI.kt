@@ -7,8 +7,10 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
+import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
+import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
@@ -26,12 +28,14 @@ import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.Coerce
 import taboolib.common5.Mirror
 import taboolib.platform.util.sendLang
 import java.io.File
 
+@Suppress("UNCHECKED_CAST")
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.admin")
 internal object CommandAPI {
 
@@ -137,12 +141,12 @@ internal object CommandAPI {
                                 "meta" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     val editor = meta.editor ?: return@execute
-                                    editor.modifyMethod?.invoke(sender, entity)
+                                    (editor as MetaEditor<EntityInstance>).modifyMethod?.invoke(sender, entity)
                                 }
                                 "reset" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     if (meta.editor?.resetMethod != null) {
-                                        meta.editor!!.resetMethod!!.invoke(sender, entity)
+                                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(sender, entity)
                                     } else {
                                         entity.setMetadata(meta.key, meta.def)
                                     }

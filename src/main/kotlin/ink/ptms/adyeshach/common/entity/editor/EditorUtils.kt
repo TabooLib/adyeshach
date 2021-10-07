@@ -46,7 +46,7 @@ internal fun <T> at(vararg index: Pair<Int, T>): T {
 /**
  * 遍历所有允许修改的元数据
  */
-internal fun EntityInstance.forEachMeta(func: (Meta, Boolean) -> Unit) {
+internal fun EntityInstance.forEachMeta(func: (Meta<*>, Boolean) -> Unit) {
     getEditableEntityMeta().forEach { func.invoke(it, HideMetas.isHideMeta(this, it)) }
 }
 
@@ -96,7 +96,7 @@ internal fun Player.edit(entity: EntityInstance, value: Any, function: (value: S
 
 internal fun MetaEditor<*>.useColorEditor() {
     modify { player, entity ->
-        player.edit(entity, meta.editor!!.displayGenerator!!(player, entity)) {
+        player.edit(entity, (meta.editor as MetaEditor<EntityInstance>).displayGenerator!!(player, entity)) {
             val args = it.split("-").map { a -> Coerce.toInteger(a) }
             entity.setMetadata(meta.key, Color.fromRGB(args.getOrElse(0) { 0 }, args.getOrElse(1) { 0 }, args.getOrElse(2) { 0 }).asRGB())
         }
@@ -111,15 +111,17 @@ internal fun MetaEditor<*>.useColorEditor() {
     }
 }
 
-internal fun MetaEditor<*>.useEnumsEditor(
+internal fun <T : EntityInstance> MetaEditor<T>.useIndexEditor(type: Class<*>, key: String) {
+    useEnumsEditor(type = type, key = "int", useIndex = true) { type.enums()[getMetadata(key)] }
+}
+
+internal fun <T : EntityInstance> MetaEditor<T>.useEnumsEditor(
     type: Class<*>? = null,
     key: String = meta.key,
     useIndex: Boolean = false,
-    display: EntityInstance.() -> Any = { getMetadata(key) },
+    display: T.() -> Any = { getMetadata(key) },
 ) {
-    display { _, entity ->
-        display(entity)
-    }
+    enumType = type
     modify { player, entity ->
         val enums = (type ?: meta.def.javaClass).enums()
         player.openMenu<Linked<Any>>("${(type ?: meta.def.javaClass).simpleName} [Pg. %p]") {
@@ -153,18 +155,19 @@ internal fun MetaEditor<*>.useEnumsEditor(
             }
         }
     }
+    display { _, entity -> display(entity) }
 }
 
-internal fun MetaEditor<*>.useEquipmentEditor(equipmentSlot: EquipmentSlot) {
+internal fun MetaEditor<AdyEntityLiving>.useEquipmentEditor(equipmentSlot: EquipmentSlot) {
     reset { _, entity ->
-        (entity as AdyEntityLiving).setEquipment(equipmentSlot, ItemStack(Material.AIR))
+        entity.setEquipment(equipmentSlot, ItemStack(Material.AIR))
     }
     modify { player, entity ->
         player.openMenu<Basic>(player.asLangText("editor-item-input")) {
             rows(1)
             map("####@####")
             set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
-            set('@', (entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
+            set('@', entity.getEquipment(equipmentSlot) ?: ItemStack(Material.AIR))
             onClick('#')
             onClose {
                 entity.setEquipment(equipmentSlot, it.inventory.getItem(4) ?: ItemStack(Material.AIR))
@@ -174,7 +177,7 @@ internal fun MetaEditor<*>.useEquipmentEditor(equipmentSlot: EquipmentSlot) {
     }
     display { player, entity ->
         try {
-            ((entity as AdyEntityLiving).getEquipment(equipmentSlot) ?: ItemStack(Material.AIR)).getI18nName(player)
+            (entity.getEquipment(equipmentSlot) ?: ItemStack(Material.AIR)).getI18nName(player)
         } catch (ignored: Exception) {
             "-"
         }

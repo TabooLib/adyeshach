@@ -4,7 +4,7 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.Meta
 import org.bukkit.entity.Player
 
-class MetaEditor<T : EntityInstance>(val meta: Meta) {
+class MetaEditor<T : EntityInstance>(val meta: Meta<T>) {
 
     /**
      * 是否可编辑

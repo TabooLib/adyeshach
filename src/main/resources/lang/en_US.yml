@@ -115,6 +115,7 @@ editor-picker-tick:
     text: '&7按下 &fF &7放下实体 &8| &7按下 &fSHIFT + F &7重置距离'
 editor-picker-settle: '&c[Adyeshach] &7实体已放置。'
 editor-picker-ground: '&7当前单位与 &f地面 &7的距离为 &f{0}&7.'
+editor-testing: '&c这个单位类型的部分功能在 Adyeshach {0} 版本下可能存在异常!'
 editor-meta-true: '&a是'
 editor-meta-false: '&c否'
 editor-meta-is-dancing: 'Is Dancing'

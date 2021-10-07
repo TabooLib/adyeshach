@@ -24,38 +24,6 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
     var data = 0.toByte()
         private set
 
-    init {
-//        naturalEditor("block")
-//            .reset { _, _ ->
-//                material = Material.STONE
-//                data = 0.toByte()
-//            }
-//            .modify { player, entity, _ ->
-//                player.openMenu<Basic>("Adyeshach Editor : Input") {
-//                    rows(1)
-//                    map("####@####")
-//                    set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
-//                        name = "§f"
-//                    }
-//                    set('@', ItemStack(material, 1, data.toShort()))
-//                    onClick('#')
-//                    onClose {
-//                        val item = it.inventory.getItem(4)
-//                        if (item.isNotAir()) {
-//                            material = item!!.type
-//                            data = item.durability.toByte()
-//                        }
-//                        destroy()
-//                        spawn(getLocation())
-//                        entity.openEditor(player)
-//                    }
-//                }
-//            }
-//            .display { player, _, _ ->
-//                ItemStack(material, 1, data.toShort()).getName(player)
-//            }
-    }
-
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {
             spawn(viewer) {

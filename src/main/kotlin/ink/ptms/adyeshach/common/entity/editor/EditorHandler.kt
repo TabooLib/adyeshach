@@ -24,6 +24,7 @@ import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.pluginVersion
 import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
@@ -35,6 +36,7 @@ import taboolib.platform.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
 
+@Suppress("UNCHECKED_CAST")
 object EditorHandler {
 
     /**
@@ -94,7 +96,7 @@ object EditorHandler {
                     } else {
                         page.append("  §n${meta.key.toLocale(player)}").newLine()
                         try {
-                            val display = editor.displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
+                            val display = (editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
                             page.append("   §c✘")
                                 .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                                 .hoverText(player.asLangText("editor-click-to-reset"))
@@ -137,11 +139,18 @@ object EditorHandler {
         }
         val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
         val json = TellrawJson()
-            .newLine()
-            .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
-            .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
-            .newLine()
-            .append("      ${player.asLangText("editor-type")} §7${manager}").newLine()
+        if (entity.testing) {
+            json.newLine()
+                .append("      §c§l§n${entity.entityType.bukkitType}⚠").hoverText(player.asLangText("editor-testing", pluginVersion)).newLine()
+                .append("      §c${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
+                .newLine()
+        } else {
+            json.newLine()
+                .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
+                .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
+                .newLine()
+        }
+        json.append("      ${player.asLangText("editor-type")} §7${manager}").newLine()
             .append("      ${player.asLangText("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
             .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine()
             .append("      ${player.asLangText("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
@@ -159,12 +168,18 @@ object EditorHandler {
         entity.forEachMeta { meta, hide ->
             val editor = meta.editor
             if (editor != null && editor.editable) {
+                if (i + meta.key.toLocale(player).length > if (isChineseSender) 15 else 36) {
+                    i = 0
+                    json.newLine().append("      ")
+                } else {
+                    i += meta.key.toLocale(player).length
+                }
                 if (hide) {
                     json.append("§8[§8§m${meta.key.toLocale(player)}§8] ")
                 } else {
                     json.append("§8[")
                     try {
-                        val display = editor.displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
+                        val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
                         json.append("§7${meta.key.toLocale(player)}")
                             .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
                             .hoverText("§7$display")
@@ -179,19 +194,6 @@ object EditorHandler {
                         json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
                     }
                     json.append("§8] ")
-                }
-                // 中文语言发送者
-                if (isChineseSender) {
-                    i += meta.key.toLocale(player).length
-                    if (i >= 15) {
-                        i = 0
-                        json.newLine().append("      ")
-                    }
-                } else {
-                    if (++i == AdyeshachSettings.editorMetaPerLine) {
-                        i = 0
-                        json.newLine().append("      ")
-                    }
                 }
             }
         }

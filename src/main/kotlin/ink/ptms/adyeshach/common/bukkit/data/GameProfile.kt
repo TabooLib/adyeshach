@@ -10,7 +10,7 @@ import org.bukkit.GameMode
 class GameProfile {
 
     @Expose
-    var name = "AdyHuman"
+    var name = "Adyeshach"
 
     /**
      * A ping that negative (i.e. not known to the server yet) will result in the no connection icon.

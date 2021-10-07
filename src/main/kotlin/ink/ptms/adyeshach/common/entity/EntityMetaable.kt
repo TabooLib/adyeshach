@@ -66,14 +66,14 @@ abstract class EntityMetaable {
     /**
      * 获取实体所有可编辑的元数据模型
      */
-    open fun getEditableEntityMeta(): List<Meta> {
+    open fun getEditableEntityMeta(): List<Meta<*>> {
         return getAvailableEntityMeta().filter { it.index != -1 }.toList()
     }
 
     /**
      * 获取实体所有元数据模型
      */
-    open fun getAvailableEntityMeta(): List<Meta> {
+    open fun getAvailableEntityMeta(): List<Meta<*>> {
         return metaCache.computeIfAbsent(javaClass) {
             AdyeshachAPI.registeredEntityMeta.filterKeys { it.isAssignableFrom(javaClass) }.values.flatten()
         }
@@ -120,6 +120,6 @@ abstract class EntityMetaable {
     companion object {
 
         val minecraftVersion = MinecraftVersion.majorLegacy
-        val metaCache = HashMap<Class<*>, List<Meta>>()
+        val metaCache = HashMap<Class<*>, List<Meta<*>>>()
     }
 }
