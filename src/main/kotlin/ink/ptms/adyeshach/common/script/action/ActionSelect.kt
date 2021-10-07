@@ -33,7 +33,7 @@ class ActionSelect(val value: ParsedAction<*>, val byId: Boolean): ScriptAction<
             if (it.hasNext()) {
                 it.mark()
                 if (it.nextToken() == "by" && it.hasNext()) {
-                    byId = when (val type = it.nextToken().lowercase(Locale.getDefault())) {
+                    byId = when (val type = it.nextToken().lowercase()) {
                         "id" -> true
                         "uniqueid", "uuid" -> false
                         else -> throw loadError("Unknown select type $type")

@@ -17,7 +17,7 @@ class AdyPrimedTNT : AdyEntity(EntityTypes.PRIMED_TNT) {
         1.9
         5
          */
-//        registerMeta(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "fuseTime", 80)
+//        natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "fuseTime", 80)
     }
 
     fun setFuseTime(fuseTime: Int) {

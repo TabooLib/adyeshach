@@ -24,7 +24,7 @@ class AdyFireworkRocket : AdyEntity(EntityTypes.FIREWORK_ROCKET) {
         1.9
         5 ->Firework info
          */
-//        registerMeta(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
+//        natural(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
     }
 
     fun getFireworkInfo(): ItemStack {

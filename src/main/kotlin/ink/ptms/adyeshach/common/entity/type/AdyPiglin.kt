@@ -10,10 +10,10 @@ class AdyPiglin : AdyEntityLiving(EntityTypes.PIGLIN) {
 
     init {
 //        val index = at(11700 to 16, 11600 to 15)
-//        registerMeta(index + 0, "isImmuneToZombification", false)
-//        registerMeta(index + 1, "isBaby", false)
-//        registerMeta(index + 2, "isChargingCrossbow", false)
-//        registerMeta(index + 3, "isDancing", false)
+//        natural(index + 0, "isImmuneToZombification", false)
+//        natural(index + 1, "isBaby", false)
+//        natural(index + 2, "isChargingCrossbow", false)
+//        natural(index + 3, "isDancing", false)
     }
 
     fun setImmuneToZombification(isImmuneToZombification: Boolean) {

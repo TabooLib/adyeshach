@@ -17,7 +17,7 @@ class AdyMinecartFurnace : AdyMinecart(EntityTypes.MINECART_FURNACE) {
         1.9
         11 ->Has fuel
          */
-//        registerMeta(at(11700 to 14, 11400 to 13, 11000 to 12, 10900 to 11), "hasFuel", false)
+//        natural(at(11700 to 14, 11400 to 13, 11000 to 12, 10900 to 11), "hasFuel", false)
     }
 
     fun isHasFuel(): Boolean {

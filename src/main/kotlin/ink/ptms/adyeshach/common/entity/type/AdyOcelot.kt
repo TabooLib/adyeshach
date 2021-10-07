@@ -24,14 +24,14 @@ class AdyOcelot : AdyEntityAgeable(EntityTypes.OCELOT) {
         1.9
         14 ->Type
          */
-//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isSitting", 0x01)
-//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isAngry", 0x02)
-//        registerMetaByteMask(at(11400 to -1, 11000 to 13, 10900 to 12), "isTamed", 0x04)
+//        mask(at(11400 to -1, 11000 to 13, 10900 to 12), "isSitting", 0x01)
+//        mask(at(11400 to -1, 11000 to 13, 10900 to 12), "isAngry", 0x02)
+//        mask(at(11400 to -1, 11000 to 13, 10900 to 12), "isTamed", 0x04)
 //
 //        if (minecraftVersion >= 11400) {
-//            registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "isTrusting", false)
+//            natural(at(11700 to 17, 11500 to 16, 11400 to 15), "isTrusting", false)
 //        } else {
-//            registerMeta(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
+//            natural(at(11000 to 15, 10900 to 14), "type", BukkitOcelotType.UNTAMED.ordinal)
 //                    .from(Editors.enums(BukkitOcelotType::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
 //                    .display { _, entity, _ ->
 //                        BukkitOcelotType.values()[entity.getMetadata("type")].name

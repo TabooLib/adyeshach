@@ -19,40 +19,6 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
     @Expose
     private var customBlockData: Byte = 0
 
-    init {
-//        registerMeta(at(11700 to 11, 11400 to 10, 11000 to 9, 10900 to 8), "customBlock", 0)
-//                .canEdit(false)
-//                .build()
-//        registerMeta(at(11700 to 12, 11400 to 11, 11000 to 10, 10900 to 9), "customBlockPosition", 6)
-//        registerMeta(at(11700 to 13, 11400 to 12, 11000 to 11, 10900 to 10), "showCustomBlock", false)
-//        registerEditor("block")
-//                .reset { _, _ ->
-//                    setCustomBlock(MaterialData(Material.AIR, 0))
-//                }
-//                .modify { player, entity, _ ->
-//                    player.openMenu<Basic>("Adyeshach Editor : Input") {
-//                        rows(1)
-//                        map("####@####")
-//                        set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
-//                            name = "§f"
-//                        }
-//                        set('@', getCustomBlock().toItemStack(1))
-//                        onClick('#')
-//                        onClose {
-//                            try {
-//                                setCustomBlock((it.inventory.getItem(4) ?: ItemStack(Material.AIR)).data!!)
-//                            } catch (t: Throwable) {
-//                                t.printStackTrace()
-//                            }
-//                            entity.openEditor(player)
-//                        }
-//                    }
-//                }
-//                .display { player, _, _ ->
-//                    getCustomBlock().toItemStack(1).getName(player)
-//                }
-    }
-
     fun setCustomBlock(materialData: MaterialData) {
         customBlock = materialData.itemType
         customBlockData = materialData.data

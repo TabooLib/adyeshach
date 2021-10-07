@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.editor.Editors
 import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -23,10 +22,10 @@ import java.util.concurrent.ConcurrentHashMap
 open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), EntityEquipable {
 
     @Expose
-    protected val equipment = HashMap<EquipmentSlot, ItemStack>()
+    internal val equipment = HashMap<EquipmentSlot, ItemStack>()
 
     @Expose
-    protected var isDie = false
+    internal var isDie = false
 
     var isHandActive: Boolean
         get() = getMetadata("isHandActive")
@@ -57,47 +56,6 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
         set(value) {
             setMetadata("beeStingersInEntity", value)
         }
-
-    init {
-//        registerMetaByteMask(at(11700 to 8), "isHandActive", 0x01)
-//        registerMetaByteMask(at(11700 to 8), "activeHand", 0x02)
-//        registerMetaByteMask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
-//        registerMeta(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
-//        registerMeta(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0)
-//            .from(Editors.COLOR)
-//            .build()
-//        registerEditor("equipmentHelmet")
-//            .from(Editors.equip(EquipmentSlot.HEAD))
-//            .build()
-//        registerEditor("equipmentChestplate")
-//            .from(Editors.equip(EquipmentSlot.CHEST))
-//            .build()
-//        registerEditor("equipmentLeggings")
-//            .from(Editors.equip(EquipmentSlot.LEGS))
-//            .build()
-//        registerEditor("equipmentBoots")
-//            .from(Editors.equip(EquipmentSlot.FEET))
-//            .build()
-//        registerEditor("equipmentHand")
-//            .from(Editors.equip(EquipmentSlot.HAND))
-//            .build()
-//        registerEditor("equipmentOffhand")
-//            .from(Editors.equip(EquipmentSlot.OFF_HAND))
-//            .build()
-//        registerEditor("isDie")
-//            .reset { _, _ ->
-//                die(die = false)
-//            }
-//            .modify { player, entity, _ ->
-//                die(die = !isDie)
-//                entity.openEditor(player)
-//            }
-//            .display { _, _, _ ->
-//                isDie.toDisplay()
-//            }
-//        registerMeta(at(11700 to 12, 11600 to 11), "arrowsInEntity", 0)
-//        registerMeta(at(11700 to 13, 11600 to 12), "beeStingersInEntity", 0)
-    }
 
     override fun visible(viewer: Player, visible: Boolean) {
         if (visible) {

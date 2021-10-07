@@ -17,13 +17,13 @@ class AdyCreeper : AdyMob(EntityTypes.CREEPER) {
          * 1.10 -> 12,13,14
          * 1.9 -> 11,12,13
          */
-//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "state", BukkitCreeperState.IDLE.ordinal)
+//        natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "state", BukkitCreeperState.IDLE.ordinal)
 //                .from(Editors.enums(BukkitCreeperState::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
 //                .display { _, entity, _ ->
 //                    BukkitCreeperState.values()[entity.getMetadata("state")].name
 //                }.build()
-//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isCharged", false)
-//        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
+//        natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isCharged", false)
+//        natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
     }
 
     fun setState(value: BukkitCreeperState) {

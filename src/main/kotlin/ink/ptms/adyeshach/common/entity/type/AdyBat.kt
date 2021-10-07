@@ -13,7 +13,7 @@ class AdyBat : AdyMob(EntityTypes.BAT) {
      * 1.9 Index->11
      */
     init {
-//        registerMetaByteMask(at(11700 to 16, 11600 to 15, 11000 to 12, 10900 to 11), "isHanging", 0x01)
+//        mask(at(11700 to 16, 11600 to 15, 11000 to 12, 10900 to 11), "isHanging", 0x01)
     }
 
     fun setHanging(value: Boolean) {

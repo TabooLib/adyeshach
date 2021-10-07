@@ -147,7 +147,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 getName()
             }
             getCustomName().isEmpty() -> {
-                entityType.name.lowercase(Locale.getDefault()).toDisplay()
+                entityType.name.lowercase().toDisplay()
             }
             else -> {
                 getCustomName()

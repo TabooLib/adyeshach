@@ -52,7 +52,7 @@ object AdyeshachAPI {
     internal val registeredControllerGenerator = ConcurrentHashMap<String, ControllerGenerator>()
 
     internal val database by lazy {
-        when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase(Locale.getDefault())) {
+        when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase()) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
             else -> {
@@ -159,7 +159,7 @@ object AdyeshachAPI {
         val meta = MetaMasked(index, key, mask, def)
         val ge = EditorHandler.editorGenerator[Boolean::class.java]
         if (ge != null) {
-            meta.editor = MetaEditor(meta).also { ge.accept(it) }
+            meta.editor = MetaEditor<EntityInstance>(meta).also { ge.accept(it) }
         }
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
     }
@@ -167,11 +167,11 @@ object AdyeshachAPI {
     /**
      * 注册元数据模型（专业类型）
      */
-    fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any, editor: Consumer<MetaEditor>? = null) {
+    fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any, editor: Consumer<MetaEditor<*>>? = null) {
         val meta = MetaNatural(index, key, def)
         val ge = editor ?: EditorHandler.editorGenerator[type]
         if (ge != null) {
-            meta.editor = MetaEditor(meta).also { ge.accept(it) }
+            meta.editor = MetaEditor<EntityInstance>(meta).also { ge.accept(it) }
         }
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
     }
@@ -179,14 +179,14 @@ object AdyeshachAPI {
     /**
      * 注册元数据模型（专业类型）编辑器
      */
-    fun registerEntityMetaNaturalEditor(type: Class<*>, key: String, editor: Consumer<MetaEditor>) {
+    fun registerEntityMetaNaturalEditor(type: Class<*>, key: String, editor: Consumer<MetaEditor<*>>) {
         registerEntityMetaNatural(type, -2, key, 0, editor)
     }
 
     /**
      * 注册特定类型的 MetaEditor 生成器
      */
-    fun registerEntityMetaEditorGenerator(vararg type: Class<*>, editor: Consumer<MetaEditor>) {
+    fun registerEntityMetaEditorGenerator(vararg type: Class<*>, editor: Consumer<MetaEditor<*>>) {
         type.forEach { EditorHandler.editorGenerator[it] = editor }
     }
 

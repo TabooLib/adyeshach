@@ -14,8 +14,8 @@ class AdyDolphin : AdyMob(EntityTypes.DOLPHIN) {
          * 1.14 -> 15, 16
          * 1.13 -> 13, 14
          */
-//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "findTreasure", false)
-//        registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
+//        natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "findTreasure", false)
+//        natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
     }
 
     fun setFindTreasure(value: Boolean) {

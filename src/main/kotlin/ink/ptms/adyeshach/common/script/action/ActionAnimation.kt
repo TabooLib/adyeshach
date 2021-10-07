@@ -34,7 +34,7 @@ class ActionAnimation(val animation: BukkitAnimation): ScriptAction<Void>() {
         @KetherParser(["animation"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
             val type = it.nextToken()
-            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.uppercase(Locale.getDefault())).orNull() ?: throw loadError("Unknown animation $type")
+            val animation = Enums.getIfPresent(BukkitAnimation::class.java, type.uppercase()).orNull() ?: throw loadError("Unknown animation $type")
             ActionAnimation(animation)
         }
     }

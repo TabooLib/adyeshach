@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyPillager : AdyRaider(EntityTypes.PILLAGER) {
 
     init {
-//        registerMeta(at(11700 to 17), "isCharging", false)
+//        natural(at(11700 to 17), "isCharging", false)
     }
 
     var isCharging: Boolean

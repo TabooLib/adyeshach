@@ -25,7 +25,7 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
         private set
 
     init {
-//        registerEditor("block")
+//        naturalEditor("block")
 //            .reset { _, _ ->
 //                material = Material.STONE
 //                data = 0.toByte()

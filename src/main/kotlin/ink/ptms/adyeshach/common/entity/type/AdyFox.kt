@@ -38,18 +38,6 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
         1.13,1.12,1.11,1.10,1.9
         null
          */
-//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "type", Fox.Type.RED.ordinal)
-//                .from(Editors.enums(Fox.Type::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-//                .display { _, entity, _ ->
-//                    Fox.Type.values()[entity.getMetadata("type")].name
-//                }.build()
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isSitting", 0x01, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isCrouching", 0x04, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isInterested", 0x08, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isPouncing", 0x10, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isSleeping", 0x20, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isFaceplanted", 0x40, false)
-//        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isDefending", 0x80.toByte(), false)
     }
 
     fun getType(): Fox.Type {

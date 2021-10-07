@@ -50,14 +50,14 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
          * 1.10 -> 13
          * 1.9 -> 12
          */
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
-//        registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
-//        registerEditor("isSleepingLegacy")
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
+//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
+//        naturalEditor("isSleepingLegacy")
 //                .reset { _, _ ->
 //                    setSleeping(false)
 //                }
@@ -68,7 +68,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 //                .display { _, _, _ ->
 //                    isSleeping().toDisplay()
 //                }
-//        registerEditor("isHideFromTabList")
+//        naturalEditor("isHideFromTabList")
 //                .reset { _, _ ->
 //                    isHideFromTabList = true
 //                }
@@ -79,7 +79,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 //                .display { _, _, _ ->
 //                    isHideFromTabList.toDisplay()
 //                }
-//        registerEditor("playerName")
+//        naturalEditor("playerName")
 //                .reset { _, _ ->
 //                    setName("Adyeshach NPC")
 //                }
@@ -95,7 +95,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 //                .display { _, _, _ ->
 //                    if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
 //                }
-//        registerEditor("playerPing")
+//        naturalEditor("playerPing")
 //                .reset { _, _ ->
 //                    setPing(60)
 //                }
@@ -110,7 +110,7 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 //                .display { _, _, _ ->
 //                    getPing().toString()
 //                }
-//        registerEditor("playerTexture")
+//        naturalEditor("playerTexture")
 //                .reset { _, _ ->
 //                    resetTexture()
 //                }

@@ -16,7 +16,7 @@ class AdyItem : AdyEntity(EntityTypes.ITEM) {
          * 1.10 -> 6
          * 1.9 -> 5
          */
-//        registerMeta(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5), "item", ItemStack(Material.BEDROCK))
+//        natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5), "item", ItemStack(Material.BEDROCK))
     }
 
     fun setItem(itemStack: ItemStack) {

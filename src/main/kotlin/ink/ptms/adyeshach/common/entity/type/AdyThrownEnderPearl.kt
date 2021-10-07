@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 class AdyThrownEnderPearl : AdyEntity(EntityTypes.THROWN_ENDER_PEARL), EntityThrowable {
 
     init {
-//        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.ENDER_PEARL))
+//        natural(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.ENDER_PEARL))
     }
 
     fun getItem(): ItemStack {

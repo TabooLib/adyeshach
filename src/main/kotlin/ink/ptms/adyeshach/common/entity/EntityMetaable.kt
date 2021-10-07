@@ -29,14 +29,14 @@ abstract class EntityMetaable {
      * 获取实体元数据
      */
     open fun <T> getMetadata(key: String): T {
-        val registerMeta = getAvailableEntityMeta().firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
-        if (registerMeta.index == -1) {
+        val natural = getAvailableEntityMeta().firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
+        if (natural.index == -1) {
             error("Metadata \"$key\" not supported this minecraft version.")
         }
-        return if (registerMeta is MetaMasked) {
-            (metadataMask[getByteMaskKey(registerMeta.index)]?.get(key) ?: registerMeta.def) as T
+        return if (natural is MetaMasked) {
+            (metadataMask[getByteMaskKey(natural.index)]?.get(key) ?: natural.def) as T
         } else {
-            registerMeta.dataWatcher.parse(metadata[key] ?: registerMeta.def) as T
+            natural.dataWatcher.parse(metadata[key] ?: natural.def) as T
         }
     }
 
@@ -44,17 +44,17 @@ abstract class EntityMetaable {
      * 设置实体元数据
      */
     open fun setMetadata(key: String, value: Any): Boolean {
-        val registerMeta = getAvailableEntityMeta().firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
-        if (registerMeta.index == -1) {
+        val natural = getAvailableEntityMeta().firstOrNull { it.key == key } ?: error("Metadata \"$key\" not registered.")
+        if (natural.index == -1) {
             error("Metadata \"$key\" not supported this minecraft version.")
         }
-        if (registerMeta.index == -2) {
+        if (natural.index == -2) {
             error("Metadata \"$key\" not allowed.")
         }
-        val event = AdyeshachMetaUpdateEvent(this, registerMeta, key, value)
+        val event = AdyeshachMetaUpdateEvent(this, natural, key, value)
         if (event.call()) {
-            if (registerMeta is MetaMasked) {
-                metadataMask.computeIfAbsent(getByteMaskKey(registerMeta.index)) { HashMap() }[key] = event.value as Boolean
+            if (natural is MetaMasked) {
+                metadataMask.computeIfAbsent(getByteMaskKey(natural.index)) { HashMap() }[key] = event.value as Boolean
             } else {
                 metadata[key] = event.value
             }

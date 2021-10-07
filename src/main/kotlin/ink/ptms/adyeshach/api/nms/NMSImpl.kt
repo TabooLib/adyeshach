@@ -692,7 +692,7 @@ class NMSImpl : NMS() {
             }
             majorLegacy == 11300 -> {
                 val p =
-                    IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.lowercase(Locale.getDefault()))) ?: net.minecraft.server.v1_13_R2.Particles.y
+                    IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.lowercase())) ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
                 } else {

@@ -68,7 +68,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                 Symbol.SET -> {
                     when {
                         meta.key == "entityPose" -> {
-                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase(Locale.getDefault())).get())
+                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase()).get())
                         }
                         meta.key == "modelEngineName" -> {
                             it.modelEngineName = value.toString()
@@ -107,7 +107,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                             val data = it.getVillagerData()
                             it.setVillagerData(
                                 VillagerData(
-                                    Enums.getIfPresent(Villager.Type::class.java, value.toString().uppercase(Locale.getDefault())).get(),
+                                    Enums.getIfPresent(Villager.Type::class.java, value.toString().uppercase()).get(),
                                     data.profession
                                 )
                             )
@@ -117,33 +117,33 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                             it.setVillagerData(
                                 VillagerData(
                                     data.type,
-                                    Enums.getIfPresent(Villager.Profession::class.java, value.toString().uppercase(Locale.getDefault())).get()
+                                    Enums.getIfPresent(Villager.Profession::class.java, value.toString().uppercase()).get()
                                 )
                             )
                         }
                         meta.key == "villagerProfessionLegacy" && it is EntityVillager -> {
-                            it.setLegacyProfession(BukkitProfession.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setLegacyProfession(BukkitProfession.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "paintingPainting" && it is AdyPainting -> {
-                            it.setPainting(BukkitPaintings.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPainting(BukkitPaintings.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "paintingDirection" && it is AdyPainting -> {
-                            it.setDirection(BukkitDirection.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setDirection(BukkitDirection.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "patternColor" && it is AdyTropicalFish -> {
-                            it.setPatternColor(DyeColor.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPatternColor(DyeColor.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "bodyColor" && it is AdyTropicalFish -> {
-                            it.setBodyColor(DyeColor.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setBodyColor(DyeColor.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "pattern" && it is AdyTropicalFish -> {
-                            it.setPattern(TropicalFish.Pattern.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPattern(TropicalFish.Pattern.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "horseColor" && it is AdyHorse -> {
-                            it.setColor(Horse.Color.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setColor(Horse.Color.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "horseStyle" && it is AdyHorse -> {
-                            it.setStyle(Horse.Style.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setStyle(Horse.Style.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "equipmentHelmet" && it is AdyEntityLiving -> {
                             it.setHelmet(getItem(value.toString()))
@@ -191,7 +191,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                                 MaterialData::class -> it.setMetadata(meta.key, getItem(value.toString()).data!!)
                                 BukkitParticles::class -> it.setMetadata(
                                     meta.key,
-                                    Enums.getIfPresent(BukkitParticles::class.java, value.toString().uppercase(Locale.getDefault())).get()
+                                    Enums.getIfPresent(BukkitParticles::class.java, value.toString().uppercase()).get()
                                 )
                             }
                         }

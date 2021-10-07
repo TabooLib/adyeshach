@@ -10,10 +10,10 @@ class AdyTurtle : AdyEntityAgeable(EntityTypes.TURTLE) {
 
     init {
 //        val index = at(11500 to 18, 11400 to 17, 11300 to 15)
-//        registerMeta(index + 0, "hasEgg", false)
-//        registerMeta(index + 1, "layingEgg", false)
-//        registerMeta(index + 3, "isGoingHome", false)
-//        registerMeta(index + 4, "isTraveling", false)
+//        natural(index + 0, "hasEgg", false)
+//        natural(index + 1, "layingEgg", false)
+//        natural(index + 3, "isGoingHome", false)
+//        natural(index + 4, "isTraveling", false)
     }
 
     fun isHasEgg(): Boolean {

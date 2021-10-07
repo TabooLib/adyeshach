@@ -14,7 +14,7 @@ abstract class AdySpellcasterIllager(entityTypes: EntityTypes) : AdyRaider(entit
         /**
          * Spell (0: none, 1: summon vex, 2: attack, 3: wololo, 4: disappear, 5: blindness)
          */
-//        registerMeta(at(11700 to 17, 11400 to 16, 11200 to 15, 11100 to 13), "spell", Spellcaster.Spell.NONE.ordinal)
+//        natural(at(11700 to 17, 11400 to 16, 11200 to 15, 11100 to 13), "spell", Spellcaster.Spell.NONE.ordinal)
 //                .from(Editors.enums(Spellcaster.Spell::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
 //                .display { _, entity, _ ->
 //                    Spellcaster.Spell.values()[entity.getMetadata("spell")].name

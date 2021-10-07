@@ -18,10 +18,10 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
          * 1.10 -> 15
          * 1.9 -> 14
          */
-//        registerMeta(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
+//        natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
 //                .canEdit(false)
 //                .build()
-//        registerEditor("horseColor")
+//        naturalEditor("horseColor")
 //                .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
 //                .reset { _, _ ->
 //                    setColor(Horse.Color.WHITE)
@@ -29,7 +29,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
 //                .display { _, _, _ ->
 //                    getColor().name
 //                }.build()
-//        registerEditor("horseStyle")
+//        naturalEditor("horseStyle")
 //                .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
 //                .reset { _, _ ->
 //                    setStyle(Horse.Style.NONE)

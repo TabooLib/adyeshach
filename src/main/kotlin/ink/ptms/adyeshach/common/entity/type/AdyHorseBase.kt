@@ -21,20 +21,20 @@ abstract class AdyHorseBase(entityTypes: EntityTypes) : AdyEntityAgeable(entityT
          * 1.9 -> 12
          */
 //        if (minecraftVersion >= 11300) {
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isTamed", 0x02)
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isSaddled", 0x04)
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "hasBred", 0x08)
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isEating", 0x10)
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isRearing", 0x20)
-//            registerMetaByteMask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isMouthOpen", 0x40)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isTamed", 0x02)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isSaddled", 0x04)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "hasBred", 0x08)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isEating", 0x10)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isRearing", 0x20)
+//            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isMouthOpen", 0x40)
 //        } else {
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isTamed", 0x02)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isSaddled", 0x04)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "hasChest", 0x08)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "hasBred", 0x10)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isEating", 0x20)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isRearing", 0x40)
-//            registerMetaByteMask(at(11100 to 13, 10900 to 12), "isMouthOpen", 0x80.toByte())
+//            mask(at(11100 to 13, 10900 to 12), "isTamed", 0x02)
+//            mask(at(11100 to 13, 10900 to 12), "isSaddled", 0x04)
+//            mask(at(11100 to 13, 10900 to 12), "hasChest", 0x08)
+//            mask(at(11100 to 13, 10900 to 12), "hasBred", 0x10)
+//            mask(at(11100 to 13, 10900 to 12), "isEating", 0x20)
+//            mask(at(11100 to 13, 10900 to 12), "isRearing", 0x40)
+//            mask(at(11100 to 13, 10900 to 12), "isMouthOpen", 0x80.toByte())
 //        }
     }
 

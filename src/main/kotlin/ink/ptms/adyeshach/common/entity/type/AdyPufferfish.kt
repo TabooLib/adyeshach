@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyPufferfish : AdyFish(EntityTypes.PUFFERFISH) {
 
     init {
-//        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "puffState", 0)
+//        natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "puffState", 0)
     }
 
     fun getPuffState(): Int {

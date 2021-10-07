@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitDragonPhase
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.inventory.Inventory
 
 /**
  * @author sky
@@ -22,7 +23,7 @@ class AdyEndDragon : AdyMob(EntityTypes.ENDER_DRAGON) {
         11 ->Dragon phase
 
          */
-//        registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "dragonPhase", BukkitDragonPhase.HOVERING_WITH_NO_AI.ordinal)
+//        natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "dragonPhase", BukkitDragonPhase.HOVERING_WITH_NO_AI.ordinal)
 //                .from(Editors.enums(BukkitDragonPhase::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
 //                .display { _, entity, _ ->
 //                    Editor.toSimple(BukkitDragonPhase.values()[entity.getMetadata("dragonPhase")].name)
