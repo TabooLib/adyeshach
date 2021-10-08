@@ -40,7 +40,6 @@ taboolib {
 }
 
 repositories {
-    maven { url = uri("https://betonquest.org/nexus/repository/betonquest/") }
     mavenLocal()
     mavenCentral()
 }

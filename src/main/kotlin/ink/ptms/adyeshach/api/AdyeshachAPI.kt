@@ -37,6 +37,7 @@ import java.util.function.Function
 
 object AdyeshachAPI {
 
+    internal val betonQuestHooked by lazy { Bukkit.getPluginManager().getPlugin("BetonQuest") != null }
     internal val modelEngineHooked by lazy { Bukkit.getPluginManager().getPlugin("ModelEngine") != null }
 
     internal val onlinePlayerMap = CopyOnWriteArrayList<String>()
