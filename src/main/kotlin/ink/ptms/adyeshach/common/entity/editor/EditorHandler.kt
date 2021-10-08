@@ -164,11 +164,15 @@ object EditorHandler {
                 warning("${meta.key}(${meta.def.javaClass}) 缺少编辑器")
             }
             if (editor != null && editor.editable) {
-                if (i + meta.key.toLocale(player).length > if (isChineseSender) 15 else 36) {
+                var length = meta.key.toLocale(player).length
+                if (length > 2) {
+                    length = 2 + ((length - 2) / 2)
+                }
+                if (i + length >= (if (isChineseSender) 12 else 36)) {
                     i = 0
                     json.newLine().append("      ")
                 } else {
-                    i += meta.key.toLocale(player).length
+                    i += length
                 }
                 json.append("§8[")
                 try {
@@ -179,6 +183,10 @@ object EditorHandler {
                         }
                         meta is MetaMasked<*> -> {
                             val bool = if (Coerce.toBoolean(entity.getMetadata(meta.key))) "§a§n" else "§8"
+                            json.append("$bool${meta.key.toLocale(player)}").hoverText("§7$display")
+                        }
+                        display == player.asLangText("editor-meta-true") || display == player.asLangText("editor-meta-false") -> {
+                            val bool = if (display == player.asLangText("editor-meta-true")) "§a§n" else "§8"
                             json.append("$bool${meta.key.toLocale(player)}").hoverText("§7$display")
                         }
                         else -> {
