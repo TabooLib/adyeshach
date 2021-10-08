@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitMushroom
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import java.util.*
 
 /**
  * @author sky

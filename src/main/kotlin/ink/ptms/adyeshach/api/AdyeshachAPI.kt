@@ -21,10 +21,8 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.onlinePlayers
 import taboolib.common.platform.function.submit
-import taboolib.common.platform.function.warning
 import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.SecuredFile
@@ -36,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 import java.util.function.Function
-import kotlin.collections.LinkedHashMap
 
 object AdyeshachAPI {
 

@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.api
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.common.entity.editor.EditorMode
 import taboolib.module.configuration.ConfigNode
-import java.lang.Exception
 
 object AdyeshachSettings {
 

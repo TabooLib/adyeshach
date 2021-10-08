@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
 import com.google.gson.annotations.Expose
-import org.bukkit.GameMode
 
 /**
  * @author sky

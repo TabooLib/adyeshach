@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import com.google.common.base.Enums
+import com.google.gson.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import com.google.gson.*
 import org.bukkit.entity.Villager
 import java.lang.reflect.Type
 

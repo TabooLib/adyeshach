@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
-import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import com.google.gson.*
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
+import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import org.bukkit.util.Vector
 import java.lang.reflect.Type
 

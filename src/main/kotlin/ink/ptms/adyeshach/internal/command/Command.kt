@@ -18,10 +18,10 @@ import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 import taboolib.common.platform.command.*
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.submit
-import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.expansion.createHelper
 import taboolib.library.xseries.XMaterial
@@ -29,7 +29,10 @@ import taboolib.library.xseries.parseToXMaterial
 import taboolib.module.chat.TellrawJson
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.platform.util.*
+import taboolib.platform.util.asLangText
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.inventoryCenterSlots
+import taboolib.platform.util.sendLang
 
 @CommandHeader(name = "adyeshach", aliases = ["npc", "anpc"], permission = "adyeshach.admin")
 internal object Command {

@@ -4,8 +4,6 @@ import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachMetaUpdateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
-import ink.ptms.adyeshach.api.nms.NMS
-import org.bukkit.entity.Player
 import taboolib.common.io.digest
 import taboolib.module.nms.MinecraftVersion
 import java.util.concurrent.ConcurrentHashMap

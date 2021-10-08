@@ -5,7 +5,9 @@ import org.bukkit.Location
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
 import taboolib.common5.mirrorNow
-import taboolib.module.navigation.*
+import taboolib.module.navigation.NodeEntity
+import taboolib.module.navigation.RandomPositionGenerator
+import taboolib.module.navigation.createPathfinder
 import taboolib.module.nms.MinecraftVersion
 
 /**

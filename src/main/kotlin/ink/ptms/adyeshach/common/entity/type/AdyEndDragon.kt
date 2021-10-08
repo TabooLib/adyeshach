@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.BukkitDragonPhase
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.inventory.Inventory
 
 /**
  * @author sky

@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.script
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookGround
@@ -14,11 +14,11 @@ import ink.ptms.adyeshach.common.entity.manager.Manager
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.getDataFolder
-import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.ScriptContext

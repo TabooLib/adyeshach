@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.Inputs.inputBook
 import ink.ptms.adyeshach.internal.trait.Trait
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
