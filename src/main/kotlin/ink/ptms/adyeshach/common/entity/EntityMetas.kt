@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.*
-import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.editor.*
 import ink.ptms.adyeshach.common.entity.type.*
@@ -14,6 +13,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.warning
@@ -130,7 +130,7 @@ object EntityMetas {
             natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
         }
         from<AdyEndCrystal> {
-            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", VectorNull())
+            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", Vector(0, 0, 0))
             natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
         }
         from<AdyItemFrame> {
@@ -335,7 +335,7 @@ object EntityMetas {
             natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "attachFace", BukkitDirection.DOWN.ordinal) {
                 it.useIndexEditor(type = BukkitDirection::class.java, key = "attachFace")
             }
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", VectorNull())
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "attachPosition", Vector(0, 0, 0))
             natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "shieldHeight", 0.toByte())
             natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11100 to 15), "color", DyeColor.PURPLE.ordinal) {
                 it.useIndexEditor(type = DyeColor::class.java, key = "color")

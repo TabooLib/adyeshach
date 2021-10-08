@@ -19,7 +19,7 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
         val controller = if (a is Controller.Pre) {
             AdyeshachAPI.getControllerGenerator().entries.firstOrNull { it.value.type == a.controller.type }
         } else {
-            AdyeshachAPI.getControllerGenerator().entries.firstOrNull { it.value.type == a::class }
+            AdyeshachAPI.getControllerGenerator().entries.firstOrNull { it.value.type == a::class.java }
         }
         return JsonPrimitive(controller?.key ?: a.javaClass.name)
     }

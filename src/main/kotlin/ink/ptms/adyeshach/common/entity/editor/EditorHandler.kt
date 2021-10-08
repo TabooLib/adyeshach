@@ -27,6 +27,8 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.pluginVersion
+import taboolib.common.platform.function.warning
+import taboolib.common.util.nonPrimitive
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.TellrawJson
@@ -89,10 +91,10 @@ object EditorHandler {
             )
             var page = TellrawJson()
             var i = 0
-            entity.forEachMeta { meta, hide ->
+            entity.forEachMeta { meta, unused ->
                 val editor = meta.editor
                 if (editor != null && editor.editable) {
-                    if (hide) {
+                    if (unused) {
                         page.append("  §8§m${meta.key.toLocale(player)}").newLine()
                     } else {
                         page.append("  §n${meta.key.toLocale(player)}").newLine()
@@ -112,21 +114,13 @@ object EditorHandler {
                     }
                     if (++i == 6) {
                         i = 0
-                        try {
-                            write(page)
-                        } catch (t: Throwable) {
-                            write(TellrawJson().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
-                        }
+                        write(page)
                         page = TellrawJson()
                     }
                 }
             }
             if (i > 0) {
-                try {
-                    write(page)
-                } catch (t: Throwable) {
-                    write(TellrawJson().append("   §c<ERROR:${t.message}>").hoverText(page.toLegacyText()))
-                }
+                write(page)
             }
         }
     }
@@ -135,9 +129,7 @@ object EditorHandler {
      * 打开聊天框编辑器
      */
     fun openByChat(player: Player, entity: EntityInstance) {
-        TellrawJson().sendTo(adaptCommandSender(player)) {
-            repeat(64) { newLine() }
-        }
+        TellrawJson().sendTo(adaptCommandSender(player)) { repeat(64) { newLine() } }
         val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
         val json = TellrawJson()
         if (entity.testing) {
@@ -157,19 +149,19 @@ object EditorHandler {
             .append("      ${player.asLangText("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
             .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
             .append("      ${player.asLangText("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
-            .hoverText(entity.getController().joinToString("\n") { it.javaClass.name })
+            .hoverText(entity.getController().joinToString("\n") { it.javaClass.simpleName })
             .append(" ")
             .append("§a(+)")
-            .hoverText(player.asLangText("editor-click-to-edit").toString())
+            .hoverText(player.asLangText("editor-click-to-edit"))
             .runCommand("/adyeshach controller ${entity.uniqueId}")
             .newLine()
             .newLine().append("      ")
         var i = 0
         val isChineseSender = adaptPlayer(player).locale.startsWith("zh", ignoreCase = true)
-        entity.forEachMeta { meta, hide ->
+        entity.forEachMeta { meta, unused ->
             val editor = meta.editor
             if (editor == null) {
-                println("${meta.key} 缺少编辑器")
+                warning("${meta.key}(${meta.def.javaClass}) 缺少编辑器")
             }
             if (editor != null && editor.editable) {
                 if (i + meta.key.toLocale(player).length > if (isChineseSender) 15 else 36) {
@@ -178,35 +170,33 @@ object EditorHandler {
                 } else {
                     i += meta.key.toLocale(player).length
                 }
-                if (hide) {
-                    json.append("§8[§8§m${meta.key.toLocale(player)}§8] ")
-                } else {
-                    json.append("§8[")
-                    try {
-                        val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
-                        // 布尔值类型
-                        if (meta is MetaMasked<*>) {
-                            val bool = if (Coerce.toBoolean(entity.getMetadata(meta.key))) "§a§n" else "§8"
-                            json.append("$bool${meta.key.toLocale(player)}")
-                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                                .hoverText("§7$display")
-                        } else {
-                            json.append("§7${meta.key.toLocale(player)}")
-                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                                .hoverText("§7$display")
+                json.append("§8[")
+                try {
+                    val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
+                    when {
+                        unused -> {
+                            json.append("§8§m${meta.key.toLocale(player)}").hoverText("§7$display\n${player.asLangText("editor-unused")}")
                         }
-                        json.append(" ")
-                        json.append("§c[R]")
-                            .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                            .hoverText(player.asLangText("editor-click-to-reset"))
-                    } catch (t: NullPointerException) {
-                        json.append("§c§o<ERROR_NULL:${meta.key}>").hoverText(meta.toString())
-                        t.printStackTrace()
-                    } catch (t: Throwable) {
-                        json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
+                        meta is MetaMasked<*> -> {
+                            val bool = if (Coerce.toBoolean(entity.getMetadata(meta.key))) "§a§n" else "§8"
+                            json.append("$bool${meta.key.toLocale(player)}").hoverText("§7$display")
+                        }
+                        else -> {
+                            json.append("§7${meta.key.toLocale(player)}").hoverText("§7$display")
+                        }
                     }
-                    json.append("§8] ")
+                    json.runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                    json.append(" ")
+                    json.append("§c[R]")
+                        .hoverText(player.asLangText("editor-click-to-reset"))
+                        .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
+                } catch (t: NullPointerException) {
+                    json.append("§c§o<ERROR_NULL:${meta.key}>").hoverText(meta.toString())
+                    t.printStackTrace()
+                } catch (t: Throwable) {
+                    json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
                 }
+                json.append("§8] ")
             }
         }
         json.newLine().sendTo(adaptCommandSender(player))
@@ -216,10 +206,10 @@ object EditorHandler {
     private fun init() {
         // 基于字符串的类型
         AdyeshachAPI.registerEntityMetaEditorGenerator(
-            Int::class.java,
-            Byte::class.java,
-            Float::class.java,
-            Double::class.java,
+            Int::class.java.nonPrimitive(),
+            Byte::class.java.nonPrimitive(),
+            Float::class.java.nonPrimitive(),
+            Double::class.java.nonPrimitive(),
             String::class.java,
             TextComponent::class.java
         ) {
@@ -241,7 +231,7 @@ object EditorHandler {
             }
         }
         // 布尔值
-        AdyeshachAPI.registerEntityMetaEditorGenerator(Boolean::class.java) {
+        AdyeshachAPI.registerEntityMetaEditorGenerator(Boolean::class.java.nonPrimitive()) {
             it.modify { player, entity ->
                 entity.setMetadata(it.meta.key, !entity.getMetadata<Boolean>(it.meta.key))
                 entity.openEditor(player)

@@ -25,12 +25,12 @@ import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.Workspace
 import java.io.File
 
-@SkipTo(LifeCycle.ENABLE)
+@SkipTo(LifeCycle.LOAD)
 object ScriptHandler {
 
     val workspace = Workspace(File(getDataFolder(), "npc/script"), ".ady", listOf("adyeshach"))
 
-    @Awake(LifeCycle.ENABLE)
+    @Awake(LifeCycle.LOAD)
     fun load() {
         AdyeshachAPI.registeredControllerGenerator["Move"] = ControllerGenerator(GeneralMove::class.java) { GeneralMove(it) }
         AdyeshachAPI.registeredControllerGenerator["Gravity"] = ControllerGenerator(GeneralGravity::class.java) { GeneralGravity(it) }

@@ -47,7 +47,7 @@ internal fun <T> at(vararg index: Pair<Int, T>): T {
  * 遍历所有允许修改的元数据
  */
 internal fun EntityInstance.forEachMeta(func: (Meta<*>, Boolean) -> Unit) {
-    getEditableEntityMeta().forEach { func.invoke(it, HideMetas.isHideMeta(this, it)) }
+    getEditableEntityMeta().forEach { func.invoke(it, UnusedMetas.isUnusedMeta(this, it)) }
 }
 
 internal fun String.minimize(): String {
@@ -86,7 +86,7 @@ internal fun String.toLocaleKey(): String {
 }
 
 internal fun Player.edit(entity: EntityInstance, value: Any, function: (value: String) -> Unit) {
-    inputSign(arrayOf("$value", "", asLangText("editor-sign-input"))) { args ->
+    inputSign(arrayOf("$value", "", "§f${asLangText("editor-sign-input")}")) { args ->
         if (args[0].isNotEmpty()) {
             function((args[0] + args[1]).colored())
         }

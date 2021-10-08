@@ -21,8 +21,11 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.onlinePlayers
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.warning
+import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.SecuredFile
 import java.io.File
@@ -157,7 +160,7 @@ object AdyeshachAPI {
      */
     fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean = false) {
         val meta = MetaMasked<EntityInstance>(index, key, mask, def)
-        val ge = EditorHandler.editorGenerator[Boolean::class.java]
+        val ge = EditorHandler.editorGenerator[Boolean::class.java.nonPrimitive()]
         if (ge != null) {
             meta.editor = MetaEditor(meta).also { ge.accept(it) }
         }
@@ -169,7 +172,7 @@ object AdyeshachAPI {
      */
     fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any, editor: Consumer<MetaEditor<*>>? = null) {
         val meta = MetaNatural<Any, EntityInstance>(index, key, def)
-        val ge = editor ?: EditorHandler.editorGenerator[type]
+        val ge = editor ?: EditorHandler.editorGenerator[def.javaClass]
         if (ge != null) {
             meta.editor = MetaEditor(meta).also { ge.accept(it) }
         }
