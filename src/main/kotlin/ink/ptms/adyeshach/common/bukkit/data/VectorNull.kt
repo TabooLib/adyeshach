@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 
 /**
  * @author sky

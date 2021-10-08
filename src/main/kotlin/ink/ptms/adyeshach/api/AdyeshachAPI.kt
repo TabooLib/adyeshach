@@ -49,7 +49,7 @@ object AdyeshachAPI {
     internal val managerPublicTemporary = ManagerPublicTemp()
 
     internal val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
-    internal val registeredControllerGenerator = ConcurrentHashMap<String, ControllerGenerator>()
+    internal val registeredControllerGenerator = LinkedHashMap<String, ControllerGenerator>()
 
     internal val database by lazy {
         when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase()) {

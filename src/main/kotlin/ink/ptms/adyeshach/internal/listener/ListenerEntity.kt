@@ -10,7 +10,7 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 

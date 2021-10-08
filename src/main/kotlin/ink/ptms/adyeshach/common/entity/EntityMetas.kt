@@ -425,6 +425,7 @@ object EntityMetas {
                 it.reset { _, entity -> entity.setMaterial(Material.STONE, 0) }
                 it.modify { player, entity ->
                     player.openMenu<Basic>(player.asLangText("editor-item-input")) {
+                        handLocked(false)
                         rows(1)
                         map("####@####")
                         set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
@@ -453,7 +454,8 @@ object EntityMetas {
             naturalEditor("block") {
                 it.reset { _, entity -> entity.setCustomBlock(MaterialData(Material.AIR, 0)) }
                 it.modify { player, entity ->
-                    player.openMenu<Basic>("Adyeshach Editor : Input") {
+                    player.openMenu<Basic>(player.asLangText("editor-item-input")) {
+                        handLocked(false)
                         rows(1)
                         map("####@####")
                         set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
@@ -596,7 +598,7 @@ object EntityMetas {
         } catch (ex: NoClassDefFoundError) {
         } catch (ex: NoSuchFieldError) {
         } catch (ex: Throwable) {
-            warning("Type ${T::class.java.name}")
+            warning("Type: ${T::class.java.name}")
             ex.printStackTrace()
         }
     }

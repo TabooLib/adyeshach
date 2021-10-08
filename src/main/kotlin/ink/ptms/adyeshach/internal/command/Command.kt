@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
 import ink.ptms.adyeshach.common.entity.editor.EditorPicker
+import ink.ptms.adyeshach.common.entity.editor.toLocaleKey
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.error
 import ink.ptms.adyeshach.common.util.info
@@ -20,10 +21,11 @@ import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.command.*
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.submit
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.expansion.createHelper
 import taboolib.library.xseries.XMaterial
+import taboolib.library.xseries.parseToXMaterial
 import taboolib.module.chat.TellrawJson
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -243,7 +245,7 @@ internal object Command {
                         AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player),
                         sender,
                         sender.world.name,
-                        sender.location.toProxyLocation().toVector()
+                        sender.location.toVector()
                     )
                 }
             }
@@ -311,7 +313,7 @@ internal object Command {
             literal("add", optional = true) {
                 dynamic(commit = "id") {
                     suggestion<CommandSender> { _, _ ->
-                        AdyeshachAPI.registeredControllerGenerator.keys().toList()
+                        AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
@@ -321,7 +323,7 @@ internal object Command {
             literal("remove", optional = true) {
                 dynamic(commit = "id") {
                     suggestion<CommandSender> { _, _ ->
-                        AdyeshachAPI.registeredControllerGenerator.keys().toList()
+                        AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
@@ -596,17 +598,20 @@ internal object Command {
         } else {
             val slots = HashMap<Int, String>()
             fun build(id: String, controller: ControllerGenerator): ItemStack {
-                val en = entity.getController(controller.type) != null
-                return buildItem(XMaterial.PAPER) {
-                    name = "&7$id ${if (en) "&a&lENABLE" else "&c&lDISABLE"}"
-                    lore += "&8CLICK TO SELECT"
-                    if (en) {
+                val key = id.toLocaleKey().substring(1)
+                val enable = entity.getController(controller.type) != null
+                return buildItem(Adyeshach.editorConf.getString("Materials.controller.$key")?.parseToXMaterial() ?: XMaterial.PAPER) {
+                    val display = sender.asLangText("editor-controller-$key")
+                    name = "&7$display ${sender.asLangText("editor-controller-${if (enable) "enable" else "disable"}")}"
+                    lore += sender.asLangText("editor-select")
+                    if (enable) {
                         shiny()
                     }
+                    hideAll()
                     colored()
                 }
             }
-            sender.openMenu<Basic>("Controller") {
+            sender.openMenu<Basic>(sender.asLangText("editor-controller")) {
                 rows(6)
                 onBuild { _, inv ->
                     AdyeshachAPI.registeredControllerGenerator.keys.forEachIndexed { index, id ->
@@ -669,7 +674,7 @@ internal object Command {
                     result.forEach {
                         TellrawJson()
                             .append("§c[Adyeshach]  §8- §a${Coerce.format(it.second)}m §7${it.first.id} §8(${it.first.getDisplayName()}§8)")
-                            .hoverText("CLICK TO TELEPORT")
+                            .hoverText(sender.asLangText("editor-select-teleport"))
                             .runCommand("/anpc tp ${it.first.uniqueId}")
                             .sendTo(adaptCommandSender(sender))
                     }

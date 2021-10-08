@@ -18,7 +18,7 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.ScriptContext

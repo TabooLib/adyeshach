@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.api.event
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import org.bukkit.entity.Player
 import taboolib.platform.type.BukkitProxyEvent
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 
 /**
  * @author sky

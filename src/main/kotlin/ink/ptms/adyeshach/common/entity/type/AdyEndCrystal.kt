@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 
 /**
  * @author sky

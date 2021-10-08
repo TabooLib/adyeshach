@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.NumberConversions
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.library.xseries.XMaterial
 
 abstract class DataWatcher {

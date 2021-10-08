@@ -24,7 +24,7 @@ import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.kether.*

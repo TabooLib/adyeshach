@@ -1,0 +1,14 @@
+
+
+#         Powered by TabooLib 6.0         #
+
+
+Materials:
+  controller:
+    move: LEATHER_BOOTS
+    gravity: FEATHER
+    smooth-look: ENDER_EYE
+    look-at-player: LEATHER_HELMET
+    look-at-player-always: IRON_HELMET
+    random-look-ground: OBSERVER
+    random-stroll-land: GRASS_BLOCK

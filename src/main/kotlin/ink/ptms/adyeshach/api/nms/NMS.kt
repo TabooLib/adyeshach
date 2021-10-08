@@ -18,7 +18,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.module.nms.nmsProxy
 import java.util.*
 

@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.MetaMasked
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
@@ -25,7 +27,6 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.pluginVersion
-import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.TellrawJson
@@ -167,6 +168,9 @@ object EditorHandler {
         val isChineseSender = adaptPlayer(player).locale.startsWith("zh", ignoreCase = true)
         entity.forEachMeta { meta, hide ->
             val editor = meta.editor
+            if (editor == null) {
+                println("${meta.key} 缺少编辑器")
+            }
             if (editor != null && editor.editable) {
                 if (i + meta.key.toLocale(player).length > if (isChineseSender) 15 else 36) {
                     i = 0
@@ -180,11 +184,19 @@ object EditorHandler {
                     json.append("§8[")
                     try {
                         val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
-                        json.append("§7${meta.key.toLocale(player)}")
-                            .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                            .hoverText("§7$display")
+                        // 布尔值类型
+                        if (meta is MetaMasked<*>) {
+                            val bool = if (Coerce.toBoolean(entity.getMetadata(meta.key))) "§a§n" else "§8"
+                            json.append("$bool${meta.key.toLocale(player)}")
+                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                                .hoverText("§7$display")
+                        } else {
+                            json.append("§7${meta.key.toLocale(player)}")
+                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                                .hoverText("§7$display")
+                        }
                         json.append(" ")
-                        json.append("§c✘")
+                        json.append("§c[R]")
                             .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                             .hoverText(player.asLangText("editor-click-to-reset"))
                     } catch (t: NullPointerException) {
@@ -218,7 +230,7 @@ object EditorHandler {
                 entity.getMetadata<Any>(it.meta.key).toString().minimize().ifEmpty { "§7_" }
             }
         }
-        // 向量 (taboolib.common.util.Vector)
+        // 向量 (org.bukkit.util.Vector)
         AdyeshachAPI.registerEntityMetaEditorGenerator(Vector::class.java) {
             it.modify { player, entity ->
                 entity.setMetadata(it.meta.key, Vector(player.location.blockX, player.location.blockY, player.location.blockZ))
@@ -242,6 +254,7 @@ object EditorHandler {
         AdyeshachAPI.registerEntityMetaEditorGenerator(ItemStack::class.java) {
             it.modify { player, entity ->
                 player.openMenu<Basic>(player.asLangText("editor-item-input")) {
+                    handLocked(false)
                     rows(1)
                     map("####@####")
                     set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
@@ -261,6 +274,7 @@ object EditorHandler {
         AdyeshachAPI.registerEntityMetaEditorGenerator(MaterialData::class.java) {
             it.modify { player, entity ->
                 player.openMenu<Basic>(player.asLangText("editor-item-input")) {
+                    handLocked(false)
                     rows(1)
                     map("####@####")
                     set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }

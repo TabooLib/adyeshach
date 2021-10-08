@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.api.nms
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -32,7 +31,7 @@ import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.reflect.Reflex.Companion.invokeMethod
 import taboolib.common.reflect.Reflex.Companion.setProperty
 import taboolib.common.reflect.Reflex.Companion.unsafeInstance
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass

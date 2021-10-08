@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.module.navigation.BoundingBox
 
 object ListenerModelEngine {

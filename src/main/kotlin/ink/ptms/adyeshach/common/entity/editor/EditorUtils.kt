@@ -142,13 +142,13 @@ internal fun <T : EntityInstance> MetaEditor<T>.useEnumsEditor(
                     val dye = ChatColor.of(java.awt.Color(element.color.red, element.color.green, element.color.blue))
                     buildItem(XMaterial.PAPER) {
                         name = "&7${dye}${element.toString().minimize()}"
-                        lore += "&8CLICK TO SELECT"
+                        lore += player.asLangText("editor-select")
                         colored()
                     }
                 } else {
                     buildItem(XMaterial.PAPER) {
                         name = "&7${element.toString().minimize()}"
-                        lore += "&8CLICK TO SELECT"
+                        lore += player.asLangText("editor-select")
                         colored()
                     }
                 }
@@ -164,6 +164,7 @@ internal fun MetaEditor<AdyEntityLiving>.useEquipmentEditor(equipmentSlot: Equip
     }
     modify { player, entity ->
         player.openMenu<Basic>(player.asLangText("editor-item-input")) {
+            handLocked(false)
             rows(1)
             map("####@####")
             set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
