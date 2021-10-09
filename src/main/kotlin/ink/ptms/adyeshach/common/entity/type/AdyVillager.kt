@@ -27,10 +27,10 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
     }
 
     override fun setLegacyProfession(profession: BukkitProfession) {
-        setMetadata("profession", profession)
+        setMetadata("profession", profession.ordinal)
     }
 
     override fun getLegacyProfession(): BukkitProfession {
-        return getMetadata("profession")
+        return BukkitProfession.of(getMetadata<BukkitProfession>("profession").ordinal)
     }
 }
