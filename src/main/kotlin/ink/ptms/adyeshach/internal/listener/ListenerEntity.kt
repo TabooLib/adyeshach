@@ -17,7 +17,7 @@ import taboolib.module.nms.PacketReceiveEvent
  * @author sky
  * @since 2020-08-15 15:53
  */
-internal object ListenerEntity {
+object ListenerEntity {
 
     @SubscribeEvent
     fun e(e: PacketReceiveEvent) {

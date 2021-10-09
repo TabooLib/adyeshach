@@ -11,12 +11,14 @@ import pl.betoncraft.betonquest.conversation.CombatTagger
 import pl.betoncraft.betonquest.conversation.Conversation
 import pl.betoncraft.betonquest.exceptions.QuestRuntimeException
 import pl.betoncraft.betonquest.utils.PlayerConverter
+import taboolib.common.LifeCycle
+import taboolib.common.platform.SkipTo
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common5.Baffle
 import java.util.concurrent.TimeUnit
 
+@SkipTo(LifeCycle.LOAD)
 object ListenerBetonQuest {
 
     val limit = Baffle.of(500, TimeUnit.MILLISECONDS)
@@ -64,14 +66,14 @@ object ListenerBetonQuest {
     @SubscribeEvent
     fun e(e: AdyeshachEntityDamageEvent) {
         if (AdyeshachAPI.betonQuestHooked && e.player.hasPermission("betonquest.conversation")) {
-            submit { logic(e.player, e.entity) }
+            logic(e.player, e.entity)
         }
     }
 
     @SubscribeEvent
     fun e(e: AdyeshachEntityInteractEvent) {
         if (AdyeshachAPI.betonQuestHooked && e.isMainHand && e.player.hasPermission("betonquest.conversation")) {
-            submit { logic(e.player, e.entity) }
+            logic(e.player, e.entity)
         }
     }
 
