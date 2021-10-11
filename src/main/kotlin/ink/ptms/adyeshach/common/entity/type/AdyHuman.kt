@@ -221,59 +221,59 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
     }
 
     fun setSkinCapeEnabled(value: Boolean) {
-        setMetadata("skinCapeEnabled", value)
+        setMetadata("skinCape", value)
     }
 
     fun isSkinCapeEnabled() {
-        return getMetadata("skinCapeEnabled")
+        return getMetadata("skinCape")
     }
 
     fun setSkinJacketEnabled(value: Boolean) {
-        setMetadata("skinJacketEnabled", value)
+        setMetadata("skinJacket", value)
     }
 
     fun isSkinJacketEnabled() {
-        return getMetadata("skinJacketEnabled")
+        return getMetadata("skinJacket")
     }
 
     fun setSkinLeftSleeveEnabled(value: Boolean) {
-        setMetadata("skinLeftSleeveEnabled", value)
+        setMetadata("skinLeftSleeve", value)
     }
 
     fun isSkinLeftSleeveEnabled() {
-        return getMetadata("skinLeftSleeveEnabled")
+        return getMetadata("skinLeftSleeve")
     }
 
     fun setSkinRightSleeveEnabled(value: Boolean) {
-        setMetadata("skinRightSleeveEnabled", value)
+        setMetadata("skinRightSleeve", value)
     }
 
     fun isSkinRightSleeveEnabled() {
-        return getMetadata("skinRightSleeveEnabled")
+        return getMetadata("skinRightSleeve")
     }
 
     fun setSkinLeftPantsEnabled(value: Boolean) {
-        setMetadata("skinLeftPantsEnabled", value)
+        setMetadata("skinLeftPants", value)
     }
 
     fun isSkinLeftPantsEnabled() {
-        return getMetadata("skinLeftPantsEnabled")
+        return getMetadata("skinLeftPants")
     }
 
     fun setSkinRightPantsEnabled(value: Boolean) {
-        setMetadata("skinRightPantsEnabled", value)
+        setMetadata("skinRightPants", value)
     }
 
     fun isSkinRightPantsEnabled() {
-        return getMetadata("skinRightPantsEnabled")
+        return getMetadata("skinRightPants")
     }
 
     fun setSkinHatEnabled(value: Boolean) {
-        setMetadata("skinHatEnabled", value)
+        setMetadata("skinHat", value)
     }
 
     fun isSkinHatEnabled() {
-        return getMetadata("skinHatEnabled")
+        return getMetadata("skinHat")
     }
 
     fun setSleeping(value: Boolean) {

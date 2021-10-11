@@ -10,6 +10,7 @@ import org.bukkit.entity.Horse
 class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
 
     init {
+        testing = true
         /**
          * Variant (Color & Style)
          *
