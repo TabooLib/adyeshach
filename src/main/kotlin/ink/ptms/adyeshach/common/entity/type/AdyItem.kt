@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 class AdyItem : AdyEntity(EntityTypes.ITEM) {
 
     init {
+        testing = true
         /**
          * 1.13 -> 7
          * 1.10 -> 6

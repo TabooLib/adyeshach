@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 class AdyFireworkRocket : AdyEntity(EntityTypes.FIREWORK_ROCKET) {
 
     init {
+        testing = true
         /*
         1.16,1.15,1.14
         7 ->Firework info

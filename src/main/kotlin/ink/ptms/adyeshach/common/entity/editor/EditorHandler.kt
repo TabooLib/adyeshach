@@ -168,7 +168,7 @@ object EditorHandler {
                 if (length > 2) {
                     length = 2 + ((length - 2) / 2)
                 }
-                if (i + length >= (if (isChineseSender) 12 else 36)) {
+                if (i + length >= (if (isChineseSender) 12 else 20)) {
                     i = 0
                     json.newLine().append("      ")
                 } else {
