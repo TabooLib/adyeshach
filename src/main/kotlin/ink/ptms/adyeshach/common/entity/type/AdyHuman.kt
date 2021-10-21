@@ -135,34 +135,33 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         }
     }
 
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
-            addPlayerInfo(viewer)
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
-                // 创建客户端对应表
+                addPlayerInfo(viewer)
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, playerUUID)
                 // 生成实体
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
-            }
-            // 更新装备
-            submit(delay = 1) {
-                updateEquipment()
-            }
-            // 更新死亡信息以及玩家类型专属属性
-            submit(delay = 5) {
-                if (isDie) {
-                    die(viewer)
+                // 更新装备
+                submit(delay = 1) {
+                    updateEquipment()
                 }
-                if (isSleepingLegacy) {
-                    setSleeping(true)
-                }
-                if (isHideFromTabList) {
-                    removePlayerInfo(viewer)
+                // 更新死亡信息以及玩家类型专属属性
+                submit(delay = 5) {
+                    if (isDie) {
+                        die(viewer)
+                    }
+                    if (isSleepingLegacy) {
+                        setSleeping(true)
+                    }
+                    if (isHideFromTabList) {
+                        removePlayerInfo(viewer)
+                    }
                 }
             }
         } else {
-            removePlayerInfo(viewer)
             destroy(viewer) {
+                removePlayerInfo(viewer)
                 // 销毁实体
                 NMS.INSTANCE.destroyEntity(viewer, index)
                 // 移除客户端对应表

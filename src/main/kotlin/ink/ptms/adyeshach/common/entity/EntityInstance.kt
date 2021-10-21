@@ -25,6 +25,7 @@ import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
+import ink.ptms.adyeshach.internal.compat.CompatServerTours
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -158,12 +159,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 切换可视状态
      */
-    abstract fun visible(viewer: Player, visible: Boolean)
+    abstract fun visible(viewer: Player, visible: Boolean): Boolean
 
     /**
      * 内部调用方法，用于第三方事件处理
      */
-    protected fun spawn(viewer: Player, spawn: Runnable) {
+    protected fun spawn(viewer: Player, spawn: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
             // 若未生成 ModelEngine 模型则发送原版数据包
             // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
@@ -178,19 +179,23 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             submit(delay = 5) {
                 refreshPassenger(viewer, error = false)
             }
+            return true
         }
+        return false
     }
 
     /**
      * 内部调用方法
      */
-    protected fun destroy(viewer: Player, destroy: Runnable) {
+    protected fun destroy(viewer: Player, destroy: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
             // 销毁模型
             if (!hideModelEngine(viewer)) {
                 destroy.run()
             }
+            return true
         }
+        return false
     }
 
     /**
@@ -752,15 +757,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             // 复活
             viewPlayers.getOutsidePlayers().forEach { player ->
                 if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
-                    viewPlayers.visible.add(player.name)
-                    visible(player, true)
+                    if (visible(player, true)) {
+                        viewPlayers.visible.add(player.name)
+                    }
                 }
             }
             // 销毁
             viewPlayers.getViewPlayers().forEach { player ->
                 if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
-                    viewPlayers.visible.remove(player.name)
-                    visible(player, false)
+                    if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
+                        viewPlayers.visible.remove(player.name)
+                    }
                 }
             }
         }

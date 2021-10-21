@@ -14,8 +14,8 @@ class AdyExperienceOrb : AdyEntity(EntityTypes.EXPERIENCE_ORB) {
     @Expose
     var amount = 1
 
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
                 NMS.INSTANCE.spawnEntityExperienceOrb(viewer, index, position.toLocation(), amount)
             }

@@ -24,8 +24,8 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
     var data = 0.toByte()
         private set
 
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
                 val clientId = UUID.randomUUID()
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)

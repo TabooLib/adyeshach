@@ -36,7 +36,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.3-11"
+    version = "6.0.3-18"
 }
 
 repositories {
@@ -46,6 +46,7 @@ repositories {
 
 dependencies {
     compileOnly("ink.ptms:Zaphkiel:1.5.0")
+    compileOnly("public:ServerTours:1.6.5")
     compileOnly("public:ModelEngine:R2.1.8")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly("com.guillaumevdn.gcore:GCore:7.15.0")

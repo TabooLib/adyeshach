@@ -57,23 +57,23 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
             setMetadata("beeStingersInEntity", value)
         }
 
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
                 val clientId = UUID.randomUUID()
                 // 创建客户端对应表
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
                 // 生成实体
                 NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, clientId, position.toLocation())
-            }
-            // 更新装备
-            submit(delay = 1) {
-                updateEquipment()
-            }
-            // 更新死亡状态
-            submit(delay = 5) {
-                if (isDie) {
-                    die(viewer = viewer)
+                // 更新装备
+                submit(delay = 1) {
+                    updateEquipment()
+                }
+                // 更新死亡状态
+                submit(delay = 5) {
+                    if (isDie) {
+                        die(viewer = viewer)
+                    }
                 }
             }
         } else {
