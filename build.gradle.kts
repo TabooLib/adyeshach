@@ -46,6 +46,7 @@ repositories {
 dependencies {
     compileOnly("ink.ptms:Zaphkiel:1.5.0")
     compileOnly("public:ModelEngine:R2.1.8")
+    compileOnly("public:ServerTours:1.6.5")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly("com.guillaumevdn.gcore:GCore:7.15.0")
     compileOnly("com.guillaumevdn.questcreator:QuestCreator:5.30.0")
