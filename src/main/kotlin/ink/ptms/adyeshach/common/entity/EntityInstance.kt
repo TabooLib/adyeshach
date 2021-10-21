@@ -26,6 +26,7 @@ import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
+import ink.ptms.adyeshach.internal.listener.ListenerServerTour.touringPlayer
 import io.netty.util.internal.ConcurrentSet
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
@@ -762,8 +763,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             // 销毁
             viewPlayers.getViewPlayers().forEach { player ->
                 if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
-                    viewPlayers.visible.remove(player.name)
-                    visible(player, false)
+                    if (player.name !in touringPlayer) {
+                        viewPlayers.visible.remove(player.name)
+                        visible(player, false)
+                    }
                 }
             }
         }
