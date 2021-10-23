@@ -10,7 +10,6 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -84,9 +83,9 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
         return !entityInstance.isNoGravity()
     }
 
-//    override fun setGravity(flag: Boolean) {
-//        return entityInstance.setNoGravity(!flag)
-//    }
+    override fun setGravity(flag: Boolean) {
+        return entityInstance.setNoGravity(!flag)
+    }
 
     override fun getHealth(): Double {
         return 1.0
@@ -133,19 +132,6 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun sendSpawnPacket(modeledEntity: ModeledEntity?) {
-    }
-
-    override fun setMoveController(p0: ModeledEntity?) {
-    }
-
-    override fun setMountController(p0: ModeledEntity?, p1: Player?, p2: String?) {
-    }
-
-    override fun setMountPoint(p0: UUID?) {
-    }
-
-    override fun getMountPoint(): UUID? {
-        return null
     }
 
     override fun getLastX(): Double {
