@@ -56,7 +56,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun remove() {
-       return entityInstance.delete()
+        return entityInstance.delete()
     }
 
     override fun isCustomNameVisible(): Boolean {
@@ -116,7 +116,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun isLivingEntity(): Boolean {
-        return entityInstance is AdyEntityLiving
+        return false
     }
 
     override fun addPotionEffect(potion: PotionEffect?) {
