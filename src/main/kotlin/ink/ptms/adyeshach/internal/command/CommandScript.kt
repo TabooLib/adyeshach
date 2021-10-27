@@ -100,7 +100,7 @@ internal object CommandScript {
         dynamic(commit = "script") {
             execute<CommandSender> { sender, _, argument ->
                 try {
-                    KetherShell.eval(argument, sender = adaptCommandSender(sender)).thenApply { v ->
+                    KetherShell.eval(argument, namespace = listOf("adyeshach"), sender = adaptCommandSender(sender)).thenApply { v ->
                         sender.sendMessage("§c[System] §7Result: $v")
                     }
                 } catch (ex: Throwable) {
