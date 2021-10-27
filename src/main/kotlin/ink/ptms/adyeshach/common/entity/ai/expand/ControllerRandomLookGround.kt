@@ -7,8 +7,8 @@ import taboolib.common.util.random
 /**
  * 随机看向附近
  *
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class ControllerRandomLookGround(entity: EntityInstance) : Controller(entity) {
 

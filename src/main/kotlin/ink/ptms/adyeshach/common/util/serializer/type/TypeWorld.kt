@@ -1,15 +1,15 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
+import com.google.gson.*
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import com.google.gson.*
 import org.bukkit.Bukkit
 import org.bukkit.World
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = World::class)
 class TypeWorld : JsonSerializer<World>, JsonDeserializer<World> {

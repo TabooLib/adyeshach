@@ -2,8 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityFireball
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 
 /**
  * @author sky
@@ -12,6 +10,6 @@ import org.bukkit.inventory.ItemStack
 class AdySmallFireball : AdyEntity(EntityTypes.SMALL_FIREBALL), EntityFireball {
 
     init {
-        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.FIRE_CHARGE))
+//        natural(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.FIRE_CHARGE))
     }
 }

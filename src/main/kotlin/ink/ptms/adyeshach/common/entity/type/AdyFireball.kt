@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityFireball
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -18,7 +17,7 @@ class AdyFireball : AdyEntity(EntityTypes.FIREBALL), EntityFireball {
         1.15,1.14,1.13,1.12,1.11,1.10,1.9
         null
          */
-        registerMeta(at(11600 to 7), "item", ItemStack(Material.AIR))
+//        natural(at(11600 to 7), "item", ItemStack(Material.AIR))
     }
 
     fun getItem(): ItemStack {

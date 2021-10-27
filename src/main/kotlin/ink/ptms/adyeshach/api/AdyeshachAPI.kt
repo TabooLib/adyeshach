@@ -3,26 +3,27 @@ package ink.ptms.adyeshach.api
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
-import ink.ptms.adyeshach.common.entity.ClientEntity
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.*
+import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
+import ink.ptms.adyeshach.common.entity.editor.EditorHandler
+import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import ink.ptms.adyeshach.common.entity.manager.*
-import ink.ptms.adyeshach.common.script.KnownController
-import ink.ptms.adyeshach.common.script.ScriptHandler
+import ink.ptms.adyeshach.common.entity.manager.database.DatabaseLocal
+import ink.ptms.adyeshach.common.entity.manager.database.DatabaseMongodb
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import ink.ptms.adyeshach.internal.database.DatabaseLocal
-import ink.ptms.adyeshach.internal.database.DatabaseMongodb
+import ink.ptms.adyeshach.common.util.toDistance
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
-import taboolib.common.platform.*
+import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.onlinePlayers
 import taboolib.common.platform.function.submit
+import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.SecuredFile
 import java.io.File
@@ -31,23 +32,28 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.function.Consumer
 import java.util.function.Function
 
 object AdyeshachAPI {
 
+    internal val betonQuestHooked by lazy { Bukkit.getPluginManager().getPlugin("BetonQuest") != null }
     internal val modelEngineHooked by lazy { Bukkit.getPluginManager().getPlugin("ModelEngine") != null }
 
     internal val onlinePlayerMap = CopyOnWriteArrayList<String>()
     internal val clientEntityMap = ConcurrentHashMap<String, MutableMap<Int, ClientEntity>>()
 
     internal val managerPrivate = ConcurrentHashMap<String, ManagerPrivate>()
-    internal val managerPrivateTemporary = ConcurrentHashMap<String, ManagerPrivateTemporary>()
+    internal val managerPrivateTemporary = ConcurrentHashMap<String, ManagerPrivateTemp>()
 
     internal val managerPublic = ManagerPublic()
-    internal val managerPublicTemporary = ManagerPublicTemporary()
+    internal val managerPublicTemporary = ManagerPublicTemp()
+
+    internal val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
+    internal val registeredControllerGenerator = LinkedHashMap<String, ControllerGenerator>()
 
     internal val database by lazy {
-        when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase(Locale.getDefault())) {
+        when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase()) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
             else -> {
@@ -71,7 +77,7 @@ object AdyeshachAPI {
     }
 
     fun getEntityManagerPrivateTemporary(player: Player): Manager {
-        return managerPrivateTemporary.computeIfAbsent(player.name) { ManagerPrivateTemporary(player.name) }
+        return managerPrivateTemporary.computeIfAbsent(player.name) { ManagerPrivateTemp(player.name) }
     }
 
     @Throws(UnknownWorldException::class)
@@ -111,10 +117,6 @@ object AdyeshachAPI {
         return getEntity(player) { true }
     }
 
-    fun getEntityFromClientUniqueId(player: Player, uniqueId: UUID): EntityInstance? {
-        return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == uniqueId }?.entity
-    }
-
     fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.index == id }
     }
@@ -129,6 +131,10 @@ object AdyeshachAPI {
 
     fun getEntityFromUniqueIdOrId(id: String, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.id == id || it.uniqueId == id }
+    }
+
+    fun getEntityFromClientUniqueId(player: Player, uniqueId: UUID): EntityInstance? {
+        return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == uniqueId }?.entity
     }
 
     fun getEntity(player: Player? = null, filter: Function<EntityInstance, Boolean>): EntityInstance? {
@@ -147,40 +153,82 @@ object AdyeshachAPI {
         return entity
     }
 
-    fun registerKnownController(name: String, event: KnownController) {
-        ScriptHandler.controllers[name] = event
-    }
-
-    fun getKnownController(name: String): KnownController? {
-        return ScriptHandler.getKnownController(name)
-    }
-
-    fun getKnownController(): Map<String, KnownController> {
-        return ScriptHandler.controllers
-    }
-
-    fun Location.toDistance(loc: Location): Double {
-        return if (this.world!!.name == loc.world!!.name) {
-            this.distance(loc)
-        } else {
-            Double.MAX_VALUE
+    /**
+     * 注册元数据模型（布尔值）
+     */
+    fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean = false) {
+        val meta = MetaMasked<EntityInstance>(index, key, mask, def)
+        val ge = EditorHandler.editorGenerator[Boolean::class.java.nonPrimitive()]
+        if (ge != null) {
+            meta.editor = MetaEditor(meta).also { ge.accept(it) }
         }
+        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
+    }
+
+    /**
+     * 注册元数据模型（专业类型）
+     */
+    fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any, editor: Consumer<MetaEditor<*>>? = null) {
+        val meta = MetaNatural<Any, EntityInstance>(index, key, def)
+        val ge = editor ?: EditorHandler.editorGenerator[def.javaClass]
+        if (ge != null) {
+            meta.editor = MetaEditor(meta).also { ge.accept(it) }
+        }
+        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += meta
+    }
+
+    /**
+     * 注册元数据模型（专业类型）编辑器
+     */
+    fun registerEntityMetaNaturalEditor(type: Class<*>, key: String, editor: Consumer<MetaEditor<*>>) {
+        registerEntityMetaNatural(type, -2, key, 0, editor)
+    }
+
+    /**
+     * 注册特定类型的 MetaEditor 生成器
+     */
+    fun registerEntityMetaEditorGenerator(vararg type: Class<*>, editor: Consumer<MetaEditor<*>>) {
+        type.forEach { EditorHandler.editorGenerator[it] = editor }
+    }
+
+    /**
+     * 注册 Controller 生成器
+     */
+    fun registerControllerGenerator(name: String, event: ControllerGenerator) {
+        registeredControllerGenerator[name] = event
+    }
+
+    /**
+     * 获取 Controller 生成器
+     */
+    fun getControllerGenerator(name: String): ControllerGenerator? {
+        return registeredControllerGenerator.entries.firstOrNull { it.key.equals(name, true) }?.value
+    }
+
+    /**
+     * 获取所有 Controller 生成器（副本）
+     */
+    fun getControllerGenerator(): Map<String, ControllerGenerator> {
+        return registeredControllerGenerator.toMap()
     }
 
     /**
      * 创建全息
      */
     fun createHologram(player: Player, location: Location, content: List<String>): Hologram<*> {
-        return Hologram.AdyeshachImpl().also {
-            it.create(player, location, content)
-        }
+        return Hologram.AdyeshachImpl().also { it.create(player, location, content) }
     }
 
+    /**
+     * 创建全息通告
+     * 以全息形式发送位于世界中的提示信息
+     */
     fun createHolographic(player: Player, location: Location, vararg message: String) {
         createHolographic(player, location, 40, { it }, *message)
     }
 
     /**
+     * 创建全息通告
      * 以全息形式发送位于世界中的提示信息
      *
      * @param location 坐标

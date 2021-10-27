@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -11,6 +10,7 @@ import org.bukkit.inventory.ItemStack
 class AdyFireworkRocket : AdyEntity(EntityTypes.FIREWORK_ROCKET) {
 
     init {
+        testing = true
         /*
         1.16,1.15,1.14
         7 ->Firework info
@@ -24,7 +24,7 @@ class AdyFireworkRocket : AdyEntity(EntityTypes.FIREWORK_ROCKET) {
         1.9
         5 ->Firework info
          */
-        registerMeta(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
+//        natural(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
     }
 
     fun getFireworkInfo(): ItemStack {

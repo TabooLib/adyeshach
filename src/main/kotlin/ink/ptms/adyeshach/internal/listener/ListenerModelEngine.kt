@@ -11,9 +11,9 @@ import ink.ptms.adyeshach.common.util.RayTrace
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.util.Vector
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
-import taboolib.common.util.Vector
 import taboolib.module.navigation.BoundingBox
 
 object ListenerModelEngine {

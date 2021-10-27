@@ -7,9 +7,10 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.bukkit.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import ink.ptms.adyeshach.common.editor.Editor
+import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
+import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import ink.ptms.adyeshach.common.entity.type.AdyHorse
 import ink.ptms.adyeshach.common.entity.type.AdyPainting
 import ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
@@ -23,7 +24,9 @@ import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
-import taboolib.common.platform.command.*
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.submit
 import taboolib.common5.Coerce
@@ -31,6 +34,7 @@ import taboolib.common5.Mirror
 import taboolib.platform.util.sendLang
 import java.io.File
 
+@Suppress("UNCHECKED_CAST")
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.admin")
 internal object CommandAPI {
 
@@ -115,79 +119,79 @@ internal object CommandAPI {
                         try {
                             when (context.argument(-2)) {
                                 "int" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, Coerce.toInteger(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "byte" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, Coerce.toByte(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "text" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, args[1])
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "pose" -> {
                                     entity.setPose(Enums.getIfPresent(BukkitPose::class.java, args[1]).get())
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "meta" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
-                                    val editor = Editor.getEditor(meta) ?: return@execute
-                                    editor.onModify?.invoke(sender, entity, meta)
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
+                                    val editor = meta.editor ?: return@execute
+                                    (editor as MetaEditor<EntityInstance>).modifyMethod?.invoke(sender, entity)
                                 }
                                 "reset" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
-                                    if (meta.editor?.onReset != null) {
-                                        meta.editor!!.onReset!!.invoke(entity, meta)
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
+                                    if (meta.editor?.resetMethod != null) {
+                                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(sender, entity)
                                     } else {
                                         entity.setMetadata(meta.key, meta.def)
                                     }
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "particle" -> {
-                                    val meta = entity.listMetadata().firstOrNull { it.key == args[0] } ?: return@execute
+                                    val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, Enums.getIfPresent(BukkitParticles::class.java, args[1]).get())
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "villager_profession" -> {
                                     val data = (entity as EntityVillager).getVillagerData()
                                     entity.setVillagerData(VillagerData(data.type, Enums.getIfPresent(Villager.Profession::class.java, args[1]).get()))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "villager_profession_legacy" -> {
                                     (entity as EntityVillager).setLegacyProfession(BukkitProfession.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "painting_painting" -> {
                                     (entity as AdyPainting).setPainting(BukkitPaintings.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "painting_direction" -> {
                                     (entity as AdyPainting).setDirection(BukkitDirection.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "pattern_color" -> {
                                     (entity as AdyTropicalFish).setPatternColor(DyeColor.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "body_color" -> {
                                     (entity as AdyTropicalFish).setBodyColor(DyeColor.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "pattern" -> {
                                     (entity as AdyTropicalFish).setPattern(TropicalFish.Pattern.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "horse_color" -> {
                                     (entity as AdyHorse).setColor(Horse.Color.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                                 "horse_style" -> {
                                     (entity as AdyHorse).setStyle(Horse.Style.valueOf(args[1]))
-                                    Editor.open(sender, entity)
+                                    entity.openEditor(sender)
                                 }
                             }
                         } catch (ex: Exception) {

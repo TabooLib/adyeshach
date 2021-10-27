@@ -3,17 +3,10 @@ package ink.ptms.adyeshach.common.entity.type
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.nms.NMS
-import ink.ptms.adyeshach.common.editor.Editor
 import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
-import taboolib.library.xseries.XMaterial
-import taboolib.module.nms.getName
-import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
-import taboolib.platform.util.isNotAir
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -31,40 +24,8 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
     var data = 0.toByte()
         private set
 
-    init {
-        registerEditor("block")
-            .reset { _, _ ->
-                material = Material.STONE
-                data = 0.toByte()
-            }
-            .modify { player, entity, _ ->
-                player.openMenu<Basic>("Adyeshach Editor : Input") {
-                    rows(1)
-                    map("####@####")
-                    set('#', XMaterial.BLACK_STAINED_GLASS_PANE) {
-                        name = "§f"
-                    }
-                    set('@', ItemStack(material, 1, data.toShort()))
-                    onClick('#')
-                    onClose {
-                        val item = it.inventory.getItem(4)
-                        if (item.isNotAir()) {
-                            material = item!!.type
-                            data = item.durability.toByte()
-                        }
-                        destroy()
-                        spawn(getLocation())
-                        Editor.open(player, entity)
-                    }
-                }
-            }
-            .display { player, _, _ ->
-                ItemStack(material, 1, data.toShort()).getName(player)
-            }
-    }
-
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
                 val clientId = UUID.randomUUID()
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)

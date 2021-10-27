@@ -17,7 +17,7 @@ open class AdySpider(entityTypes: EntityTypes) : AdyMob(entityTypes) {
          * 1.10 -> 12
          * 1.9 -> 11
          */
-        registerMetaByteMask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isClimbing", 0x01)
+//        mask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isClimbing", 0x01)
     }
 
     fun setClimbing(climbing: Boolean) {

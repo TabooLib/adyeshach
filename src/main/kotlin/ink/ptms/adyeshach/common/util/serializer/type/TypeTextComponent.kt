@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
-import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import com.google.gson.*
+import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import net.md_5.bungee.api.chat.TextComponent
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = TextComponent::class)
 class TypeTextComponent : JsonSerializer<TextComponent>, JsonDeserializer<TextComponent> {

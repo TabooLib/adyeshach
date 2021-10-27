@@ -10,8 +10,8 @@ import taboolib.library.configuration.ConfigurationSection
 import java.util.*
 
 /**
- * @Author sky
- * @Since 2020-08-04 12:47
+ * @author sky
+ * @since 2020-08-04 12:47
  */
 abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable() {
 
@@ -31,6 +31,8 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
     var position = EntityPosition.empty()
         protected set
         get() = field.clone()
+
+    var testing = false
 
     val x: Double
         get() = position.x

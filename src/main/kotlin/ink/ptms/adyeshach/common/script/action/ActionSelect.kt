@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -33,7 +32,7 @@ class ActionSelect(val value: ParsedAction<*>, val byId: Boolean): ScriptAction<
             if (it.hasNext()) {
                 it.mark()
                 if (it.nextToken() == "by" && it.hasNext()) {
-                    byId = when (val type = it.nextToken().lowercase(Locale.getDefault())) {
+                    byId = when (val type = it.nextToken().lowercase()) {
                         "id" -> true
                         "uniqueid", "uuid" -> false
                         else -> throw loadError("Unknown select type $type")

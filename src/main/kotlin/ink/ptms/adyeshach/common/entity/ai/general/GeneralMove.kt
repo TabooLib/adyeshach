@@ -11,8 +11,8 @@ import taboolib.common5.Baffle
 /**
  * 实体移动逻辑
  *
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class GeneralMove(entity: EntityInstance) : Controller(entity) {
 
@@ -91,6 +91,6 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
     }
 
     fun getGravity(): GeneralGravity {
-        return entity!!.getController(GeneralGravity::class)!!
+        return entity!!.getController(GeneralGravity::class.java)!!
     }
 }

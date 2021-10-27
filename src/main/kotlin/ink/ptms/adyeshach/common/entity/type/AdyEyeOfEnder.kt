@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -15,7 +14,7 @@ class AdyEyeOfEnder : AdyEntity(EntityTypes.EYE_OF_ENDER) {
         1.16,1.15,1.14
         7 ->Item
          */
-        registerMeta(at(11700 to 8, 11400 to 7), "item", ItemStack(Material.ENDER_EYE))
+//        natural(at(11700 to 8, 11400 to 7), "item", ItemStack(Material.ENDER_EYE))
     }
 
     fun getItem(): ItemStack {

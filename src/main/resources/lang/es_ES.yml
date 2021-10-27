@@ -6,11 +6,9 @@ not-support: '&4[Adyeshach] &cLo siento, Adyeshach no soporta esta version de mi
 not-support-new-version:
   - '&4[Adyeshach] &cLo siento, adyeshach no soporta esta nueva version de minecraft.'
   - '&4[Adyeshach] &cPor favor espera a que la compatibilidad este completa.'
-
 trait-sit-manager-not-set: '&c[Adyeshach] &7El gestor de entidades no se ha iniciado.'
 trait-sit-remove: '&c[Adyeshach] &7Sentando.'
 trait-sit-create: '&c[Adyeshach] &7Levantando.'
-
 trait-patrol:
   - type: TITLE
     title: ''
@@ -29,7 +27,6 @@ trait-patrol-update:
     fadeout: 0
 trait-patrol-tool-name: '&bPatrol Tool'
 trait-patrol-tool-lore: '&7Left-Click to add path node and Right-Click to remove.'
-
 trait-title-finish: '&c[Adyeshach] &7Trait Edited.'
 trait-title:
   - type: TITLE
@@ -38,7 +35,6 @@ trait-title:
     fadein: 10
     stay: 40
     fadeout: 10
-
 trait-command-finish: '&c[Adyeshach] &7Trait editado.'
 trait-command:
   - type: TITLE
@@ -47,7 +43,6 @@ trait-command:
     fadein: 10
     stay: 40
     fadeout: 10
-
 armor-stand-editor-name: 'Ángulos del soporte de armaduras'
 armor-stand-editor-1:
   - type: TITLE
@@ -59,7 +54,6 @@ armor-stand-editor-1:
 armor-stand-editor-2:
   - type: ACTIONBAR
     text: '&7Presiona &fSHIFT + CLICK IZQUIERDO &7Para aumentar &8| &7Presiona &fSHIFT + CLICK DERECHO &7disminuir'
-
 command-main-entity-not-support: '&c[Adyeshach] &7La entidad &f"{0}" &7no es soportada.'
 command-main-entity-create: '&c[Adyeshach] &7NPC creado.'
 command-main-entity-not-found: '&c[Adyeshach] &7El npc no se encontró.'
@@ -99,6 +93,8 @@ command-script-list-all:
 command-script-reload-all:
   - '&c[Adyeshach] &7Los scripts han sido recargados perfectamente.'
 editor-armorstand-tool: '&c[Adyeshach] &7Use the Angle Tool (REDSTONE_TORCH) to edit the ArmorStand NPC.'
+editor-armorstand-tool-name: '当前: {0}'
+editor-armorstand-tool-lore: '盔甲架角度调整工具'
 editor-temporary: '&7(Temporary)'
 editor-type: 'Type'
 editor-tags: 'Tags'
@@ -108,6 +104,37 @@ editor-manager-public: 'PUBLIC'
 editor-manager-private: 'PRIVATE'
 editor-click-to-edit: '&7CLICK TO EDIT'
 editor-click-to-reset: '&7CLICK TO RESET'
+editor-sign-input: 'please enter content'
+editor-item-input: '放入物品'
+editor-text-input-name: '&f打开并输入内容'
+editor-text-input-lore: '&7单位编辑器'
+editor-picker-tick:
+  - type: TITLE
+    title: '&3&l移动实体'
+    subtitle: '&7距离: &8{0}'
+    fadein: 0
+    stay: 20
+    fadeout: 0
+  - type: ACTIONBAR
+    text: '&7按下 &fF &7放下实体 &8| &7按下 &fSHIFT + F &7重置距离'
+editor-picker-settle: '&c[Adyeshach] &7实体已放置。'
+editor-picker-ground: '&7当前单位与 &f地面 &7的距离为 &f{0}&7.'
+editor-testing: '&c这个单位类型的部分功能在 Adyeshach {0} 版本下可能存在异常!'
+editor-select: '&8点击选择'
+editor-select-teleport: '&8点击传送'
+editor-unused: '&c这个元数据可以修改, 但是没有意义。'
+editor-controller: '单位控制器'
+editor-controller-move: '移动'
+editor-controller-gravity: '重力'
+editor-controller-smooth-look: '平滑视角移动（测试）'
+editor-controller-look-at-player: '看向玩家（模拟原版）'
+editor-controller-look-at-player-always: '看向玩家（锁定玩家）'
+editor-controller-random-look-ground: '随机看向周围'
+editor-controller-random-stroll-land: '随机游荡'
+editor-controller-enable: '&a启用'
+editor-controller-disable: '&c禁用'
+editor-meta-true: '&a是'
+editor-meta-false: '&c否'
 editor-meta-is-dancing: 'Is Dancing'
 editor-meta-is-faceplanted: 'Is Faceplanted'
 editor-meta-skin-jacket: 'Skin Jacket'
@@ -185,6 +212,7 @@ editor-meta-villager-profession: 'Villager Profession'
 editor-meta-horse-style: 'Horse Style'
 editor-meta-is-drinking-potion: 'Is Drinking Potion'
 editor-meta-entity-pose: 'Entity Pose'
+editor-meta-pose: 'Entity Pose'
 editor-meta-is-small: 'Is Small'
 editor-meta-shield-height: 'Shield Height'
 editor-meta-from-bucket: 'From Bucket'
@@ -272,3 +300,4 @@ editor-meta-is-charging: 'Is Charging'
 editor-meta-is-becoming-drowned: 'Is Becoming Drowned'
 editor-meta-head-shake-timer: 'Head Shake Timer'
 editor-meta-model-engine: 'Model Engine'
+editor-meta-is-hands-held-up: 'Hands Held up'

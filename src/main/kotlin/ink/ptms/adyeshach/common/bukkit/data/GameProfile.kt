@@ -1,16 +1,15 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
 import com.google.gson.annotations.Expose
-import org.bukkit.GameMode
 
 /**
- * @Author sky
- * @Since 2020-08-05 18:31
+ * @author sky
+ * @since 2020-08-05 18:31
  */
 class GameProfile {
 
     @Expose
-    var name = "AdyHuman"
+    var name = "Adyeshach"
 
     /**
      * A ping that negative (i.e. not known to the server yet) will result in the no connection icon.

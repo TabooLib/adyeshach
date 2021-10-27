@@ -1,11 +1,8 @@
 package ink.ptms.adyeshach.api
 
 import ink.ptms.adyeshach.Adyeshach
-import ink.ptms.adyeshach.common.editor.EditorMode
-import org.spigotmc.SpigotConfig
+import ink.ptms.adyeshach.common.entity.editor.EditorMode
 import taboolib.module.configuration.ConfigNode
-import java.lang.Exception
-import java.util.*
 
 object AdyeshachSettings {
 
@@ -38,10 +35,6 @@ object AdyeshachSettings {
 
     @ConfigNode("Settings.pathfinder-sync")
     var pathfinderSync = true
-        private set
-
-    @ConfigNode("Settings.editor-meta-per-line")
-    var editorMetaPerLine = 3
         private set
 
     @ConfigNode("Settings.delete-file-in-unknown-world")

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.internal.trait.impl
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
@@ -18,7 +19,7 @@ import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.*
 
-object Patrol : Trait() {
+object TraitPatrol : Trait() {
 
     val edit = HashMap<String, EntityInstance>()
     val nodesCacheMap = HashMap<String, List<Location>>()
@@ -89,8 +90,13 @@ object Patrol : Trait() {
     }
 
     fun EntityInstance.nodes(nodes: List<Location>) {
-        data.set("$uniqueId.nodes", nodes.map { it.serialize() })
-        nodesCacheMap[uniqueId] = nodes.toList()
+        if (nodes.isEmpty()) {
+            data.set("$uniqueId.nodes", null)
+            nodesCacheMap.remove(uniqueId)
+        } else {
+            data.set("$uniqueId.nodes", nodes.map { it.serialize() })
+            nodesCacheMap[uniqueId] = nodes.toList()
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -114,6 +120,11 @@ object Patrol : Trait() {
 
     fun EntityInstance.index(): Int {
         return data.getInt("$uniqueId.index")
+    }
+
+    @SubscribeEvent
+    fun e(e: AdyeshachEntityRemoveEvent) {
+        e.entity.nodes(emptyList())
     }
 
     @SubscribeEvent

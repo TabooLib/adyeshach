@@ -5,14 +5,13 @@ import ink.ptms.adyeshach.common.entity.ai.Controller
 import taboolib.common5.Baffle
 
 /**
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
 
     /*
         -180  -135  -90  -45  0  +45  +90  +135  +180
-
      */
 
     var yaw = 0f

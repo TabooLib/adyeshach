@@ -3,9 +3,10 @@ package ink.ptms.adyeshach.common.script.action
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.bukkit.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Editors
+import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityVillager
+import ink.ptms.adyeshach.common.entity.editor.MetaEditor
+import ink.ptms.adyeshach.common.entity.editor.enums
 import ink.ptms.adyeshach.common.entity.type.*
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
@@ -23,17 +24,16 @@ import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
-import taboolib.common.util.Vector
+import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.kether.*
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * @author IzzelAliz
  */
-class ActionMeta(val key: String, val symbol: Symbol, val value: String?): ScriptAction<Void>() {
+class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : ScriptAction<Void>() {
 
     val zaphkielHook = Bukkit.getPluginManager().isPluginEnabled("Zaphkiel")
 
@@ -60,16 +60,16 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
             error("No entity selected.")
         }
         s.getEntities()!!.filterNotNull().forEach {
-            val meta = it.listMetadata().firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
-            val editor = Editor.getEditor(meta) ?: error("Metadata is not editable. (0)")
-            if (!editor.edit) {
+            val meta = it.getEditableEntityMeta().firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
+            val editor = meta.editor ?: error("Metadata is not editable. (0)")
+            if (!editor.editable) {
                 error("Metadata is not editable. (1)")
             }
             when (symbol) {
                 Symbol.SET -> {
                     when {
                         meta.key == "entityPose" -> {
-                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase(Locale.getDefault())).get())
+                            it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase()).get())
                         }
                         meta.key == "modelEngineName" -> {
                             it.modelEngineName = value.toString()
@@ -78,7 +78,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                             it.visibleDistance = Coerce.toDouble(value)
                         }
                         meta.key == "alwaysVisible" -> {
-                            it.alwaysVisible = Coerce.toBoolean(value)
+                            it.visibleAfterLoaded = Coerce.toBoolean(value)
                         }
                         meta.key == "moveSpeed" -> {
                             it.moveSpeed = Coerce.toDouble(value)
@@ -104,47 +104,26 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                         meta.key == "playerTexture" && it is AdyHuman -> {
                             it.setTexture(value.toString())
                         }
-                        meta.key == "villagerType" && it is EntityVillager -> {
-                            val data = it.getVillagerData()
-                            it.setVillagerData(
-                                VillagerData(
-                                    Enums.getIfPresent(Villager.Type::class.java, value.toString().uppercase(Locale.getDefault())).get(),
-                                    data.profession
-                                )
-                            )
-                        }
-                        meta.key == "villagerProfession" && it is EntityVillager -> {
-                            val data = it.getVillagerData()
-                            it.setVillagerData(
-                                VillagerData(
-                                    data.type,
-                                    Enums.getIfPresent(Villager.Profession::class.java, value.toString().uppercase(Locale.getDefault())).get()
-                                )
-                            )
-                        }
-                        meta.key == "villagerProfessionLegacy" && it is EntityVillager -> {
-                            it.setLegacyProfession(BukkitProfession.valueOf(value.toString().uppercase(Locale.getDefault())))
-                        }
                         meta.key == "paintingPainting" && it is AdyPainting -> {
-                            it.setPainting(BukkitPaintings.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPainting(BukkitPaintings.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "paintingDirection" && it is AdyPainting -> {
-                            it.setDirection(BukkitDirection.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setDirection(BukkitDirection.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "patternColor" && it is AdyTropicalFish -> {
-                            it.setPatternColor(DyeColor.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPatternColor(DyeColor.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "bodyColor" && it is AdyTropicalFish -> {
-                            it.setBodyColor(DyeColor.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setBodyColor(DyeColor.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "pattern" && it is AdyTropicalFish -> {
-                            it.setPattern(TropicalFish.Pattern.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setPattern(TropicalFish.Pattern.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "horseColor" && it is AdyHorse -> {
-                            it.setColor(Horse.Color.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setColor(Horse.Color.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "horseStyle" && it is AdyHorse -> {
-                            it.setStyle(Horse.Style.valueOf(value.toString().uppercase(Locale.getDefault())))
+                            it.setStyle(Horse.Style.valueOf(value.toString().uppercase()))
                         }
                         meta.key == "equipmentHelmet" && it is AdyEntityLiving -> {
                             it.setHelmet(getItem(value.toString()))
@@ -174,9 +153,29 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                         meta.key == "block" && it is AdyMinecart -> {
                             it.setCustomBlock(getItem(value.toString()).data!!)
                         }
-                        editor.enum != null -> {
-                            val enum = Editors.getEnums(editor.enum!!).firstOrNull { e -> e.toString().equals(value.toString(), true) }
-                                ?: error("Enum type \"${value}\" not found.")
+                        meta.key == "villagerProfessionLegacy" && it is EntityVillager -> {
+                            it.setLegacyProfession(BukkitProfession.valueOf(value.toString().uppercase()))
+                        }
+                        meta.key == "villagerType" && it is EntityVillager -> {
+                            val data = it.getVillagerData()
+                            it.setVillagerData(
+                                VillagerData(
+                                    Enums.getIfPresent(Villager.Type::class.java, value.toString().uppercase()).get(),
+                                    data.profession
+                                )
+                            )
+                        }
+                        meta.key == "villagerProfession" && it is EntityVillager -> {
+                            val data = it.getVillagerData()
+                            it.setVillagerData(
+                                VillagerData(
+                                    data.type,
+                                    Enums.getIfPresent(Villager.Profession::class.java, value.toString().uppercase()).get()
+                                )
+                            )
+                        }
+                        editor.enumType != null -> {
+                            val enum = editor.enumType!!.enums().firstOrNull { e -> e.toString().equals(value.toString(), true) } ?: error("Enum type \"${value}\" not found.")
                             it.setMetadata(meta.key, (enum as Enum<*>).ordinal)
                         }
                         else -> {
@@ -192,15 +191,15 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?): Scrip
                                 MaterialData::class -> it.setMetadata(meta.key, getItem(value.toString()).data!!)
                                 BukkitParticles::class -> it.setMetadata(
                                     meta.key,
-                                    Enums.getIfPresent(BukkitParticles::class.java, value.toString().uppercase(Locale.getDefault())).get()
+                                    Enums.getIfPresent(BukkitParticles::class.java, value.toString().uppercase()).get()
                                 )
                             }
                         }
                     }
                 }
                 Symbol.RESET -> {
-                    if (meta.editor?.onReset != null) {
-                        meta.editor!!.onReset!!.invoke(it, meta)
+                    if (meta.editor?.resetMethod != null) {
+                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(s.sender!!.cast(), it)
                     } else {
                         it.setMetadata(meta.key, meta.def)
                     }

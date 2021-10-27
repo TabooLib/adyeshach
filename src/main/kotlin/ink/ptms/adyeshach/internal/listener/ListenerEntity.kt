@@ -1,24 +1,23 @@
 package ink.ptms.adyeshach.internal.listener
 
-import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 
 /**
- * @Author sky
- * @Since 2020-08-15 15:53
+ * @author sky
+ * @since 2020-08-15 15:53
  */
-internal object ListenerEntity {
+object ListenerEntity {
 
     @SubscribeEvent
     fun e(e: PacketReceiveEvent) {

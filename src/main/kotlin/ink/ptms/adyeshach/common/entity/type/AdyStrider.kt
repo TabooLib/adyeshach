@@ -9,8 +9,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 class AdyStrider : AdyEntityLiving(EntityTypes.STRIDER) {
 
     init {
-        registerMeta(at(11700 to 18), "isShaking", false)
-        registerMeta(at(11700 to 19), "hasSaddle", false)
+//        natural(at(11700 to 18), "isShaking", false)
+//        natural(at(11700 to 19), "hasSaddle", false)
     }
 
     var isShaking: Boolean

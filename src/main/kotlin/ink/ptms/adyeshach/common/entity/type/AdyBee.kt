@@ -1,7 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Editor.toDisplay
 import ink.ptms.adyeshach.common.entity.EntityTypes
 
 /**
@@ -14,24 +12,24 @@ class AdyBee : AdyEntityAgeable(EntityTypes.BEE) {
      * 1.15+ 一致
      */
     init {
-        registerMetaByteMask(at(11700 to 17, 11500 to 16), "unUsed", 0x01)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16), "isFlip", 0x02)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16), "hasStung", 0x04)
-        registerMetaByteMask(at(11700 to 17, 11500 to 16), "hasNectar", 0x08)
-        registerMeta(at(11700 to 18, 11500 to 17), "angerTicks", 0)
-                .canEdit(false)
-                .build()
-        registerEditor("isAngered")
-                .reset { entity, _ ->
-                    (entity as AdyBee).setAngered(false)
-                }
-                .modify { player, entity, _ ->
-                    (entity as AdyBee).setAngered(!entity.isAngered())
-                    Editor.open(player, entity)
-                }
-                .display { _, entity, _ ->
-                    (entity as AdyBee).isAngered().toDisplay()
-                }
+//        mask(at(11700 to 17, 11500 to 16), "unUsed", 0x01)
+//        mask(at(11700 to 17, 11500 to 16), "isFlip", 0x02)
+//        mask(at(11700 to 17, 11500 to 16), "hasStung", 0x04)
+//        mask(at(11700 to 17, 11500 to 16), "hasNectar", 0x08)
+//        natural(at(11700 to 18, 11500 to 17), "angerTicks", 0)
+//                .canEdit(false)
+//                .build()
+//        naturalEditor("isAngered")
+//                .reset { entity, _ ->
+//                    (entity as AdyBee).setAngered(false)
+//                }
+//                .modify { player, entity, _ ->
+//                    (entity as AdyBee).setAngered(!entity.isAngered())
+//                    entity.openEditor(player)
+//                }
+//                .display { _, entity, _ ->
+//                    (entity as AdyBee).isAngered().toDisplay()
+//                }
     }
 
     fun setUnUsed(unused: Boolean) {

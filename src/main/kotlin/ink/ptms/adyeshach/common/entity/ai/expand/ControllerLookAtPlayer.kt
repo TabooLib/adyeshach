@@ -9,8 +9,8 @@ import taboolib.common.util.random
 /**
  * 看向周围玩家
  *
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
 

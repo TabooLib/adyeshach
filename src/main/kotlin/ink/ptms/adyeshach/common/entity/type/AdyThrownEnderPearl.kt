@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -12,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 class AdyThrownEnderPearl : AdyEntity(EntityTypes.THROWN_ENDER_PEARL), EntityThrowable {
 
     init {
-        registerMeta(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.ENDER_PEARL))
+//        natural(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.ENDER_PEARL))
     }
 
     fun getItem(): ItemStack {

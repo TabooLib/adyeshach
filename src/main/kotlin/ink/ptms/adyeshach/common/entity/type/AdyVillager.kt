@@ -4,8 +4,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitProfession
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.EntityVillager
-import ink.ptms.adyeshach.common.entity.EntityVillager.Companion.registerVillagerEditor
-import org.bukkit.entity.Villager
 
 /**
  * @author sky
@@ -17,15 +15,7 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
     constructor() : this(EntityTypes.VILLAGER)
 
     init {
-        if (version >= 11400) {
-            registerMeta(at(11700 to 17), "headShakeTimer", 0)
-            registerMeta(at(11700 to 18, 11500 to 17, 11400 to 16), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
-        } else {
-            registerMeta(at(11000 to 13, 10900 to 12), "profession", BukkitProfession.FARMER.ordinal)
-                    .canEdit(false)
-                    .build()
-        }
-        registerVillagerEditor(this)
+        testing = true
     }
 
     override fun setVillagerData(villagerData: VillagerData) {
@@ -37,10 +27,10 @@ open class AdyVillager(entityTypes: EntityTypes) : AdyEntityAgeable(entityTypes)
     }
 
     override fun setLegacyProfession(profession: BukkitProfession) {
-        setMetadata("profession", profession)
+        setMetadata("profession", profession.ordinal)
     }
 
     override fun getLegacyProfession(): BukkitProfession {
-        return getMetadata("profession")
+        return BukkitProfession.of(getMetadata<BukkitProfession>("profession").ordinal)
     }
 }

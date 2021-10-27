@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.script
 
+import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayer
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerLookAtPlayerAlways
 import ink.ptms.adyeshach.common.entity.ai.expand.ControllerRandomLookGround
@@ -12,34 +14,31 @@ import ink.ptms.adyeshach.common.entity.manager.Manager
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.SkipTo
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.Workspace
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
 
-@SkipTo(LifeCycle.ENABLE)
+@SkipTo(LifeCycle.LOAD)
 object ScriptHandler {
 
     val workspace = Workspace(File(getDataFolder(), "npc/script"), ".ady", listOf("adyeshach"))
-    val controllers = ConcurrentHashMap<String, KnownController>()
 
-    @Awake(LifeCycle.ENABLE)
+    @Awake(LifeCycle.LOAD)
     fun load() {
-        // 已知控制器
-        controllers["Move"] = KnownController(GeneralMove::class) { GeneralMove(it) }
-        controllers["Gravity"] = KnownController(GeneralGravity::class) { GeneralGravity(it) }
-        controllers["SmoothLook"] = KnownController(GeneralSmoothLook::class) { GeneralSmoothLook(it) }
-        controllers["LookAtPlayer"] = KnownController(ControllerLookAtPlayer::class) { ControllerLookAtPlayer(it) }
-        controllers["LookAtPlayerAlways"] = KnownController(ControllerLookAtPlayerAlways::class) { ControllerLookAtPlayerAlways(it) }
-        controllers["RandomLookGround"] = KnownController(ControllerRandomLookGround::class) { ControllerRandomLookGround(it) }
-        controllers["RandomStrollLand"] = KnownController(ControllerRandomStrollLand::class) { ControllerRandomStrollLand(it) }
+        AdyeshachAPI.registeredControllerGenerator["Move"] = ControllerGenerator(GeneralMove::class.java) { GeneralMove(it) }
+        AdyeshachAPI.registeredControllerGenerator["Gravity"] = ControllerGenerator(GeneralGravity::class.java) { GeneralGravity(it) }
+        AdyeshachAPI.registeredControllerGenerator["SmoothLook"] = ControllerGenerator(GeneralSmoothLook::class.java) { GeneralSmoothLook(it) }
+        AdyeshachAPI.registeredControllerGenerator["LookAtPlayer"] = ControllerGenerator(ControllerLookAtPlayer::class.java) { ControllerLookAtPlayer(it) }
+        AdyeshachAPI.registeredControllerGenerator["LookAtPlayerAlways"] = ControllerGenerator(ControllerLookAtPlayerAlways::class.java) { ControllerLookAtPlayerAlways(it) }
+        AdyeshachAPI.registeredControllerGenerator["RandomLookGround"] = ControllerGenerator(ControllerRandomLookGround::class.java) { ControllerRandomLookGround(it) }
+        AdyeshachAPI.registeredControllerGenerator["RandomStrollLand"] = ControllerGenerator(ControllerRandomStrollLand::class.java) { ControllerRandomStrollLand(it) }
     }
 
     fun toEulerAngle(str: String): EulerAngle {
@@ -72,8 +71,8 @@ object ScriptHandler {
         )
     }
 
-    fun getKnownController(name: String): KnownController? {
-        return controllers.entries.firstOrNull { it.key.equals(name, true) }?.value
+    fun getControllerGenerator(name: String): ControllerGenerator? {
+        return AdyeshachAPI.getControllerGenerator(name)
     }
 
     fun ScriptContext.getManager(): Manager? {

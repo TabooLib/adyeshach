@@ -9,8 +9,8 @@ import org.bukkit.entity.FallingBlock
 import taboolib.common5.Baffle
 
 /**
- * @Author sky
- * @Since 2020-08-19 22:09
+ * @author sky
+ * @since 2020-08-19 22:09
  */
 class GeneralGravity(entity: EntityInstance) : Controller(entity) {
 

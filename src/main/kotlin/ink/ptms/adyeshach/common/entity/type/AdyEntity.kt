@@ -8,13 +8,13 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:28
+ * @author sky
+ * @since 2020-08-04 18:28
  */
 open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
 
-    override fun visible(viewer: Player, visible: Boolean) {
-        if (visible) {
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
             spawn(viewer) {
                 val clientId = UUID.randomUUID()
                 // 创建客户端对应表
@@ -28,10 +28,10 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
                     }
                     it
                 })
-            }
-            // 投掷物单位初始化，取消客户端重力计算
-            if (this is EntityThrowable) {
-                setNoGravity(true)
+                // 投掷物单位初始化，取消客户端重力计算
+                if (this is EntityThrowable) {
+                    setNoGravity(true)
+                }
             }
         } else {
             destroy(viewer) {

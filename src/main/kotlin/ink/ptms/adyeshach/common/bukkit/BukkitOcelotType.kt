@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.bukkit
 
 /**
- * @Author sky
- * @Since 2020-08-17 17:28
+ * @author sky
+ * @since 2020-08-17 17:28
  */
 enum class BukkitOcelotType {
 

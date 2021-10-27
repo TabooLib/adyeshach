@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.26"
+    id("io.izzel.taboolib") version "1.31"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
@@ -16,6 +16,8 @@ taboolib {
             name("Zaphkiel").optional(true)
             name("Citizens").optional(true)
             name("ServerNPC").optional(true)
+            name("ModelEngine").optional(true)
+            name("BetonQuest").optional(true)
         }
     }
     install("common")
@@ -34,25 +36,24 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.3-5"
+    version = "6.0.3-21"
 }
 
 repositories {
-    maven { url = uri("https://betonquest.org/nexus/repository/betonquest/") }
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compileOnly("ink.ptms:Zaphkiel:1.5.0")
-    compileOnly("public:ModelEngine:R2.1.8")
+    compileOnly("ink.ptms:Zaphkiel:1.7.0")
     compileOnly("public:ServerTours:1.6.5")
+    compileOnly("public:ModelEngine:2.2.0")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly("com.guillaumevdn.gcore:GCore:7.15.0")
     compileOnly("com.guillaumevdn.questcreator:QuestCreator:5.30.0")
     compileOnly("com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE")
-//    compileOnly("org.betonquest:betonquest:2.0.0-20210924.233441-89")
-//    compileOnly("pl.betoncraft:betonquest:1.12.5")
+    compileOnly("org.betonquest:betonquest:2.0.0")
+    compileOnly("pl.betoncraft:betonquest:1.12.5")
     compileOnly("ink.ptms.core:v11701:11701:mapped")
     compileOnly("ink.ptms.core:v11701:11701:universal")
     compileOnly("ink.ptms.core:v11604:11604:all")

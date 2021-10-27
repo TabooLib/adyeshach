@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.api.nms
 import com.google.common.base.Enums
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
@@ -28,17 +27,16 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
+import org.bukkit.util.Vector
 import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.reflect.Reflex.Companion.invokeMethod
 import taboolib.common.reflect.Reflex.Companion.setProperty
 import taboolib.common.reflect.Reflex.Companion.unsafeInstance
-import taboolib.common.util.Vector
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass
 import taboolib.module.nms.sendPacket
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Arasple
@@ -692,7 +690,7 @@ class NMSImpl : NMS() {
             }
             majorLegacy == 11300 -> {
                 val p =
-                    IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.lowercase(Locale.getDefault()))) ?: net.minecraft.server.v1_13_R2.Particles.y
+                    IRegistry.PARTICLE_TYPE.get(MinecraftKey(bukkitParticles.name.lowercase())) ?: net.minecraft.server.v1_13_R2.Particles.y
                 if (p is net.minecraft.server.v1_13_R2.Particle<*>) {
                     p.f()
                 } else {

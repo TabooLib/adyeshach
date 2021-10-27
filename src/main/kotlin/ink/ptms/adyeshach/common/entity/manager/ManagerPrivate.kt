@@ -4,16 +4,16 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ai.ControllerNone
+import ink.ptms.adyeshach.common.entity.manager.database.Database
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import ink.ptms.adyeshach.internal.database.Database
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
 /**
- * @Author sky
- * @Since 2020-08-14 14:25
+ * @author sky
+ * @since 2020-08-14 14:25
  */
 class ManagerPrivate(val player: String, val database: Database): Manager() {
 
@@ -49,7 +49,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val player = Bukkit.getPlayerExact(player) ?: return
         val file = database.pull(player)
         activeEntity.forEach {
-            it.unregisterController(ControllerNone::class)
+            it.unregisterController(ControllerNone::class.java)
             it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
         }
         database.push(player)

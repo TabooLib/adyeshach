@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.bukkit
 
 /**
- * @Author sky
- * @Since 2020-08-04 18:36
+ * @author sky
+ * @since 2020-08-04 18:36
  */
 enum class BukkitParticles {
 

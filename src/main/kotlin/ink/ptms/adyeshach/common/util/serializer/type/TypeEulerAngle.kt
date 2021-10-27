@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
-import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import com.google.gson.*
+import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import org.bukkit.util.EulerAngle
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = EulerAngle::class)
 class TypeEulerAngle : JsonSerializer<EulerAngle>, JsonDeserializer<EulerAngle> {

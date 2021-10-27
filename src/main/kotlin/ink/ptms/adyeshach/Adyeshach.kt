@@ -1,24 +1,28 @@
 package ink.ptms.adyeshach
 
-import net.minecraft.server.v1_10_R1.PacketPlayOutEntityMetadata
-import net.minecraft.server.v1_9_R2.PacketPlayOutNamedEntitySpawn
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
-import taboolib.common.platform.*
-import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.*
+import taboolib.common.platform.Awake
+import taboolib.common.platform.Plugin
+import taboolib.common.platform.function.console
+import taboolib.common.platform.function.disablePlugin
+import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.warning
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.SecuredFile
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.PacketSendEvent
 import taboolib.platform.BukkitPlugin
 import java.io.File
 
 object Adyeshach : Plugin() {
 
-    @Config(migrate = true)
+    @Config
     lateinit var conf: SecuredFile
+        private set
+
+    @Config("editor.yml")
+    lateinit var editorConf: SecuredFile
         private set
 
     val plugin by lazy {

@@ -19,31 +19,13 @@ import taboolib.module.configuration.util.getStringListColored
 import taboolib.module.kether.KetherFunction
 import taboolib.platform.util.sendLang
 
-object Title : Trait() {
+object TraitTitle : Trait() {
 
     // <玩家, <NPC, 全息>>
     val playerLookup = HashMap<String, HashMap<String, Hologram<*>>>()
 
     // <NPC, <玩家, 全息>>
     val entityLookup = HashMap<String, HashMap<String, Hologram<*>>>()
-
-    override fun getName(): String {
-        return "title"
-    }
-
-    override fun edit(player: Player, entityInstance: EntityInstance) {
-        player.sendLang("trait-title")
-        player.inputBook(data.getStringList(entityInstance.uniqueId)) {
-            remove(entityInstance)
-            if (it.all { line -> line.isBlank() }) {
-                data.set(entityInstance.uniqueId, null)
-            } else {
-                data.set(entityInstance.uniqueId, it)
-                create(entityInstance)
-            }
-            player.sendLang("trait-title-finish")
-        }
-    }
 
     @Awake(LifeCycle.DISABLE)
     fun cancel() {
@@ -150,6 +132,24 @@ object Title : Trait() {
             playerHologramMap.remove(entity.uniqueId)!!.delete()
             // 移除 entityLookup 中的缓存
             entityLookup[entity.uniqueId]!!.remove(viewer.name)
+        }
+    }
+
+    override fun getName(): String {
+        return "title"
+    }
+
+    override fun edit(player: Player, entityInstance: EntityInstance) {
+        player.sendLang("trait-title")
+        player.inputBook(data.getStringList(entityInstance.uniqueId)) {
+            remove(entityInstance)
+            if (it.all { line -> line.isBlank() }) {
+                data.set(entityInstance.uniqueId, null)
+            } else {
+                data.set(entityInstance.uniqueId, it)
+                create(entityInstance)
+            }
+            player.sendLang("trait-title-finish")
         }
     }
 }

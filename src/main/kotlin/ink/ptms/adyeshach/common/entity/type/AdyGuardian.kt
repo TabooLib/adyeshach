@@ -24,13 +24,6 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
              0x04 iselderly
         13 ->Targer EID
          */
-        if (version >= 11100) {
-            registerMeta(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 13), "isRetractingSpikes", false)
-        } else {
-            registerMetaByteMask(at(11000 to 12, 10900 to 11), "isRetractingSpikes", 0x02)
-            registerMetaByteMask(at(11000 to 12, 10900 to 11), "isElderly", 0x04)
-        }
-        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", false)
     }
 
     fun setRetractingSpikes(value: Boolean) {
@@ -50,14 +43,14 @@ open class AdyGuardian(entityTypes: EntityTypes = EntityTypes.GUARDIAN) : AdyMob
     }
 
     fun setElderly(value: Boolean) {
-        if (version >= 11100) {
+        if (minecraftVersion >= 11100) {
             error("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
         }
         setMetadata("isElderly", value)
     }
 
     fun isElderly(): Boolean {
-        if (version >= 11100) {
+        if (minecraftVersion >= 11100) {
             error("Metadata \"isElderly\" not supported this minecraft version. Use \"AdyElderGuardian\" instead")
         }
         return getMetadata("isElderly")

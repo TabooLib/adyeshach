@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.entity.type
 
-import ink.ptms.adyeshach.common.editor.Editors
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.entity.Fox
 
@@ -39,18 +38,6 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
         1.13,1.12,1.11,1.10,1.9
         null
          */
-        registerMeta(at(11700 to 17, 11500 to 16, 11400 to 15), "type", Fox.Type.RED.ordinal)
-                .from(Editors.enums(Fox.Type::class) { _, entity, meta, index, _ -> "/adyeshachapi edit int ${entity.uniqueId} ${meta.key} $index" })
-                .display { _, entity, _ ->
-                    Fox.Type.values()[entity.getMetadata("type")].name
-                }.build()
-        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isSitting", 0x01, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isCrouching", 0x04, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isInterested", 0x08, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isPouncing", 0x10, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17, 11400 to 16), "isSleeping", 0x20, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isFaceplanted", 0x40, false)
-        registerMetaByteMask(at(11700 to 18, 11500 to 17), "isDefending", 0x80.toByte(), false)
     }
 
     fun getType(): Fox.Type {
@@ -66,7 +53,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setSitting(value: Boolean) {
-        return setMetadata("isSitting", value)
+        setMetadata("isSitting", value)
     }
 
     fun isCrouching(): Boolean {
@@ -74,7 +61,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setCrouching(value: Boolean) {
-        return setMetadata("isCrouching", value)
+        setMetadata("isCrouching", value)
     }
 
     fun isInterested(): Boolean {
@@ -82,7 +69,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setInterested(value: Boolean) {
-        return setMetadata("isInterested", value)
+        setMetadata("isInterested", value)
     }
 
     fun isPouncing(): Boolean {
@@ -90,7 +77,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setPouncing(value: Boolean) {
-        return setMetadata("isPouncing", value)
+        setMetadata("isPouncing", value)
     }
 
     fun isSleeping(): Boolean {
@@ -98,7 +85,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setSleeping(value: Boolean) {
-        return setMetadata("isSleeping", value)
+        setMetadata("isSleeping", value)
     }
 
     fun isFaceplanted(): Boolean {
@@ -106,7 +93,7 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setFaceplanted(value: Boolean) {
-        return setMetadata("isFaceplanted", value)
+        setMetadata("isFaceplanted", value)
     }
 
     fun isDefending(): Boolean {
@@ -114,6 +101,6 @@ class AdyFox : AdyEntityAgeable(EntityTypes.FOX) {
     }
 
     fun setDefending(value: Boolean) {
-        return setMetadata("isDefending", value)
+        setMetadata("isDefending", value)
     }
 }

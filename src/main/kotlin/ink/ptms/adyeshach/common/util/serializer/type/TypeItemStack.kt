@@ -1,14 +1,14 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
+import com.google.gson.*
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import com.google.gson.*
 import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = ItemStack::class)
 class TypeItemStack : JsonSerializer<ItemStack>, JsonDeserializer<ItemStack> {

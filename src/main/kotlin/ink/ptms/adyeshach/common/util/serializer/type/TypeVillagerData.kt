@@ -1,15 +1,15 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
 import com.google.common.base.Enums
+import com.google.gson.*
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
-import com.google.gson.*
 import org.bukkit.entity.Villager
 import java.lang.reflect.Type
 
 /**
- * @Author sky
- * @Since 2020-08-20 20:10
+ * @author sky
+ * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = VillagerData::class)
 class TypeVillagerData : JsonSerializer<VillagerData>, JsonDeserializer<VillagerData> {

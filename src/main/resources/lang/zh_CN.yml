@@ -2,11 +2,9 @@ not-support: '&4[Adyeshach] &c抱歉, Adyeshach 不支持当前服务端版本!'
 not-support-new-version:
   - '&4[Adyeshach] &c抱歉, Adyeshach 暂时不支持新的服务端版本!'
   - '&4[Adyeshach] &c请等待兼容工作完成.'
-
 trait-sit-manager-not-set: '&c[Adyeshach] &7单位管理器未被初始化.'
 trait-sit-remove: '&c[Adyeshach] &7生物已站立.'
 trait-sit-create: '&c[Adyeshach] &7生物已坐下.'
-
 trait-patrol:
   - type: TITLE
     title: ''
@@ -25,7 +23,6 @@ trait-patrol-update:
     fadeout: 0
 trait-patrol-tool-name: '&b路径工具'
 trait-patrol-tool-lore: '&7左键点击添加路径节点, 右键点击移除.'
-
 trait-title-finish: '&c[Adyeshach] &7特性已保存.'
 trait-title:
   - type: TITLE
@@ -34,7 +31,6 @@ trait-title:
     fadein: 10
     stay: 40
     fadeout: 10
-
 trait-command-finish: '&c[Adyeshach] &7特性已保存.'
 trait-command:
   - type: TITLE
@@ -43,7 +39,6 @@ trait-command:
     fadein: 10
     stay: 40
     fadeout: 10
-
 armor-stand-editor-name: '盔甲架角度'
 armor-stand-editor-1:
   - type: TITLE
@@ -55,7 +50,6 @@ armor-stand-editor-1:
 armor-stand-editor-2:
   - type: ACTIONBAR
     text: '&7按下 &fSHIFT + LEFT-CLICK &7增加角度 &8| &7按下 &fSHIFT + RIGHT-CLICK &7减少角度'
-
 command-main-entity-not-support: '&c[Adyeshach] &7抱歉, 插件不支持 &f"{0}" &7类型.'
 command-main-entity-create: '&c[Adyeshach] &7已创建该单位.'
 command-main-entity-not-found: '&c[Adyeshach] &7该单位不存在.'
@@ -94,7 +88,9 @@ command-script-list-all:
   - '&c[Adyeshach] &7运行脚本: &f{1}'
 command-script-reload-all:
   - '&c[Adyeshach] &7重载完成.'
-editor-armorstand-tool: '§c[Adyeshach] §7使用角度工具来 (红石火把) 来编辑盔甲架单位'
+editor-armorstand-tool: '&c[Adyeshach] &7使用角度工具来 (红石火把) 来编辑盔甲架单位'
+editor-armorstand-tool-name: '当前: {0}'
+editor-armorstand-tool-lore: '盔甲架角度调整工具'
 editor-temporary: '&7(临时)'
 editor-type: '类型'
 editor-tags: '标签'
@@ -104,6 +100,37 @@ editor-manager-public: '公开'
 editor-manager-private: '私有'
 editor-click-to-edit: '&7点击编辑'
 editor-click-to-reset: '&7点击重置'
+editor-sign-input: '请在第一行输入内容'
+editor-item-input: '放入物品'
+editor-text-input-name: '&f打开并输入内容'
+editor-text-input-lore: '&7单位编辑器'
+editor-picker-tick:
+  - type: TITLE
+    title: '&3&l移动实体'
+    subtitle: '&7距离: &8{0}'
+    fadein: 0
+    stay: 20
+    fadeout: 0
+  - type: ACTIONBAR
+    text: '&7按下 &fF &7放下实体 &8| &7按下 &fSHIFT + F &7重置距离'
+editor-picker-settle: '&c[Adyeshach] &7实体已放置。'
+editor-picker-ground: '&7当前单位与 &f地面 &7的距离为 &f{0}&7.'
+editor-testing: '&c这个单位类型的部分功能在 Adyeshach {0} 版本下可能存在异常!'
+editor-select: '&8点击选择'
+editor-select-teleport: '&8点击传送'
+editor-unused: '&c这个元数据可以修改, 但是没有意义。'
+editor-controller: '单位控制器'
+editor-controller-move: '移动'
+editor-controller-gravity: '重力'
+editor-controller-smooth-look: '平滑视角移动（测试）'
+editor-controller-look-at-player: '看向玩家（模拟原版）'
+editor-controller-look-at-player-always: '看向玩家（锁定玩家）'
+editor-controller-random-look-ground: '随机看向周围'
+editor-controller-random-stroll-land: '随机游荡'
+editor-controller-enable: '&a启用'
+editor-controller-disable: '&c禁用'
+editor-meta-true: '&a是'
+editor-meta-false: '&c否'
 editor-meta-is-dancing: '跳舞'
 editor-meta-is-faceplanted: '脸部埋入地下'
 editor-meta-skin-jacket: '皮肤上衣'
@@ -134,7 +161,7 @@ editor-meta-equipment-chestplate: '胸甲'
 editor-meta-skin-hat: '皮肤帽子'
 editor-meta-is-left-handed: '左撇子'
 editor-meta-custom-name: '自定义名称'
-editor-meta-un-used: '占位符'
+editor-meta-un-used: '未使用的类型'
 editor-meta-has-bred: '有繁殖'
 editor-meta-fuse-time: '点燃时间'
 editor-meta-on-fire: '着火'
@@ -168,7 +195,7 @@ editor-meta-health: '生命'
 editor-meta-is-immune-to-zombification: '免疫僵化'
 editor-meta-noclip: 'Noclip'
 editor-meta-is-ignited: '被点燃'
-editor-meta-un-used-riding: '占位符'
+editor-meta-un-used-riding: '未使用的类型'
 editor-meta-no-base-plate: '没有底板'
 editor-meta-is-celebrating: '庆祝'
 editor-meta-skin-right-sleeve: '皮肤右袖'
@@ -181,6 +208,7 @@ editor-meta-villager-profession: '村民职业'
 editor-meta-horse-style: '马样式'
 editor-meta-is-drinking-potion: '喝药'
 editor-meta-entity-pose: '实体姿势'
+editor-meta-pose: '实体姿势'
 editor-meta-is-small: '小型'
 editor-meta-shield-height: '盾牌高度'
 editor-meta-from-bucket: '来自桶'
@@ -222,7 +250,7 @@ editor-meta-firework-info: '烟花类型'
 editor-meta-has-stung: '有刺'
 editor-meta-has-arms: '有胳膊'
 editor-meta-invulnerable: '无敌'
-editor-meta-dye-color: '燃料颜色'
+editor-meta-dye-color: '颜色'
 editor-meta-is-charged: '高压'
 editor-meta-is-retracting-spikes: '收回尖刺'
 editor-meta-has-no-pumpkin-hat: '没有南瓜头'
@@ -268,3 +296,4 @@ editor-meta-is-charging: '在拉弓'
 editor-meta-is-becoming-drowned: '正在转换'
 editor-meta-head-shake-timer: '摇头时间'
 editor-meta-model-engine: 'Model Engine'
+editor-meta-is-hands-held-up: '抬手'

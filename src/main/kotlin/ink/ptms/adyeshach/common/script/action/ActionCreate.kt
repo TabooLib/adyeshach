@@ -8,7 +8,6 @@ import org.bukkit.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -29,7 +28,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
         fun parser() = scriptParser {
             val id = it.nextToken()
             val type = it.nextToken()
-            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.uppercase(Locale.getDefault())).orNull() ?: throw loadError("Entity \"$type\" not supported.")
+            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.uppercase()).orNull() ?: throw loadError("Entity \"$type\" not supported.")
             it.expects("at", "on")
             ActionCreate(id, entityType, it.next(ArgTypes.ACTION))
         }

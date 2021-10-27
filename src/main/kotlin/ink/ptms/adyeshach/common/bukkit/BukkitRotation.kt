@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.common.bukkit
 
 /**
- * @Author sky
- * @Since 2020-08-04 20:44
+ * @author sky
+ * @since 2020-08-04 20:44
  */
 enum class BukkitRotation(val index: String) {
 

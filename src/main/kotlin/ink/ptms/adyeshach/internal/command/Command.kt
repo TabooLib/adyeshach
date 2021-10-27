@@ -3,11 +3,11 @@ package ink.ptms.adyeshach.internal.command
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.editor.Editor
-import ink.ptms.adyeshach.common.editor.Picker
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.script.KnownController
+import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
+import ink.ptms.adyeshach.common.entity.editor.EditorPicker
+import ink.ptms.adyeshach.common.entity.editor.toLocaleKey
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.error
 import ink.ptms.adyeshach.common.util.info
@@ -18,17 +18,21 @@ import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 import taboolib.common.platform.command.*
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.submit
-import taboolib.common.util.Vector
 import taboolib.common5.Coerce
 import taboolib.expansion.createHelper
 import taboolib.library.xseries.XMaterial
+import taboolib.library.xseries.parseToXMaterial
 import taboolib.module.chat.TellrawJson
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.platform.util.*
+import taboolib.platform.util.asLangText
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.inventoryCenterSlots
+import taboolib.platform.util.sendLang
 
 @CommandHeader(name = "adyeshach", aliases = ["npc", "anpc"], permission = "adyeshach.admin")
 internal object Command {
@@ -244,7 +248,7 @@ internal object Command {
                         AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1)!!, sender as? Player),
                         sender,
                         sender.world.name,
-                        sender.location.toProxyLocation().toVector()
+                        sender.location.toVector()
                     )
                 }
             }
@@ -312,7 +316,7 @@ internal object Command {
             literal("add", optional = true) {
                 dynamic(commit = "id") {
                     suggestion<CommandSender> { _, _ ->
-                        ScriptHandler.controllers.keys().toList()
+                        AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerAdd(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
@@ -322,7 +326,7 @@ internal object Command {
             literal("remove", optional = true) {
                 dynamic(commit = "id") {
                     suggestion<CommandSender> { _, _ ->
-                        ScriptHandler.controllers.keys().toList()
+                        AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
                     execute<CommandSender> { sender, context, argument ->
                         commandControllerRemove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2)!!, sender as? Player), sender, argument)
@@ -402,7 +406,7 @@ internal object Command {
         }
         entity.id = name
         sender.sendLang("command-main-entity-create")
-        Editor.open(sender, entity)
+        entity.openEditor(sender)
     }
 
     internal fun commandRemove(entity: EntityInstance?, sender: CommandSender) {
@@ -427,7 +431,7 @@ internal object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
-            Editor.open(sender, entity)
+            entity.openEditor(sender)
         }
     }
 
@@ -437,7 +441,7 @@ internal object Command {
         } else {
             entity.clone(name, sender.location)
             sender.sendLang("command-main-entity-create")
-            Editor.open(sender, entity)
+            entity.openEditor(sender)
         }
     }
 
@@ -462,7 +466,7 @@ internal object Command {
             if (entity.getController().isNotEmpty()) {
                 sender.sendLang("command-main-move-cancel")
             } else {
-                Picker.select(sender, entity)
+                EditorPicker.select(sender, entity)
             }
         }
     }
@@ -558,12 +562,12 @@ internal object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
-            val controller = ScriptHandler.getKnownController(name)
+            val controller = ScriptHandler.getControllerGenerator(name)
             if (controller == null) {
                 sender.sendLang("command-main-controller-not-found", name)
                 return
             }
-            entity.registerController(controller.get.apply(entity))
+            entity.registerController(controller.generator.apply(entity))
             sender.sendLang("command-main-success")
         }
     }
@@ -572,12 +576,12 @@ internal object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
-            val controller = ScriptHandler.getKnownController(name)
+            val controller = ScriptHandler.getControllerGenerator(name)
             if (controller == null) {
                 sender.sendLang("command-main-controller-not-found", name)
                 return
             }
-            entity.unregisterController(controller.controllerClass)
+            entity.unregisterController(controller.type)
             sender.sendLang("command-main-success")
         }
     }
@@ -596,40 +600,43 @@ internal object Command {
             sender.sendLang("command-main-entity-not-found")
         } else {
             val slots = HashMap<Int, String>()
-            fun build(id: String, controller: KnownController): ItemStack {
-                val en = entity.getController(controller.controllerClass) != null
-                return buildItem(XMaterial.PAPER) {
-                    name = "&7$id ${if (en) "&a&lENABLE" else "&c&lDISABLE"}"
-                    lore += "&8CLICK TO SELECT"
-                    if (en) {
+            fun build(id: String, controller: ControllerGenerator): ItemStack {
+                val key = id.toLocaleKey().substring(1)
+                val enable = entity.getController(controller.type) != null
+                return buildItem(Adyeshach.editorConf.getString("Materials.controller.$key")?.parseToXMaterial() ?: XMaterial.PAPER) {
+                    val display = sender.asLangText("editor-controller-$key")
+                    name = "&7$display ${sender.asLangText("editor-controller-${if (enable) "enable" else "disable"}")}"
+                    lore += sender.asLangText("editor-select")
+                    if (enable) {
                         shiny()
                     }
+                    hideAll()
                     colored()
                 }
             }
-            sender.openMenu<Basic>("Controller") {
+            sender.openMenu<Basic>(sender.asLangText("editor-controller")) {
                 rows(6)
                 onBuild { _, inv ->
-                    AdyeshachAPI.getKnownController().keys.forEachIndexed { index, id ->
+                    AdyeshachAPI.registeredControllerGenerator.keys.forEachIndexed { index, id ->
                         slots[inventoryCenterSlots[index]] = id
-                        inv.setItem(inventoryCenterSlots[index], build(id, AdyeshachAPI.getKnownController(id)!!))
+                        inv.setItem(inventoryCenterSlots[index], build(id, AdyeshachAPI.getControllerGenerator(id)!!))
                     }
                 }
                 onClick(lock = true) {
                     if (slots.containsKey(it.rawSlot)) {
-                        val controller = AdyeshachAPI.getKnownController(slots[it.rawSlot]!!)!!
-                        if (entity.getController(controller.controllerClass) == null) {
-                            entity.registerController(controller.get.apply(entity))
+                        val controller = AdyeshachAPI.getControllerGenerator(slots[it.rawSlot]!!)!!
+                        if (entity.getController(controller.type) == null) {
+                            entity.registerController(controller.generator.apply(entity))
                             it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
                         } else {
-                            entity.unregisterController(controller.controllerClass)
+                            entity.unregisterController(controller.type)
                             it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
                         }
                         sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                     }
                 }
                 onClose {
-                    Editor.open(sender, entity)
+                    entity.openEditor(sender)
                 }
             }
         }
@@ -670,7 +677,7 @@ internal object Command {
                     result.forEach {
                         TellrawJson()
                             .append("§c[Adyeshach]  §8- §a${Coerce.format(it.second)}m §7${it.first.id} §8(${it.first.getDisplayName()}§8)")
-                            .hoverText("CLICK TO TELEPORT")
+                            .hoverText(sender.asLangText("editor-select-teleport"))
                             .runCommand("/anpc tp ${it.first.uniqueId}")
                             .sendTo(adaptCommandSender(sender))
                     }
