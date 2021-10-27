@@ -818,7 +818,6 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             val modelManager = ModelEngineAPI.api.modelManager
             if (modelEngineUniqueId != null) {
                 modelManager.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
-                destroy()
                 return true
             } else if (modelEngineName.isNotBlank()) {
                 return refreshModelEngine()
