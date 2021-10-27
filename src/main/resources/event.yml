@@ -1,0 +1,11 @@
+
+
+#         Powered by TabooLib 6.0         #
+
+
+event:
+  - on: npc interact
+    run: |-
+      if check &id is *test2 then {
+        tell *"Hello World!"
+      }
