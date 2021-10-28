@@ -54,7 +54,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?): Script
 
     internal object Parser {
 
-        @KetherParser(["tags"], namespace = "adyeshach", shared = true)
+        @KetherParser(["tag"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
             val symbol = when (val type = it.nextToken()) {
                 "set" -> Symbol.SET
