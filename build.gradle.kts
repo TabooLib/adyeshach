@@ -3,6 +3,7 @@ plugins {
     `maven-publish`
     id("io.izzel.taboolib") version "1.31"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
+    id("org.jetbrains.dokka") version "1.5.30"
 }
 
 taboolib {
@@ -67,6 +68,7 @@ dependencies {
     compileOnly("ink.ptms.core:v10900:10900:all")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.30")
 }
 
 tasks.withType<JavaCompile> {
@@ -98,3 +100,16 @@ publishing {
         }
     }
 }
+
+//tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
+//    outputFormat = "javadoc"
+//    outputDirectory = "$buildDir/dokka"
+//    configuration {
+//        skipDeprecated = true
+//        reportUndocumented = true
+//        skipEmptyPackages = true
+//        noJdkLink = true
+//        noStdlibLink = true
+//    }
+//}
+

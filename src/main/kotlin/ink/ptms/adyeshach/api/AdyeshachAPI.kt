@@ -64,42 +64,73 @@ object AdyeshachAPI {
         }
     }
 
+    /**
+     * 获取公共单位管理器
+     */
     fun getEntityManagerPublic(): Manager {
         return managerPublic
     }
 
+    /**
+     * 获取临时的公共单位管理器
+     */
     fun getEntityManagerPublicTemporary(): Manager {
         return managerPublicTemporary
     }
 
+    /**
+     * 获取私有单位管理器
+     * @param player 玩家
+     */
     fun getEntityManagerPrivate(player: Player): Manager {
         return managerPrivate.computeIfAbsent(player.name) { ManagerPrivate(player.name, database) }
     }
 
+    /**
+     * 获取临时的私有单位管理器
+     * @param player 玩家
+     */
     fun getEntityManagerPrivateTemporary(player: Player): Manager {
         return managerPrivateTemporary.computeIfAbsent(player.name) { ManagerPrivateTemp(player.name) }
     }
 
+    /**
+     * 从配置文件读取单位
+     * @param section 原始 yaml 实例
+     */
     @Throws(UnknownWorldException::class)
     fun fromYaml(section: ConfigurationSection): EntityInstance? {
         return fromJson(Converter.yamlToJson(section).toString())
     }
 
+    /**
+     * 从配置文件读取单位
+     * @param source 序列化后的 yaml 文件
+     */
     @Throws(UnknownWorldException::class)
     fun fromYaml(source: String): EntityInstance? {
         return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString())
     }
 
+    /**
+     * 从 Json 输入流中读取单位
+     */
     @Throws(UnknownWorldException::class)
     fun fromJson(inputStream: InputStream): EntityInstance? {
         return fromJson(inputStream.readBytes().toString(StandardCharsets.UTF_8))
     }
 
+    /**
+     * 从 Json 文件中读取单位
+     */
     @Throws(UnknownWorldException::class)
     fun fromJson(file: File): EntityInstance? {
         return fromJson(file.readText(StandardCharsets.UTF_8))
     }
 
+    /**
+     * 从 Json 序列化后文件中读取单位
+     */
     @Throws(UnknownWorldException::class)
     fun fromJson(source: String): EntityInstance? {
         val entityType = try {
@@ -113,35 +144,62 @@ object AdyeshachAPI {
         return Serializer.gson.fromJson(source, entityType.entityBase)
     }
 
+    /**
+     * 获取玩家就近的单位
+     * 包含公共、私有单位管理器中的单位
+     */
     fun getEntityNearly(player: Player): EntityInstance? {
         return getEntity(player) { true }
     }
 
+    /**
+     * 通过实体 id 获取单位
+     */
     fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.index == id }
     }
 
+    /**
+     * 通过单位 id 获取单位
+     */
     fun getEntityFromId(id: String, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.id == id }
     }
 
+    /**
+     * 通过 uuid 获取单位
+     */
     fun getEntityFromUniqueId(id: String, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.uniqueId == id }
     }
 
+    /**
+     * 通过 uuid 或单位 id 获取单位
+     */
     fun getEntityFromUniqueIdOrId(id: String, player: Player? = null): EntityInstance? {
         return getEntity(player) { it.id == id || it.uniqueId == id }
     }
 
+    /**
+     * 通过玩家数据包中的 uuid 获取单位
+     */
     fun getEntityFromClientUniqueId(player: Player, uniqueId: UUID): EntityInstance? {
         return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == uniqueId }?.entity
     }
 
+    /**
+     * 获取一个单位
+     * @param filter 过滤
+     */
     fun getEntity(player: Player? = null, filter: Function<EntityInstance, Boolean>): EntityInstance? {
         val entity = getEntities(player, filter)
         return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
     }
 
+    /**
+     * 获取多个单位
+     * @param filter 过滤
+     */
     fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
         val entity = ArrayList<EntityInstance>()
         entity.addAll(getEntityManagerPublic().getEntities().filter { filter.apply(it) })
