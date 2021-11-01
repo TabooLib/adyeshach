@@ -41,7 +41,7 @@ object TraitViewCondition : Trait() {
     }
 
     override fun edit(player: Player, entityInstance: EntityInstance) {
-        player.sendLang("trait-condition")
+        player.sendLang("trait-view-condition")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             if (it.all { line -> line.isBlank() }) {
                 data.set(entityInstance.uniqueId, null)
@@ -50,7 +50,7 @@ object TraitViewCondition : Trait() {
             }
             entityInstance.destroy()
             entityInstance.respawn()
-            player.sendLang("trait-condition-finish")
+            player.sendLang("trait-view-condition-finish")
         }
     }
 }
