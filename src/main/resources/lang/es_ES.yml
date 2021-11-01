@@ -43,6 +43,14 @@ trait-command:
     fadein: 10
     stay: 40
     fadeout: 10
+trait-view-condition-finish: '&c[Adyeshach] &7特性已保存.'
+trait-view-condition:
+  - type: TITLE
+    title: '&3&l特性 : 可视条件'
+    subtitle: '&7打开书并输入条件内容'
+    fadein: 10
+    stay: 40
+    fadeout: 10
 armor-stand-editor-name: 'Ángulos del soporte de armaduras'
 armor-stand-editor-1:
   - type: TITLE
