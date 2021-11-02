@@ -26,17 +26,24 @@ import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.submit
 import taboolib.common5.Coerce
 import taboolib.common5.Mirror
+import taboolib.expansion.createHelper
 import taboolib.platform.util.sendLang
 import java.io.File
 
 @Suppress("UNCHECKED_CAST")
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.admin")
 internal object CommandAPI {
+
+    @CommandBody
+    val main = mainCommand {
+        createHelper()
+    }
 
     @CommandBody
     val verify = subCommand {
@@ -96,7 +103,7 @@ internal object CommandAPI {
                     listOf("DEFAULT", "SLIM")
                 }
                 execute<CommandSender> { sender, context, argument ->
-                    commandUploadSign(sender, context.argument(-1)!!, argument)
+                    commandUploadSign(sender, context.argument(-1), argument)
                 }
             }
             execute<CommandSender> { sender, _, argument ->
@@ -115,7 +122,7 @@ internal object CommandAPI {
                 dynamic(commit = "value") {
                     execute<Player> { sender, context, argument ->
                         val args = argument.split(" ")
-                        val entity = AdyeshachAPI.getEntityFromUniqueId(context.argument(-1)!!, sender) ?: return@execute
+                        val entity = AdyeshachAPI.getEntityFromUniqueId(context.argument(-1), sender) ?: return@execute
                         try {
                             when (context.argument(-2)) {
                                 "int" -> {
