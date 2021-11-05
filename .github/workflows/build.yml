@@ -1,4 +1,4 @@
-name: Chemdah Build
+name: Adyeshach Build
 on: [ push ]
 jobs:
   build:

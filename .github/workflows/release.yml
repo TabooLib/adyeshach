@@ -1,4 +1,4 @@
-name: Chemdah Build
+name: Adyeshach Release
 on: [ release ]
 jobs:
   build:
