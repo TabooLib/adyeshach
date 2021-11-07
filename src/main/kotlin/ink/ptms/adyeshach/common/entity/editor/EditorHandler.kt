@@ -298,8 +298,8 @@ object EditorHandler {
                 armorStandLookup[player.name] = entity as AdyArmorStand to null
                 player.inventory.takeItem(99) { item -> item.hasLore(player.asLangText("editor-armorstand-tool-lore")) }
                 player.giveItem(buildItem(XMaterial.REDSTONE_TORCH) {
-                    name = "&7${player.asLangText("editor-armorstand-tool-name", "NONE")}"
-                    lore += "&8${player.asLangText("editor-armorstand-tool-lore")}"
+                    name = "§7${player.asLangText("editor-armorstand-tool-name", "NONE")}"
+                    lore += "§8${player.asLangText("editor-armorstand-tool-lore")}"
                     shiny()
                     colored()
                 })
