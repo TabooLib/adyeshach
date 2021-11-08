@@ -55,6 +55,11 @@ abstract class Manager {
         function.accept(entityInstance)
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
+        entityInstance.viewPlayers.visible.addAll(player.filter {
+            it.world == location.world && it.location.distance(location) < entityInstance.visibleDistance
+        }.map {
+            it.name
+        })
         val event = AdyeshachEntityCreateEvent(entityInstance, location)
         event.call()
         if (event.isCancelled) {

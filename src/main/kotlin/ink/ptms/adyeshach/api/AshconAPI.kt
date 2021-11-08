@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.net.URL
 import java.nio.charset.StandardCharsets
 
@@ -42,6 +43,7 @@ object AshconAPI {
                 getProfile(e.player.name)
             } catch (ignore: NullPointerException) {
             } catch (ignore: FileNotFoundException) {
+            } catch (ignore: IOException) {
             }
         }
     }
