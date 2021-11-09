@@ -5,6 +5,8 @@ import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.zaphkiel.ZaphkielAPI
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -25,7 +27,7 @@ class ActionEquipment(val equipment: BukkitEquipment, val item: ParsedAction<*>)
             error("No entity selected.")
         }
         frame.newFrame(item).run<Any>().thenAccept { item ->
-            val itemStack = ZaphkielAPI.getItemStack(item.toString())!!
+            val itemStack = ZaphkielAPI.getItemStack(item.toString()) ?: ItemStack(Material.AIR)
             s.getEntities()!!.filterIsInstance<EntityEquipable>().forEach {
                 when (equipment) {
                     BukkitEquipment.HAND -> it.setItemInMainHand(itemStack)
