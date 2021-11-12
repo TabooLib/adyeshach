@@ -22,6 +22,7 @@ object Inputs {
             write(lines.joinToString("\n"))
             material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
             name = inputName
+            author = "123"
             lore += asLangText("editor-text-input-lore")
         })
         bookData[name] = listen
@@ -34,15 +35,14 @@ object Inputs {
 
     @SubscribeEvent
     fun e(e: PlayerEditBookEvent) {
-        if (e.newBookMeta.displayName == e.player.asLangText("editor-text-input-name")) {
+        if (e.previousBookMeta.displayName == e.player.asLangText("editor-text-input-name")) {
             val listen = bookData.remove(e.player.name) ?: return
             val lines = e.newBookMeta.pages.flatMap {
                 TextComponent(it).toPlainText().replace("§0", "").split("\n")
             }
             listen.accept(lines)
             submit(delay = 1) {
-                val inputName = e.player.asLangText("editor-text-input-name")
-                e.player.inventory.takeItem(99) { it.hasName(inputName) }
+                e.player.inventory.takeItem(99) { it.itemMeta == e.newBookMeta }
             }
         }
     }
