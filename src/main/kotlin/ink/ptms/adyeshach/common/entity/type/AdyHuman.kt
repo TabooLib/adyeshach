@@ -42,87 +42,6 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         }
 
     init {
-        /**
-         * 1.15 -> 16
-         * 1.14 -> 15
-         * 1.10 -> 13
-         * 1.9 -> 12
-         */
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, true)
-//        mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, true)
-//        naturalEditor("isSleepingLegacy")
-//                .reset { _, _ ->
-//                    setSleeping(false)
-//                }
-//                .modify { player, entity, _ ->
-//                    setSleeping(!isSleeping())
-//                    entity.openEditor(player)
-//                }
-//                .display { _, _, _ ->
-//                    isSleeping().toDisplay()
-//                }
-//        naturalEditor("isHideFromTabList")
-//                .reset { _, _ ->
-//                    isHideFromTabList = true
-//                }
-//                .modify { player, entity, _ ->
-//                    isHideFromTabList = !isHideFromTabList
-//                    entity.openEditor(player)
-//                }
-//                .display { _, _, _ ->
-//                    isHideFromTabList.toDisplay()
-//                }
-//        naturalEditor("playerName")
-//                .reset { _, _ ->
-//                    setName("Adyeshach NPC")
-//                }
-//                .modify { player, entity, _ ->
-//                    player.inputSign(arrayOf(getName(), "", "请在第一行输入内容")) {
-//                        if (it[0].isNotEmpty()) {
-//                            val name = "${it[0]}${it[1]}"
-//                            setName(if (name.length > 16) name.substring(0, 16) else name)
-//                        }
-//                        entity.openEditor(player)
-//                    }
-//                }
-//                .display { _, _, _ ->
-//                    if (getName().isEmpty()) "§7_" else Editor.toSimple(getName())
-//                }
-//        naturalEditor("playerPing")
-//                .reset { _, _ ->
-//                    setPing(60)
-//                }
-//                .modify { player, entity, _ ->
-//                    player.inputSign(arrayOf("${getPing()}", "", "请在第一行输入内容")) {
-//                        if (it[0].isNotEmpty()) {
-//                            setPing(NumberConversions.toInt(it[0]))
-//                        }
-//                        entity.openEditor(player)
-//                    }
-//                }
-//                .display { _, _, _ ->
-//                    getPing().toString()
-//                }
-//        naturalEditor("playerTexture")
-//                .reset { _, _ ->
-//                    resetTexture()
-//                }
-//                .modify { player, entity, _ ->
-//                    player.inputSign(arrayOf(getTextureName(), "", "请在第一行输入内容")) {
-//                        if (it[0].isNotEmpty()) {
-//                            setTexture(it[0])
-//                        }
-//                        entity.openEditor(player)
-//                    }
-//                }
-//                .display { _, _, _ ->
-//                    if (gameProfile.textureName.isEmpty()) "§7_" else Editor.toSimple(gameProfile.textureName)
-//                }
         // refresh skin
         submit(async = true, delay = 200, period = 200) {
             if (manager != null) {
@@ -142,8 +61,9 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, playerUUID)
                 // 生成实体
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
-                // 更新装备
+                // 更新朝向与装备
                 submit(delay = 1) {
+                    setHeadRotation(yaw, pitch)
                     updateEquipment()
                 }
                 // 更新死亡信息以及玩家类型专属属性

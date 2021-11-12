@@ -248,7 +248,7 @@ internal object Command {
                         AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
                         sender,
                         sender.world.name,
-                        sender.location.toVector()
+                        sender.eyeLocation.toVector()
                     )
                 }
             }
@@ -480,7 +480,7 @@ internal object Command {
                 sender.sendLang("command-main-world-not-found")
             } else {
                 entity.teleport(Location(bukkitWorld, pos.x, pos.y, pos.z, yaw, pitch))
-                submit(delay = 20) {
+                submit(delay = 5) {
                     entity.setHeadRotation(yaw, pitch)
                 }
                 sender.sendLang("command-main-success")
@@ -493,7 +493,7 @@ internal object Command {
             sender.sendLang("command-main-entity-not-found")
         } else {
             entity.teleport(sender.location)
-            submit(delay = 20) {
+            submit(delay = 5) {
                 entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
             }
             sender.sendLang("command-main-success")
