@@ -329,8 +329,12 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             return
         }
         position = EntityPosition.fromLocation(event.location)
-        forViewers {
-            NMS.INSTANCE.teleportEntity(it, index, location)
+        // 修改世界
+        if (position.world.name != location.world?.name) {
+            destroy()
+            respawn()
+        } else {
+            forViewers { NMS.INSTANCE.teleportEntity(it, index, location) }
         }
     }
 
