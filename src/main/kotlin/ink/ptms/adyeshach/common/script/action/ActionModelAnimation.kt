@@ -23,21 +23,22 @@ class ActionModelAnimation(val model: String, val state: String, val remove: Boo
             val modelManager = ModelEngineAPI.api.modelManager
             if (it.modelEngineUniqueId != null) {
                 val modeledEntity =
-                    modelManager.getModeledEntity(it.modelEngineUniqueId) ?: return CompletableFuture.failedFuture(null)
+                    modelManager.getModeledEntity(it.modelEngineUniqueId)
                 if (remove) {
                     while (modeledEntity.allActiveModel.values.iterator().hasNext()) {
                         val active = modeledEntity.allActiveModel.values.iterator().next()
                         active.removeState(state, ingorelerp)
                     }
-                } else {
+                }
+                else {
                     while (modeledEntity.allActiveModel.values.iterator().hasNext()) {
                         val active = modeledEntity.allActiveModel.values.iterator().next()
                         active.addState(state, lerpin, lerpout, speed)
-                        }
                     }
                 }
-            }
-            return CompletableFuture.completedFuture(null)
+            } else return CompletableFuture.failedFuture(null)
+        }
+        return CompletableFuture.completedFuture(null)
     }
     internal object Parser {
 
