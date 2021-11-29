@@ -5,7 +5,7 @@
 
 event:
   - if: npc interact
-    run: |-
+    run: |
       if check &id is *test2 then {
         tell *"Hello World!"
       }

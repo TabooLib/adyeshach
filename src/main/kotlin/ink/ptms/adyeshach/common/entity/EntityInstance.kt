@@ -30,6 +30,7 @@ import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import java.util.*

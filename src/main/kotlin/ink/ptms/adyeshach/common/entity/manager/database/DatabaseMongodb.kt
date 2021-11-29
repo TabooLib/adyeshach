@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.common.entity.manager.database
 import ink.ptms.adyeshach.Adyeshach
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.adaptPlayer
-import taboolib.library.configuration.FileConfiguration
+import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.database.bridge.Index
 import taboolib.module.database.bridge.createBridgeCollection
 
@@ -14,16 +14,16 @@ import taboolib.module.database.bridge.createBridgeCollection
 class DatabaseMongodb : Database() {
 
     val collection = createBridgeCollection(
-        Adyeshach.conf.getString("Database.url.client"),
-        Adyeshach.conf.getString("Database.url.database"),
-        Adyeshach.conf.getString("Database.url.collection"),
+        Adyeshach.conf.getString("Database.url.client")!!,
+        Adyeshach.conf.getString("Database.url.database")!!,
+        Adyeshach.conf.getString("Database.url.collection")!!,
         Index.UUID
     )
 
-    override fun pull(player: Player): FileConfiguration {
+    override fun pull(player: Player): ConfigurationSection {
         return collection[adaptPlayer(player)].also {
             if (it.contains("username")) {
-                it.set("username", player.name)
+                it["username"] = player.name
             }
         }
     }

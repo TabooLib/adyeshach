@@ -9,7 +9,7 @@ import taboolib.common.platform.function.disablePlugin
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.warning
 import taboolib.module.configuration.Config
-import taboolib.module.configuration.SecuredFile
+import taboolib.module.configuration.Configuration
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.BukkitPlugin
@@ -18,11 +18,11 @@ import java.io.File
 object Adyeshach : Plugin() {
 
     @Config
-    lateinit var conf: SecuredFile
+    lateinit var conf: Configuration
         private set
 
     @Config("editor.yml")
-    lateinit var editorConf: SecuredFile
+    lateinit var editorConf: Configuration
         private set
 
     val plugin by lazy {
