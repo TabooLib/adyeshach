@@ -18,12 +18,15 @@ class ActionGermEngine(val state: String, val remove: Boolean) : ScriptAction<Vo
         if (!s.entitySelected()) {
             error("No entity selected.")
         }
-        val player = s.sender?.castSafely<Player>() ?: error("No viewer selected")
         s.getEntities()!!.filterNotNull().forEach {
             if (remove) {
-                GermPacketAPI.stopModelAnimation(player, it.index, state)
+                it.forViewers { p ->
+                    GermPacketAPI.stopModelAnimation(p, it.index, state)
+                }
             } else {
-                GermPacketAPI.sendModelAnimation(player, it.index, state)
+                it.forViewers { p ->
+                    GermPacketAPI.sendModelAnimation(p, it.index, state)
+                }
             }
         }
         return CompletableFuture.completedFuture(null)
