@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.common.script.action
+package ink.ptms.adyeshach.common.script.action.compat
 
 import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.manager.ModelManager
@@ -10,7 +10,7 @@ import taboolib.common5.Coerce
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
-class ActionModelAnimation(
+class ActionModelEngine(
     val state: String,
     val remove: Boolean,
     val speed: Double,
@@ -73,18 +73,18 @@ class ActionModelAnimation(
                                     try {
                                         it.expect("lerpout")
                                         val lerpout = it.nextInt()
-                                        ActionModelAnimation(state, false, speed, lerpin, lerpout, false)
+                                        ActionModelEngine(state, false, speed, lerpin, lerpout, false)
                                     } catch (ex: Exception) {
                                         it.reset()
-                                        ActionModelAnimation(state, false, speed, lerpin, 1, false)
+                                        ActionModelEngine(state, false, speed, lerpin, 1, false)
                                     }
                                 } catch (ex: Exception) {
                                     it.reset()
-                                    ActionModelAnimation(state, false, speed, 0, 1, false)
+                                    ActionModelEngine(state, false, speed, 0, 1, false)
                                 }
                             } catch (ex: Exception) {
                                 it.reset()
-                                ActionModelAnimation(state, false, 1.0, 0, 1, false)
+                                ActionModelEngine(state, false, 1.0, 0, 1, false)
                             }
                         }
                         "remove" -> {
@@ -92,10 +92,10 @@ class ActionModelAnimation(
                             it.mark()
                             try {
                                 it.expects("ingorelerp")
-                                ActionModelAnimation(state, true, 0.0, 0, 0, Coerce.toBoolean(it.nextToken()))
+                                ActionModelEngine(state, true, 0.0, 0, 0, Coerce.toBoolean(it.nextToken()))
                             } catch (ex: Exception) {
                                 it.reset()
-                                ActionModelAnimation(state, true, 0.0, 0, 0, false)
+                                ActionModelEngine(state, true, 0.0, 0, 0, false)
                             }
                         }
                         else -> error("out of case")
