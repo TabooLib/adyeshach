@@ -23,7 +23,7 @@ class ActionModelEngine(
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         if (!AdyeshachAPI.modelEngineHooked) {
-            return CompletableFuture.failedFuture(null)
+            return CompletableFuture.completedFuture(null)
         }
         val s = frame.script()
         if (s.getManager() == null) {
