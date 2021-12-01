@@ -37,7 +37,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.6-4"
+    version = "6.0.6-5"
 }
 
 repositories {
@@ -56,14 +56,14 @@ dependencies {
     compileOnly("com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE")
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("pl.betoncraft:betonquest:1.12.5")
-    compileOnly("ink.ptms.core:v11701:11701:mapped")
-    compileOnly("ink.ptms.core:v11701:11701:universal")
+    compileOnly("ink.ptms.core:v11701:11701-minimize:mapped")
+    compileOnly("ink.ptms.core:v11701:11701-minimize:universal")
     compileOnly("ink.ptms.core:v11604:11604:all")
-    compileOnly("ink.ptms.core:v11600:11600:all")
+    compileOnly("ink.ptms.core:v11600:11600-minimize")
     compileOnly("ink.ptms.core:v11500:11500:all")
-    compileOnly("ink.ptms.core:v11400:11400:all")
+    compileOnly("ink.ptms.core:v11400:11400-minimize")
     compileOnly("ink.ptms.core:v11300:11300:all")
-    compileOnly("ink.ptms.core:v11200:11200:all")
+    compileOnly("ink.ptms.core:v11200:11200-minimize")
     compileOnly("ink.ptms.core:v11100:11100:all")
     compileOnly("ink.ptms.core:v11000:11000:all")
     compileOnly("ink.ptms.core:v10900:10900:all")
