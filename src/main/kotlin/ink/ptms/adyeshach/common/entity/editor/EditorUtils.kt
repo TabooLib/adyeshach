@@ -17,7 +17,7 @@ import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.colored
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.getI18nName
+import taboolib.module.nms.getName
 import taboolib.module.nms.inputSign
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -178,7 +178,7 @@ internal fun MetaEditor<AdyEntityLiving>.useEquipmentEditor(equipmentSlot: Equip
     }
     display { player, entity ->
         try {
-            (entity.getEquipment(equipmentSlot) ?: ItemStack(Material.AIR)).getI18nName(player)
+            (entity.getEquipment(equipmentSlot) ?: ItemStack(Material.AIR)).getName(player)
         } catch (ignored: Exception) {
             "-"
         }

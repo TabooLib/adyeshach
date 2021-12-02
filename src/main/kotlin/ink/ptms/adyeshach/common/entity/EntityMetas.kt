@@ -20,7 +20,7 @@ import taboolib.common.platform.function.warning
 import taboolib.common5.Coerce
 import taboolib.library.xseries.XMaterial
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.getI18nName
+import taboolib.module.nms.getName
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.asLangText
@@ -442,7 +442,7 @@ object EntityMetas {
                         }
                     }
                 }
-                it.display { player, entity -> ItemStack(entity.material, 1, entity.data.toShort()).getI18nName(player) }
+                it.display { player, entity -> ItemStack(entity.material, 1, entity.data.toShort()).getName(player) }
             }
         }
         from<AdyMinecart> {
@@ -473,13 +473,15 @@ object EntityMetas {
                         }
                     }
                 }
-                it.display { player, entity -> entity.getCustomBlock().toItemStack(1).getI18nName(player) }
+                it.display { player, entity -> entity.getCustomBlock().toItemStack(1).getName(player) }
             }
         }
         from<AdyVillager> {
             if (minecraftVersion >= 11400) {
                 natural(at(11700 to 17), "headShakeTimer", 0)
-                natural(at(11700 to 18, 11500 to 17, 11400 to 16), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
+                natural(at(11700 to 18, 11500 to 17, 11400 to 16), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE)) {
+                    it.editable = false
+                }
             } else {
                 natural(at(11000 to 13, 10900 to 12), "profession", BukkitProfession.FARMER.ordinal) {
                     it.editable = false
@@ -521,6 +523,7 @@ object EntityMetas {
             natural(at(11000 to 5), "noGravity", false)
             natural(at(11400 to 6), "pose", BukkitPose.STANDING) {
                 it.reset { _, entity -> entity.setPose(BukkitPose.STANDING) }
+                it.useEnumsEditor(type = BukkitPose::class.java, key = "pose") { getPose() }
                 it.display { _, entity -> entity.getPose() }
             }
             natural(at(11700 to 7), "ticksFrozenInPowderedSnow", 0)
@@ -595,8 +598,8 @@ object EntityMetas {
     inline fun <reified T : EntityInstance> from(reg: IMetaRegister<T>.() -> Unit) {
         try {
             IMetaRegister(T::class.java).also(reg)
-        } catch (ex: NoClassDefFoundError) {
-        } catch (ex: NoSuchFieldError) {
+        } catch (_: NoClassDefFoundError) {
+        } catch (_: NoSuchFieldError) {
         } catch (ex: Throwable) {
             warning("Type: ${T::class.java.name}")
             ex.printStackTrace()
