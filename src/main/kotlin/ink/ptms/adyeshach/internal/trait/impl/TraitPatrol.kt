@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.EquipmentSlot
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.submit
@@ -24,77 +25,82 @@ object TraitPatrol : Trait() {
     val edit = HashMap<String, EntityInstance>()
     val nodesCacheMap = HashMap<String, List<Location>>()
 
-    init {
-        // 巡逻触发周期
-        submit(period = 5, async = true) {
-            data.getKeys(false).forEach {
-                val entity = AdyeshachAPI.getEntityFromUniqueId(it)
-                // 触发巡逻的前提：不在编辑模式、不在移动、不在准备移动、存在观察者
-                if (entity != null && !entity.isEditing() && !entity.isControllerMoving() && !entity.hasTag("tryMoving") && entity.hasViewer()) {
-                    val index = entity.index()
-                    val nodes = entity.nodes()
-                    if (index < nodes.size) {
-                        try {
-                            entity.controllerMove(nodes[index])
-                            entity.index(index + 1)
-                        } catch (e: Exception) {
-                            println("[Adyeshach] Patrol Error: $e")
-                        }
-                    } else {
-                        entity.index(0)
+    /**
+     * 巡逻触发周期
+     */
+    @Schedule(period = 5, async = true)
+    fun process() {
+        data.getKeys(false).forEach {
+            val entity = AdyeshachAPI.getEntityFromUniqueId(it)
+            // 触发巡逻的前提：不在编辑模式、不在移动、不在准备移动、存在观察者
+            if (entity != null && !entity.isEditing() && !entity.isControllerMoving() && !entity.hasTag("tryMoving") && entity.hasViewer()) {
+                val index = entity.index()
+                val nodes = entity.nodes()
+                if (index < nodes.size) {
+                    try {
+                        entity.controllerMove(nodes[index])
+                        entity.index(index + 1)
+                    } catch (e: Exception) {
+                        println("[Adyeshach] Patrol Error: $e")
                     }
+                } else {
+                    entity.index(0)
                 }
             }
         }
-        // 编辑模式展示
-        submit(period = 40, async = true) {
-            Bukkit.getOnlinePlayers().forEach { player ->
-                if (player.name in edit) {
-                    val nodes = edit[player.name]!!.nodes()
-                    if (nodes.isNotEmpty()) {
-                        var p = nodes[0]
-                        nodes.forEachIndexed { i, node ->
-                            if (i > 0) {
-                                PathFinderHandler.request(p, node, edit[player.name]!!.entityType.getPathType()) { r ->
-                                    (r as ResultNavigation).pointList.forEachIndexed { index, p ->
-                                        submit(delay = index * 2L) {
-                                            val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
-                                            player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
-                                        }
-                                    }
-                                }
-                                p = node
-                            }
-                            if (i > 1 && i + 1 == nodes.size) {
-                                PathFinderHandler.request(node, nodes[0], edit[player.name]!!.entityType.getPathType()) { r ->
-                                    (r as ResultNavigation).pointList.forEachIndexed { index, p ->
-                                        submit(delay = index * 2L) {
-                                            val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
-                                            player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
-                                        }
+    }
+
+    /**
+     * 编辑模式展示
+     */
+    @Schedule(period = 40, async = true)
+    fun edit() {
+        Bukkit.getOnlinePlayers().forEach { player ->
+            if (player.name in edit) {
+                val nodes = edit[player.name]!!.nodes()
+                if (nodes.isNotEmpty()) {
+                    var p = nodes[0]
+                    nodes.forEachIndexed { i, node ->
+                        if (i > 0) {
+                            PathFinderHandler.request(p, node, edit[player.name]!!.entityType.getPathType()) { r ->
+                                (r as ResultNavigation).pointList.forEachIndexed { index, p ->
+                                    submit(delay = index * 2L) {
+                                        val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
+                                        player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
                                     }
                                 }
                             }
-                            val hologram = AdyeshachAPI.createHologram(player, Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), listOf("#${i + 1}"))
-                            submit(delay = 40) {
-                                hologram.delete()
-                            }
-                            val pos = Location(player.world, node.x + 0.5, node.y + 0.5, node.z + 0.5)
-                            player.spawnParticle(Particle.VILLAGER_HAPPY, pos, 20, 0.0, 1.0, 0.0, 0.0)
+                            p = node
                         }
+                        if (i > 1 && i + 1 == nodes.size) {
+                            PathFinderHandler.request(node, nodes[0], edit[player.name]!!.entityType.getPathType()) { r ->
+                                (r as ResultNavigation).pointList.forEachIndexed { index, p ->
+                                    submit(delay = index * 2L) {
+                                        val pos = Location(player.world, p.x + 0.5, p.y + 0.5, p.z + 0.5)
+                                        player.spawnParticle(Particle.FLAME, pos, 5, 0.0, 0.0, 0.0, 0.0)
+                                    }
+                                }
+                            }
+                        }
+                        val hologram = AdyeshachAPI.createHologram(player, Location(player.world, node.x + 0.5, node.y + 1, node.z + 0.5), listOf("#${i + 1}"))
+                        submit(delay = 40) {
+                            hologram.delete()
+                        }
+                        val pos = Location(player.world, node.x + 0.5, node.y + 0.5, node.z + 0.5)
+                        player.spawnParticle(Particle.VILLAGER_HAPPY, pos, 20, 0.0, 1.0, 0.0, 0.0)
                     }
-                    player.sendLang("trait-patrol", nodes.size)
                 }
+                player.sendLang("trait-patrol", nodes.size)
             }
         }
     }
 
     fun EntityInstance.nodes(nodes: List<Location>) {
         if (nodes.isEmpty()) {
-            data.set("$uniqueId.nodes", null)
+            data["$uniqueId.nodes"] = null
             nodesCacheMap.remove(uniqueId)
         } else {
-            data.set("$uniqueId.nodes", nodes.map { it.serialize() })
+            data["$uniqueId.nodes"] = nodes.map { it.serialize() }
             nodesCacheMap[uniqueId] = nodes.toList()
         }
     }
@@ -107,7 +113,7 @@ object TraitPatrol : Trait() {
     }
 
     fun EntityInstance.edit(value: Boolean) {
-        data.set("$uniqueId.edit", value)
+        data["$uniqueId.edit"] = value
     }
 
     fun EntityInstance.isEditing(): Boolean {
@@ -115,7 +121,7 @@ object TraitPatrol : Trait() {
     }
 
     fun EntityInstance.index(value: Int) {
-        data.set("$uniqueId.index", value)
+        data["$uniqueId.index"] = value
     }
 
     fun EntityInstance.index(): Int {

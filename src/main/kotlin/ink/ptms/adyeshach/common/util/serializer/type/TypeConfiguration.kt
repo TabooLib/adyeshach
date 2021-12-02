@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.common.util.serializer.type
 import com.google.gson.*
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import taboolib.module.configuration.Configuration
-import taboolib.module.configuration.SecuredFile
 import java.lang.reflect.Type
 
 /**
@@ -18,6 +17,6 @@ class TypeConfiguration : JsonSerializer<Configuration>, JsonDeserializer<Config
     }
 
     override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): Configuration {
-        return SecuredFile.loadConfiguration(a.asString)
+        return Configuration.loadFromString(a.asString)
     }
 }

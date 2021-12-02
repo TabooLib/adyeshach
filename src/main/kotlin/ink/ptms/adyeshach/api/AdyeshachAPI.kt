@@ -25,7 +25,7 @@ import taboolib.common.platform.function.onlinePlayers
 import taboolib.common.platform.function.submit
 import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
-import taboolib.module.configuration.SecuredFile
+import taboolib.module.configuration.Configuration
 import java.io.File
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
@@ -109,7 +109,7 @@ object AdyeshachAPI {
      */
     @Throws(UnknownWorldException::class)
     fun fromYaml(source: String): EntityInstance? {
-        return fromJson(Converter.yamlToJson(SecuredFile.loadConfiguration(source)).toString())
+        return fromJson(Converter.yamlToJson(Configuration.loadFromString(source)).toString())
     }
 
     /**

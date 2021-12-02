@@ -17,7 +17,7 @@ object TraitCommand : Trait() {
 
     @SubscribeEvent
     fun e(e: AdyeshachEntityRemoveEvent) {
-        data.set(e.entity.uniqueId, null)
+        data[e.entity.uniqueId] = null
     }
 
     /**
@@ -61,9 +61,9 @@ object TraitCommand : Trait() {
         player.sendLang("trait-command")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             if (it.all { line -> line.isBlank() }) {
-                data.set(entityInstance.uniqueId, null)
+                data[entityInstance.uniqueId] = null
             } else {
-                data.set(entityInstance.uniqueId, it)
+                data[entityInstance.uniqueId] = it
             }
             player.sendLang("trait-command-finish")
         }

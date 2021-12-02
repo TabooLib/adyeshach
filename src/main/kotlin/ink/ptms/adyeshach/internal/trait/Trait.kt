@@ -2,14 +2,11 @@ package ink.ptms.adyeshach.internal.trait
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import org.bukkit.entity.Player
-import taboolib.module.configuration.Configuration
-import taboolib.module.configuration.SecuredFile
 import taboolib.module.configuration.createLocal
 
 abstract class Trait {
 
-    val data: Configuration
-        get() = createLocal("npc/traits/${getName()}.yml")
+    val data by lazy { createLocal("npc/traits/${getName()}.yml") }
 
     abstract fun getName(): String
 

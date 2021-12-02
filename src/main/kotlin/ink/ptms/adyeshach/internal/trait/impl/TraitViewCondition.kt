@@ -17,7 +17,7 @@ object TraitViewCondition : Trait() {
 
     @SubscribeEvent
     fun e(e: AdyeshachEntityRemoveEvent) {
-        data.set(e.entity.uniqueId, null)
+        data[e.entity.uniqueId] = null
     }
 
     @SubscribeEvent
@@ -44,9 +44,9 @@ object TraitViewCondition : Trait() {
         player.sendLang("trait-view-condition")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             if (it.all { line -> line.isBlank() }) {
-                data.set(entityInstance.uniqueId, null)
+                data[entityInstance.uniqueId] = null
             } else {
-                data.set(entityInstance.uniqueId, it)
+                data[entityInstance.uniqueId] = it
             }
             entityInstance.destroy()
             entityInstance.respawn()
