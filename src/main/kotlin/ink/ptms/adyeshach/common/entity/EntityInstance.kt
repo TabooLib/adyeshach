@@ -570,6 +570,8 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         entity.forEach {
             if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
                 passengers.remove(it.uniqueId)
+                val en = manager?.getEntityByUniqueId(it.uniqueId)
+                en?.teleport(en.getLocation())
             }
         }
         refreshPassenger()
@@ -603,13 +605,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (manager == null) {
             error("Entity Manager not initialized.")
         }
-        forViewers {
-            NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray())
-        }
+        forViewers { NMS.INSTANCE.updatePassengers(it, index, *getPassengers().map { e -> e.index }.toIntArray()) }
         val vehicle = getVehicle() ?: return
-        forViewers {
-            vehicle.refreshPassenger(it)
-        }
+        forViewers { vehicle.refreshPassenger(it) }
     }
 
     fun isFired(): Boolean {
