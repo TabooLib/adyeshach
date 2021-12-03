@@ -228,6 +228,16 @@ internal object Command {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
+            literal("here") {
+                execute<Player> { sender, context, _ ->
+                    commandLook(
+                        AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
+                        sender,
+                        sender.world.name,
+                        sender.eyeLocation.toVector()
+                    )
+                }
+            }
             literal("to") {
                 dynamicLocation({
                     execute<CommandSender> { sender, context, argument ->
@@ -243,16 +253,6 @@ internal object Command {
                         )
                     }
                 })
-            }
-            literal("here") {
-                execute<Player> { sender, context, _ ->
-                    commandLook(
-                        AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
-                        sender,
-                        sender.world.name,
-                        sender.eyeLocation.toVector()
-                    )
-                }
             }
         }
     }
