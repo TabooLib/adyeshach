@@ -9,7 +9,7 @@ import taboolib.common5.Baffle
  * @author sky
  * @since 2020-08-14 21:57
  */
-class ViewPlayers {
+open class ViewPlayers(val entityInstance: EntityInstance) {
 
     /**
      * 允许看到这个实体的玩家
@@ -27,7 +27,21 @@ class ViewPlayers {
     val visibleRefreshLocker = Baffle.of(20)
 
     /**
-     * 获取允许看到且在可视范围内的所有玩家
+     * 获取允许看到的所有玩家
+     */
+    fun getPlayers(): List<Player> {
+        return Bukkit.getOnlinePlayers().filter { it.name in viewers }
+    }
+
+    /**
+     * 获取允许看到的且在可视范围内所有玩家（未看到的）
+     */
+    fun getPlayersInViewDistance(): List<Player> {
+        return Bukkit.getOnlinePlayers().filter { it.name in viewers && entityInstance.isInVisibleDistance(it) }
+    }
+
+    /**
+     * 获取允许看到且在可视范围内的所有玩家（已经到的）
      */
     fun getViewPlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name in visible }

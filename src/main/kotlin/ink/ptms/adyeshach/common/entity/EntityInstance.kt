@@ -30,7 +30,6 @@ import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import java.util.*
@@ -42,7 +41,7 @@ import java.util.function.Consumer
  * @author sky
  * @since 2020-08-04 12:51
  */
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "LeakingThis")
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
 
     /**
@@ -125,7 +124,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 观察者容器
      */
-    val viewPlayers = ViewPlayers()
+    val viewPlayers = ViewPlayers(this)
 
     /**
      * 是否冻结实体，启用后无法移动
@@ -400,7 +399,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 注销控制器
      */
     fun <T : Controller> unregisterController(controller: Class<T>) {
-        if (controller == GeneralMove::class) {
+        if (controller == GeneralMove::class.java) {
             removeTag("isMoving")
         }
         this.controller.removeIf { it.javaClass == controller }
@@ -610,6 +609,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         forViewers { vehicle.refreshPassenger(it) }
     }
 
+    fun isInVisibleDistance(player: Player): Boolean {
+        return player.world.name == position.world.name && player.location.distance(getLocation()) < visibleDistance
+    }
+
     fun isFired(): Boolean {
         return getMetadata("onFire")
     }
@@ -759,7 +762,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleRefreshLocker.hasNext()) {
             // 复活
             viewPlayers.getOutsidePlayers().forEach { player ->
-                if (player.world.name == position.world.name && player.location.distance(position.toLocation()) < visibleDistance) {
+                if (isInVisibleDistance(player)) {
                     if (visible(player, true)) {
                         viewPlayers.visible.add(player.name)
                     }
@@ -767,7 +770,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             }
             // 销毁
             viewPlayers.getViewPlayers().forEach { player ->
-                if (player.world.name != position.world.name || player.location.distance(position.toLocation()) > visibleDistance) {
+                if (!isInVisibleDistance(player)) {
                     if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
                         viewPlayers.visible.remove(player.name)
                     }

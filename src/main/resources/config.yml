@@ -28,3 +28,4 @@ Settings:
     - 'dungeon_world_1'
     - 'dungeon_world_2'
     - 'custom?'
+  view-condition-interval: 40

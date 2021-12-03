@@ -51,7 +51,7 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?): ScriptAction<
                 "add" -> Symbol.ADD
                 "remove" -> Symbol.REMOVE
                 "reset" -> Symbol.RESET
-                else -> throw loadError("Unknown passanger operator $type")
+                else -> throw loadError("Unknown passenger operator $type")
             }
             ActionPassenger(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
         }

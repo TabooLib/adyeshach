@@ -300,7 +300,7 @@ internal object Command {
             }
             literal("reset") {
                 execute<CommandSender> { sender, context, _ ->
-                    commandPassengerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2), sender as? Player), sender)
+                    commandPassengerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender)
                 }
             }
         }
@@ -337,7 +337,7 @@ internal object Command {
             }
             literal("reset", optional = true) {
                 execute<CommandSender> { sender, context, _ ->
-                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-2), sender as? Player), sender)
+                    commandControllerReset(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender)
                 }
             }
         }

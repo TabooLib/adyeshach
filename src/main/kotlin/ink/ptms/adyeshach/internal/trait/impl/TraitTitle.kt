@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
+import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.module.configuration.util.getStringListColored
@@ -48,7 +49,7 @@ object TraitTitle : Trait() {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun e(e: AdyeshachEntityVisibleEvent) {
         // 只有在玩家能够看到 NPC 时才会生成全息，所以只通过 Visible 事件创建或回收全息
         if (e.entity.isPublic()) {
