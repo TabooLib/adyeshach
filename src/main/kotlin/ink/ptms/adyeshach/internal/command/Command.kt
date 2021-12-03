@@ -82,18 +82,18 @@ internal object Command {
 
     @CommandBody
     val rename = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(commit = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
-            dynamic(commit = "new id") {
+            execute<Player> { sender, _, argument ->
+                commandRename(AdyeshachAPI.getEntityNearly(sender), sender, argument)
+            }
+            dynamic(commit = "new id", optional = true) {
                 execute<CommandSender> { sender, context, argument ->
                     commandRename(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
                 }
             }
-        }
-        execute<Player> { sender, _, argument ->
-            commandRename(AdyeshachAPI.getEntityNearly(sender), sender, argument)
         }
     }
 
@@ -114,11 +114,14 @@ internal object Command {
 
     @CommandBody
     val copy = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(commit = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
-            dynamic(commit = "new id") {
+            execute<Player> { sender, _, argument ->
+                commandCopy(AdyeshachAPI.getEntityNearly(sender), sender, argument)
+            }
+            dynamic(commit = "new id", optional = true) {
                 suggestion<Player>(uncheck = true) { sender, _ ->
                     sender.suggestEntityId()
                 }
@@ -161,9 +164,6 @@ internal object Command {
                     })
                 }
             }
-        }
-        execute<Player> { sender, _, argument ->
-            commandCopy(AdyeshachAPI.getEntityNearly(sender), sender, argument)
         }
     }
 

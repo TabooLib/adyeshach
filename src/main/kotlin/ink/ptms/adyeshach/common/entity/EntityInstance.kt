@@ -806,15 +806,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         val entity = AdyeshachAPI.fromJson(json.toString()) ?: return null
         (manager ?: this.manager)?.addEntity(entity)
         entity.tag.putAll(tag)
-        entity.manager = manager
+        entity.manager = (manager ?: this.manager)
         entity.position = EntityPosition.fromLocation(location)
         entity.passengers.clear()
+        // 复制关联单位
         getPassengers().forEachIndexed { index, passenger ->
             passenger.clone("${newId}_passenger_$index", location)?.let { entity.addPassenger(it) }
         }
-        forViewers {
-            entity.addViewer(it)
-        }
+        // 复制观察者
+        forViewers { entity.addViewer(it) }
         return entity
     }
 
