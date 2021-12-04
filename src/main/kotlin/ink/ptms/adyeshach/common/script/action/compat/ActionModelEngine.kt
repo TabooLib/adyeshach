@@ -48,7 +48,7 @@ class ActionModelEngine(
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         /**
          * modelengine animation add {token} [speed {double} [lerpin {int} [lerpout {int}]]]

@@ -22,7 +22,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
         }
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["create"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

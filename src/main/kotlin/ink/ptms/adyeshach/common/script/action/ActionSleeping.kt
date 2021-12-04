@@ -28,7 +28,7 @@ class ActionSleeping: ScriptAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["sleeping"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

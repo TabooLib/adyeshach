@@ -209,7 +209,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["meta"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

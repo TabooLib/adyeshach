@@ -32,7 +32,7 @@ class ActionGermEngine(val state: String, val remove: Boolean) : ScriptAction<Vo
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["germengine"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

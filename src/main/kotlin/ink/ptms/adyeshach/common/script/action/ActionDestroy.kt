@@ -25,7 +25,7 @@ class ActionDestroy: ScriptAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["destroy"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

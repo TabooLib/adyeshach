@@ -25,7 +25,7 @@ class ActionStill: ScriptAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["still"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

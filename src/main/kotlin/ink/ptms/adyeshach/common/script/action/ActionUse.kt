@@ -36,7 +36,7 @@ class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["use"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

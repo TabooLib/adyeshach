@@ -52,7 +52,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?): Script
         }
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["tag"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

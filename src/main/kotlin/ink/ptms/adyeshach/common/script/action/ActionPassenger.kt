@@ -43,7 +43,7 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?): ScriptAction<
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["passenger"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

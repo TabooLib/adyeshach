@@ -42,7 +42,7 @@ class ActionMove(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["move"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

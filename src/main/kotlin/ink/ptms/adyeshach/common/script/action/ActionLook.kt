@@ -36,7 +36,7 @@ class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["look"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

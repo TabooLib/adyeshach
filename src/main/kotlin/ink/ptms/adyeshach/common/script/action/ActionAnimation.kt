@@ -28,7 +28,7 @@ class ActionAnimation(val animation: BukkitAnimation): ScriptAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["animation"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

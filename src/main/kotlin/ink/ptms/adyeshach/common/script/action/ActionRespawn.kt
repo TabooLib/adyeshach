@@ -25,7 +25,7 @@ class ActionRespawn: ScriptAction<Void>() {
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["respawn"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

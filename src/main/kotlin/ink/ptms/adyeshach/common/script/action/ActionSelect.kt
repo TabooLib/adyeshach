@@ -23,7 +23,7 @@ class ActionSelect(val value: ParsedAction<*>, val byId: Boolean): ScriptAction<
         }
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["select"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

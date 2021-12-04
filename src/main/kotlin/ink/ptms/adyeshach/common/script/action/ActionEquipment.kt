@@ -42,7 +42,7 @@ class ActionEquipment(val equipment: BukkitEquipment, val item: ParsedAction<*>)
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["equipment"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

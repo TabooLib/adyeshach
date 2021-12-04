@@ -55,7 +55,7 @@ class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?): ScriptActi
         return CompletableFuture.completedFuture(null)
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["viewer"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {

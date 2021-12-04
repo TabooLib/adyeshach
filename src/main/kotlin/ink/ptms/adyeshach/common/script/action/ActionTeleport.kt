@@ -29,7 +29,7 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
         }
     }
 
-    internal object Parser {
+    companion object {
 
         @KetherParser(["teleport"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
