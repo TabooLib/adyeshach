@@ -27,7 +27,9 @@ object TraitViewCondition : Trait() {
         if (e.visible && data.contains(e.entity.uniqueId)) {
             runKether {
                 val script = data.getStringList(e.entity.uniqueId)
-                KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(e.viewer)).thenAccept {
+                KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(e.viewer)) {
+                    rootFrame().variables()["@entities"] = listOf(e.entity)
+                }.thenAccept {
                     if (Coerce.toBoolean(it)) {
                         return@thenAccept
                     }
@@ -46,7 +48,9 @@ object TraitViewCondition : Trait() {
             // 获取玩家
             e.entity.viewPlayers.getPlayersInViewDistance().forEach {
                 runKether {
-                    KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)).thenAccept { cond ->
+                    KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
+                        rootFrame().variables()["@entities"] = listOf(e.entity)
+                    }.thenAccept { cond ->
                         if (Coerce.toBoolean(cond)) {
                             // 看不见但是满足可视条件
                             if (it.name !in e.entity.viewPlayers.visible) {

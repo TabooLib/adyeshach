@@ -40,13 +40,13 @@ object ListenerGameEvent {
 
     @SubscribeEvent
     fun e(e: AdyeshachEntityDamageEvent) {
-        invokeEvent(e.player, "npc damage", mapOf("id" to e.entity.id))
+        invokeEvent(e.player, "npc damage", mapOf("id" to e.entity.id, "@entities" to listOf(e.entity)))
     }
 
     @SubscribeEvent
     fun e(e: AdyeshachEntityInteractEvent) {
         if (e.isMainHand) {
-            invokeEvent(e.player, "npc interact", mapOf("id" to e.entity.id))
+            invokeEvent(e.player, "npc interact", mapOf("id" to e.entity.id, "@entities" to listOf(e.entity)))
         }
     }
 
@@ -55,7 +55,7 @@ object ListenerGameEvent {
             when {
                 event.run != null -> {
                     try {
-                        KetherShell.eval(event.run, namespace = listOf("chemdah", "adyeshach")) {
+                        KetherShell.eval(event.run, namespace = listOf("adyeshach")) {
                             sender = adaptPlayer(player)
                             rootFrame().variables().also { args.forEach { (k, v) -> it[k] = v } }
                         }
