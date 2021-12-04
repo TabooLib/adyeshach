@@ -355,7 +355,7 @@ object EditorHandler {
                                 armorStandLookup[e.player.name] = bind to angle
                                 e.player.closeInventory()
                                 e.player.inventory.setItemInMainHand(e.player.inventory.itemInMainHand.modifyMeta<ItemMeta> {
-                                    setDisplayName("&7${e.player.asLangText("editor-armorstand-tool-name", angle.name)}")
+                                    setDisplayName("§7${e.player.asLangText("editor-armorstand-tool-name", angle.name)}")
                                 })
                                 e.player.sendLang("armor-stand-editor-1", angle.name)
                                 e.player.sendLang("armor-stand-editor-2")
