@@ -97,7 +97,7 @@ object TraitPatrol : Trait() {
 
     fun EntityInstance.nodes(nodes: List<Location>) {
         if (nodes.isEmpty()) {
-            data["$uniqueId.nodes"] = null
+            data[uniqueId] = null
             nodesCacheMap.remove(uniqueId)
         } else {
             data["$uniqueId.nodes"] = nodes.map { it.serialize() }

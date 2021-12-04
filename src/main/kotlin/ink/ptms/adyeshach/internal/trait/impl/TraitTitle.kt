@@ -40,11 +40,11 @@ object TraitTitle : Trait() {
         AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().forEach { update(it) }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun e(e: AdyeshachEntityTeleportEvent) {
         if (entityLookup.containsKey(e.entity.uniqueId)) {
             entityLookup[e.entity.uniqueId]!!.forEach {
-                it.value.teleport(e.entity.getLocation().add(0.0, e.entity.entityType.entitySize.height + 0.25, 0.0))
+                it.value.teleport(e.location.clone().add(0.0, e.entity.entityType.entitySize.height + 0.25, 0.0))
             }
         }
     }
