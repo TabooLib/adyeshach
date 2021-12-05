@@ -35,11 +35,16 @@ class ActionModelEngine(
         s.getEntities()!!.filterNotNull().forEach {
             if (it.modelEngineUniqueId != null) {
                 val modeledEntity = modelManager.getModeledEntity(it.modelEngineUniqueId)
-                val activeModel = modeledEntity.allActiveModel.values.firstOrNull()
-                if (activeModel != null) {
-                    if (remove) {
+                if (remove) {
+                    val active = modeledEntity.allActiveModel.values.iterator()
+                    while (active.hasNext()) {
+                        val activeModel = active.next()
                         activeModel.removeState(state, ingorelerp)
-                    } else {
+                    }
+                } else {
+                    val active = modeledEntity.allActiveModel.values.iterator()
+                    while (active.hasNext()) {
+                        val activeModel = active.next()
                         activeModel.addState(state, lerpin, lerpout, speed)
                     }
                 }
