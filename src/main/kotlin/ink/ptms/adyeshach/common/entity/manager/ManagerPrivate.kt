@@ -26,7 +26,10 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
         conf.getKeys(false).forEach {
             try {
-                val entity = AdyeshachAPI.fromYaml(conf.getConfigurationSection(it)!!) ?: return@forEach
+                val entity = AdyeshachAPI.fromYaml(conf.getConfigurationSection(it)!!) { k ->
+                    // 2021/12/05 因为发现在 MongoDB 中无法使用 $ 符号，因此进行转换
+                    if (k.startsWith("_mark_")) "$${k.substring("_mark_".length)}" else k
+                } ?: return@forEach
                 if (entity.entityType.bukkitType == null) {
                     println("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
                 } else {
@@ -34,15 +37,13 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
                     entity.addViewer(player)
                     activeEntity.add(entity)
                 }
-            } catch (ex: UnknownWorldException) {
+            } catch (_: UnknownWorldException) {
             }
         }
     }
 
     override fun onDisable() {
-        activeEntity.forEach {
-            it.destroy()
-        }
+        activeEntity.forEach { it.destroy() }
     }
 
     override fun onSave() {
@@ -50,7 +51,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
         val file = database.pull(player)
         activeEntity.forEach {
             it.unregisterController(ControllerNone::class.java)
-            it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}"))
+            it.toYaml(file.createSection("AdyeshachNPC.${it.uniqueId}")) { k -> if (k.startsWith("$")) "_mark_${k.substring(1)}" else k }
         }
         database.push(player)
     }
@@ -65,7 +66,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
     override fun remove(entityInstance: EntityInstance) {
         val player = Bukkit.getPlayerExact(player)!!
         val file = database.pull(player)
-        file.set("AdyeshachNPC.${entityInstance.uniqueId}", null)
+        file["AdyeshachNPC.${entityInstance.uniqueId}"] = null
         activeEntity.remove(entityInstance)
     }
 

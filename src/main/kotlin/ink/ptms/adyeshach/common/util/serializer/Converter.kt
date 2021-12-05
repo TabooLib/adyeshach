@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.util.serializer
 import com.google.gson.*
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.kether.isInt
+import java.util.function.Function
 
 /**
  * @author sky
@@ -32,35 +33,35 @@ object Converter {
                     }
                     this
                 })
-                else -> json.add(k, convert(section.get(k)!!))
+                else -> json.add(k, convert(section[k]!!))
             }
         }
     }
 
-    fun jsonToYaml(source: String, section: ConfigurationSection) {
+    fun jsonToYaml(source: String, section: ConfigurationSection, transfer: Function<String, String> = Function { it }) {
         JsonParser().parse(source).asJsonObject.entrySet().forEach {
-            jsonToYaml(section, it.key, it.value)
+            jsonToYaml(section, transfer.apply(it.key), it.value, transfer)
         }
     }
 
-    fun jsonToYaml(section: ConfigurationSection, key: String, value: JsonElement) {
+    private fun jsonToYaml(section: ConfigurationSection, key: String, value: JsonElement, transfer: Function<String, String>) {
         when {
             value.isJsonObject -> {
                 val sub = section.createSection(key)
                 value.asJsonObject.entrySet().forEach {
-                    jsonToYaml(sub, it.key, it.value)
+                    jsonToYaml(sub, transfer.apply(it.key), it.value, transfer)
                 }
             }
             value.isJsonArray -> {
-                section.set(key, value.asJsonArray.map { convert(it.asJsonPrimitive) }.toList())
+                section[key] = value.asJsonArray.map { convert(it.asJsonPrimitive) }.toList()
             }
             else -> {
-                section.set(key, convert(value.asJsonPrimitive))
+                section[key] = convert(value.asJsonPrimitive)
             }
         }
     }
 
-    fun convert(value: Any): JsonPrimitive {
+    private fun convert(value: Any): JsonPrimitive {
         return when (value) {
             is Number -> {
                 if (value.isInt()) {
@@ -75,7 +76,7 @@ object Converter {
         }
     }
 
-    fun convert(value: JsonPrimitive): Any {
+    private fun convert(value: JsonPrimitive): Any {
         return when {
             value.isNumber -> {
                 if (value.asNumber.isInt()) {

@@ -7,6 +7,7 @@ import org.bukkit.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
+import taboolib.platform.util.toBukkitLocation
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        return frame.newFrame(location).run<Location>().thenAccept { loc ->
+        return frame.newFrame(location).run<taboolib.common.util.Location>().thenAccept {
             val s = frame.script()
             if (s.getManager() == null) {
                 error("No manager selected.")
@@ -23,9 +24,7 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
             if (!s.entitySelected()) {
                 error("No entity selected.")
             }
-            s.getEntities()!!.filterNotNull().forEach {
-                it.teleport(loc)
-            }
+            s.getEntities()!!.filterNotNull().forEach { en -> en.teleport(it.toBukkitLocation()) }
         }
     }
 

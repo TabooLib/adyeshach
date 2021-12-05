@@ -16,6 +16,7 @@ import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.common.util.toDistance
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
@@ -26,6 +27,7 @@ import taboolib.common.platform.function.submit
 import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.Type
 import java.io.File
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
@@ -99,8 +101,14 @@ object AdyeshachAPI {
      * @param section 原始 yaml 实例
      */
     @Throws(UnknownWorldException::class)
-    fun fromYaml(section: ConfigurationSection): EntityInstance? {
-        return fromJson(Converter.yamlToJson(section).toString())
+    fun fromYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it }): EntityInstance? {
+        val conf = Configuration.empty(Type.JSON)
+        section.getValues(true).forEach { (k, v) ->
+            if (v !is ConfigurationSection) {
+                conf[transfer.apply(k)] = v
+            }
+        }
+        return fromJson(conf.saveToString())
     }
 
     /**

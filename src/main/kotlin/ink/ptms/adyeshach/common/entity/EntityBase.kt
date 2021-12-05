@@ -8,6 +8,7 @@ import org.bukkit.Location
 import org.bukkit.World
 import taboolib.library.configuration.ConfigurationSection
 import java.util.*
+import java.util.function.Function
 
 /**
  * @author sky
@@ -61,8 +62,8 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
         return Serializer.gson.toJson(this)
     }
 
-    fun toYaml(section: ConfigurationSection) {
-        Converter.jsonToYaml(toJson(), section)
+    fun toYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it }) {
+        Converter.jsonToYaml(toJson(), section, transfer)
     }
 
     override fun equals(other: Any?): Boolean {

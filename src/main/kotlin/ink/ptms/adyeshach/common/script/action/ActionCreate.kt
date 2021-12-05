@@ -8,6 +8,7 @@ import org.bukkit.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
+import taboolib.platform.util.toBukkitLocation
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -17,8 +18,9 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val manager = frame.script().getManager() ?: error("No manager selected.")
-        return frame.newFrame(location).run<Location>().thenAccept {
-            manager.create(type, it).id = id
+        return frame.newFrame(location).run<Any>().thenAccept {
+            val loc = if (it is taboolib.common.util.Location) it.toBukkitLocation() else it as Location
+            manager.create(type, loc).id = id
         }
     }
 
