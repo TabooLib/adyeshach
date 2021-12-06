@@ -17,6 +17,11 @@ class MetaEditor<T : EntityInstance>(val meta: Meta<T>) {
     var enumType: Class<*>? = null
 
     /**
+     * 混合编辑器
+     */
+    var hybrid = false
+
+    /**
      * 恢复默认
      */
     internal var resetMethod: Function2<Player, T, Unit>? = null

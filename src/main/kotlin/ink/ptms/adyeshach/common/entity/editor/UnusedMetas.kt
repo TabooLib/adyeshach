@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.editor
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityMetaable
 import ink.ptms.adyeshach.common.entity.Meta
+import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import ink.ptms.adyeshach.common.entity.type.AdyBee
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import kotlin.reflect.KClass
@@ -20,11 +21,25 @@ enum class UnusedMetas(val clazz: KClass<*>, val key: String) {
 
     ENTITY_2(EntityInstance::class, "ticksFrozenInPowderedSnow"),
 
+    ENTITY_3(EntityInstance::class, "isHandActive"),
+
+    ENTITY_4(EntityInstance::class, "activeHand"),
+
+    ENTITY_5(EntityInstance::class, "isSwimming"),
+
     BEE_1(AdyBee::class, "unUsed"),
 
     HUMAN_1(AdyHuman::class, "customName"),
 
-    HUMAN_2(AdyHuman::class, "isCustomNameVisible");
+    HUMAN_2(AdyHuman::class, "isCustomNameVisible"),
+
+    ARMORSTAND_1(AdyArmorStand::class, "isSprinting"),
+
+    ARMORSTAND_2(AdyArmorStand::class, "isSneaking"),
+
+    ARMORSTAND_3(AdyArmorStand::class, "isInRiptideSpinAttack"),
+
+    ;
 
     companion object {
 

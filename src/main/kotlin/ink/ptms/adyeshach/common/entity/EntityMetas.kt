@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.entity.*
-import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -23,10 +22,9 @@ import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.getName
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.platform.util.asLangText
-import taboolib.platform.util.buildItem
-import taboolib.platform.util.isNotAir
+import taboolib.platform.util.*
 import java.util.function.Consumer
+import kotlin.collections.set
 
 @Suppress("UNCHECKED_CAST")
 object EntityMetas {
@@ -187,12 +185,40 @@ object EntityMetas {
             mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "noBasePlate", 0x08)
             mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "isMarker", 0x10)
             mask(at(11000 to -1, 10900 to 10), "hasGravity", 0x02)
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "angleHead", EulerAngle(0.0, 0.0, 0.0))
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "angleBody", EulerAngle(0.0, 0.0, 0.0))
-            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "angleLeftArm", EulerAngle(-10.0, 0.0, -10.0))
-            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "angleRightArm", EulerAngle(-15.0, 0.0, 10.0))
-            natural(at(11700 to 20, 11500 to 19, 11400 to 18, 11000 to 16, 10900 to 15), "angleLeftLeg", EulerAngle(-1.0, 0.0, -1.0))
-            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11000 to 17, 10900 to 16), "angleRightLeg", EulerAngle(1.0, 0.0, 1.0))
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "angleHead", EulerAngle(0.0, 0.0, 0.0)) {
+                it.editable = false
+            }
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "angleBody", EulerAngle(0.0, 0.0, 0.0)) {
+                it.editable = false
+            }
+            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "angleLeftArm", EulerAngle(-10.0, 0.0, -10.0)) {
+                it.editable = false
+            }
+            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "angleRightArm", EulerAngle(-15.0, 0.0, 10.0)) {
+                it.editable = false
+            }
+            natural(at(11700 to 20, 11500 to 19, 11400 to 18, 11000 to 16, 10900 to 15), "angleLeftLeg", EulerAngle(-1.0, 0.0, -1.0)) {
+                it.editable = false
+            }
+            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11000 to 17, 10900 to 16), "angleRightLeg", EulerAngle(1.0, 0.0, 1.0)) {
+                it.editable = false
+            }
+            naturalEditor("angle") {
+                it.hybrid = true
+                it.modify { player, entity ->
+                    EditorHandler.armorStandLookup[player.name] = entity to null
+                    player.inventory.takeItem(99) { item -> item.hasLore(player.asLangText("editor-armorstand-tool-lore")) }
+                    player.giveItem(buildItem(XMaterial.REDSTONE_TORCH) {
+                        name = "§7${player.asLangText("editor-armorstand-tool-name", "NONE")}"
+                        lore += "§8${player.asLangText("editor-armorstand-tool-lore")}"
+                        shiny()
+                        colored()
+                    })
+                    player.sendLang("editor-armorstand-tool")
+                    player.closeInventory()
+                }
+                it.display { player, _ -> player.asLangText("editor-no-preview") }
+            }
         }
     }
 
@@ -207,11 +233,11 @@ object EntityMetas {
         }
         from<AdyParrot> {
             val index = at(11700 to 19, 11500 to 18, 11400 to 17, 11200 to 15)
-            natural(index, "color", Parrot.Variant.RED.ordinal) { it.useIndexEditor(Parrot.Variant::class.java, "color") }
+            natural(index, "color", 0) { it.useIndexEditor(Parrot.Variant::class.java, "color") }
         }
         from<AdySheep> {
             val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
-            natural(index, "dyeColor", DyeColor.WHITE.ordinal) { it.useIndexEditor(DyeColor::class.java, "dyeColor") }
+            natural(index, "dyeColor", 0) { it.useIndexEditor(DyeColor::class.java, "dyeColor") }
             mask(index, "isSheared", 0x10)
         }
         from<AdyMushroom> {
@@ -405,12 +431,7 @@ object EntityMetas {
             mask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
             natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
             natural(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0) { it.useColorEditor() }
-            naturalEditor("equipmentHelmet") { it.useEquipmentEditor(EquipmentSlot.HEAD) }
-            naturalEditor("equipmentChestplate") { it.useEquipmentEditor(EquipmentSlot.CHEST) }
-            naturalEditor("equipmentLeggings") { it.useEquipmentEditor(EquipmentSlot.LEGS) }
-            naturalEditor("equipmentBoots") { it.useEquipmentEditor(EquipmentSlot.FEET) }
-            naturalEditor("equipmentHand") { it.useEquipmentEditor(EquipmentSlot.HAND) }
-            naturalEditor("equipmentOffhand") { it.useEquipmentEditor(EquipmentSlot.OFF_HAND) }
+            naturalEditor("equipment") { it.useHybridEquipmentEditor() }
             naturalEditor("isDie") {
                 it.reset { _, entity -> entity.die(false) }
                 it.modify { player, entity ->
