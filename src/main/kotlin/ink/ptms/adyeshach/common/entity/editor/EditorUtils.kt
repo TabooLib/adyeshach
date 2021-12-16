@@ -26,9 +26,10 @@ import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.*
 import taboolib.type.BukkitEquipment
+import java.util.concurrent.ConcurrentHashMap
 
 internal val minecraftVersion = MinecraftVersion.majorLegacy
-internal val cacheEnums = HashMap<String, Array<out Any>>()
+internal val cacheEnums = ConcurrentHashMap<String, Array<out Any>>()
 internal val allowSlots = listOf(
     EquipmentSlot(13, BukkitEquipment.HEAD, XMaterial.LEATHER_HELMET),
     EquipmentSlot(22, BukkitEquipment.CHEST, XMaterial.LEATHER_CHESTPLATE),

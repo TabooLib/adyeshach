@@ -28,6 +28,15 @@ abstract class EntityBase(@Expose val entityType: EntityTypes) : EntityMetaable(
     @Expose
     val uniqueId = UUID.randomUUID().toString().replace("-", "")
 
+    /**
+     * 标准化 UUID
+     */
+    val normalizeUniqueId: UUID
+        get() {
+            val u = uniqueId
+            return UUID.fromString("${u.substring(0, 8)}-${u.substring(8, 12)}-${u.substring(12, 16)}-${u.substring(16, 20)}-${u.substring(20)}")
+        }
+
     @Expose
     var position = EntityPosition.empty()
         protected set

@@ -45,7 +45,7 @@ class AdyPainting : AdyEntity(EntityTypes.PAINTING) {
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             spawn(viewer) {
-                val clientId = UUID.randomUUID()
+                val clientId = normalizeUniqueId
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
                 NMS.INSTANCE.spawnEntityPainting(viewer, index, clientId, position.toLocation(), direction, painting)
             }

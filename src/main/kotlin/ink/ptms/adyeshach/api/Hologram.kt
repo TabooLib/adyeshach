@@ -4,10 +4,11 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyArmorStand
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.util.concurrent.ConcurrentHashMap
 
 abstract class Hologram<T> {
 
-    protected val map = HashMap<Int, T>()
+    protected val map = ConcurrentHashMap<Int, T>()
 
     fun create(player: Player, location: Location, content: List<String>) {
         content.forEachIndexed { index, line ->

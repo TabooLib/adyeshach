@@ -27,7 +27,7 @@ class AdyFallingBlock : AdyEntity(EntityTypes.FALLING_BLOCK) {
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             spawn(viewer) {
-                val clientId = UUID.randomUUID()
+                val clientId = normalizeUniqueId
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
                 NMS.INSTANCE.spawnEntityFallingBlock(viewer, index, clientId, position.toLocation(), material, data)
             }

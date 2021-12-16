@@ -16,7 +16,7 @@ open class AdyEntity(entityTypes: EntityTypes) : EntityInstance(entityTypes) {
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             spawn(viewer) {
-                val clientId = UUID.randomUUID()
+                val clientId = normalizeUniqueId
                 // 创建客户端对应表
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
                 // 生成实体

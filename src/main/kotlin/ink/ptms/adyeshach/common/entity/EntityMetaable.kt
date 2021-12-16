@@ -21,7 +21,7 @@ abstract class EntityMetaable {
     internal val metadata = ConcurrentHashMap<String, Any>()
 
     @Expose
-    internal val metadataMask = ConcurrentHashMap<String, HashMap<String, Boolean>>()
+    internal val metadataMask = ConcurrentHashMap<String, MutableMap<String, Boolean>>()
 
     /**
      * 获取实体元数据
@@ -52,7 +52,7 @@ abstract class EntityMetaable {
         val event = AdyeshachMetaUpdateEvent(this, natural, key, value)
         if (event.call()) {
             if (natural is MetaMasked) {
-                metadataMask.computeIfAbsent(getByteMaskKey(natural.index)) { HashMap() }[key] = event.value as Boolean
+                metadataMask.computeIfAbsent(getByteMaskKey(natural.index)) { ConcurrentHashMap() }[key] = event.value as Boolean
             } else {
                 metadata[key] = event.value
             }
@@ -118,6 +118,6 @@ abstract class EntityMetaable {
     companion object {
 
         val minecraftVersion = MinecraftVersion.majorLegacy
-        val metaCache = HashMap<Class<*>, List<Meta<*>>>()
+        val metaCache = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
     }
 }

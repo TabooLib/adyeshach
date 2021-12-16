@@ -42,7 +42,7 @@ object EditorHandler {
      * 针对特定类型的 MetaEditor 生成器
      * 使用 registerEntityMetaNatural 注册元数据模型时若未指定编辑器则从该容器中选取生成器生成对应的编辑器
      */
-    internal val editorGenerator = HashMap<Class<*>, Consumer<MetaEditor<*>>>()
+    internal val editorGenerator = ConcurrentHashMap<Class<*>, Consumer<MetaEditor<*>>>()
 
     /**
      * 储存玩家当前编辑盔甲架单位的实例以及所选择的角度

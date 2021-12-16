@@ -19,11 +19,12 @@ import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 object TraitPatrol : Trait() {
 
-    val edit = HashMap<String, EntityInstance>()
-    val nodesCacheMap = HashMap<String, List<Location>>()
+    val edit = ConcurrentHashMap<String, EntityInstance>()
+    val nodesCacheMap = ConcurrentHashMap<String, List<Location>>()
 
     /**
      * 巡逻触发周期
@@ -56,7 +57,7 @@ object TraitPatrol : Trait() {
     @Schedule(period = 40, async = true)
     fun edit() {
         Bukkit.getOnlinePlayers().forEach { player ->
-            if (player.name in edit) {
+            if (edit.containsKey(player.name)) {
                 val nodes = edit[player.name]!!.nodes()
                 if (nodes.isNotEmpty()) {
                     var p = nodes[0]
@@ -140,7 +141,7 @@ object TraitPatrol : Trait() {
 
     @SubscribeEvent
     fun e(e: PlayerSwapHandItemsEvent) {
-        if (e.player.name in edit) {
+        if (edit.containsKey(e.player.name)) {
             e.isCancelled = true
             e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             if (e.player.isSneaking) {
@@ -156,7 +157,7 @@ object TraitPatrol : Trait() {
 
     @SubscribeEvent
     fun e(e: PlayerInteractEvent) {
-        if (e.player.name in edit && e.hand == EquipmentSlot.HAND) {
+        if (edit.containsKey(e.player.name) && e.hand == EquipmentSlot.HAND) {
             val entity = edit[e.player.name]!!
             if (e.action == Action.LEFT_CLICK_BLOCK && e.item?.type == Material.BLAZE_ROD) {
                 e.isCancelled = true

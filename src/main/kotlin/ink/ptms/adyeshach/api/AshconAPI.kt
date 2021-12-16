@@ -10,6 +10,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Arasple
@@ -18,7 +19,7 @@ import java.nio.charset.StandardCharsets
 object AshconAPI {
 
     private val url = arrayOf("https://api.ashcon.app/mojang/v2/user/")
-    private val profileCache = mutableMapOf<String, JsonObject>()
+    private val profileCache = ConcurrentHashMap<String, JsonObject>()
 
     fun getTextureValue(name: String): String {
         return getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("value").asString

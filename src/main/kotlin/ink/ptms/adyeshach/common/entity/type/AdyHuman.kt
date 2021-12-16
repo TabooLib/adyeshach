@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
-    private val playerUUID = UUID.randomUUID()
+    private val playerUUID = normalizeUniqueId
 
     @Expose
     private val gameProfile = GameProfile()
@@ -60,6 +60,9 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
                 addPlayerInfo(viewer)
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, playerUUID)
                 // 生成实体
+                viewer.sendMessage("生成玩家类型NPC")
+                viewer.sendMessage("NPC uniqueID: $normalizeUniqueId")
+                viewer.sendMessage("clientId: $playerUUID")
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
                 // 更新朝向与装备
                 submit(delay = 1) {

@@ -19,14 +19,15 @@ import taboolib.common.platform.function.adaptCommandSender
 import taboolib.module.configuration.util.getStringListColored
 import taboolib.module.kether.KetherFunction
 import taboolib.platform.util.sendLang
+import java.util.concurrent.ConcurrentHashMap
 
 object TraitTitle : Trait() {
 
     // <玩家, <NPC, 全息>>
-    val playerLookup = HashMap<String, HashMap<String, Hologram<*>>>()
+    val playerLookup = ConcurrentHashMap<String, MutableMap<String, Hologram<*>>>()
 
     // <NPC, <玩家, 全息>>
-    val entityLookup = HashMap<String, HashMap<String, Hologram<*>>>()
+    val entityLookup = ConcurrentHashMap<String, MutableMap<String, Hologram<*>>>()
 
     @Awake(LifeCycle.DISABLE)
     fun cancel() {
@@ -90,10 +91,10 @@ object TraitTitle : Trait() {
             }
             val hologram = AdyeshachAPI.createHologram(viewer, loc, message)
             // 写入 playerLookup 并删除之前存在的全息对象
-            val playerHologramMap = playerLookup.computeIfAbsent(viewer.name) { HashMap() }
+            val playerHologramMap = playerLookup.computeIfAbsent(viewer.name) { ConcurrentHashMap() }
             playerHologramMap.put(entity.uniqueId, hologram)?.delete()
             // 写入 entityLookup
-            val entityHologramMap = entityLookup.computeIfAbsent(entity.uniqueId) { HashMap() }
+            val entityHologramMap = entityLookup.computeIfAbsent(entity.uniqueId) { ConcurrentHashMap() }
             entityHologramMap[viewer.name] = hologram
         }
     }
