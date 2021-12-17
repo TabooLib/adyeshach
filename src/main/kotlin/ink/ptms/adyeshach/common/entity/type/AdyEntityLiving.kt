@@ -63,10 +63,6 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
                 val clientId = normalizeUniqueId
                 // 创建客户端对应表
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
-
-                viewer.sendMessage("生成 ${entityType.name} 类型NPC")
-                viewer.sendMessage("NPC uniqueID: $normalizeUniqueId")
-                viewer.sendMessage("clientId: $clientId")
                 // 生成实体
                 NMS.INSTANCE.spawnEntityLiving(viewer, entityType, index, clientId, position.toLocation())
                 // 更新装备
