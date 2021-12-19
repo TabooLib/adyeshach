@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach
 
+import ink.ptms.adyeshach.internal.listener.ListenerGameEvent
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
 import taboolib.common.platform.Awake
@@ -10,6 +11,7 @@ import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.warning
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
+import taboolib.module.kether.Kether
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.BukkitPlugin
@@ -34,6 +36,10 @@ object Adyeshach : Plugin() {
             console().sendLang("not-support")
             disablePlugin()
         }
+    }
+
+    override fun onEnable() {
+        Kether.isAllowToleranceParser = true
     }
 
     @Awake(LifeCycle.INIT)
@@ -61,5 +67,6 @@ object Adyeshach : Plugin() {
 
     fun reload() {
         conf.reload()
+        ListenerGameEvent.init()
     }
 }
