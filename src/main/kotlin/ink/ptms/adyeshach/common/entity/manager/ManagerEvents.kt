@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
-import ink.ptms.adyeshach.common.util.toDistance
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
@@ -105,7 +105,7 @@ internal object ManagerEvents {
     @SubscribeEvent
     fun e(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().toDistance(e.player.location) < it.visibleDistance }.forEach {
+            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().safeDistance(e.player.location) < it.visibleDistance }.forEach {
                 it.visible(e.player, true)
                 AdyeshachEntitySpawnEvent(it).call()
             }

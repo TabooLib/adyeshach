@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity.ai.expand
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.GameMode
 import org.bukkit.potion.PotionEffectType
 import taboolib.common.util.random
@@ -38,9 +39,9 @@ class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
             .filterNot {
                 it.hasPotionEffect(PotionEffectType.INVISIBILITY) || it.gameMode == GameMode.SPECTATOR || it.isInvulnerable
             }.minByOrNull {
-                it.location.distance(entity.position.toLocation())
+                it.location.safeDistance(entity.position.toLocation())
             }?.let {
-                if (it.location.distance(entity.position.toLocation()) < 16) {
+                if (it.location.safeDistance(entity.position.toLocation()) < 16) {
                     entity.controllerLook(it.eyeLocation, smooth = true)
                 }
             }

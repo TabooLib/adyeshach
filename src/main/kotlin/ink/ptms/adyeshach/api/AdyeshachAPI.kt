@@ -10,13 +10,13 @@ import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import ink.ptms.adyeshach.common.entity.manager.*
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseLocal
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseMongodb
+import ink.ptms.adyeshach.common.entity.manager.database.DatabaseNull
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import ink.ptms.adyeshach.common.util.toDistance
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
@@ -58,6 +58,7 @@ object AdyeshachAPI {
         when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase()) {
             "LOCAL" -> DatabaseLocal()
             "MONGODB" -> DatabaseMongodb()
+            "DISABLE" -> DatabaseNull()
             else -> {
                 val event = CustomDatabaseEvent(db)
                 event.call()
@@ -201,7 +202,7 @@ object AdyeshachAPI {
      */
     fun getEntity(player: Player? = null, filter: Function<EntityInstance, Boolean>): EntityInstance? {
         val entity = getEntities(player, filter)
-        return if (player != null) entity.minByOrNull { it.position.toLocation().toDistance(player.location) } else entity.firstOrNull()
+        return if (player != null) entity.minByOrNull { it.position.toLocation().safeDistance(player.location) } else entity.firstOrNull()
     }
 
     /**

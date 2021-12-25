@@ -24,6 +24,7 @@ import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
+import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.compat.CompatServerTours
 import io.netty.util.internal.ConcurrentSet
@@ -610,7 +611,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     fun isInVisibleDistance(player: Player): Boolean {
-        return player.world.name == position.world.name && player.location.distance(getLocation()) < visibleDistance
+        return player.location.safeDistance(getLocation()) < visibleDistance
     }
 
     fun isFired(): Boolean {

@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Location
 import taboolib.common5.Baffle
 
@@ -85,7 +86,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
                 entity.teleport(plan.x, plan.y + heightTo, plan.z)
             }
         }
-        if (entity.position.toLocation().distance(next) < speed) {
+        if (entity.position.toLocation().safeDistance(next) < speed) {
             i++
         }
     }

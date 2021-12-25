@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.common.entity.editor.toLocaleKey
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.error
 import ink.ptms.adyeshach.common.util.info
+import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.internal.trait.TraitFactory
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -666,8 +667,8 @@ internal object Command {
             sender.asLangText("command-main-near-4") to AdyeshachAPI.getEntityManagerPrivateTemporary(sender),
         ).forEach { (k, v) ->
             v.getEntities().mapNotNull {
-                if (it.getWorld().name == sender.world.name && it.getLocation().distance(sender.location) < 64) {
-                    it to it.getLocation().distance(sender.location)
+                if (it.getLocation().safeDistance(sender.location) < 64) {
+                    it to it.getLocation().safeDistance(sender.location)
                 } else {
                     null
                 }

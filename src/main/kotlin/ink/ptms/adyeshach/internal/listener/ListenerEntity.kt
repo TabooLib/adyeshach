@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
@@ -28,7 +29,7 @@ object ListenerEntity {
         if (e.packet.name == "PacketPlayInUseEntity") {
             val entity = AdyeshachAPI.getEntityFromEntityId(e.packet.read("a")!!, e.player) ?: return
             // 判定观察者并检测作弊
-            if (entity.isViewer(e.player) && entity.getWorld() == e.player.world && entity.getLocation().distance(e.player.location) < 10) {
+            if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
                 if (MinecraftVersion.isUniversal) {
                     val action = e.packet.read<Any>("action")!!
                     when (action.javaClass.simpleName) {

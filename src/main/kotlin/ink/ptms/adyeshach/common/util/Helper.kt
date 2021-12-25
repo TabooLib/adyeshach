@@ -36,9 +36,9 @@ fun CommandSender.error(message: String) {
     }
 }
 
-fun Location.toDistance(loc: Location): Double {
+fun Location.safeDistance(loc: Location): Double {
     return if (this.world!!.name == loc.world!!.name) {
-        this.distance(loc)
+        distance(loc)
     } else {
         Double.MAX_VALUE
     }

@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity.manager
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.function.Consumer
@@ -56,7 +57,7 @@ abstract class Manager {
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
         entityInstance.viewPlayers.visible.addAll(player.filter {
-            it.world == location.world && it.location.distance(location) < entityInstance.visibleDistance
+            it.location.safeDistance(location) < entityInstance.visibleDistance
         }.map {
             it.name
         })

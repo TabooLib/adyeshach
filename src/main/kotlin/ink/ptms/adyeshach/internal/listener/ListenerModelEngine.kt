@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachMetaUpdateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.RayTrace
+import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -45,7 +46,7 @@ object ListenerModelEngine {
         if (AdyeshachAPI.modelEngineHooked && e.action != Action.PHYSICAL) {
             val modelManager = ModelEngineAPI.api.modelManager
             val entities = ArrayList<Pair<EntityInstance, BoundingBox>>()
-            AdyeshachAPI.getEntities(e.player) { it.getWorld() == e.player.world && it.getLocation().distance(e.player.location) <= 5 }.forEach {
+            AdyeshachAPI.getEntities(e.player) { it.getLocation().safeDistance(e.player.location) <= 5 }.forEach {
                 if (it.modelEngineUniqueId != null) {
                     val modeledEntity = modelManager.getModeledEntity(it.modelEngineUniqueId) ?: return@forEach
                     val blueprint = modeledEntity.getActiveModel(it.modelEngineName).blueprint ?: return@forEach

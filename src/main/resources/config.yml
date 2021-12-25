@@ -4,7 +4,7 @@
 
 
 Database:
-  # LOCAL, MONGODB
+  # LOCAL, MONGODB, DISABLE
   method: LOCAL
   url:
     client: 'mongodb://localhost:3307'
