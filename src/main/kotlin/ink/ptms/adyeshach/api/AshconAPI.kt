@@ -29,8 +29,8 @@ object AshconAPI {
         return getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("signature").asString
     }
 
-    fun getProfile(name: String) = profileCache.computeIfAbsent(name) {
-        JsonParser().parse(readFromURL("${url[0]}$name")).asJsonObject
+    fun getProfile(name: String): JsonObject {
+        return profileCache[name] ?: JsonObject()
     }
 
     fun readFromURL(url: String): String {
@@ -41,9 +41,9 @@ object AshconAPI {
     private fun e(e: PlayerJoinEvent) {
         submit(async = true) {
             try {
-                getProfile(e.player.name)
-            } catch (ignore: NullPointerException) {
+                profileCache[e.player.name] = JsonParser().parse(readFromURL("${url[0]}$name")).asJsonObject
             } catch (ignore: FileNotFoundException) {
+            } catch (ignore: NullPointerException) {
             } catch (ignore: IOException) {
             }
         }
