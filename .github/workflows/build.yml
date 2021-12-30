@@ -24,8 +24,10 @@ jobs:
         run: chmod +x ./gradlew
       - name: build
         run: ./gradlew build
+      - name: build dokka
+        run: ./gradlew dokkaHtml
       - name: capture build artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
-          path: build/libs/
+          path: build

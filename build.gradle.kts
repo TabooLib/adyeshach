@@ -69,7 +69,7 @@ dependencies {
     compileOnly("ink.ptms.core:v10900:10900")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.30")
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.0")
 }
 
 tasks.withType<JavaCompile> {
@@ -84,10 +84,10 @@ configure<JavaPluginConvention> {
 publishing {
     repositories {
         maven {
-            url = uri("https://repo2s.ptms.ink/repository/maven-releases/")
+            url = uri("https://repo.tabooproject.org/storages/public/releases")
             credentials {
-                username = project.findProperty("user").toString()
-                password = project.findProperty("password").toString()
+                username = project.findProperty("taboolibUsername").toString()
+                password = project.findProperty("taboolibPassword").toString()
             }
             authentication {
                 create<BasicAuthentication>("basic")
