@@ -808,6 +808,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         val entity = AdyeshachAPI.fromJson(json.toString()) ?: return null
         (manager ?: this.manager)?.addEntity(entity)
         entity.tag.putAll(tag)
+        entity.persistentTag.putAll(persistentTag)
         entity.manager = (manager ?: this.manager)
         entity.position = EntityPosition.fromLocation(location)
         entity.passengers.clear()

@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionTag(val key: String, val symbol: Symbol, val value: String?): ScriptAction<Any?>() {
+class ActionTag(val persistent: Boolean, val key: String, val symbol: Symbol, val value: String?) : ScriptAction<Any?>() {
 
     enum class Symbol {
 
@@ -28,34 +28,41 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?): Script
         }
         return when (symbol) {
             Symbol.REMOVE -> {
-                s.getEntities()!!.filterNotNull().forEach {
-                    it.removeTag(key)
-                }
+                s.getEntities()!!.filterNotNull().forEach { if (persistent) it.removePersistentTag(key) else it.removeTag(key) }
                 CompletableFuture.completedFuture(null)
             }
             Symbol.SET -> {
                 s.getEntities()!!.filterNotNull().forEach {
                     if (value!! == "null") {
-                        it.removeTag(key)
+                        if (persistent) it.removePersistentTag(key) else it.removeTag(key)
                     } else {
-                        it.setTag(key, value)
+                        if (persistent) it.setPersistentTag(key, value) else it.setTag(key, value)
                     }
                 }
                 CompletableFuture.completedFuture(null)
             }
-            Symbol.HAS -> {
-                CompletableFuture.completedFuture(s.getEntities()!!.filterNotNull().firstOrNull()?.hasTag(key))
-            }
             else -> {
-                CompletableFuture.completedFuture(s.getEntities()!!.filterNotNull().firstOrNull()?.getTag(key))
+                val en = s.getEntities()!!.filterNotNull().firstOrNull()
+                CompletableFuture.completedFuture(if (persistent) en?.hasPersistentTag(key) else en?.hasTag(key))
             }
         }
     }
 
     companion object {
 
+        /**
+         * tag [persistent] set a to 1
+         */
         @KetherParser(["tag"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
+            it.mark()
+            val persistent = try {
+                it.expect("persistent")
+                true
+            } catch (ex: Throwable) {
+                it.reset()
+                false
+            }
             val symbol = when (val type = it.nextToken()) {
                 "set" -> Symbol.SET
                 "get" -> Symbol.GET
@@ -68,7 +75,7 @@ class ActionTag(val key: String, val symbol: Symbol, val value: String?): Script
                 it.expect("to")
                 it.nextToken()
             } else null
-            ActionTag(key, symbol, value)
+            ActionTag(persistent, key, symbol, value)
         }
     }
 }

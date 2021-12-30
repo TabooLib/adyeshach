@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.32"
+    id("io.izzel.taboolib") version "1.33"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
     id("org.jetbrains.dokka") version "1.5.30"
 }
@@ -37,11 +37,11 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.7-3"
+    version = "6.0.7-6"
 }
 
 repositories {
-    mavenLocal()
+    maven { url = uri("https://repo.tabooproject.org/storages/public/releases") }
     mavenCentral()
 }
 
@@ -52,21 +52,21 @@ dependencies {
     compileOnly("public:GermPlugin:4.0.3")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly("com.guillaumevdn.gcore:GCore:7.15.0")
-    compileOnly("com.guillaumevdn.questcreator:QuestCreator:5.30.0")
-    compileOnly("com.isnakebuzz.servernpc:ServerNPC:1.12.10:RELEASE")
+    compileOnly("com.guillaumevdn.questcreator:QuestCreator:1")
+    compileOnly("com.isnakebuzz.servernpc:ServerNPC:1")
     compileOnly("org.betonquest:betonquest:2.0.0")
     compileOnly("pl.betoncraft:betonquest:1.12.5")
     compileOnly("ink.ptms.core:v11701:11701-minimize:mapped")
     compileOnly("ink.ptms.core:v11701:11701-minimize:universal")
-    compileOnly("ink.ptms.core:v11604:11604:all")
+    compileOnly("ink.ptms.core:v11604:11604")
     compileOnly("ink.ptms.core:v11600:11600-minimize")
-    compileOnly("ink.ptms.core:v11500:11500:all")
+    compileOnly("ink.ptms.core:v11500:11500")
     compileOnly("ink.ptms.core:v11400:11400-minimize")
-    compileOnly("ink.ptms.core:v11300:11300:all")
+    compileOnly("ink.ptms.core:v11300:11300")
     compileOnly("ink.ptms.core:v11200:11200-minimize")
-    compileOnly("ink.ptms.core:v11100:11100:all")
-    compileOnly("ink.ptms.core:v11000:11000:all")
-    compileOnly("ink.ptms.core:v10900:10900:all")
+    compileOnly("ink.ptms.core:v11100:11100")
+    compileOnly("ink.ptms.core:v11000:11000")
+    compileOnly("ink.ptms.core:v10900:10900")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.5.30")
@@ -101,16 +101,3 @@ publishing {
         }
     }
 }
-
-//tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
-//    outputFormat = "javadoc"
-//    outputDirectory = "$buildDir/dokka"
-//    configuration {
-//        skipDeprecated = true
-//        reportUndocumented = true
-//        skipEmptyPackages = true
-//        noJdkLink = true
-//        noStdlibLink = true
-//    }
-//}
-

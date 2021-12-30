@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.AdyeshachMetaUpdateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachPersistentTagUpdateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
 import taboolib.common.io.digest
 import taboolib.module.nms.MinecraftVersion
@@ -16,6 +17,13 @@ abstract class EntityMetaable {
      * 不会通过持久化
      */
     internal val tag = ConcurrentHashMap<String, String>()
+
+    /**
+     * 永久标签
+     * 会通过序列化
+     */
+    @Expose
+    internal val persistentTag = ConcurrentHashMap<String, String>()
 
     @Expose
     internal val metadata = ConcurrentHashMap<String, Any>()
@@ -107,6 +115,40 @@ abstract class EntityMetaable {
                 tag[key] = event.value!!
             } else {
                 tag.remove(key)
+            }
+        }
+    }
+
+    open fun getPersistentTags(): Set<Map.Entry<String, String>> {
+        return persistentTag.entries
+    }
+
+    open fun getPersistentTag(key: String): String? {
+        return persistentTag[key]
+    }
+
+    open fun hasPersistentTag(key: String): Boolean {
+        return persistentTag.containsKey(key)
+    }
+
+    open fun setPersistentTag(key: String, value: String) {
+        val event = AdyeshachPersistentTagUpdateEvent(this, key, value)
+        if (event.call()) {
+            if (event.value != null) {
+                persistentTag[key] = event.value!!
+            } else {
+                persistentTag.remove(key)
+            }
+        }
+    }
+
+    open fun removePersistentTag(key: String) {
+        val event = AdyeshachPersistentTagUpdateEvent(this, key, null)
+        if (event.call()) {
+            if (event.value != null) {
+                persistentTag[key] = event.value!!
+            } else {
+                persistentTag.remove(key)
             }
         }
     }
