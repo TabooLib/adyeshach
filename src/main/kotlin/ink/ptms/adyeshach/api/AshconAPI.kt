@@ -41,7 +41,7 @@ object AshconAPI {
     private fun e(e: PlayerJoinEvent) {
         submit(async = true) {
             try {
-                profileCache[e.player.name] = JsonParser().parse(readFromURL("${url[0]}$name")).asJsonObject
+                profileCache[e.player.name] = JsonParser().parse(readFromURL("${url[0]}${e.player.name}")).asJsonObject
             } catch (ignore: FileNotFoundException) {
             } catch (ignore: NullPointerException) {
             } catch (ignore: IOException) {
