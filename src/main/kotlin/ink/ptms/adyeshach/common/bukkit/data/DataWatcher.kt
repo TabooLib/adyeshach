@@ -146,7 +146,8 @@ abstract class DataWatcher {
 
         override fun parse(value: Any): Any {
             return if (value is Map<*, *>) {
-                val material = XMaterial.matchXMaterial(value["type"].toString()).orElse(XMaterial.STONE).parseMaterial()!!
+                val id = value["type"].toString().replace("LEGACY_", "")
+                val material = XMaterial.matchXMaterial(id).orElse(XMaterial.STONE).parseMaterial()!!
                 MaterialData(material, value["data"]!!.toByte())
             } else {
                 value as MaterialData

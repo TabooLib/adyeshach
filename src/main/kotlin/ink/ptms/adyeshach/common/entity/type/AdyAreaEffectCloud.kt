@@ -25,7 +25,7 @@ class AdyAreaEffectCloud : AdyEntity(EntityTypes.AREA_EFFECT_CLOUD) {
     }
 
     fun getColor(): Color {
-        return Color.fromRGB(getMetadata("color"))
+        return Color.fromRGB(getMetadata<Int>("color").let { if (it == -1) 0 else it })
     }
 
     fun setIgnoreRadius(ignoreRadius: Boolean) {

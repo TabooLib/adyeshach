@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.editor.minecraftVersion
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import org.bukkit.Location
@@ -182,7 +183,7 @@ class NMSImpl : NMS() {
                 "xRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
                 "yRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "type" to getEntityTypeNMS(EntityTypes.FALLING_BLOCK),
-                "data" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
+                "data" to net.minecraft.world.level.block.Block.getId(((block ?: Blocks.STONE) as net.minecraft.world.level.block.Block).defaultBlockState())
             )
         } else if (majorLegacy >= 11300) {
             val block = Blocks::class.java.getProperty<Any>(material.name, fixed = true)
@@ -706,7 +707,9 @@ class NMSImpl : NMS() {
     }
 
     override fun toBlockId(materialData: MaterialData): Int {
-        return if (MinecraftVersion.major >= 5) {
+        return if (MinecraftVersion.major >= 10) {
+            net.minecraft.world.level.block.Block::class.java.invokeMethod("getId", CraftMagicNumbers.getBlock(materialData), fixed = true)!!
+        } else if (MinecraftVersion.major >= 5) {
             Block.getCombinedId(CraftMagicNumbers.getBlock(materialData))
         } else {
             materialData.itemType.id + (materialData.data.toInt() shl 12)

@@ -854,5 +854,9 @@ enum class EntityTypes(
         fun fromBukkit(bukkitType: EntityType): EntityTypes? {
             return values().firstOrNull { it.bukkitType == bukkitType }
         }
+
+        fun fromClass(clazz: Class<*>): EntityTypes? {
+            return values().firstOrNull { it.entityBase == clazz }
+        }
     }
 }

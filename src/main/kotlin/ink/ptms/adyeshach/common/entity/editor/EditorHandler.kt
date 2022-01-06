@@ -65,26 +65,16 @@ object EditorHandler {
     fun openByBook(player: Player, entity: EntityInstance) {
         val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
         player.sendBook {
-            write(TellrawJson()
-                .append("  §1§l§n${entity.entityType.bukkitType}").newLine()
-                .append("  §1${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
-                .append("").newLine()
+            write(TellrawJson().append("  §1§l§n${entity.entityType.bukkitType}").newLine()
+                .append("  §1${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine().append("").newLine()
                 .append("  ${player.asLangText("editor-type")} §7$manager").newLine()
                 .append("  ${player.asLangText("editor-viewer")} §7${entity.viewPlayers.viewers.size} ").append("§c(?)")
-                .hoverText(entity.viewPlayers.viewers.joinToString("\n"))
-                .newLine()
-                .append("  ${player.asLangText("editor-tags")} §7${entity.getTags().size} ").append("§c(?)")
-                .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
-                .newLine()
+                .hoverText(entity.viewPlayers.viewers.joinToString("\n")).newLine().append("  ${player.asLangText("editor-tags")} §7${entity.getTags().size} ")
+                .append("§c(?)").hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" }).newLine()
                 .append("  ${player.asLangText("editor-pathfinder")} §7${entity.getController().size} ").append("§c(?)")
-                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine()
-                .append("").newLine()
-                .append("   §7§oX ${entity.position.x}").newLine()
-                .append("   §7§oY ${entity.position.y}").newLine()
-                .append("   §7§oZ ${entity.position.z}").newLine()
-                .append("   §7§oYaw ${entity.position.yaw}").newLine()
-                .append("   §7§oPitch ${entity.position.pitch}").newLine()
-            )
+                .hoverText(entity.getController().joinToString("\n") { it.javaClass.name }).newLine().append("").newLine()
+                .append("   §7§oX ${entity.position.x}").newLine().append("   §7§oY ${entity.position.y}").newLine().append("   §7§oZ ${entity.position.z}")
+                .newLine().append("   §7§oYaw ${entity.position.yaw}").newLine().append("   §7§oPitch ${entity.position.pitch}").newLine())
             var page = TellrawJson()
             var i = 0
             entity.forEachMeta { meta, unused ->
@@ -96,13 +86,10 @@ object EditorHandler {
                         page.append("  §n${meta.key.toLocale(player)}").newLine()
                         try {
                             val display = (editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
-                            page.append("   §c✘")
-                                .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
+                            page.append("   §c✘").runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
                                 .hoverText(player.asLangText("editor-click-to-reset"))
-                            page.append(" §7$display")
-                                .runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                                .hoverText(player.asLangText("editor-click-to-edit"))
-                                .newLine()
+                            page.append(" §7$display").runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                                .hoverText(player.asLangText("editor-click-to-edit")).newLine()
                         } catch (t: Throwable) {
                             t.printStackTrace()
                             page.append(" §c§o<ERROR:${t.message}>").newLine()
@@ -129,94 +116,98 @@ object EditorHandler {
         val manager = if (entity.isPublic()) player.asLangText("editor-manager-public") else player.asLangText("editor-manager-private")
         val json = TellrawJson()
         if (entity.testing) {
-            json.newLine()
-                .append("      §c§l§n${entity.entityType.bukkitType}⚠").hoverText(player.asLangText("editor-testing", pluginVersion)).newLine()
-                .append("      §c${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
-                .newLine()
+            json.newLine().append("      §c§l§n${entity.entityType.bukkitType}⚠").hoverText(player.asLangText("editor-testing", pluginVersion)).newLine()
+                .append("      §c${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine().newLine()
         } else {
-            json.newLine()
-                .append("      §6§l§n${entity.entityType.bukkitType}").newLine()
-                .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine()
-                .newLine()
+            json.newLine().append("      §6§l§n${entity.entityType.bukkitType}").newLine()
+                .append("      §6${entity.id} ${if (entity.isTemporary()) player.asLangText("editor-temporary") else ""}").newLine().newLine()
         }
-        // 基本信息
-        json.append("      ")
-        json.append("§8[§f${player.asLangText("editor-type")}: §7${manager}§8]")
-        json.append(" ")
-        json.append("§8[§f${player.asLangText("editor-viewer")}: §7${entity.viewPlayers.viewers.size}§8]")
-            .hoverText(entity.viewPlayers.viewers.joinToString("\n").ifEmpty { "§7_" })
-        json.append(" ")
-        json.append("§8[§f${player.asLangText("editor-tags")}: §7${entity.getTags().size}§8")
-            .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
-        json.append(" ")
-        json.append("§8[§f${player.asLangText("editor-pathfinder")}: §7${entity.getController().size}")
-            .hoverText(entity.getController().joinToString("\n") { it.javaClass.simpleName })
-        json.append(" ")
-        json.append("§a(+)§8]")
-            .hoverText(player.asLangText("editor-click-to-edit"))
-            .runCommand("/adyeshach controller ${entity.uniqueId}")
-        json.newLine().append("      ")
-        var len = 0
-        var firstBool = true
-        var firstUnused = true
-        json.newLine().append("      ")
-        entity.forEachMetaSorted(player) { meta, unused ->
-            val editor = meta.editor
-            if (editor == null) {
-                warning("${meta.key}(${meta.def.javaClass}) 缺少编辑器")
+        if (!entity.invalid) {
+            // 基本信息
+            json.append("      ")
+            json.append("§8[§f${player.asLangText("editor-type")}: §7${manager}§8]")
+            json.append(" ")
+            json.append("§8[§f${player.asLangText("editor-viewer")}: §7${entity.viewPlayers.viewers.size}§8]")
+                .hoverText(entity.viewPlayers.viewers.joinToString("\n").ifEmpty { "§7_" })
+            json.append(" ")
+            // 标签
+            if (entity.getTags().isNotEmpty()) {
+                json.append("§8[§f${player.asLangText("editor-tags")}: §7${entity.getTags().size}§8")
+                    .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                json.append(" ")
             }
-            if (editor != null && editor.editable) {
-                try {
-                    val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
-                    when {
-                        unused -> {
-                            if (firstUnused) {
-                                firstUnused = false
-                                if (len != 0) {
-                                    json.newLine()
-                                }
-                                json.newLine().append("      ")
-                                len = 0
-                            }
-                            json.append("§8[")
-                            json.append("§8${meta.key.toLocale(player)}").hoverText("§7$display\n${player.asLangText("editor-unused")}")
-                        }
-                        meta.isBooleanType(player, entity) -> {
-                            if (firstBool) {
-                                firstBool = false
-                                if (len != 0) {
-                                    json.newLine()
-                                }
-                                json.newLine().append("      ")
-                                len = 0
-                            }
-                            json.append("§8[")
-                            val bool = if (display == player.asLangText("editor-meta-true")) "§a" else "§6"
-                            json.append("$bool${meta.key.toLocale(player)}").hoverText("§7$display")
-                        }
-                        else -> {
-                            json.append("§8[")
-                            json.append("§7${meta.key.toLocale(player)}").hoverText("§7$display")
-                        }
-                    }
-                    json.runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
-                    if (!unused && !editor.hybrid) {
-                        json.append(" ")
-                        json.append("§c(R)")
-                            .hoverText(player.asLangText("editor-click-to-reset"))
-                            .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
-                    }
-                } catch (t: NullPointerException) {
-                    json.append("§c§o<ERROR_NULL:${meta.key}>").hoverText(meta.toString())
-                    t.printStackTrace()
-                } catch (t: Throwable) {
-                    json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
+            // 持久化标签
+            if (entity.getPersistentTags().isNotEmpty()) {
+                json.append("§8[§f${player.asLangText("editor-persistent-tags")}: §7${entity.getTags().size}§8")
+                    .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                json.append(" ")
+            }
+            json.append("§8[§f${player.asLangText("editor-pathfinder")}: §7${entity.getController().size}")
+                .hoverText(entity.getController().joinToString("\n") { it.javaClass.simpleName })
+            json.append(" ")
+            json.append("§a(+)§8]").hoverText(player.asLangText("editor-click-to-edit")).runCommand("/adyeshach controller ${entity.uniqueId}")
+            json.newLine().append("      ")
+            var len = 0
+            var firstBool = true
+            var firstUnused = true
+            json.newLine().append("      ")
+            entity.forEachMetaSorted(player) { meta, unused ->
+                val editor = meta.editor
+                if (editor == null) {
+                    warning("${meta.key}(${meta.def.javaClass}) 缺少编辑器")
                 }
-                json.append("§8] ")
-                len += "[${meta.key.toLocale(player)}${if (unused || editor.hybrid) "" else " (R)"}]".realLength()
-                if (len >= 52) {
-                    len = 0
-                    json.newLine().append("      ")
+                if (editor != null && editor.editable) {
+                    try {
+                        val display = (meta.editor as MetaEditor<EntityInstance>).displayGenerator?.invoke(player, entity) ?: entity.getMetadata(meta.key)
+                        when {
+                            unused -> {
+                                if (firstUnused) {
+                                    firstUnused = false
+                                    if (len != 0) {
+                                        json.newLine()
+                                    }
+                                    json.newLine().append("      ")
+                                    len = 0
+                                }
+                                json.append("§8[")
+                                json.append("§8${meta.key.toLocale(player)}").hoverText("§7$display\n${player.asLangText("editor-unused")}")
+                            }
+                            meta.isBooleanType(player, entity) -> {
+                                if (firstBool) {
+                                    firstBool = false
+                                    if (len != 0) {
+                                        json.newLine()
+                                    }
+                                    json.newLine().append("      ")
+                                    len = 0
+                                }
+                                json.append("§8[")
+                                val bool = if (display == player.asLangText("editor-meta-true")) "§a" else "§6"
+                                json.append("$bool${meta.key.toLocale(player)}").hoverText("§7$display")
+                            }
+                            else -> {
+                                json.append("§8[")
+                                json.append("§7${meta.key.toLocale(player)}").hoverText("§7$display")
+                            }
+                        }
+                        json.runCommand("/adyeshachapi edit meta ${entity.uniqueId} ${meta.key}")
+                        if (!unused && !editor.hybrid) {
+                            json.append(" ")
+                            json.append("§c(R)").hoverText(player.asLangText("editor-click-to-reset"))
+                                .runCommand("/adyeshachapi edit reset ${entity.uniqueId} ${meta.key}")
+                        }
+                    } catch (t: NullPointerException) {
+                        json.append("§c§o<ERROR_NULL:${meta.key}>").hoverText(meta.toString())
+                        t.printStackTrace()
+                    } catch (t: Throwable) {
+                        json.append("§c§o<ERROR:${t.message}>").hoverText(meta.toString())
+                    }
+                    json.append("§8] ")
+                    len += "[${meta.key.toLocale(player)}${if (unused || editor.hybrid) "" else " (R)"}]".realLength()
+                    if (len >= 50) {
+                        len = 0
+                        json.newLine().append("      ")
+                    }
                 }
             }
         }
@@ -226,14 +217,12 @@ object EditorHandler {
     @Awake(LifeCycle.INIT)
     private fun init() {
         // 基于字符串的类型
-        AdyeshachAPI.registerEntityMetaEditorGenerator(
-            Int::class.java.nonPrimitive(),
+        AdyeshachAPI.registerEntityMetaEditorGenerator(Int::class.java.nonPrimitive(),
             Byte::class.java.nonPrimitive(),
             Float::class.java.nonPrimitive(),
             Double::class.java.nonPrimitive(),
             String::class.java,
-            TextComponent::class.java
-        ) {
+            TextComponent::class.java) {
             it.modify { player, entity ->
                 player.edit(entity, entity.getMetadata(it.meta.key)) { value -> entity.setMetadata(it.meta.key, value) }
             }
@@ -269,7 +258,7 @@ object EditorHandler {
                     rows(1)
                     map("####@####")
                     set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
-                    set('@', it.meta.def as ItemStack)
+                    set('@', (entity.getMetadata(it.meta.key) ?: it.meta.def) as ItemStack)
                     onClick('#')
                     onClose { e ->
                         entity.setMetadata(it.meta.key, e.inventory.getItem(4) ?: ItemStack(Material.AIR))
@@ -278,7 +267,7 @@ object EditorHandler {
                 }
             }
             it.display { player, entity ->
-                entity.getMetadata<ItemStack>(it.meta.key).getName(player)
+                kotlin.runCatching { entity.getMetadata<ItemStack>(it.meta.key).getName(player) }.getOrElse { "-" }
             }
         }
         // 材质
@@ -289,7 +278,7 @@ object EditorHandler {
                     rows(1)
                     map("####@####")
                     set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
-                    set('@', (it.meta.def as MaterialData).toItemStack(1))
+                    set('@', ((entity.getMetadata(it.meta.key) ?: it.meta.def) as MaterialData).toItemStack(1))
                     onClick('#')
                     onClose { e ->
                         try {
@@ -302,7 +291,7 @@ object EditorHandler {
                 }
             }
             it.display { player, entity ->
-                entity.getMetadata<MaterialData>(it.meta.key).toItemStack(1).getName(player)
+                kotlin.runCatching { entity.getMetadata<MaterialData>(it.meta.key).toItemStack(1).getName(player) }.getOrElse { "-" }
             }
         }
     }

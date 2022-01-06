@@ -14,6 +14,7 @@ import org.bukkit.util.Vector
 class AdyShulker : AdyMob(EntityTypes.SHULKER) {
 
     init {
+        testing = true
         /*
         1.16,1.15
         15 ->Attach face

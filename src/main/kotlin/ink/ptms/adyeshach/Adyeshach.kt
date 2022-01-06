@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach
 
+import ink.ptms.adyeshach.common.entity.editor.UnusedMetas
 import ink.ptms.adyeshach.internal.listener.ListenerGameEvent
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
@@ -36,9 +37,6 @@ object Adyeshach : Plugin() {
             console().sendLang("not-support")
             disablePlugin()
         }
-    }
-
-    override fun onEnable() {
         Kether.isAllowToleranceParser = true
     }
 
@@ -67,6 +65,7 @@ object Adyeshach : Plugin() {
 
     fun reload() {
         conf.reload()
+        UnusedMetas.init()
         ListenerGameEvent.init()
     }
 }

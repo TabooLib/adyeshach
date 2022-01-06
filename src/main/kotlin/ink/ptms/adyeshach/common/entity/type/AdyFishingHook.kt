@@ -10,5 +10,6 @@ class AdyFishingHook : AdyEntity(EntityTypes.FISHING_HOOK) {
 
     init {
         testing = true
+        invalid = true
     }
 }

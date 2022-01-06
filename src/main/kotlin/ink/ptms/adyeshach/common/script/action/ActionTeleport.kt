@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        return frame.newFrame(location).run<taboolib.common.util.Location>().thenAccept {
+        return frame.newFrame(location).run<Location>().thenAccept {
             val s = frame.script()
             if (s.getManager() == null) {
                 error("No manager selected.")
@@ -24,7 +24,7 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
             if (!s.entitySelected()) {
                 error("No entity selected.")
             }
-            s.getEntities()!!.filterNotNull().forEach { en -> en.teleport(it.toBukkitLocation()) }
+            s.getEntities()!!.filterNotNull().forEach { en -> en.teleport(it) }
         }
     }
 

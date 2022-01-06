@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.common.bukkit.*
+import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.entity.editor.*
 import ink.ptms.adyeshach.common.entity.type.*
@@ -30,6 +31,52 @@ import kotlin.collections.set
 object EntityMetas {
 
     private val minecraftVersion = MinecraftVersion.majorLegacy
+
+    /**
+     * 接口
+     */
+    @Awake(LifeCycle.ENABLE)
+    private fun init0() {
+        from<AdyFish> {
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 12), "fromBucket", false)
+        }
+        from<AdyRaider> {
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14), "isCelebrating", false)
+        }
+        from<AdyEntityAgeable> {
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 12, 10900 to 11), "isBaby", false)
+        }
+        from<AdyMob> {
+            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11), "isLeftHanded", 0x02)
+            mask(at(11700 to 15, 11600 to 14), "isAgressive", 0x04)
+        }
+        from<AdyHorseChested> {
+            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11100 to 15), "hasChest", false)
+        }
+        from<AdyEntityTameable> {
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isSitting", 0x01)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isAngry", 0x02)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isTamed", 0x04)
+        }
+        from<AdyHorseBase> {
+            if (minecraftVersion >= 11300) {
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isTamed", 0x02)
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isSaddled", 0x04)
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "hasBred", 0x08)
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isEating", 0x10)
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isRearing", 0x20)
+                mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 13), "isMouthOpen", 0x40)
+            } else {
+                mask(at(11100 to 13, 10900 to 12), "isTamed", 0x02)
+                mask(at(11100 to 13, 10900 to 12), "isSaddled", 0x04)
+                mask(at(11100 to 13, 10900 to 12), "hasChest", 0x08)
+                mask(at(11100 to 13, 10900 to 12), "hasBred", 0x10)
+                mask(at(11100 to 13, 10900 to 12), "isEating", 0x20)
+                mask(at(11100 to 13, 10900 to 12), "isRearing", 0x40)
+                mask(at(11100 to 13, 10900 to 12), "isMouthOpen", 0x80.toByte())
+            }
+        }
+    }
 
     /**
      * 不含有编辑器的基本元数据类型
@@ -128,7 +175,7 @@ object EntityMetas {
             natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11300 to 14), "hasFish", false)
         }
         from<AdyEndCrystal> {
-            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", Vector(0, 0, 0))
+            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "beamTarget", VectorNull())
             natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
         }
         from<AdyItemFrame> {
@@ -156,7 +203,9 @@ object EntityMetas {
             mask(at(11200 to -1, 11000 to 12, 10900 to 11), "isRetractingSpikes", 0x02)
             mask(at(11200 to -1, 11000 to 12, 10900 to 11), "isElderly", 0x04)
             natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 13), "isRetractingSpikes", false)
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", false)
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", 0) {
+                it.editable = false
+            }
         }
         from<AdyTurtle> {
             val index = at(11500 to 18, 11400 to 17, 11300 to 15)
@@ -235,6 +284,10 @@ object EntityMetas {
             val index = at(11700 to 19, 11500 to 18, 11400 to 17, 11200 to 15)
             natural(index, "color", 0) { it.useIndexEditor(Parrot.Variant::class.java, "color") }
         }
+        from<AdySpellcasterIllager> {
+            val index = at(11700 to 17, 11400 to 16, 11200 to 15, 11100 to 13)
+            natural(index, "spell", 0) { it.useIndexEditor(Spellcaster.Spell::class.java, "spell") }
+        }
         from<AdySheep> {
             val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
             natural(index, "dyeColor", 0) { it.useIndexEditor(DyeColor::class.java, "dyeColor") }
@@ -242,7 +295,7 @@ object EntityMetas {
         }
         from<AdyMushroom> {
             natural(at(11700 to 17, 11500 to 16, 11400 to 15), "type", BukkitMushroom.RED.name.lowercase()) {
-                it.useEnumsEditor(type = BukkitMushroom::class.java, key = "text")
+                it.useEnumsEditor(type = BukkitMushroom::class.java, key = "type")
             }
         }
         from<AdyEndDragon> {
@@ -264,10 +317,10 @@ object EntityMetas {
             natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
         }
         from<AdyLlama> {
-            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11100 to 17), "carpetColor", -1) {
+            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11100 to 17), "carpetColor", 0) {
                 it.useIndexEditor(DyeColor::class.java, "carpetColor")
             }
-            natural(at(11700 to 22, 11500 to 21, 11400 to 20, 11100 to 18), "color", Llama.Color.CREAMY.ordinal) {
+            natural(at(11700 to 22, 11500 to 21, 11400 to 20, 11100 to 18), "color", 0) {
                 it.useIndexEditor(Llama.Color::class.java, "color")
             }
         }
@@ -303,10 +356,33 @@ object EntityMetas {
         from<AdyZombieVillager> {
             if (minecraftVersion >= 11400) {
                 natural(at(11700 to 19), "isConverting", false)
-                natural(at(11700 to 20, 11500 to 19, 11400 to 18), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
+                natural(at(11700 to 20, 11500 to 19, 11400 to 18), "villagerData", VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE)) {
+                    it.editable = false
+                }
             } else {
                 natural(at(11400 to -1, 11300 to 17, 11100 to 16), "profession", BukkitProfession.FARMER.ordinal) {
                     it.editable = false
+                }
+            }
+            if (minecraftVersion >= 11400) {
+                naturalEditor("villagerType") {
+                    it.useEnumsEditor(type = Villager.Type::class.java, key = "villager_type") {
+                        getMetadata<VillagerData>("villagerData").type
+                    }
+                    it.reset { _, entity -> entity.setVillagerData(VillagerData(Villager.Type.PLAINS, entity.getVillagerData().profession)) }
+                }
+                naturalEditor("villagerProfession") {
+                    it.useEnumsEditor(type = Villager.Profession::class.java, key = "villager_profession") {
+                        getMetadata<VillagerData>("villagerData").profession
+                    }
+                    it.reset { _, entity -> entity.setVillagerData(VillagerData(entity.getVillagerData().type, Villager.Profession.NONE)) }
+                }
+            } else {
+                naturalEditor("villagerProfession") {
+                    it.useEnumsEditor(type = BukkitProfession::class.java, key = "villager_profession_legacy") {
+                        BukkitProfession.values()[getMetadata("profession")]
+                    }
+                    it.reset { _, entity -> entity.setLegacyProfession(BukkitProfession.FARMER) }
                 }
             }
         }
@@ -484,9 +560,9 @@ object EntityMetas {
                         }
                         set('@', entity.getCustomBlock().toItemStack(1))
                         onClick('#')
-                        onClose {
+                        onClose { e ->
                             try {
-                                entity.setCustomBlock((it.inventory.getItem(4) ?: ItemStack(Material.AIR)).data!!)
+                                entity.setCustomBlock((e.inventory.getItem(4) ?: ItemStack(Material.AIR)).data!!)
                             } catch (t: Throwable) {
                                 t.printStackTrace()
                             }
@@ -494,7 +570,7 @@ object EntityMetas {
                         }
                     }
                 }
-                it.display { player, entity -> entity.getCustomBlock().toItemStack(1).getName(player) }
+                it.display { player, entity -> kotlin.runCatching { entity.getCustomBlock().toItemStack(1).getName(player) }.getOrElse { "-" } }
             }
         }
         from<AdyVillager> {

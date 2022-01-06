@@ -22,13 +22,13 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
-    private val playerUUID = normalizeUniqueId
+    internal val playerUUID = normalizeUniqueId
 
     @Expose
-    private val gameProfile = GameProfile()
+    internal val gameProfile = GameProfile()
 
     @Expose
-    private var isSleepingLegacy = false
+    internal var isSleepingLegacy = false
 
     @Expose
     var isHideFromTabList = true
@@ -58,26 +58,10 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         return if (visible) {
             spawn(viewer) {
                 addPlayerInfo(viewer)
+                // 创建客户端对应表
                 AdyeshachAPI.clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, playerUUID)
                 // 生成实体
                 NMS.INSTANCE.spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
-                // 更新朝向与装备
-                submit(delay = 1) {
-                    setHeadRotation(yaw, pitch)
-                    updateEquipment()
-                }
-                // 更新死亡信息以及玩家类型专属属性
-                submit(delay = 5) {
-                    if (isDie) {
-                        die(viewer)
-                    }
-                    if (isSleepingLegacy) {
-                        setSleeping(true)
-                    }
-                    if (isHideFromTabList) {
-                        removePlayerInfo(viewer)
-                    }
-                }
             }
         } else {
             destroy(viewer) {
@@ -233,13 +217,13 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
         }
     }
 
-    private fun addPlayerInfo(viewer: Player) {
+    internal fun addPlayerInfo(viewer: Player) {
         val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone())
         event.call()
         NMS.INSTANCE.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.texture)
     }
 
-    private fun removePlayerInfo(viewer: Player) {
+    internal fun removePlayerInfo(viewer: Player) {
         NMS.INSTANCE.removePlayerInfo(viewer, playerUUID)
     }
 }

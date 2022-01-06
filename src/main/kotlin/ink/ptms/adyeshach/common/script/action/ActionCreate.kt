@@ -19,8 +19,7 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val manager = frame.script().getManager() ?: error("No manager selected.")
         return frame.newFrame(location).run<Any>().thenAccept {
-            val loc = if (it is taboolib.common.util.Location) it.toBukkitLocation() else it as Location
-            manager.create(type, loc).id = id
+            manager.create(type, it as Location).id = id
         }
     }
 

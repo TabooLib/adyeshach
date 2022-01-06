@@ -67,11 +67,18 @@ internal fun EntityInstance.forEachMeta(func: (Meta<*>, Boolean) -> Unit) {
  * 经过类型排序
  */
 internal fun EntityInstance.forEachMetaSorted(player: Player, func: (Meta<*>, Boolean) -> Unit) {
-    getEditableEntityMeta().map {
-        it to when {
-            UnusedMetas.isUnusedMeta(this, it) -> 0
-            it.isBooleanType(player, this) -> 1
-            else -> 2
+    getEditableEntityMeta().mapNotNull {
+        try {
+            it to when {
+                UnusedMetas.isUnusedMeta(this, it) -> 0
+                it.isBooleanType(player, this) -> 1
+                else -> 2
+            }
+        } catch (ex: Throwable) {
+            if (ex.message?.contains("not supported") != true) {
+                ex.printStackTrace()
+            }
+            null
         }
     }.sortedByDescending { it.second }.forEach { func.invoke(it.first, UnusedMetas.isUnusedMeta(this, it.first)) }
 }
@@ -162,7 +169,7 @@ internal fun MetaEditor<*>.useColorEditor() {
         }
     }
     display { _, entity ->
-        val color = Color.fromRGB(entity.getMetadata(meta.key))
+        val color = Color.fromRGB(entity.getMetadata<Int>(meta.key).let { if (it == -1) 0 else it })
         if (minecraftVersion >= 11600) {
             "${ChatColor.of(java.awt.Color(color.red, color.green, color.blue))}${color.red}-${color.green}-${color.blue}"
         } else {

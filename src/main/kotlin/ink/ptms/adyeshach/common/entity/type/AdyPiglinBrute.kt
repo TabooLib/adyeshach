@@ -6,4 +6,4 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPiglinBrute : AdyEntityLiving(EntityTypes.PIGLIN_BRUTE)
+class AdyPiglinBrute : AdyPiglin(EntityTypes.PIGLIN_BRUTE)

@@ -325,17 +325,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     fun teleport(location: Location) {
         val event = AdyeshachEntityTeleportEvent(this, location)
-        event.call()
-        if (event.isCancelled) {
-            return
-        }
-        position = EntityPosition.fromLocation(event.location)
-        // 修改世界
-        if (position.world.name != location.world?.name) {
-            destroy()
-            respawn()
-        } else {
-            forViewers { NMS.INSTANCE.teleportEntity(it, index, location) }
+        if (event.call()) {
+            position = EntityPosition.fromLocation(event.location)
+            // 修改世界
+            if (position.world.name != location.world?.name) {
+                destroy()
+                respawn()
+            } else {
+                forViewers { NMS.INSTANCE.teleportEntity(it, index, location) }
+            }
         }
     }
 
@@ -343,7 +341,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体位置
      */
     fun teleport(entityPosition: EntityPosition) {
-        this.teleport(entityPosition.toLocation())
+        teleport(entityPosition.toLocation())
     }
 
     /**
@@ -364,13 +362,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体视角
      */
     fun setHeadRotation(yaw: Float, pitch: Float) {
-        position = position.run {
-            this.yaw = yaw
-            this.pitch = pitch
-            this
-        }
-        forViewers {
-            NMS.INSTANCE.setHeadRotation(it, index, yaw, pitch)
+        val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
+        if (event.call()) {
+            position = position.run {
+                this.yaw = event.yaw
+                this.pitch = event.pitch
+                this
+            }
+            forViewers {
+                NMS.INSTANCE.setHeadRotation(it, index, event.yaw, event.pitch)
+            }
         }
     }
 

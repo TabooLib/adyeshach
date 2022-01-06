@@ -4,6 +4,8 @@ import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.type.AdyItem
+import ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
 import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
@@ -19,6 +21,18 @@ import taboolib.module.nms.PacketReceiveEvent
  * @since 2020-08-15 15:53
  */
 object ListenerEntity {
+
+    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun e(e: AdyeshachNaturalMetaGenerateEvent) {
+        val value = e.value
+        if (e.meta.key == "customName" && value is String) {
+            val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
+            if (value.length > length) {
+                e.value = value.substring(0, length)
+                warning("NPC ${e.entity.id} created with name length greater than $length, truncating to ${value.substring(0, length)}")
+            }
+        }
+    }
 
     @SubscribeEvent
     fun e(e: PacketReceiveEvent) {
@@ -72,25 +86,6 @@ object ListenerEntity {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityTeleportEvent) {
-        e.entity.getPassengers().forEach {
-            it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachNaturalMetaGenerateEvent) {
-        val value = e.value
-        if (e.meta.key == "customName" && value is String) {
-            val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
-            if (value.length > length) {
-                e.value = value.substring(0, length)
-                warning("NPC ${e.entity.id} created with name length greater than $length, truncating to ${value.substring(0, length)}")
             }
         }
     }

@@ -233,6 +233,6 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     }
 
     fun getPotionEffectColor(): Color {
-        return Color.fromRGB(getMetadata("potionEffectColor"))
+        return Color.fromRGB(getMetadata<Int>("potionEffectColor").let { if (it == -1) 0 else it })
     }
 }

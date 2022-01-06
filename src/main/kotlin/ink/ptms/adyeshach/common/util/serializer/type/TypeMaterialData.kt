@@ -4,6 +4,7 @@ import com.google.gson.*
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import org.bukkit.Material
 import org.bukkit.material.MaterialData
+import taboolib.library.xseries.XMaterial
 import java.lang.reflect.Type
 
 /**
@@ -15,7 +16,7 @@ class TypeMaterialData : JsonSerializer<MaterialData>, JsonDeserializer<Material
 
     override fun serialize(a: MaterialData, p1: Type, p2: JsonSerializationContext): JsonElement {
         return JsonObject().run {
-            addProperty("type", a.itemType.name)
+            addProperty("type", XMaterial.matchXMaterial(a.itemType).name)
             addProperty("data", a.data)
             this
         }

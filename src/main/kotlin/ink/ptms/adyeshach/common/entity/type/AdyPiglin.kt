@@ -6,7 +6,9 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
  * @author sky
  * @date 2020/8/4 23:15
  */
-class AdyPiglin : AdyEntityLiving(EntityTypes.PIGLIN) {
+open class AdyPiglin(entityTypes: EntityTypes) : AdyEntityLiving(entityTypes) {
+
+    constructor(): this(EntityTypes.PIGLIN)
 
     init {
 //        val index = at(11700 to 16, 11600 to 15)
