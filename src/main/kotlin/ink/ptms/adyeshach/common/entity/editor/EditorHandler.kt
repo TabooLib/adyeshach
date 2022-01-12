@@ -138,8 +138,8 @@ object EditorHandler {
             }
             // 持久化标签
             if (entity.getPersistentTags().isNotEmpty()) {
-                json.append("§8[§f${player.asLangText("editor-persistent-tags")}: §7${entity.getTags().size}§8")
-                    .hoverText(entity.getTags().joinToString("\n") { "${it.key} = ${it.value}" })
+                json.append("§8[§f${player.asLangText("editor-persistent-tags")}: §7${entity.getPersistentTags().size}§8")
+                    .hoverText(entity.getPersistentTags().joinToString("\n") { "${it.key} = ${it.value}" })
                 json.append(" ")
             }
             json.append("§8[§f${player.asLangText("editor-pathfinder")}: §7${entity.getController().size}")

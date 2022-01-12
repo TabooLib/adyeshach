@@ -33,10 +33,9 @@ import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.reflect.Reflex.Companion.invokeMethod
 import taboolib.common.reflect.Reflex.Companion.setProperty
 import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.module.nms.*
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.nmsClass
-import taboolib.module.nms.obcClass
-import taboolib.module.nms.sendPacket
+import taboolib.platform.util.serializeToByteArray
 import java.util.*
 
 /**
