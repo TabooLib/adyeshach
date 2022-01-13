@@ -77,7 +77,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                         meta.key == "visibleDistance" -> {
                             it.visibleDistance = Coerce.toDouble(value)
                         }
-                        meta.key == "alwaysVisible" -> {
+                        meta.key == "visibleAfterLoaded" -> {
                             it.visibleAfterLoaded = Coerce.toBoolean(value)
                         }
                         meta.key == "moveSpeed" -> {
