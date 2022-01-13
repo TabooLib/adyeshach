@@ -10,6 +10,7 @@ import ink.ptms.adyeshach.common.util.serializer.Serializer
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import taboolib.common.io.newFile
+import taboolib.common.platform.function.warning
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -30,7 +31,8 @@ object MojangAPI {
         if (file.exists() && file.length() > 1) {
             val json = JsonParser().parse(file.readText(StandardCharsets.UTF_8)).asJsonObject
             if (json.size() == 0) {
-                error("empty data")
+                warning("Unable to read valid data for $name from $file, please delete it.")
+                return null
             }
             return if (json.has("network")) {
                 Texture(json.get("value").asString, json.get("signature").asString)
@@ -52,7 +54,8 @@ object MojangAPI {
         } else {
             val json = AshconAPI.getProfile(name)
             if (json.size() == 0) {
-                error("empty data")
+                warning("Unable to request valid data for $name from AshconAPI")
+                return null
             }
             return if (json.has("uuid")) {
                 val texture = Texture(AshconAPI.getTextureValue(name), AshconAPI.getTextureSignature(name))

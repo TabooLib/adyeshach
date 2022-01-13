@@ -51,6 +51,7 @@ trait-view-condition:
     fadein: 10
     stay: 40
     fadeout: 10
+trait-data-error: '{0} 文件加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
 armor-stand-editor-name: 'Ángulos del soporte de armaduras'
 armor-stand-editor-1:
   - type: TITLE
