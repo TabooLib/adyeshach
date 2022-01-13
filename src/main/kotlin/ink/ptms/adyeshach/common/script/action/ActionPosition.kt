@@ -11,9 +11,9 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionPosition: ScriptAction<Location>() {
+class ActionPosition: ScriptAction<Any>() {
 
-    override fun run(frame: ScriptFrame): CompletableFuture<Location> {
+    override fun run(frame: ScriptFrame): CompletableFuture<Any> {
         val s = frame.script()
         if (s.getManager() == null) {
             error("No manager selected.")
@@ -21,7 +21,8 @@ class ActionPosition: ScriptAction<Location>() {
         if (!s.entitySelected()) {
             error("No entity selected.")
         }
-        return CompletableFuture.completedFuture(s.getEntities()!!.firstOrNull()!!.getLocation())
+        val e = s.getEntities()!!
+        return CompletableFuture.completedFuture(if (e.size > 1) e.mapNotNull { it?.getLocation() } else e.first()!!.getLocation())
     }
 
     companion object {
