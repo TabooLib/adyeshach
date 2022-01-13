@@ -17,7 +17,7 @@ abstract class Trait {
         } catch (ex: Throwable) {
             ex.printStackTrace()
             val file = "npc/traits/${getName()}-temp-${UUID.randomUUID().toString().replace("-", "").lowercase()}.yml"
-            console().sendLang("trait-data-error", "npc/traits/${getName()}.yml", file.name)
+            console().sendLang("trait-data-error", "npc/traits/${getName()}.yml", file)
             createLocal(file)
         }
     }
