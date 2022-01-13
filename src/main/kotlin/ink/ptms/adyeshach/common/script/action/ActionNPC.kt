@@ -1,10 +1,8 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import org.bukkit.Location
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
@@ -27,9 +25,16 @@ class ActionPosition: ScriptAction<Any>() {
 
     companion object {
 
-        @KetherParser(["position"], namespace = "adyeshach", shared = true)
+        /**
+         * npc position
+         */
+        @KetherParser(["npc"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
-            ActionPosition()
+            it.switch {
+                case("position", "location") {
+                    ActionPosition()
+                }
+            }
         }
     }
 }
