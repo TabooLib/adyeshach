@@ -889,8 +889,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 }
                 destroy()
                 modeledEntity.isInvisible = true
-                modeledEntity.setNametag(getCustomName())
-                modeledEntity.setNametagVisible(isCustomNameVisible())
+                val nameTag = modeledEntity.nametagHandler.allTags.firstOrNull()
+                if (nameTag != null) {
+                    modeledEntity.nametagHandler.setCustomName(nameTag, getCustomName())
+                    modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
+                }
                 modelEngineUniqueId = entityModeled.modelUniqueId
                 forViewers {
                     modeledEntity.addPlayer(it)
@@ -906,8 +909,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             val modelManager = ModelEngineAPI.api.modelManager
             if (modelEngineUniqueId != null) {
                 val modeledEntity = modelManager.getModeledEntity(modelEngineUniqueId) ?: return
-                modeledEntity.setNametag(getCustomName())
-                modeledEntity.setNametagVisible(isCustomNameVisible())
+                val nameTag = modeledEntity.nametagHandler.allTags.firstOrNull()
+                if (nameTag != null) {
+                    modeledEntity.nametagHandler.setCustomName(nameTag, getCustomName())
+                    modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
+                }
             }
         }
     }
