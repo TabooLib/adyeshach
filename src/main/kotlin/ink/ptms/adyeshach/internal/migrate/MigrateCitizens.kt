@@ -112,7 +112,7 @@ class MigrateCitizens : Migrate() {
                 entity.setPattern((npc.entity as TropicalFish).pattern)
             }
             if (entity is AdyHuman && npc.entity is Player) {
-                val skin = if (npc.entity is SkinnableEntity) npc.entity as SkinnableEntity  else NMS.getSkinnable(npc.entity)
+                val skin = if (npc.entity is SkinnableEntity) npc.entity as SkinnableEntity else NMS.getSkinnable(npc.entity)
                 if (skin != null && !skin.profile.properties.isEmpty) {
                     val property = skin.profile.properties.entries().first().value
                     entity.setName(npc.name)
@@ -120,12 +120,14 @@ class MigrateCitizens : Migrate() {
                 }
             }
             if (entity is AdyEntityLiving && npc.entity is LivingEntity) {
-                (npc.entity as LivingEntity).equipment?.helmet?.let { entity.setEquipment(EquipmentSlot.HEAD, it) }
-                (npc.entity as LivingEntity).equipment?.chestplate?.let { entity.setEquipment(EquipmentSlot.CHEST, it) }
-                (npc.entity as LivingEntity).equipment?.leggings?.let { entity.setEquipment(EquipmentSlot.LEGS, it) }
-                (npc.entity as LivingEntity).equipment?.boots?.let { entity.setEquipment(EquipmentSlot.FEET, it) }
-                (npc.entity as LivingEntity).equipment?.itemInMainHand?.let { entity.setEquipment(EquipmentSlot.HAND, it) }
-                (npc.entity as LivingEntity).equipment?.itemInOffHand?.let { entity.setEquipment(EquipmentSlot.OFF_HAND, it) }
+                (npc.entity as LivingEntity).equipment?.apply {
+                    entity.setEquipment(EquipmentSlot.HAND, itemInMainHand)
+                    entity.setEquipment(EquipmentSlot.OFF_HAND, itemInOffHand)
+                    helmet?.apply { entity.setEquipment(EquipmentSlot.HEAD, this) }
+                    chestplate?.apply { entity.setEquipment(EquipmentSlot.CHEST, this) }
+                    leggings?.apply { entity.setEquipment(EquipmentSlot.LEGS, this) }
+                    boots?.apply { entity.setEquipment(EquipmentSlot.FEET, this) }
+                }
             }
             try {
                 entity.setPose(BukkitPose.valueOf(npc.entity.pose.name))
