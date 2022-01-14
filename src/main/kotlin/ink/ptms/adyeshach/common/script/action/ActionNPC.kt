@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionPosition: ScriptAction<Any>() {
+class ActionPosition : ScriptAction<Any>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Any> {
         val s = frame.script()

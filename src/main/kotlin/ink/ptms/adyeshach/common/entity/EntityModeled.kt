@@ -1,8 +1,9 @@
 package ink.ptms.adyeshach.common.entity
 
 import com.ticxo.modelengine.api.model.ActiveModel
-import com.ticxo.modelengine.api.model.BaseEntity
 import com.ticxo.modelengine.api.model.ModeledEntity
+import com.ticxo.modelengine.api.model.base.BaseEntity
+import com.ticxo.modelengine.api.model.base.EntityData
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
 import org.bukkit.Location
@@ -163,5 +164,12 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
 
     override fun getModelList(): MutableList<String> {
         return ArrayList()
+    }
+
+    override fun saveModelInfo(p0: ModeledEntity) {
+    }
+
+    override fun loadModelInfo(): EntityData {
+        return EntityData()
     }
 }
