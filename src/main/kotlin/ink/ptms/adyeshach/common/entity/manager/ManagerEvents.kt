@@ -128,14 +128,16 @@ internal object ManagerEvents {
     }
 
     fun spawn(player: Player) {
-        AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
-            it.viewPlayers.viewers.add(player.name)
-        }
-        AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
-            it.viewPlayers.viewers.add(player.name)
-        }
-        mirrorNow("ManagerPrivate:onLoad(async)") {
-            AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
+        if (player.isOnline) {
+            AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
+                it.viewPlayers.viewers.add(player.name)
+            }
+            AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
+                it.viewPlayers.viewers.add(player.name)
+            }
+            mirrorNow("ManagerPrivate:onLoad(async)") {
+                AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
+            }
         }
     }
 }

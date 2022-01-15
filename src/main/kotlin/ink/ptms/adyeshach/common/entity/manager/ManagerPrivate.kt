@@ -21,7 +21,7 @@ class ManagerPrivate(val player: String, val database: Database): Manager() {
 
     override fun onEnable() {
         activeEntity.clear()
-        val player = Bukkit.getPlayerExact(player)!!
+        val player = Bukkit.getPlayerExact(player) ?: return
         val file = database.pull(player)
         val conf = file.getConfigurationSection("AdyeshachNPC") ?: return
         conf.getKeys(false).forEach {
