@@ -19,16 +19,13 @@ import java.util.concurrent.CompletableFuture
 class ActionEquipment(val equipment: BukkitEquipment, val item: ParsedAction<*>) : ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
-        }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
         frame.newFrame(item).run<Any>().thenAccept { item ->
             val itemStack = ZaphkielAPI.getItemStack(item.toString()) ?: ItemStack(Material.AIR)
-            s.getEntities()!!.filterIsInstance<EntityEquipable>().forEach {
+            script.getEntities()!!.filterIsInstance<EntityEquipable>().forEach {
                 when (equipment) {
                     BukkitEquipment.HAND -> it.setItemInMainHand(itemStack)
                     BukkitEquipment.OFF_HAND -> it.setItemInOffHand(itemStack)

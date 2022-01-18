@@ -17,9 +17,9 @@ import java.util.concurrent.CompletableFuture
 class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAction<*>): ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val manager = frame.script().getManager() ?: error("No manager selected.")
-        return frame.newFrame(location).run<Any>().thenAccept {
-            manager.create(type, it as Location).id = id
+        val manager = frame.script().getManager() ?: error("Manager is not selected")
+        return frame.newFrame(location).run<Location>().thenAccept {
+            manager.create(type, it).id = id
         }
     }
 

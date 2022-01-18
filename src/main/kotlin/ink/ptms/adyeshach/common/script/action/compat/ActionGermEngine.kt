@@ -4,29 +4,21 @@ import com.germ.germplugin.api.GermPacketAPI
 import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
-import org.bukkit.entity.Player
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 class ActionGermEngine(val state: String, val remove: Boolean) : ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
+        script.getEntities()?.forEach {
             if (remove) {
-                it.forViewers { p ->
-                    GermPacketAPI.stopModelAnimation(p, it.index, state)
-                }
+                it?.forViewers { p -> GermPacketAPI.stopModelAnimation(p, it.index, state) }
             } else {
-                it.forViewers { p ->
-                    GermPacketAPI.sendModelAnimation(p, it.index, state)
-                }
+                it?.forViewers { p -> GermPacketAPI.sendModelAnimation(p, it.index, state) }
             }
         }
         return CompletableFuture.completedFuture(null)

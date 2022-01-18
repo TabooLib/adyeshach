@@ -52,15 +52,12 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
 
     @Suppress("UNCHECKED_CAST")
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            val meta = it.getEditableEntityMeta().firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
+        script.getEntities()?.forEach {
+            val meta = it?.getEditableEntityMeta()?.firstOrNull { m -> m.key.equals(key, true) } ?: error("Metadata \"${key}\" not found.")
             val editor = meta.editor ?: error("Metadata is not editable. (0)")
             if (!editor.editable) {
                 error("Metadata is not editable. (1)")
@@ -199,7 +196,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                 }
                 Symbol.RESET -> {
                     if (meta.editor?.resetMethod != null) {
-                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(s.sender!!.cast(), it)
+                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(script.sender!!.cast(), it)
                     } else {
                         it.setMetadata(meta.key, meta.def)
                     }

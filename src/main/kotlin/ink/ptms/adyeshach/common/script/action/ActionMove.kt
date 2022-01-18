@@ -14,26 +14,23 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionMove(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val relative: Boolean): ScriptAction<Void>() {
+class ActionMove(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>, val relative: Boolean) : ScriptAction<Void>() {
 
-    fun Any.d() = Coerce.toDouble(this)
+    fun Any.double() = Coerce.toDouble(this)
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         frame.newFrame(x).run<Any>().thenAccept { x ->
             frame.newFrame(y).run<Any>().thenAccept { y ->
                 frame.newFrame(z).run<Any>().thenAccept { z ->
-                    val s = frame.script()
-                    if (s.getManager() == null) {
-                        error("No manager selected.")
+                    val script = frame.script()
+                    if (script.getManager() == null || !script.entitySelected()) {
+                        error("Manager or Entity is not selected")
                     }
-                    if (!s.entitySelected()) {
-                        error("No entity selected.")
-                    }
-                    s.getEntities()!!.filterNotNull().forEach {
+                    script.getEntities()?.forEach {
                         if (relative) {
-                            it.controllerMove(Location(it.position.world, it.position.x + x.d(), it.position.y + y.d(), it.position.z + z.d()))
+                            it?.controllerMove(Location(it.position.world, it.position.x + x.double(), it.position.y + y.double(), it.position.z + z.double()))
                         } else {
-                            it.controllerMove(Location(it.position.world, x.d(), y.d(), z.d()))
+                            it?.controllerMove(Location(it.position.world, x.double(), y.double(), z.double()))
                         }
                     }
                 }

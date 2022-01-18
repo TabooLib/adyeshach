@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionController(val symbol: Symbol, val controller: String?): ScriptAction<Void>() {
+class ActionController(val symbol: Symbol, val controller: String?) : ScriptAction<Void>() {
 
     enum class Symbol {
 
@@ -19,25 +19,21 @@ class ActionController(val symbol: Symbol, val controller: String?): ScriptActio
     }
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
+        script.getEntities()?.forEach {
             when (symbol) {
                 Symbol.ADD -> {
-                    String
                     val controller = ScriptHandler.getControllerGenerator(controller!!) ?: error("Unknown controller $controller")
-                    it.registerController(controller.generator.apply(it))
+                    it?.registerController(controller.generator.apply(it))
                 }
                 Symbol.REMOVE -> {
                     val controller = ScriptHandler.getControllerGenerator(controller!!) ?: error("Unknown controller $controller")
-                    it.unregisterController(controller.type)
+                    it?.unregisterController(controller.type)
                 }
-                Symbol.RESET -> it.resetController()
+                Symbol.RESET -> it?.resetController()
             }
         }
         return CompletableFuture.completedFuture(null)

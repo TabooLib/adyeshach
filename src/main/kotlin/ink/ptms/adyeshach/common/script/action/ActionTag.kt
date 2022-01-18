@@ -19,30 +19,27 @@ class ActionTag(val persistent: Boolean, val key: String, val symbol: Symbol, va
 
     @Suppress("UNCHECKED_CAST")
     override fun run(frame: ScriptFrame): CompletableFuture<Any?> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
-        }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
         return when (symbol) {
             Symbol.REMOVE -> {
-                s.getEntities()!!.filterNotNull().forEach { if (persistent) it.removePersistentTag(key) else it.removeTag(key) }
+                script.getEntities()?.forEach { if (persistent) it?.removePersistentTag(key) else it?.removeTag(key) }
                 CompletableFuture.completedFuture(null)
             }
             Symbol.SET -> {
-                s.getEntities()!!.filterNotNull().forEach {
+                script.getEntities()?.forEach {
                     if (value!! == "null") {
-                        if (persistent) it.removePersistentTag(key) else it.removeTag(key)
+                        if (persistent) it?.removePersistentTag(key) else it?.removeTag(key)
                     } else {
-                        if (persistent) it.setPersistentTag(key, value) else it.setTag(key, value)
+                        if (persistent) it?.setPersistentTag(key, value) else it?.setTag(key, value)
                     }
                 }
                 CompletableFuture.completedFuture(null)
             }
             else -> {
-                val en = s.getEntities()!!.filterNotNull().firstOrNull()
+                val en = script.getEntities()!!.filterNotNull().firstOrNull()
                 CompletableFuture.completedFuture(if (persistent) en?.hasPersistentTag(key) else en?.hasTag(key))
             }
         }

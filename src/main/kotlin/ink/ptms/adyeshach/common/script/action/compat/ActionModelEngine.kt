@@ -25,15 +25,12 @@ class ActionModelEngine(
         if (!AdyeshachAPI.modelEngineHooked) {
             return CompletableFuture.completedFuture(null)
         }
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            if (it.modelEngineUniqueId != null) {
+        script.getEntities()?.forEach {
+            if (it?.modelEngineUniqueId != null) {
                 val modeledEntity = modelManager.getModeledEntity(it.modelEngineUniqueId)
                 if (remove) {
                     val active = modeledEntity.allActiveModel.values.iterator()

@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionPassenger(val symbol: Symbol, val passenger: String?): ScriptAction<Void>() {
+class ActionPassenger(val symbol: Symbol, val passenger: String?) : ScriptAction<Void>() {
 
     enum class Symbol {
 
@@ -18,26 +18,19 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?): ScriptAction<
     }
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
+        script.getEntities()?.forEach {
             when (symbol) {
                 Symbol.ADD -> {
-                    s.getManager()!!.getEntityById(passenger!!).forEach { e ->
-                        it.addPassenger(e)
-                    }
+                    script.getManager()!!.getEntityById(passenger!!).forEach { e -> it?.addPassenger(e) }
                 }
                 Symbol.REMOVE -> {
-                    it.getPassengers().filter { e -> e.id == passenger }.forEach { e ->
-                        it.removePassenger(e)
-                    }
+                    it!!.getPassengers().filter { e -> e.id == passenger }.forEach { e -> it.removePassenger(e) }
                 }
-                Symbol.RESET -> it.clearPassengers()
+                Symbol.RESET -> it?.clearPassengers()
             }
         }
         return CompletableFuture.completedFuture(null)

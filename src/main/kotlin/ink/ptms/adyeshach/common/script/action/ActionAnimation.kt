@@ -12,19 +12,14 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionAnimation(val animation: BukkitAnimation): ScriptAction<Void>() {
+class ActionAnimation(val animation: BukkitAnimation) : ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            it.displayAnimation(animation)
-        }
+        script.getEntities()?.forEach { it?.displayAnimation(animation) }
         return CompletableFuture.completedFuture(null)
     }
 

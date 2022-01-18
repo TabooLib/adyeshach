@@ -12,16 +12,11 @@ import java.util.concurrent.CompletableFuture
 class ActionRemove: ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
-        }
-        s.getEntities()!!.filterNotNull().forEach {
-            it.remove()
-        }
+        script.getEntities()?.forEach { it?.remove() }
         return CompletableFuture.completedFuture(null)
     }
 

@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?): ScriptAction<Void>() {
+class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : ScriptAction<Void>() {
 
     enum class Symbol {
 
@@ -21,29 +21,24 @@ class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?): ScriptActi
     }
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
-        }
-        if (!s.entitySelected()) {
-            error("No entity selected.")
+        val script = frame.script()
+        if (script.getManager() == null || !script.entitySelected()) {
+            error("Manager or Entity is not selected")
         }
         if (viewer == null || symbol == Symbol.RESET) {
-            s.getEntities()!!.filterNotNull().forEach {
-                it.clearViewer()
-            }
+            script.getEntities()?.forEach { it?.clearViewer() }
         } else {
             frame.newFrame(viewer).run<Any>().thenAccept { viewer ->
-                s.getEntities()!!.filterNotNull().forEach {
+                script.getEntities()?.forEach {
                     when (symbol) {
                         Symbol.ADD -> {
-                            Bukkit.getPlayerExact(viewer.toString())?.run {
-                                it.addViewer(this)
+                            Bukkit.getPlayerExact(viewer.toString())?.apply {
+                                it?.addViewer(this)
                             }
                         }
                         Symbol.REMOVE -> {
-                            Bukkit.getPlayerExact(viewer.toString())?.run {
-                                it.removeViewer(this)
+                            Bukkit.getPlayerExact(viewer.toString())?.apply {
+                                it?.removeViewer(this)
                             }
                         }
                         else -> {

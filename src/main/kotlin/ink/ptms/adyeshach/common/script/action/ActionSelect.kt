@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.common.script.action
 
-import ink.ptms.adyeshach.common.script.ScriptHandler.entitySelected
 import ink.ptms.adyeshach.common.script.ScriptHandler.getEntities
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
@@ -13,15 +12,16 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionSelect(val value: ParsedAction<*>, val byId: Boolean): ScriptAction<Void>() {
+class ActionSelect(val value: ParsedAction<*>, val byId: Boolean) : ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (s.getManager() == null) {
-            error("No manager selected.")
+        val script = frame.script()
+        if (script.getManager() == null) {
+            error("Manager is not selected")
         }
         return frame.newFrame(value).run<Any>().thenAccept {
-            s.setEntities(if (byId) s.getManager()!!.getEntityById(it.toString()) else listOf(s.getManager()!!.getEntityByUniqueId(it.toString())))
+            val manager = script.getManager()!!
+            script.setEntities(if (byId) manager.getEntityById(it.toString()) else listOf(manager.getEntityByUniqueId(it.toString())))
         }
     }
 

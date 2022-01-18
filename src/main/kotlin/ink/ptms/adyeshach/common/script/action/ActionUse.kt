@@ -12,11 +12,11 @@ import java.util.concurrent.CompletableFuture
 class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val s = frame.script()
-        if (manager == "private" && s.sender !is ProxyPlayer) {
+        val script = frame.script()
+        if (manager == "private" && script.sender !is ProxyPlayer) {
             error("The private manager required a player viewer.")
         }
-        s.setManager(when (manager) {
+        script.setManager(when (manager) {
             "public" -> {
                 if (temporary) {
                     AdyeshachAPI.getEntityManagerPublicTemporary()
@@ -26,9 +26,9 @@ class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>
             }
             "private" -> {
                 if (temporary) {
-                    AdyeshachAPI.getEntityManagerPrivateTemporary(s.sender!!.cast())
+                    AdyeshachAPI.getEntityManagerPrivateTemporary(script.sender!!.cast())
                 } else {
-                    AdyeshachAPI.getEntityManagerPrivate(s.sender!!.cast())
+                    AdyeshachAPI.getEntityManagerPrivate(script.sender!!.cast())
                 }
             }
             else -> null
