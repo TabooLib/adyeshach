@@ -37,7 +37,6 @@ object Adyeshach : Plugin() {
             console().sendLang("not-support")
             disablePlugin()
         }
-        Kether.isAllowToleranceParser = true
     }
 
     @Awake(LifeCycle.INIT)
