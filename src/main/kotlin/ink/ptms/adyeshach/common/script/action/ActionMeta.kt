@@ -68,7 +68,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                         meta.key == "entityPose" -> {
                             it.setPose(Enums.getIfPresent(BukkitPose::class.java, value.toString().uppercase()).get())
                         }
-                        meta.key == "modelEngineName" -> {
+                        meta.key == "modelEngine" -> {
                             it.modelEngineName = value.toString()
                         }
                         meta.key == "visibleDistance" -> {
