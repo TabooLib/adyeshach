@@ -1,18 +1,18 @@
 package ink.ptms.adyeshach.internal.trait.impl
 
 import ink.ptms.adyeshach.api.AdyeshachSettings
-import ink.ptms.adyeshach.api.event.AdyeshachEntityRemoveEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityTickEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.api.event.*
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.util.Inputs.inputBook
 import ink.ptms.adyeshach.internal.runKether
 import ink.ptms.adyeshach.internal.trait.Trait
 import org.bukkit.entity.Player
+import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Coerce
 import taboolib.module.kether.KetherShell
+import taboolib.module.kether.printKetherErrorMessage
 import taboolib.platform.util.sendLang
 
 object TraitViewCondition : Trait() {
@@ -22,20 +22,24 @@ object TraitViewCondition : Trait() {
         data[e.entity.uniqueId] = null
     }
 
+    @SubscribeEvent(EventPriority.LOWEST)
+    fun e(e: AdyeshachEntityDamageEvent) {
+        if (!checkView(e.entity, e.player)) {
+            e.isCancelled = true
+        }
+    }
+
+    @SubscribeEvent(EventPriority.LOWEST)
+    fun e(e: AdyeshachEntityInteractEvent) {
+        if (!checkView(e.entity, e.player)) {
+            e.isCancelled = true
+        }
+    }
+
     @SubscribeEvent
     fun e(e: AdyeshachEntityVisibleEvent) {
-        if (e.visible && data.contains(e.entity.uniqueId)) {
-            runKether {
-                val script = data.getStringList(e.entity.uniqueId)
-                KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(e.viewer)) {
-                    rootFrame().variables()["@entities"] = listOf(e.entity)
-                }.thenAccept {
-                    if (Coerce.toBoolean(it)) {
-                        return@thenAccept
-                    }
-                    e.isCancelled = true
-                }
-            }
+        if (e.visible && !checkView(e.entity, e.viewer)) {
+            e.isCancelled = true
         }
     }
 
@@ -85,5 +89,19 @@ object TraitViewCondition : Trait() {
             entityInstance.respawn()
             player.sendLang("trait-view-condition-finish")
         }
+    }
+
+    fun checkView(entity: EntityInstance, viewer: Player): Boolean {
+        if (data.contains(entity.uniqueId)) {
+            try {
+                val script = data.getStringList(entity.uniqueId)
+                return Coerce.toBoolean(KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(viewer)) {
+                    rootFrame().variables()["@entities"] = listOf(entity)
+                }.getNow(false))
+            } catch (ex: Exception) {
+                ex.printKetherErrorMessage()
+            }
+        }
+        return true
     }
 }

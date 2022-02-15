@@ -23,6 +23,7 @@ import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
+import org.bukkit.permissions.Permissible
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import taboolib.common5.Coerce
