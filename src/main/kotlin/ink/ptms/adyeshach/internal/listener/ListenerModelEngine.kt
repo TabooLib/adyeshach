@@ -63,16 +63,16 @@ object ListenerModelEngine {
                     )
                 }
             }
-            val traces = RayTrace(e.player).traces(5.0, 0.2)
-            for (vec in traces) {
-                val firstOrNull = entities.firstOrNull { it.second.contains(vec) }
-                if (firstOrNull != null) {
-                    if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
-                        AdyeshachEntityDamageEvent(firstOrNull.first, e.player).call()
+            RayTrace(e.player).traces(5.0, 0.2).forEach { vec ->
+                entities.filter { it.second.contains(vec) }.forEach {
+                    val result = if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
+                        AdyeshachEntityDamageEvent(it.first, e.player).call()
                     } else {
-                        AdyeshachEntityInteractEvent(firstOrNull.first, e.player, e.hand == EquipmentSlot.HAND, Vector(vec.x, vec.y, vec.z)).call()
+                        AdyeshachEntityInteractEvent(it.first, e.player, e.hand == EquipmentSlot.HAND, Vector(vec.x, vec.y, vec.z)).call()
                     }
-                    return
+                    if (result) {
+                        return
+                    }
                 }
             }
         }

@@ -22,16 +22,20 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.onlinePlayers
 import taboolib.common.platform.function.submit
 import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
+import taboolib.module.kether.KetherFunction
+import taboolib.module.kether.KetherShell
 import java.io.File
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
@@ -315,6 +319,15 @@ object AdyeshachAPI {
             messages.remove(key)
             holographic.cancel()
         }
+    }
+
+    fun invokeKether(source: String, player: Player, vars: Map<String, Any>): CompletableFuture<Any?> {
+        val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
+        return KetherShell.eval(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"), vars = map)
+    }
+
+    fun parseFunction(source: String, player: Player): String {
+        return KetherFunction.parse(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"))
     }
 
     @Awake(LifeCycle.DISABLE)
