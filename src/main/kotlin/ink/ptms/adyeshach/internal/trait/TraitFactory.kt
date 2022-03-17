@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.internal.trait
 
+import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.internal.trait.impl.TraitTitle
 import taboolib.common.LifeCycle
 import taboolib.common.io.getInstance
 import taboolib.common.io.runningClasses

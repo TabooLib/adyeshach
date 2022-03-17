@@ -146,12 +146,22 @@ object TraitTitle : Trait() {
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             remove(entityInstance)
             if (it.all { line -> line.isBlank() }) {
-                data.set(entityInstance.uniqueId, null)
+                data[entityInstance.uniqueId] = null
             } else {
-                data.set(entityInstance.uniqueId, it)
+                data[entityInstance.uniqueId] = it
                 create(entityInstance)
             }
             player.sendLang("trait-title-finish")
         }
+    }
+}
+
+fun EntityInstance.setTraitTitle(title: List<String>?) {
+    TraitTitle.remove(this)
+    if (title == null || title.all { line -> line.isBlank() }) {
+        TraitTitle.data[uniqueId] = null
+    } else {
+        TraitTitle.data[uniqueId] = title
+        TraitTitle.create(this)
     }
 }
