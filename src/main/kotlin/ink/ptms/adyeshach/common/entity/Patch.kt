@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity
 
 import ink.ptms.adyeshach.api.event.*
+import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.AdyItem
 import ink.ptms.adyeshach.common.entity.type.AdyMinecart
@@ -8,6 +9,7 @@ import ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
+import taboolib.common.util.Vector
 
 object Patch {
 
@@ -60,9 +62,12 @@ object Patch {
     fun e(e: AdyeshachEntityVisibleEvent) {
         if (e.visible) {
             when (e.entity) {
+                // 修复掉落物品显示错误问题
                 is AdyItem -> {
                     e.entity.setMetadata("item", e.entity.getItem())
+                    e.entity.sendVelocity(Vector(0, 0, 0))
                 }
+                // 修复玩家类型视角和装备无法正常显示的问题
                 is AdyHuman -> {
                     submit(delay = 1) {
                         e.entity.setHeadRotation(e.entity.yaw, e.entity.pitch)

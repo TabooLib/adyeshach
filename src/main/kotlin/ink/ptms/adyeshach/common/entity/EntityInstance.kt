@@ -33,6 +33,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
+import taboolib.common.util.Vector
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
@@ -744,6 +745,13 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      */
     open fun generateEntityMetadata(player: Player): Array<Any> {
         return getAvailableEntityMeta().mapNotNull { it.generateMetadata(player, this) }.toTypedArray()
+    }
+
+    /**
+     * 发送向量数据包
+     */
+    open fun sendVelocity(vector: Vector) {
+        forViewers { NMS.INSTANCE.updateEntityVelocity(it, index, org.bukkit.util.Vector(vector.x, vector.y, vector.z)) }
     }
 
     /**

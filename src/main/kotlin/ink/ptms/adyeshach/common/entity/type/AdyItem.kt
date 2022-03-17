@@ -9,15 +9,6 @@ import org.bukkit.inventory.ItemStack
  */
 class AdyItem : AdyEntity(EntityTypes.ITEM) {
 
-    init {
-        /**
-         * 1.13 -> 7
-         * 1.10 -> 6
-         * 1.9 -> 5
-         */
-//        natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5), "item", ItemStack(Material.BEDROCK))
-    }
-
     fun setItem(itemStack: ItemStack) {
         setMetadata("item", itemStack)
         respawn()
