@@ -449,7 +449,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体看向某个坐标
      */
-    fun controllerLook(location: Location, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
+    fun controllerLook(location: Location, smooth: Boolean = false, smoothInternal: Float = 22.5f) {
         position.toLocation().add(0.0, entityType.entitySize.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
             controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothInternal)
@@ -459,7 +459,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 使实体看向某个视角
      */
-    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = true, smoothInternal: Float = 22.5f) {
+    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = false, smoothInternal: Float = 22.5f) {
         if (smooth && controller.any { it is GeneralSmoothLook }) {
             val look = getController(GeneralSmoothLook::class.java)!!
             look.yaw = yaw

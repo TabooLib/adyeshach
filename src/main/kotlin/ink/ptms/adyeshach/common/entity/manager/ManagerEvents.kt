@@ -106,8 +106,9 @@ internal object ManagerEvents {
     fun e(e: PlayerRespawnEvent) {
         submit(delay = 20) {
             AdyeshachAPI.getEntities(e.player) { it.position.toLocation().safeDistance(e.player.location) < it.visibleDistance }.forEach {
-                it.visible(e.player, true)
-                AdyeshachEntitySpawnEvent(it).call()
+                if (it.isViewer(e.player)) {
+                    it.visible(e.player, true)
+                }
             }
         }
     }
