@@ -6,10 +6,12 @@ import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.*
 import net.citizensnpcs.api.CitizensAPI
+import net.citizensnpcs.api.event.DespawnReason
 import net.citizensnpcs.npc.skin.SkinnableEntity
 import net.citizensnpcs.util.NMS
 import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
 
 /**
@@ -35,7 +37,7 @@ class MigrateCitizens : Migrate() {
             }
             val entity = AdyeshachAPI.getEntityManagerPublic().create(entityTypes, npc.entity.location)
             entity.id = "citizens_${npc.id}"
-            entity.setCustomName(npc.fullName)
+            entity.setCustomName(npc.name)
             entity.setCustomNameVisible(true)
             if (entity is AdyEntityAgeable && npc.entity is Ageable) {
                 entity.setBaby((npc.entity as Ageable).age < 0)
@@ -139,6 +141,7 @@ class MigrateCitizens : Migrate() {
             }
             entity.setGlowing(npc.entity.isGlowing)
             npc.destroy()
+            info("Migrated ${npc.name} (${npc.entity.type}) -> ${entity.uniqueId}")
         }
     }
 }
