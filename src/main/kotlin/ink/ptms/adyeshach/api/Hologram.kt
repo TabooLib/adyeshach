@@ -52,13 +52,14 @@ abstract class Hologram<T> {
                 npc.setBasePlate(false)
                 npc.setInvisible(true)
                 npc.setCustomName(line)
-                npc.setCustomNameVisible(true)
+                npc.setCustomNameVisible(line.isNotEmpty())
             } as AdyArmorStand
         }
 
         override fun update(obj: AdyArmorStand, line: String) {
             if (!obj.isDeleted) {
                 obj.setCustomName(line)
+                obj.setCustomNameVisible(line.isNotEmpty())
             }
         }
 

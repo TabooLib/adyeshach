@@ -141,7 +141,7 @@ class MigrateCitizens : Migrate() {
             }
             entity.setGlowing(npc.entity.isGlowing)
             npc.destroy()
-            info("Migrated ${npc.name} (${npc.entity.type}) -> ${entity.uniqueId}")
+            info("Migrated ${npc.name} -> ${entity.uniqueId}")
         }
     }
 }
