@@ -53,7 +53,6 @@ abstract class Manager {
             error("Entity \"${entityTypes.name}\" not supported this minecraft version.")
         }
         val entityInstance = entityTypes.newInstance()
-        function.accept(entityInstance)
         entityInstance.manager = this
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
         entityInstance.viewPlayers.visible.addAll(player.filter {
@@ -66,6 +65,7 @@ abstract class Manager {
         if (event.isCancelled) {
             return entityInstance
         }
+        function.accept(entityInstance)
         entityInstance.spawn(event.location)
         return entityInstance
     }
@@ -117,6 +117,6 @@ abstract class Manager {
     }
 
     open fun onTick() {
-        getEntities().forEach { it.onTick() }
+        getEntities().parallelStream().forEach { it.onTick() }
     }
 }

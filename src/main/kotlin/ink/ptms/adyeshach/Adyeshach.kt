@@ -12,7 +12,6 @@ import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.warning
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
-import taboolib.module.kether.Kether
 import taboolib.module.lang.sendLang
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.BukkitPlugin

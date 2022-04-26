@@ -45,9 +45,8 @@ internal object ManagerEvents {
             manager.onDisable()
             manager.onSave()
         }
-        val manager = AdyeshachAPI.getEntityManagerPublic()
-        manager.onDisable()
-        manager.onSave()
+        AdyeshachAPI.getEntityManagerPublic().onDisable()
+        AdyeshachAPI.getEntityManagerPublic().onSave()
     }
 
     @Awake(LifeCycle.ACTIVE)
