@@ -787,8 +787,9 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 }
             }
         }
+        val loc = getLocation()
         // 实体逻辑处理
-        controller.filter { it.shouldExecute() }.forEach {
+        controller.filter { it.shouldExecute() && getWorld().isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) }.forEach {
             when {
                 it is Controller.Pre -> {
                     controller.add(it.controller.generator.apply(this))
