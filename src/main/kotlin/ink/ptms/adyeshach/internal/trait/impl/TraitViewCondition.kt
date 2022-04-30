@@ -105,3 +105,13 @@ object TraitViewCondition : Trait() {
         return true
     }
 }
+
+fun EntityInstance.setViewCondition(condition: List<String>?) {
+    if (condition == null || condition.all { line -> line.isBlank() }) {
+        TraitViewCondition.data[uniqueId] = null
+    } else {
+        TraitViewCondition.data[uniqueId] = condition
+        destroy()
+        respawn()
+    }
+}

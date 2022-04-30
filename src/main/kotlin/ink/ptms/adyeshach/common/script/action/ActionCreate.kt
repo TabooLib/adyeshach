@@ -14,12 +14,19 @@ import java.util.concurrent.CompletableFuture
 /**
  * @author IzzelAliz
  */
-class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAction<*>): ScriptAction<Void>() {
+class ActionCreate(val id: ParsedAction<*>, val type: ParsedAction<*>, val location: ParsedAction<*>): ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val manager = frame.script().getManager() ?: error("Manager is not selected")
-        return frame.newFrame(location).run<Location>().thenAccept {
-            manager.create(type, it).id = id
+        return frame.newFrame(id).run<String>().thenAccept { id ->
+            frame.newFrame(type).run<String>().thenAccept { type ->
+                frame.newFrame(location).run<Location>().thenAccept { location ->
+                    manager.create(
+                        Enums.getIfPresent(EntityTypes::class.java, type.uppercase()).orNull() ?: throw loadError("Entity \"$type\" not supported."),
+                        location
+                    ).id = id
+                }.join()
+            }.join()
         }
     }
 
@@ -27,11 +34,10 @@ class ActionCreate(val id: String, val type: EntityTypes, val location: ParsedAc
 
         @KetherParser(["create"], namespace = "adyeshach", shared = true)
         fun parser() = scriptParser {
-            val id = it.nextToken()
-            val type = it.nextToken()
-            val entityType = Enums.getIfPresent(EntityTypes::class.java, type.uppercase()).orNull() ?: throw loadError("Entity \"$type\" not supported.")
+            val id = it.next(ArgTypes.ACTION)
+            val type = it.next(ArgTypes.ACTION)
             it.expects("at", "on")
-            ActionCreate(id, entityType, it.next(ArgTypes.ACTION))
+            ActionCreate(id, type, it.next(ArgTypes.ACTION))
         }
     }
 }
