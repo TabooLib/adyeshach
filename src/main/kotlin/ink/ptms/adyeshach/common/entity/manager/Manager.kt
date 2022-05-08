@@ -117,6 +117,6 @@ abstract class Manager {
     }
 
     open fun onTick() {
-        getEntities().parallelStream().forEach { it.onTick() }
+        getEntities().forEach { it.onTick() }
     }
 }
