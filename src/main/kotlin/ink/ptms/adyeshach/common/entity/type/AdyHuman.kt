@@ -13,7 +13,6 @@ import ink.ptms.adyeshach.common.util.mojang.MojangAPI
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -22,7 +21,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
 
-    internal val playerUUID = normalizeUniqueId
+    private val playerUUID by lazy {
+        normalizeUniqueId
+    }
 
     @Expose
     internal val gameProfile = GameProfile()
