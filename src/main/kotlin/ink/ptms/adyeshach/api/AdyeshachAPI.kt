@@ -19,6 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.world.WorldUnloadEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
@@ -333,6 +334,16 @@ object AdyeshachAPI {
     @Awake(LifeCycle.DISABLE)
     internal fun e() {
         onlinePlayers().forEach { database.push(it.cast()) }
+    }
+
+    // 当世界被卸载时, 该世界的所有虚拟实体应当被清除
+    @SubscribeEvent
+    fun e(e: WorldUnloadEvent) {
+        getEntities { true }
+            .filter { it.getWorld().uid == e.world.uid }
+            .forEach {
+                it.remove()
+            }
     }
 
     @SubscribeEvent
