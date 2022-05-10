@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import it.unimi.dsi.fastutil.ints.Int2IntMaps.SynchronizedMap
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
@@ -10,6 +11,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.charset.StandardCharsets
+import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -19,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 object AshconAPI {
 
     private val url = arrayOf("https://api.ashcon.app/mojang/v2/user/")
-    private val profileCache = ConcurrentHashMap<String, JsonObject>()
+    private val profileCache = Collections.synchronizedMap(HashMap<String, JsonObject>())
 
     fun getTextureValue(name: String): String {
         return getProfile(name).getAsJsonObject("textures").getAsJsonObject("raw").get("value").asString
@@ -30,7 +32,7 @@ object AshconAPI {
     }
 
     fun getProfile(name: String): JsonObject {
-        return profileCache[name] ?: JsonObject()
+        return profileCache.getOrDefault(name, JsonObject())
     }
 
     fun readFromURL(url: String): String {
@@ -39,12 +41,14 @@ object AshconAPI {
 
     @SubscribeEvent
     private fun e(e: PlayerJoinEvent) {
-        submit(async = true) {
-            try {
-                profileCache[e.player.name] = JsonParser().parse(readFromURL("${url[0]}${e.player.name}")).asJsonObject
-            } catch (ignore: FileNotFoundException) {
-            } catch (ignore: NullPointerException) {
-            } catch (ignore: IOException) {
+        if (AdyeshachSettings.ashconAPI) {
+            submit(async = true) {
+                try {
+                    profileCache[e.player.name] = JsonParser().parse(readFromURL("${url[0]}${e.player.name}")).asJsonObject
+                } catch (ignore: FileNotFoundException) {
+                } catch (ignore: NullPointerException) {
+                } catch (ignore: IOException) {
+                }
             }
         }
     }

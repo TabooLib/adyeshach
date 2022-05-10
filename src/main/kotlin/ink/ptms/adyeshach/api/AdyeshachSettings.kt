@@ -64,6 +64,10 @@ object AdyeshachSettings {
     var viewConditionInterval = 40
         get() = if (field == 0) 40 else field
 
+    @ConfigNode("Settings.ashcon-api")
+    var ashconAPI = true
+        private set
+
     fun isSpecifiedWorld(world: String): Boolean {
         return deleteFileInUnknownWorld.any { if (it.endsWith("?")) world.contains(it.substring(0, it.length - 1)) else world == it }
     }
