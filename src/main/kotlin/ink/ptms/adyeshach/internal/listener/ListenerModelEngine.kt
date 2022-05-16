@@ -64,7 +64,7 @@ object ListenerModelEngine {
                 }
             }
             RayTrace(e.player).traces(5.0, 0.2).forEach { vec ->
-                entities.filter { it.second.contains(vec) }.forEach {
+                entities.filter { it.second.contains(vec) && it.first.isVisibleViewer(e.player) }.forEach {
                     val result = if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
                         AdyeshachEntityDamageEvent(it.first, e.player).call()
                     } else {

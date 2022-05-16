@@ -796,9 +796,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                     controller.remove(it)
                 }
                 it.isAsync() -> {
-                    pool.submit {
-                        it.onTick()
-                    }
+                    pool.submit { it.onTick() }
                 }
                 else -> {
                     it.onTick()
@@ -904,9 +902,10 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                     modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
                 }
                 modelEngineUniqueId = entityModeled.modelUniqueId
-                forViewers {
-                    modeledEntity.addPlayer(it)
-                }
+                // 首次加载模型的时候还不存在任何观察者，因此需要延迟添加
+                // 否则会出现模型消失的问题
+                // 于 2022-05-16 日由阿瑞（1484813603）反馈
+                submit { forViewers { modeledEntity.addPlayer(it) } }
                 return true
             }
         }

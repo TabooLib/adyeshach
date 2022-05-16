@@ -53,4 +53,8 @@ open class ViewPlayers(val entityInstance: EntityInstance) {
     fun getOutsidePlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name !in visible }
     }
+
+    override fun toString(): String {
+        return "ViewPlayers(viewers=$viewers, visible=$visible)"
+    }
 }

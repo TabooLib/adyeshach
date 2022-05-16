@@ -37,7 +37,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.7-62"
+    version = "6.0.8-3"
 }
 
 repositories {
@@ -47,7 +47,7 @@ repositories {
 dependencies {
     compileOnly("ink.ptms:Zaphkiel:1.7.0")
     compileOnly("public:ServerTours:1.6.5")
-    compileOnly("public:ModelEngine:2.3.1")
+    compileOnly("public:ModelEngine:2.5.1")
     compileOnly("public:GermPlugin:4.0.3")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly("com.guillaumevdn.gcore:GCore:7.15.0")
@@ -68,7 +68,7 @@ dependencies {
     compileOnly("ink.ptms.core:v11000:11000")
     compileOnly("ink.ptms.core:v10900:10900")
     compileOnly(kotlin("stdlib"))
-    compileOnly(fileTree("libs"))
+    taboo(fileTree("libs"))
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.0")
 }
 
