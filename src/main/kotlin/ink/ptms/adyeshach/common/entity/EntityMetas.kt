@@ -228,6 +228,12 @@ object EntityMetas {
             natural(index + 2, "isChargingCrossbow", false)
             natural(index + 3, "isDancing", false)
         }
+        from<AdyGoat> {
+            val index = at(11900 to 17)
+            natural(index + 0, "isScreamingGoat", false)
+            natural(index + 1, "hasLeftHorn", true)
+            natural(index + 2, "hasRightHorn", true)
+        }
         from<AdyArmorStand> {
             mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "isSmall", 0x01)
             mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "hasArms", 0x04)

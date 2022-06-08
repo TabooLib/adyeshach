@@ -20,6 +20,13 @@ enum class EntityTypes(
     val flying: Boolean = false,
 ) {
 
+    ALLAY(
+        Enums.getIfPresent(EntityType::class.java, "ALLAY").orNull(),
+        -1,
+        EntitySize(0.6, 0.35),
+        AdyAllay::class.java,
+    ),
+
     AREA_EFFECT_CLOUD(
         Enums.getIfPresent(EntityType::class.java, "AREA_EFFECT_CLOUD").orNull(),
         3,
@@ -242,6 +249,27 @@ enum class EntityTypes(
         53,
         EntitySize(3.6, 12.0),
         AdyGiant::class.java
+    ),
+
+    GLOW_ITEM_FRAME(
+        Enums.getIfPresent(EntityType::class.java, "GLOW_ITEM_FRAME").orNull(),
+        -1,
+        EntitySize(0.75, 0.75),
+        AdyGlowItemFrame::class.java
+    ),
+
+    GLOW_SQUID(
+        Enums.getIfPresent(EntityType::class.java, "GLOW_SQUID").orNull(),
+        -1,
+        EntitySize(0.8, 0.8),
+        AdyGlowSquid::class.java
+    ),
+
+    GOAT(
+        Enums.getIfPresent(EntityType::class.java, "GOAT").orNull(),
+        -1,
+        EntitySize(1.3, 0.9),
+        AdyGoat::class.java
     ),
 
     GUARDIAN(
