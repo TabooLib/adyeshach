@@ -68,7 +68,7 @@ class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
         if (minecraftVersion < 11600) {
             setMetadata("variant", color.ordinal and 255 or style.ordinal shl 8)
         } else {
-            setMetadata("variant", color.ordinal and 255 or style.ordinal shl (8 and '\uff00'.code))
+            setMetadata("variant", color.ordinal and 255 or ((style.ordinal shl 8) and '\uff00'.code))
         }
     }
 
