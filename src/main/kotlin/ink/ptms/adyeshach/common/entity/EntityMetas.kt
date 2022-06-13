@@ -435,7 +435,7 @@ object EntityMetas {
                 it.reset { _, entity -> entity.setColor(Horse.Color.WHITE) }
             }
             naturalEditor("horseStyle") {
-                it.useEnumsEditor(type = Horse.Color::class.java, key = "horse_style") { getStyle() }
+                it.useEnumsEditor(type = Horse.Style::class.java, key = "horse_style") { getStyle() }
                 it.reset { _, entity -> entity.setStyle(Horse.Style.NONE) }
             }
         }
