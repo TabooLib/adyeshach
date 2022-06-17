@@ -1,10 +1,5 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.common.bukkit.nms.AdyeshachNMS
-import ink.ptms.adyeshach.common.entity.path.PathType
-import org.bukkit.entity.EntityType
-import java.lang.reflect.Constructor
-
 /**
  * Adyeshach
  * ink.ptms.adyeshach.common.entity.EntityTypes
@@ -238,60 +233,4 @@ enum class EntityTypes {
     PLAYER,
 
     FISHING_HOOK;
-
-    /**
-     * 获取对应 Bukkit 类型
-     */
-    val bukkitType: EntityType
-        get() = TODO()
-
-    /**
-     * 获取对应 Bukkit 序号
-     */
-    val bukkitId: Int
-        get() = TODO()
-
-    /**
-     * 获取实体大小
-     */
-    val entitySize: EntitySize
-        get() = TODO()
-
-    /**
-     * 获取对应 Adyeshach 类型
-     */
-    val entityBase: Class<EntityInstance>
-        get() = TODO()
-
-    /**
-     * 获取内部名称
-     */
-    val internalName: String?
-        get() = null
-
-    /**
-     * 是否为飞行单位
-     */
-    val flying: Boolean
-        get() = TODO()
-
-    /**
-     * 获取对应 Adyeshach 类型构造器
-     */
-    val constructor: Constructor<EntityInstance> = entityBase.getDeclaredConstructor()
-
-    /**
-     * 创建对应 Adyeshach 类型实例
-     */
-    fun newInstance(): EntityInstance = constructor.newInstance()
-
-    /**
-     * 获取对应 NMS 类型
-     */
-    fun getEntityTypeNMS() = AdyeshachNMS.getHelper().adapt(this)
-
-    /**
-     * 获取寻路类型
-     */
-    fun getPathType(): PathType = TODO()
 }

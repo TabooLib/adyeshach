@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.common.bukkit.nms.MinecraftMeta
+import ink.ptms.adyeshach.common.api.MinecraftMeta
 import org.bukkit.entity.Player
 
 /**
