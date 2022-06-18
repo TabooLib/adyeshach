@@ -9,7 +9,7 @@ package ink.ptms.adyeshach.common.api
  * @author 坏黑
  * @since 2022/6/15 18:05
  */
-interface AdyeshachNMS {
+interface AdyeshachMinecraftAPI {
 
     /**
      * 获取用于转换 NMS 对象或其他调用 Minecraft 内部方法的接口

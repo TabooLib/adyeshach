@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.nms
+package ink.ptms.adyeshach.internal
 
 import com.google.common.base.Optional
 

@@ -1,0 +1,385 @@
+###################################
+#                                 #
+#              TYPES              #
+#                                 #
+###################################
+
+AdyAreaEffectCloud
+    radius f 0.5
+        17 8
+        16 -
+    color i
+        ~
+    ignoreRadius z
+        ~
+    particle !Particle EFFECT
+        ~
+
+AdyArmorStand
+    isSmall 0x01 | hasArms 0x04 | noBasePlate 0x08 | isMarker 0x10
+        17 15
+        15 -
+        14 -
+        10 --
+        09 -
+    hasGravity 0x02
+        10 !
+        09 10
+    angleHead !EulerAngle
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    angleBody !EulerAngle
+        ~
+    angleLeftArm !EulerAngle -10 0 -10
+        ~
+    angleRightArm !EulerAngle -15 0 10
+        ~
+    angleLeftLeg !EulerAngle -1 0 -1
+        ~
+    angleRightLeg !EulerAngle 1 0 1
+        ~
+
+AdyArrow
+    isCritical 0x01
+        17 8
+        16 -
+        10 -
+        09 -
+    noclip 0x02
+        17 8
+        14 -
+    piercingLevel b
+        1709
+        16 -
+        1509
+    color i -1
+        17 10
+        16 -
+
+AdyBat
+    isHanging 0x01
+        17 16
+        16 -
+        10 ---
+        09 -
+
+AdyBee
+    unUsed 0x01 | isFlip 0x01 | hasStung 0x04 | hasNectar 0x08
+        17 17
+        15 -
+    angerTicks i
+        ~
+
+AdyBlaze
+    fire 0x01
+        17 16
+        16 -
+        11 ---
+        09 -
+
+AdyBoat
+    sinceLastHit i
+        17 8
+        16 -
+        10 -
+        09 -
+    forwardDirection i 1
+        ~
+    damageTaken f
+        ~
+    type i 0
+        ~
+    leftPaddleTurning z
+        17 12
+        16 -
+        10 ~
+        09 -
+    rightPaddleTurning z
+        17 13
+        16 -
+        11 --
+        09 -
+    splashTimer i
+        17 14
+        16 -
+        13 -
+
+AdyCat
+    type i
+        17 19
+        15 -
+    isLying z
+        17 20
+    isRelaxed z
+        ~
+    color i 14
+        17 22
+        15 -
+
+AdyCreeper
+    state i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    isCharged z
+        ~
+    isIgnited z
+        ~
+
+AdyDolphin
+    findTreasure z
+        17 17
+        15 -
+        14 -
+        13 --
+    hasFish z
+        ~
+
+AdyEndCrystal
+    beamTarget !Vector
+        17 8
+        14 -
+        10 -
+        09 -
+    showBottom z true
+        ~
+
+AdyEndDragon
+    dragonPhase i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+AdyEnderman
+    carriedBlock !Material
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    isScreaming z
+        ~
+    isStaring z
+        17 18
+        15 -
+
+AdyEyeOfEnder
+    item !ItemStack ENDER_EYE
+        17 8
+        14 -
+
+AdyFireworkRocket
+    fireworkInfo !ItemStack
+        17 8
+        14 -
+        11 -
+        0909
+
+AdyFox
+    isSitting 0x01 | isCrouching 0x04 | isSleeping 0x20
+        17 18
+        15 -
+        14 -
+    isInterested 0x08 | isPouncing 0x10 | isFaceplanted 0x40 | isDefending 0x80
+        17 18
+        15 -
+    type i
+        17 17
+        15 -
+        14 -
+
+AdyGhast
+    isAttacking z
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+AdyGoat
+    isScreamingGoat z
+        19 17
+    hasLeftHorn z true
+        ~
+    hasRightHorn z true
+        ~
+
+AdyGuardian
+    isRetractingSpikes 0x02 | isElderly 0x04
+        12 !
+        10 12
+        09 -
+    isRetractingSpikes z
+        17 16
+        15 -
+        14 -
+        11 -
+    targetEntity i
+        ~
+        09 12
+
+AdyHorse
+    variant i
+        17 19
+        15 -
+        14 -
+        10 --
+        09 -
+
+AdyItem
+    item !ItemStack APPLE
+        17 8
+        13 -
+        10 -
+        09 -
+
+AdyItemFrame
+    item !ItemStack
+        17 8
+        13 -
+        10 -
+        09 -
+    rotation i
+        ~
+
+AdyFireball
+    item !ItemStack
+        16 7
+
+AdyLlama
+    carpetColor i
+        17 21
+        15 -
+        14 -
+        10 --
+    color i
+        ~
+
+AdyMinecart
+    customBlock i
+        17 11
+        14 -
+        10 -
+        09 -
+    customBlockPosition i 6
+        ~
+    showCustomBlock z
+        ~
+
+AdyMinecartFurnace
+    hasFuel z
+        17 14
+        14 -
+        10 -
+        09 -
+
+AdyMushroom
+    type t red
+        17 17
+        15 -
+        14 -
+
+AdyOcelot
+    isSitting 0x01 | isAngry 0x02 | isTamed 0x04
+        14 !
+        10 13
+        09 -
+    isTrusting@14+ z
+        17 17
+        15 -
+        14 -
+    type@14- 0
+        10 15
+        09 -
+
+AdyPainting
+    paintingVariant !Painting KEBAB
+        19 8
+
+AdyPanda
+    isSneezing 0x02 | isEating 0x04 | isSitting 0x08 | isOnBack 0x10
+        17 22
+        15 -
+        14 -
+
+AdyParrot
+    color i
+        17 19
+        15 -
+        14 -
+        12 --
+
+AdyPhantom
+    size i
+        17 16
+        15 -
+        14 -
+        13 --
+
+AdyPig
+    hasSaddle z
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+AdyPiglin
+    isImmuneToZombification z
+        17 16
+        16 -
+    isBaby z
+        ~
+    isChargingCrossbow z
+        ~
+    isDancing
+        ~
+
+AdyPillager
+    isCharging z
+        17 17
+
+AdyPolarBear
+    isStanding z
+        17 17
+        15 -
+        14 -
+        10 --
+
+AdyPrimedTNT
+    fuseTime i 80
+        17 8
+        14 -
+        10 -
+        09 -
+
+AdyPufferfish
+    puffState 0
+        17 17
+        15 -
+        14 -
+        13 --
+
+AdyRabbit
+    type i 2
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+AdySheep
+    dyeColor $Internal | isSheared $Internal
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+

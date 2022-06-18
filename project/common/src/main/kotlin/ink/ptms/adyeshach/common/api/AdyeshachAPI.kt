@@ -63,7 +63,12 @@ interface AdyeshachAPI {
     fun getKetherHandler(): AdyeshachKetherHandler
 
     /**
-     * 获取 Adyeshach 中所有有关 NMS 职责的接口
+     * 获取 Adyeshach 中的 NMS 接口
      */
-    fun getNMS(): AdyeshachNMS
+    fun getMinecraftAPI(): AdyeshachMinecraftAPI
+
+    /**
+     * 获取 Adyeshach 中的网络接口
+     */
+    fun getNetworkAPI(): AdyeshachNetworkAPI
 }

@@ -27,5 +27,5 @@ abstract class MinecraftMetadataParser<T> {
 
     protected fun Any.toDouble() = Coerce.toDouble(this)
 
-    protected fun metadataHandler() = Adyeshach.api().getNMS().getEntityMetadataHandler()
+    protected fun metadataHandler() = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
 }
