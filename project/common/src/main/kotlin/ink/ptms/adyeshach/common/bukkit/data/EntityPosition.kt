@@ -52,6 +52,9 @@ class EntityPosition(
     companion object {
 
         fun empty(): EntityPosition {
+            if (Bukkit.getWorlds().isEmpty()) {
+                error("No worlds found")
+            }
             return EntityPosition(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0, 0f, 0f)
         }
 

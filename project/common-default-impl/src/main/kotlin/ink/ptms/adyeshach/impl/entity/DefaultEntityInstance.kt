@@ -19,7 +19,7 @@ import taboolib.common.util.Vector
  * @since 2022/6/19 21:26
  */
 abstract class DefaultEntityInstance(entityType: EntityTypes) : DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity,
-    DefaultViewable, InternalEntity {
+    DefaultRideable, DefaultViewable, InternalEntity {
 
     override val index: Int
         get() = TODO("Not yet implemented")

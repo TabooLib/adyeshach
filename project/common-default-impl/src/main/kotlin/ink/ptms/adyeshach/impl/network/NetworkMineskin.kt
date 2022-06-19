@@ -26,7 +26,7 @@ import java.util.stream.Collectors
 @Suppress("SpellCheckingInspection")
 class NetworkMineskin : AdyeshachNetworkAPI.Skin {
 
-    private val crlf: String
+    val crlf: String
         get() = "\r\n"
 
     override fun getTexture(name: String): AdyeshachNetworkAPI.SkinTexture? {

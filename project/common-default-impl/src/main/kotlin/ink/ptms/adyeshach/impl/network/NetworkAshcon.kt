@@ -21,15 +21,16 @@ import java.util.*
  */
 class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
 
-    private val ashconUrl = arrayOf("https://api.ashcon.app/mojang/v2/user/")
-    private val profileCache = Collections.synchronizedMap(HashMap<String, JsonObject>())
+    val ashconURL = arrayOf("https://api.ashcon.app/mojang/v2/user/")
+
+    val profiles: MutableMap<String, JsonObject?> = Collections.synchronizedMap(HashMap())
 
     init {
         TabooLibCommon.postpone(LifeCycle.ENABLE) {
             registerBukkitListener(PlayerJoinEvent::class.java) {
                 submit(async = true) {
                     try {
-                        profileCache[it.player.name] = JsonParser().parse(readFromURL("${ashconUrl[0]}${it.player.name}")).asJsonObject
+                        profiles[it.player.name] = JsonParser().parse(readFromURL("${ashconURL[0]}${it.player.name}")).asJsonObject
                     } catch (ignore: FileNotFoundException) {
                     } catch (ignore: NullPointerException) {
                     } catch (ignore: IOException) {
@@ -37,7 +38,7 @@ class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
                 }
             }
             registerBukkitListener(PlayerQuitEvent::class.java) {
-                profileCache.remove(it.player.name)
+                profiles.remove(it.player.name)
             }
         }
     }
@@ -51,7 +52,7 @@ class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
     }
 
     override fun getProfile(name: String): JsonObject? {
-        return profileCache.getOrDefault(name, null)
+        return profiles.getOrDefault(name, null)
     }
 
     fun readFromURL(url: String): String {

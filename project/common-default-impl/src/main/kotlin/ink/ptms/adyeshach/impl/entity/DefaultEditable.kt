@@ -14,7 +14,6 @@ import org.bukkit.entity.Player
 interface DefaultEditable : Editable {
 
     override fun openEditor(player: Player) {
-        object : ArrayList<String>() {}
         TODO("Not yet implemented")
     }
 

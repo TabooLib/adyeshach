@@ -15,7 +15,7 @@ import taboolib.common.util.Vector
  * @since 2022/6/15 22:57
  */
 @Suppress("SpellCheckingInspection")
-interface EntityInstance : EntityBase, Controllable, GenericEntity, Viewable {
+interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Viewable {
 
     /**
      * 实体序号，用于发包

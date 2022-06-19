@@ -16,6 +16,8 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     val entityFinder = DefaultAdyeshachEntityFinder()
     val entitySerializer = DefaultAdyeshachEntitySerializer()
     val entityTypeHelper = DefaultAdyeshachEntityTypeHandler()
+    val entityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
+    val entityControllerHandler = DefaultAdyeshachEntityControllerHandler()
     val networkAPI = DefaultAdyeshachNetworkAPI()
 
     override fun getPublicEntityManager(temporary: Boolean): Manager {
@@ -39,11 +41,11 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     }
 
     override fun getEntityMetadataHandler(): AdyeshachEntityMetadataHandler {
-        TODO("Not yet implemented")
+        return entityMetadataHandler
     }
 
     override fun getEntityControllerHandler(): AdyeshachEntityControllerHandler {
-        TODO("Not yet implemented")
+        return entityControllerHandler
     }
 
     override fun getHologramHandler(): AdyeshachHologramHandler {
