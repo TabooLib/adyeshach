@@ -4,38 +4,37 @@ package ink.ptms.adyeshach.common.entity.type
  * @author sky
  * @date 2020/8/4 23:15
  */
-@Suppress("SpellCheckingInspection")
-abstract class AdyPiglin : AdyEntityLiving() {
+interface AdyPiglin : AdyEntityLiving {
 
-    open fun setImmuneToZombification(isImmuneToZombification: Boolean) {
+    fun setImmuneToZombification(isImmuneToZombification: Boolean) {
         setMetadata("isImmuneToZombification", isImmuneToZombification)
     }
 
-    open fun isImmuneToZombification(): Boolean {
+    fun isImmuneToZombification(): Boolean {
         return getMetadata("isImmuneToZombification")
     }
 
-    open fun setBaby(isBaby: Boolean) {
+    fun setBaby(isBaby: Boolean) {
         setMetadata("isBaby", isBaby)
     }
 
-    open fun isBaby(): Boolean {
+    fun isBaby(): Boolean {
         return getMetadata("isBaby")
     }
 
-    open fun isChargingCrossbow(): Boolean {
+    fun isChargingCrossbow(): Boolean {
         return getMetadata("isChargingCrossbow")
     }
 
-    open fun setChargingCrossbow(isChargingCrossbow: Boolean) {
+    fun setChargingCrossbow(isChargingCrossbow: Boolean) {
         setMetadata("isChargingCrossbow", isChargingCrossbow)
     }
 
-    open fun isDancing(): Boolean {
+    fun isDancing(): Boolean {
         return getMetadata("isDancing")
     }
 
-    open fun setDancing(isDancing: Boolean) {
+    fun setDancing(isDancing: Boolean) {
         setMetadata("isDancing", isDancing)
     }
 }

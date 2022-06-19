@@ -5,4 +5,4 @@ package ink.ptms.adyeshach.common.entity.type
  * @date 2020/8/4 23:15
  */
 @Suppress("SpellCheckingInspection")
-abstract class AdyEndermite : AdyMob()
+interface AdyEndermite : AdyMob

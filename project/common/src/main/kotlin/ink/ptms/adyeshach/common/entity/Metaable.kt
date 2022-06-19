@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/15 23:04
  */
+@Suppress("SpellCheckingInspection")
 interface Metaable {
 
     /**
@@ -21,11 +22,6 @@ interface Metaable {
      * 设置实体元数据
      */
     fun setMetadata(key: String, value: Any): Boolean
-
-    /**
-     * 获取实体所有可编辑的元数据模型
-     */
-    fun getEditableEntityMeta(): List<Meta<*>>
 
     /**
      * 获取实体所有元数据模型

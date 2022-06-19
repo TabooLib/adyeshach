@@ -6,33 +6,33 @@ package ink.ptms.adyeshach.common.entity.type
  * before 1.16 known as Insentient
  */
 @Suppress("SpellCheckingInspection")
-abstract class AdyMob : AdyEntityLiving() {
+interface AdyMob : AdyEntityLiving {
 
     /**
      * 设置为左撇子
      */
-    open fun setLeftHanded(leftHanded: Boolean) {
+    fun setLeftHanded(leftHanded: Boolean) {
         setMetadata("isLeftHanded", leftHanded)
     }
 
     /**
      * 是否为左撇子
      */
-    open fun isLeftHanded(): Boolean {
+    fun isLeftHanded(): Boolean {
         return getMetadata("isLeftHanded")
     }
 
     /**
      * 设置为好斗的
      */
-    open fun setAgressive(agressive: Boolean) {
+    fun setAgressive(agressive: Boolean) {
         setMetadata("isAgressive", agressive)
     }
 
     /**
      * 是否为好斗的
      */
-    open fun isAgressive(): Boolean {
+    fun isAgressive(): Boolean {
         return getMetadata("isAgressive")
     }
 }

@@ -5,40 +5,40 @@ package ink.ptms.adyeshach.common.entity.type
  * @date 2020/8/4 23:15
  * 1.14+
  */
-abstract class AdyPanda : AdyEntityAgeable() {
+interface AdyPanda : AdyEntityAgeable {
 
-    open fun isSneezing(): Boolean {
+    fun isSneezing(): Boolean {
         return getMetadata("isSneezing")
     }
 
-    open fun setSneezing(value: Boolean) {
+    fun setSneezing(value: Boolean) {
         setMetadata("isSneezing", value)
     }
 
-    open fun isEating(): Boolean {
+    fun isEating(): Boolean {
         return getMetadata("isEating")
     }
 
-    open fun setEating(value: Boolean) {
+    fun setEating(value: Boolean) {
         setMetadata("isEating", value)
     }
 
-    open fun isSitting(): Boolean {
+    fun isSitting(): Boolean {
         assert(minecraftVersion < 11600, "isSitting")
         return getMetadata("isSitting")
     }
 
-    open fun setSitting(value: Boolean) {
+    fun setSitting(value: Boolean) {
         assert(minecraftVersion < 11600, "setSitting")
         setMetadata("isSitting", value)
     }
 
-    open fun isOnBack(): Boolean {
+    fun isOnBack(): Boolean {
         assert(minecraftVersion < 11600, "isOnBack")
         return getMetadata("isOnBack")
     }
 
-    open fun setIsOnBack(value: Boolean) {
+    fun setIsOnBack(value: Boolean) {
         assert(minecraftVersion < 11600, "setIsOnBack")
         setMetadata("isOnBack", value)
     }

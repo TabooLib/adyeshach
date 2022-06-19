@@ -9,37 +9,37 @@ import org.bukkit.util.Vector
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyShulker : AdyMob() {
+interface AdyShulker : AdyMob {
 
-    open fun setAttachFace(value: BukkitDirection) {
+    fun setAttachFace(value: BukkitDirection) {
         setMetadata("attachFace", value.ordinal)
     }
 
-    open fun getAttachFace(): BukkitDirection {
+    fun getAttachFace(): BukkitDirection {
         return BukkitDirection.of(getMetadata("attackFace"))
     }
 
-    open fun setAttachPosition(position: Vector?) {
+    fun setAttachPosition(position: Vector?) {
         setMetadata("attachPosition", position ?: EmptyVector())
     }
 
-    open fun getAttachPosition(): Vector? {
+    fun getAttachPosition(): Vector? {
         return getMetadata<Vector>("attachPosition").takeUnless { it is EmptyVector }
     }
 
-    open fun setShieldHeight(value: Byte) {
+    fun setShieldHeight(value: Byte) {
         setMetadata("shieldHeight", value)
     }
 
-    open fun getShieldHeight(): Byte {
+    fun getShieldHeight(): Byte {
         return getMetadata("shieldHeight")
     }
 
-    open fun setColor(value: DyeColor) {
+    fun setColor(value: DyeColor) {
         setMetadata("color", value.ordinal)
     }
 
-    open fun setColor(): DyeColor {
+    fun setColor(): DyeColor {
         return DyeColor.values()[getMetadata("color")]
     }
 }

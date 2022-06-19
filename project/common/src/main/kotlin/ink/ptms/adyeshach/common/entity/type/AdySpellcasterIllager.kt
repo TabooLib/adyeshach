@@ -7,13 +7,13 @@ import org.bukkit.entity.Spellcaster
  * @date 2020/8/4 23:15
  */
 @Suppress("SpellCheckingInspection")
-abstract class AdySpellcasterIllager : AdyRaider() {
+interface AdySpellcasterIllager : AdyRaider {
 
-    open fun setSpell(spell: Spellcaster.Spell) {
+    fun setSpell(spell: Spellcaster.Spell) {
         setMetadata("spell", spell.ordinal)
     }
 
-    open fun getSpell(): Spellcaster.Spell {
+    fun getSpell(): Spellcaster.Spell {
         return Spellcaster.Spell.values()[getMetadata("spell")]
     }
 }

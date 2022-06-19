@@ -13,4 +13,5 @@ taboolib {
 
 dependencies {
     compileOnly(project(":project:common"))
+    compileOnly("net.md-5:bungeecord-chat:1.17")
 }

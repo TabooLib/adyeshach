@@ -7,54 +7,54 @@ import org.bukkit.entity.Ocelot
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyOcelot : AdyEntityAgeable() {
+interface AdyOcelot : AdyEntityAgeable {
 
-    open fun setTrusting(value: Boolean) {
+    fun setTrusting(value: Boolean) {
         assert(minecraftVersion < 11400, "setTrusting")
         setMetadata("isTrusting", value)
     }
 
-    open fun isTrusting(): Boolean {
+    fun isTrusting(): Boolean {
         assert(minecraftVersion < 11400, "isTrusting")
         return getMetadata("isTrusting")
     }
 
-    open fun setType(type: Ocelot.Type) {
+    fun setType(type: Ocelot.Type) {
         assert(minecraftVersion >= 11400, "setType")
         setMetadata("type", type.ordinal)
     }
 
-    open fun getType(): BukkitOcelotType {
+    fun getType(): BukkitOcelotType {
         assert(minecraftVersion >= 11400, "getType")
         return BukkitOcelotType.of(getMetadata("type"))
     }
 
-    open fun setSitting(value: Boolean) {
+    fun setSitting(value: Boolean) {
         assert(minecraftVersion >= 11400, "setSitting", "CAT")
         setMetadata("isSitting", value)
     }
 
-    open fun isSitting(): Boolean {
+    fun isSitting(): Boolean {
         assert(minecraftVersion >= 11400, "isSitting", "CAT")
         return getMetadata("isSitting")
     }
 
-    open fun setAngry(value: Boolean) {
+    fun setAngry(value: Boolean) {
         assert(minecraftVersion >= 11400, "setAngry", "CAT")
         setMetadata("isAngry", value)
     }
 
-    open fun isAngry(): Boolean {
+    fun isAngry(): Boolean {
         assert(minecraftVersion >= 11400, "isAngry", "CAT")
         return getMetadata("isAngry")
     }
 
-    open fun setTamed(value: Boolean) {
+    fun setTamed(value: Boolean) {
         assert(minecraftVersion >= 11400, "setTamed", "CAT")
         setMetadata("isTamed", value)
     }
 
-    open fun isTamed(): Boolean {
+    fun isTamed(): Boolean {
         assert(minecraftVersion >= 11400, "isTamed", "CAT")
         return getMetadata("isTamed")
     }

@@ -16,31 +16,12 @@ import java.util.function.Function
 interface AdyeshachEntitySerializer {
 
     /**
-     * 从配置文件读取单位
-     *
-     * @param section 原始 yaml 实例
+     * 从 Yaml 中读取单位
      */
-    fun fromYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it }): EntityInstance?
+    fun fromYaml(source: String, transfer: Function<String, String> = Function { it }): EntityInstance?
 
     /**
-     * 从配置文件读取单位
-     *
-     * @param source 序列化后的 yaml 文件
+     * 从 Json 中读取单位
      */
-    fun fromYaml(source: String): EntityInstance?
-
-    /**
-     * 从 Json 输入流中读取单位
-     */
-    fun fromJson(inputStream: InputStream): EntityInstance?
-
-    /**
-     * 从 Json 文件中读取单位
-     */
-    fun fromJson(file: File): EntityInstance?
-
-    /**
-     * 从 Json 序列化后文件中读取单位
-     */
-    fun fromJson(source: String): EntityInstance?
+    fun fromJson(source: String, transfer: Function<String, String> = Function { it }): EntityInstance?
 }

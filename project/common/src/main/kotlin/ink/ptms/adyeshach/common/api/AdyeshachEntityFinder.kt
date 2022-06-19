@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.api
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.function.Function
@@ -15,23 +16,19 @@ import java.util.function.Function
 interface AdyeshachEntityFinder {
 
     /**
-     * 获取一个单位
-     *
-     * @param filter 过滤
-     */
-    fun getEntity(player: Player? = null, filter: Function<EntityInstance, Boolean>): EntityInstance?
-
-    /**
-     * 获取多个单位
-     *
-     * @param filter 过滤
+     * 通过过滤器获取单位
      */
     fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean>): List<EntityInstance>
 
     /**
-     * 获取玩家就近的单位（包含公共、私有单位管理器中的单位）
+     * 通过单位 id 获取单位
      */
-    fun getEntityNearly(player: Player): EntityInstance?
+    fun getEntitiesFromId(id: String, player: Player? = null): List<EntityInstance>
+
+    /**
+     * 通过单位 id 或 uuid 获取单位
+     */
+    fun getEntitiesFromIdOrUniqueId(id: String, player: Player? = null): List<EntityInstance>
 
     /**
      * 通过实体 id 获取单位
@@ -39,22 +36,42 @@ interface AdyeshachEntityFinder {
     fun getEntityFromEntityId(id: Int, player: Player? = null): EntityInstance?
 
     /**
-     * 通过单位 id 获取单位
-     */
-    fun getEntityFromId(id: String, player: Player? = null): EntityInstance?
-
-    /**
      * 通过 uuid 获取单位
      */
     fun getEntityFromUniqueId(id: String, player: Player? = null): EntityInstance?
 
     /**
-     * 通过 uuid 或单位 id 获取单位
-     */
-    fun getEntityFromUniqueIdOrId(id: String, player: Player? = null): EntityInstance?
-
-    /**
      * 通过玩家数据包中的 uuid 获取单位
      */
-    fun getEntityFromClientUniqueId(player: Player, uniqueId: UUID): EntityInstance?
+    fun getEntityFromClientUniqueId(id: UUID, player: Player): EntityInstance?
+
+    /**
+     * 通过过滤器获取玩家就近的单位（通过所有单位管理器）
+     */
+    fun getNearestEntity(player: Player, filter: Function<EntityInstance, Boolean>): EntityInstance?
+
+    /**
+     * 通过过滤器获取坐标就近的单位（通过公共单位管理器）
+     */
+    fun getNearestEntity(location: Location, filter: Function<EntityInstance, Boolean>): EntityInstance?
+
+    /**
+     * 通过单位 id 获取单位
+     */
+    fun getNearestEntityFromId(id: String, player: Player): EntityInstance?
+
+    /**
+     * 通过单位 id 获取单位
+     */
+    fun getNearestEntityFromId(id: String, location: Location): EntityInstance?
+
+    /**
+     * 通过 uuid 或单位 id 获取单位
+     */
+    fun getNearestEntityFromIdOrUniqueId(id: String, player: Player): EntityInstance?
+
+    /**
+     * 通过 uuid 或单位 id 获取单位
+     */
+    fun getNearestEntityFromIdOrUniqueId(id: String, location: Location): EntityInstance?
 }

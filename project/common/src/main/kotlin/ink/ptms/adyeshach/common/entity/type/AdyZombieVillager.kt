@@ -8,7 +8,7 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyZombieVillager : AdyZombie(), EntityVillager {
+interface AdyZombieVillager : AdyZombie, EntityVillager {
 
     var isConvertingToVillager: Boolean
         get() = getMetadata("isConverting")

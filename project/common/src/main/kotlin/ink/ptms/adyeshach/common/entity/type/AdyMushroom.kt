@@ -6,13 +6,13 @@ import ink.ptms.adyeshach.common.bukkit.BukkitMushroom
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyMushroom : AdyCow() {
+interface AdyMushroom : AdyCow {
 
-    open fun setType(value: BukkitMushroom) {
+    fun setType(value: BukkitMushroom) {
         setMetadata("type", value.name.lowercase())
     }
 
-    open fun getType(): BukkitMushroom {
+    fun getType(): BukkitMushroom {
         return BukkitMushroom.valueOf(getMetadata<String>("type").uppercase())
     }
 }

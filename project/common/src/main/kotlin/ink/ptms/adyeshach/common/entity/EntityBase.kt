@@ -3,9 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import org.bukkit.Location
 import org.bukkit.World
-import taboolib.library.configuration.ConfigurationSection
 import java.util.*
-import java.util.function.Function
 
 /**
  * Adyeshach
@@ -14,7 +12,7 @@ import java.util.function.Function
  * @author 坏黑
  * @since 2022/6/15 23:03
  */
-interface EntityBase : Metaable, TagContainer {
+interface EntityBase : Metaable, TagContainer, EntitySerializable {
 
     /**
      * 实体类型
@@ -24,7 +22,7 @@ interface EntityBase : Metaable, TagContainer {
     /**
      * 实体生成序号（名字）
      */
-    val id: String
+    var id: String
 
     /**
      * 实体内部序号（UUID）
@@ -37,7 +35,7 @@ interface EntityBase : Metaable, TagContainer {
     val normalizeUniqueId: UUID
 
     /**
-     * 实体所在位置
+     * 实体所在位置（直接修改该字段不会触发位置更新）
      */
     var position: EntityPosition
 
@@ -51,14 +49,29 @@ interface EntityBase : Metaable, TagContainer {
      */
     var invalid: Boolean
 
+    /**
+     * 实体详细坐标信息: x
+     */
     val x: Double
 
+    /**
+     * 实体详细坐标信息: y
+     */
     val y: Double
 
+    /**
+     * 实体详细坐标信息: z
+     */
     val z: Double
 
+    /**
+     * 实体详细坐标信息: yaw
+     */
     val yaw: Float
 
+    /**
+     * 实体详细坐标信息: pitch
+     */
     val pitch: Float
 
     /**
@@ -70,16 +83,4 @@ interface EntityBase : Metaable, TagContainer {
      * 实体所在位置（封装自 EntityPosition 类型）
      */
     fun getLocation(): Location
-
-    /**
-     * 转换为 Json 字符串
-     */
-    fun toJson(): String
-
-    /**
-     * 转换为 Yaml 并写入 ConfigurationSection 对象
-     *
-     * @param transfer 节点名称转换函数
-     */
-    fun toYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it })
 }

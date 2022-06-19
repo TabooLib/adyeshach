@@ -7,37 +7,37 @@ import org.bukkit.Color
  * @author sky
  * @since 2020-08-04 18:31
  */
-abstract class AdyAreaEffectCloud : AdyEntity() {
+interface AdyAreaEffectCloud : AdyEntity {
 
-    open fun setRadius(radius: Float) {
+    fun setRadius(radius: Float) {
         setMetadata("radius", radius)
     }
 
-    open fun getRadius(): Float {
+    fun getRadius(): Float {
         return getMetadata("radius")
     }
 
-    open fun setColor(color: Color) {
+    fun setColor(color: Color) {
         setMetadata("color", color.asRGB())
     }
 
-    open fun getColor(): Color {
+    fun getColor(): Color {
         return Color.fromRGB(getMetadata<Int>("color").coerceAtLeast(0))
     }
 
-    open fun setIgnoreRadius(ignoreRadius: Boolean) {
+    fun setIgnoreRadius(ignoreRadius: Boolean) {
         setMetadata("ignoreRadius", ignoreRadius)
     }
 
-    open fun isIgnoreRadius(): Boolean {
+    fun isIgnoreRadius(): Boolean {
         return getMetadata("ignoreRadius")
     }
 
-    open fun setParticle(particle: BukkitParticles) {
+    fun setParticle(particle: BukkitParticles) {
         setMetadata("particle", particle)
     }
 
-    open fun getParticle(): BukkitParticles {
+    fun getParticle(): BukkitParticles {
         return getMetadata("particle")
     }
 }

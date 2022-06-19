@@ -4,60 +4,60 @@ package ink.ptms.adyeshach.common.entity.type
  * @author sky
  * @since 2020-08-04 18:28
  */
-abstract class AdyHorseBase : AdyEntityAgeable() {
+interface AdyHorseBase : AdyEntityAgeable {
 
-    open fun setTamed(value: Boolean) {
+    fun setTamed(value: Boolean) {
         setMetadata("isTamed", value)
     }
 
-    open fun isTamed(): Boolean {
+    fun isTamed(): Boolean {
         return getMetadata("isTamed")
     }
 
-    open fun setSaddled(value: Boolean) {
+    fun setSaddled(value: Boolean) {
         setMetadata("isSaddled", value)
     }
 
-    open fun isSaddled(): Boolean {
+    fun isSaddled(): Boolean {
         return getMetadata("isSaddled")
     }
 
-    open fun setHasBred(value: Boolean) {
+    fun setHasBred(value: Boolean) {
         setMetadata("hasBred", value)
     }
 
-    open fun isHasBred(): Boolean {
+    fun isHasBred(): Boolean {
         return getMetadata("hasBred")
     }
 
-    open fun setEating(value: Boolean) {
+    fun setEating(value: Boolean) {
         setMetadata("isEating", value)
     }
 
-    open fun isEating(): Boolean {
+    fun isEating(): Boolean {
         return getMetadata("isEating")
     }
 
-    open fun setRearing(value: Boolean) {
+    fun setRearing(value: Boolean) {
         setMetadata("isRearing", value)
     }
 
-    open fun isRearing(): Boolean {
+    fun isRearing(): Boolean {
         return getMetadata("isRearing")
     }
 
-    open fun setMouthOpen(value: Boolean) {
+    fun setMouthOpen(value: Boolean) {
         setMetadata("isMouthOpen", value)
     }
 
-    open fun isMouthOpen(): Boolean {
+    fun isMouthOpen(): Boolean {
         return getMetadata("isMouthOpen")
     }
 
     /**
      * 低版本方法
      */
-    open fun setHasChest(value: Boolean) {
+    fun setHasChest(value: Boolean) {
         assert(minecraftVersion >= 11300, "setHasChest", "DONKEY")
         setMetadata("hasChest", value)
     }
@@ -65,7 +65,7 @@ abstract class AdyHorseBase : AdyEntityAgeable() {
     /**
      * 低版本方法
      */
-    open fun isHasChest(): Boolean {
+    fun isHasChest(): Boolean {
         assert(minecraftVersion >= 11300, "isHasChest", "DONKEY")
         return getMetadata("hasChest")
     }

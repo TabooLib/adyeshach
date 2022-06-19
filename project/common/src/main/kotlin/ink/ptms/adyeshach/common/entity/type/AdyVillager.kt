@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.entity.EntityVillager
  * @date 2020/8/4 23:15
  */
 @Suppress("LeakingThis")
-abstract class AdyVillager : AdyEntityAgeable(), EntityVillager {
+interface AdyVillager : AdyEntityAgeable, EntityVillager {
 
     override fun setVillagerData(villagerData: VillagerData) {
         setMetadata("villagerData", villagerData)

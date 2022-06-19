@@ -29,12 +29,7 @@ interface AdyeshachEntityTypeHandler {
     /**
      * 获取 Bukkit 对应的内部名称
      */
-    fun getBukkitEntityInternalName(entityType: EntityTypes): String?
-
-    /**
-     * 通过与 AdyEntity 类似的接口类获取对应实体类型
-     */
-    fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes?
+    fun getBukkitEntityAliases(entityType: EntityTypes): List<String>
 
     /**
      * 获取实体所对应的原版大小
@@ -50,4 +45,9 @@ interface AdyeshachEntityTypeHandler {
      * 创建实体实例
      */
     fun getEntityInstance(entityType: EntityTypes): EntityInstance
+
+    /**
+     * 通过与 AdyEntity 类似的接口类获取对应实体类型
+     */
+    fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes?
 }

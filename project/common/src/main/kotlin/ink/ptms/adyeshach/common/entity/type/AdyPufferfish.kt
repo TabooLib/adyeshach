@@ -5,13 +5,13 @@ package ink.ptms.adyeshach.common.entity.type
  * @date 2020/8/4 23:15
  */
 @Suppress("SpellCheckingInspection")
-abstract class AdyPufferfish : AdyFish() {
+interface AdyPufferfish : AdyFish {
 
-    open fun getPuffState(): Int {
+    fun getPuffState(): Int {
         return getMetadata("puffState")
     }
 
-    open fun setPuffState(value: Int) {
+    fun setPuffState(value: Int) {
         setMetadata("puffState", value)
     }
 }

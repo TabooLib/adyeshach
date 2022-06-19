@@ -7,53 +7,53 @@ import org.bukkit.util.EulerAngle
  * @author sky
  * @since 2020-08-04 19:30
  */
-abstract class AdyArmorStand : AdyEntityLiving() {
+interface AdyArmorStand : AdyEntityLiving {
 
-    open fun setSmall(value: Boolean) {
+    fun setSmall(value: Boolean) {
         setMetadata("isSmall", value)
     }
 
-    open fun isSmall(): Boolean {
+    fun isSmall(): Boolean {
         return getMetadata("isSmall")
     }
 
-    open fun setGravity(value: Boolean) {
+    fun setGravity(value: Boolean) {
         setMetadata("hasGravity", value)
     }
 
-    open fun isGravity(): Boolean {
+    fun isGravity(): Boolean {
         return getMetadata("hasGravity")
     }
 
-    open fun setArms(value: Boolean) {
+    fun setArms(value: Boolean) {
         setMetadata("hasArms", value)
     }
 
-    open fun hasArms(): Boolean {
+    fun hasArms(): Boolean {
         return getMetadata("hasArms")
     }
 
-    open fun setBasePlate(value: Boolean) {
+    fun setBasePlate(value: Boolean) {
         setMetadata("noBasePlate", !value)
     }
 
-    open fun hasBasePlate(): Boolean {
+    fun hasBasePlate(): Boolean {
         return getMetadata("noBasePlate")
     }
 
-    open fun setMarker(value: Boolean) {
+    fun setMarker(value: Boolean) {
         setMetadata("isMarker", value)
     }
 
-    open fun isMarker(): Boolean {
+    fun isMarker(): Boolean {
         return getMetadata("isMarker")
     }
 
-    open fun setRotation(rotation: BukkitRotation, eulerAngle: EulerAngle) {
+    fun setRotation(rotation: BukkitRotation, eulerAngle: EulerAngle) {
         setMetadata(rotation.metaName, eulerAngle)
     }
 
-    open fun getRotation(rotation: BukkitRotation): EulerAngle {
+    fun getRotation(rotation: BukkitRotation): EulerAngle {
         return getMetadata(rotation.metaName)
     }
 }

@@ -4,7 +4,7 @@ package ink.ptms.adyeshach.common.entity.type
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyStrider : AdyEntityLiving() {
+interface AdyStrider : AdyEntityLiving {
 
     var isShaking: Boolean
         get() = getMetadata("isShaking")

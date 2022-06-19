@@ -6,7 +6,11 @@ plugins {
 
 dependencies {
     implementation(project(":project:common"))
-    implementation(project(":project:implementation-bukkit"))
+    implementation(project(":project:common-api"))
+    implementation(project(":project:common-default-impl"))
+    implementation(project(":project:module-bukkit"))
+    implementation(project(":project:module-editor"))
+    implementation(project(":project:module-legacy-api"))
 }
 
 tasks {

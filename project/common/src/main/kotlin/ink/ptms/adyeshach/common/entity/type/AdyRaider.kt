@@ -4,13 +4,13 @@ package ink.ptms.adyeshach.common.entity.type
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyRaider : AdyMob() {
+interface AdyRaider : AdyMob {
 
-    open fun isCelebrating(): Boolean {
+    fun isCelebrating(): Boolean {
         return getMetadata("isCelebrating")
     }
 
-    open fun setCelebrating(isCelebrating: Boolean) {
+    fun setCelebrating(isCelebrating: Boolean) {
         setMetadata("isCelebrating", isCelebrating)
     }
 }

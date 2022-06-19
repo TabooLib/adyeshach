@@ -6,29 +6,29 @@ import ink.ptms.adyeshach.common.bukkit.BukkitCreeperState
  * @author sky
  * @since 2020-08-04 19:30
  */
-abstract class AdyCreeper : AdyMob() {
+interface AdyCreeper : AdyMob {
 
-    open fun setState(value: BukkitCreeperState) {
+    fun setState(value: BukkitCreeperState) {
         setMetadata("state", value.value)
     }
 
-    open fun getState(): BukkitCreeperState {
+    fun getState(): BukkitCreeperState {
         return BukkitCreeperState.of(getMetadata("state"))
     }
 
-    open fun setCharged(value: Boolean) {
+    fun setCharged(value: Boolean) {
         setMetadata("isCharged", value)
     }
 
-    open fun isCharged(): Boolean {
+    fun isCharged(): Boolean {
         return getMetadata("isCharged")
     }
 
-    open fun setIgnited(value: Boolean) {
+    fun setIgnited(value: Boolean) {
         setMetadata("isIgnited", value)
     }
 
-    open fun isIgnited(): Boolean {
+    fun isIgnited(): Boolean {
         return getMetadata("isIgnited")
     }
 }

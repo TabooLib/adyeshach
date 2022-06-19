@@ -7,13 +7,13 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyThrownExperienceBottle : AdyEntity(), EntityThrowable {
+interface AdyThrownExperienceBottle : AdyEntity, EntityThrowable {
 
-    open fun getItem(): ItemStack {
+    fun getItem(): ItemStack {
         return getMetadata("item")
     }
 
-    open fun setItem(value: ItemStack) {
+    fun setItem(value: ItemStack) {
         setMetadata("item", value)
     }
 }

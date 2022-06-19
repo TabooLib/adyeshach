@@ -4,7 +4,7 @@ package ink.ptms.adyeshach.common.entity.type
  * @author sky
  * @since 2020-08-04 18:28
  */
-abstract class AdyZombie : AdyMob() {
+interface AdyZombie : AdyMob {
 
     var isBecomingDrowned: Boolean
         get() = getMetadata("isBecomingDrowned")
@@ -12,43 +12,43 @@ abstract class AdyZombie : AdyMob() {
             setMetadata("isBecomingDrowned", value)
         }
 
-    open fun setBaby(value: Boolean) {
+    fun setBaby(value: Boolean) {
         setMetadata("isBaby", value)
     }
 
-    open fun isBaby(): Boolean {
+    fun isBaby(): Boolean {
         return getMetadata("isBaby")
     }
 
-    open fun setDrowning(value: Boolean) {
+    fun setDrowning(value: Boolean) {
         setMetadata("isDrowning", value)
     }
 
-    open fun isDrowning(): Boolean {
+    fun isDrowning(): Boolean {
         return getMetadata("isDrowning")
     }
 
-    open fun setHandsHeldUp(value: Boolean) {
+    fun setHandsHeldUp(value: Boolean) {
         setMetadata("isHandsHeldUp", value)
     }
 
-    open fun getHandsHeldUp(): Boolean {
+    fun getHandsHeldUp(): Boolean {
         return getMetadata("isHandsHeldUp")
     }
 
-    open fun setZombieType(value: Int) {
+    fun setZombieType(value: Int) {
         setMetadata("zombieType", value)
     }
 
-    open fun getZombieType(): Int {
+    fun getZombieType(): Int {
         return getMetadata("zombieType")
     }
 
-    open fun setConverting(value: Boolean) {
+    fun setConverting(value: Boolean) {
         setMetadata("isConverting", value)
     }
 
-    open fun isConverting(): Boolean {
+    fun isConverting(): Boolean {
         return getMetadata("isConverting")
     }
 }

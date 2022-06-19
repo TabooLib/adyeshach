@@ -8,37 +8,37 @@ import org.bukkit.Color
  * @since 2020-08-04 19:30
  */
 @Suppress("SpellCheckingInspection")
-abstract class AdyArrow : AdyEntity(), EntityThrowable {
+interface AdyArrow : AdyEntity, EntityThrowable {
 
-    open fun setCritical(value: Boolean) {
+    fun setCritical(value: Boolean) {
         setMetadata("isCritical", value)
     }
 
-    open fun isCritical(): Boolean {
+    fun isCritical(): Boolean {
         return getMetadata("isCritical")
     }
 
-    open fun setNoclip(value: Boolean) {
+    fun setNoclip(value: Boolean) {
         setMetadata("noclip", value)
     }
 
-    open fun isNoclip(): Boolean {
+    fun isNoclip(): Boolean {
         return getMetadata("noclip")
     }
 
-    open fun setPiercingLevel(value: Byte) {
+    fun setPiercingLevel(value: Byte) {
         setMetadata("piercingLevel", value)
     }
 
-    open fun getPiercingLevel(): Byte {
+    fun getPiercingLevel(): Byte {
         return getMetadata("piercingLevel")
     }
 
-    open fun setColor(value: Color) {
+    fun setColor(value: Color) {
         setMetadata("color", value.asRGB())
     }
 
-    open fun getColor(): Color {
+    fun getColor(): Color {
         return Color.fromRGB(getMetadata("color"))
     }
 }

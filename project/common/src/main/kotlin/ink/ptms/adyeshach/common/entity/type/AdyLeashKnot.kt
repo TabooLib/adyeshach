@@ -6,4 +6,4 @@ import ink.ptms.adyeshach.common.entity.EntityThrowable
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyLeashKnot : AdyEntity(), EntityThrowable
+interface AdyLeashKnot : AdyEntity, EntityThrowable

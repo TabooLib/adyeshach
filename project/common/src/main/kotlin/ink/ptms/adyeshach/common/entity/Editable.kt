@@ -15,4 +15,9 @@ interface Editable {
      * 打开编辑器
      */
     fun openEditor(player: Player)
+
+    /**
+     * 获取实体所有可编辑的元数据模型
+     */
+    fun getEditableEntityMeta(): List<Meta<*>>
 }

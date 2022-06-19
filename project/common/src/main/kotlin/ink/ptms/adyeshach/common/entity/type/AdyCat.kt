@@ -8,7 +8,7 @@ import org.bukkit.entity.Cat
  * @author sky
  * @since 2020-08-04 19:30
  */
-abstract class AdyCat : AdyEntityTameable() {
+interface AdyCat : AdyEntityTameable {
 
     var isLying: Boolean
         get() = getMetadata("isLying")
@@ -22,19 +22,19 @@ abstract class AdyCat : AdyEntityTameable() {
             setMetadata("isRelaxed", value)
         }
 
-    open fun setType(value: Cat.Type) {
+    fun setType(value: Cat.Type) {
         setMetadata("type", value.ordinal)
     }
 
-    open fun getType(): Cat.Type {
+    fun getType(): Cat.Type {
         return Cat.Type.values()[getMetadata("type")]
     }
 
-    open fun setCollarColor(value: DyeColor) {
+    fun setCollarColor(value: DyeColor) {
         setMetadata("color", value.ordinal)
     }
 
-    open fun getCollarColor(): DyeColor {
+    fun getCollarColor(): DyeColor {
         return DyeColor.values()[getMetadata("color")]
     }
 }

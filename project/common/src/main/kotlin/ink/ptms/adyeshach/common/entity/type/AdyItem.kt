@@ -6,15 +6,15 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyItem : AdyEntity() {
+interface AdyItem : AdyEntity {
 
     /**
      * 设置物品
      */
-    abstract fun setItem(itemStack: ItemStack)
+    fun setItem(itemStack: ItemStack)
 
     /**
      * 获取物品
      */
-    abstract fun getItem(): ItemStack
+    fun getItem(): ItemStack
 }

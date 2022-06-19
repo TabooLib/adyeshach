@@ -6,13 +6,13 @@ import ink.ptms.adyeshach.common.bukkit.BukkitDragonPhase
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyEndDragon : AdyMob() {
+interface AdyEndDragon : AdyMob {
 
-    open fun setDragonPhase(dragonPhase: BukkitDragonPhase) {
+    fun setDragonPhase(dragonPhase: BukkitDragonPhase) {
         setMetadata("dragonPhase", dragonPhase.ordinal)
     }
 
-    open fun getDragonPhase(): BukkitDragonPhase {
+    fun getDragonPhase(): BukkitDragonPhase {
         return BukkitDragonPhase.of(getMetadata("dragonPhase"))
     }
 }

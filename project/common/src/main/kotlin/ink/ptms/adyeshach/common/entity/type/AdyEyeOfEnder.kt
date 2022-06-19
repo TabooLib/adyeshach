@@ -6,13 +6,13 @@ import org.bukkit.inventory.ItemStack
  * @author sky
  * @date 2020/8/4 23:15
  */
-abstract class AdyEyeOfEnder : AdyEntity() {
+interface AdyEyeOfEnder : AdyEntity {
 
-    open fun getItem(): ItemStack {
+    fun getItem(): ItemStack {
         return getMetadata("item")
     }
 
-    open fun setItem(value: ItemStack) {
+    fun setItem(value: ItemStack) {
         setMetadata("item", value)
     }
 }
