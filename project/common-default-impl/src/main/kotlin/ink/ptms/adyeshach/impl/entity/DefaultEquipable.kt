@@ -1,6 +1,9 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityEquipable
+import ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -16,74 +19,100 @@ import org.bukkit.inventory.ItemStack
 interface DefaultEquipable : EntityEquipable {
 
     override fun clearEquipment() {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment.clear()
+        updateEquipment()
     }
 
     override fun updateEquipment() {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        forViewers { updateEquipment(it) }
     }
 
     override fun updateEquipment(player: Player) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+        operator.updateEquipment(player, index, EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) })
     }
 
     override fun getEquipment(): Map<EquipmentSlot, ItemStack> {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment
     }
 
     override fun getEquipment(equipmentSlot: EquipmentSlot): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[equipmentSlot]
     }
 
     override fun setEquipment(equipmentSlot: EquipmentSlot, itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[equipmentSlot] = itemStack
+        updateEquipment()
     }
 
     override fun setItemInMainHand(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.HAND] = itemStack
+        updateEquipment()
     }
 
     override fun getItemInMainHand(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.HAND]
     }
 
     override fun setItemInOffHand(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.OFF_HAND] = itemStack
+        updateEquipment()
     }
 
     override fun getItemInOffHand(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.OFF_HAND]
     }
 
     override fun setHelmet(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.HEAD] = itemStack
+        updateEquipment()
     }
 
     override fun getHelmet(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.HEAD]
     }
 
     override fun setChestplate(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.CHEST] = itemStack
+        updateEquipment()
     }
 
     override fun getChestplate(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.CHEST]
     }
 
     override fun setLeggings(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.LEGS] = itemStack
+        updateEquipment()
     }
 
     override fun getLeggings(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.LEGS]
     }
 
     override fun setBoots(itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        equipment[EquipmentSlot.FEET] = itemStack
     }
 
     override fun getBoots(): ItemStack? {
-        TODO("Not yet implemented")
+        this as DefaultEntityLiving
+        return equipment[EquipmentSlot.FEET]
     }
 }

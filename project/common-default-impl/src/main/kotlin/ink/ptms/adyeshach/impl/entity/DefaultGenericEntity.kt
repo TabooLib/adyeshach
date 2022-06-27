@@ -1,7 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
+import ink.ptms.adyeshach.common.entity.EntityBase
 import ink.ptms.adyeshach.common.entity.GenericEntity
+import ink.ptms.adyeshach.common.entity.Metaable
+import ink.ptms.adyeshach.common.util.toReadable
 
 /**
  * Adyeshach
@@ -13,98 +16,127 @@ import ink.ptms.adyeshach.common.entity.GenericEntity
 interface DefaultGenericEntity : GenericEntity {
 
     override var ticksFrozenInPowderedSnow: Int
-        get() = TODO("Not yet implemented")
-        set(value) {}
+        get() {
+            this as Metaable
+            return getMetadata("ticksFrozenInPowderedSnow")
+        }
+        set(value) {
+            this as Metaable
+            setMetadata("ticksFrozenInPowderedSnow", value)
+        }
 
     override fun getDisplayName(): String {
-        TODO("Not yet implemented")
+        this as EntityBase
+        return getCustomName().ifEmpty { entityType.name.lowercase().toReadable() }
     }
 
     override fun isFired(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("onFire")
     }
 
     override fun isSneaking(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isCrouched")
     }
 
     override fun isSprinting(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isSprinting")
     }
 
     override fun isSwimming(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isSwimming")
     }
 
     override fun isInvisible(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isInvisible")
     }
 
     override fun isGlowing(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isGlowing")
     }
 
     override fun isFlyingElytra(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isFlyingElytra")
     }
 
     override fun isNoGravity(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("noGravity")
     }
 
     override fun setFired(onFire: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("onFire", onFire)
     }
 
     override fun setSneaking(sneaking: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("sneaking", sneaking)
     }
 
     override fun setSprinting(sprinting: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isSprinting", sprinting)
     }
 
     override fun setSwimming(swimming: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isSwimming", swimming)
     }
 
     override fun setInvisible(invisible: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isInvisible", invisible)
     }
 
     override fun setGlowing(glowing: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isGlowing", glowing)
     }
 
     override fun setFlyingElytra(flyingElytra: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isFlyingElytra", flyingElytra)
     }
 
     override fun setNoGravity(noGravity: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("noGravity", noGravity)
     }
 
     override fun setCustomNameVisible(value: Boolean) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("isCustomNameVisible", value)
     }
 
     override fun isCustomNameVisible(): Boolean {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("isCustomNameVisible")
     }
 
     override fun setCustomName(value: String) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("customName", value)
     }
 
     override fun getCustomName(): String {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("customName")
     }
 
     override fun setPose(pose: BukkitPose) {
-        TODO("Not yet implemented")
+        this as Metaable
+        setMetadata("pose", pose)
     }
 
     override fun getPose(): BukkitPose {
-        TODO("Not yet implemented")
+        this as Metaable
+        return getMetadata("pose")
     }
 }

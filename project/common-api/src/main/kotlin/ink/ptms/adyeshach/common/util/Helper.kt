@@ -21,3 +21,15 @@ fun <T : Enum<T>> Class<T>.getEnumOrNull(vararg name: String): T? {
     name.forEach { Enums.getIfPresent(this, it).orNull()?.let { e -> return e } }
     return null
 }
+
+fun String?.toReadable(): String {
+    val builder = StringBuilder()
+    toString().toCharArray().forEachIndexed { index, c ->
+        when {
+            index == 0 -> builder.append(c.uppercaseChar())
+            c.isUpperCase() -> builder.append(" $c")
+            else -> builder.append(c)
+        }
+    }
+    return builder.toString()
+}

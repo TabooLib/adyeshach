@@ -42,6 +42,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         TODO("Not yet implemented")
     }
 
+    override fun updateEquipment(player: Player, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>) {
+        TODO("Not yet implemented")
+    }
+
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
         TODO("Not yet implemented")
     }

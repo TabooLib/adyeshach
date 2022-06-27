@@ -76,6 +76,15 @@ interface MinecraftEntityOperator {
     fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack)
 
     /**
+     * 更新数据包实体的装备信息
+     *
+     * @param player 数据包接收人
+     * @param entityId 实体序号
+     * @param equipment 装备信息
+     */
+    fun updateEquipment(player: Player, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>)
+
+    /**
      * 更新数据包实体的骑乘信息
      *
      * @param player 数据包接收人

@@ -20,7 +20,7 @@ interface Viewable {
     /**
      * 可视距离，离开该距离后将回收实体
      */
-    var visibleDistance: Int
+    var visibleDistance: Double
 
     /**
      * 加载完成后自动显示，关闭后只能通过 API 控制玩家是否可见

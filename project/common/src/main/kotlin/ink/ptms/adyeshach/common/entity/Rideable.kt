@@ -54,7 +54,7 @@ interface Rideable {
     /**
      * 刷新骑乘者
      */
-    fun refreshPassenger(viewer: Player, error: Boolean = true)
+    fun refreshPassenger(viewer: Player)
 
     /**
      * 刷新骑乘者

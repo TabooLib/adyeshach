@@ -14,17 +14,6 @@ import java.util.function.Consumer
  */
 interface DefaultViewable : Viewable {
 
-    override val viewPlayers: ViewPlayers
-        get() = TODO("Not yet implemented")
-
-    override var visibleDistance: Int
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
-    override var visibleAfterLoaded: Boolean
-        get() = TODO("Not yet implemented")
-        set(value) {}
-
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         TODO("Not yet implemented")
     }
