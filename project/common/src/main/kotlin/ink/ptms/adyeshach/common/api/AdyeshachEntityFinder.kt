@@ -18,6 +18,11 @@ interface AdyeshachEntityFinder {
     /**
      * 通过过滤器获取单位
      */
+    fun getEntity(player: Player? = null, match: Function<EntityInstance, Boolean>): EntityInstance?
+
+    /**
+     * 通过过滤器获取单位
+     */
     fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean>): List<EntityInstance>
 
     /**

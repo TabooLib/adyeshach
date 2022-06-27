@@ -15,7 +15,7 @@ object AdyeshachPlugin : Plugin() {
 
     override fun onLoad() {
         try {
-            DefaultAdyeshachBooster.startup()
+            DefaultAdyeshachBooster().startup()
         } catch (ex: Throwable) {
             ex.printStackTrace()
             disablePlugin()

@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.common.api.Adyeshach
  * @author 坏黑
  * @since 2022/6/19 17:12
  */
-object DefaultAdyeshachBooster {
+class DefaultAdyeshachBooster {
 
     /**
      * 启动 Adyeshach 服务

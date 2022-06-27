@@ -1,670 +1,670 @@
-AdyAllay
+ink.ptms.adyeshach.common.entity.type.AdyAllay
     ALLAY
     -1
     0.35 0.6 FLYING
     ~
 
-AdyAreaEffectCloud
+ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
     AREA_EFFECT_CLOUD
     3
     0.5 2.0
     ~
 
-AdyArmorStand
+ink.ptms.adyeshach.common.entity.type.AdyArmorStand
     ARMOR_STAND
     78
     1.975 0.5
     ~
 
-AdyArrow
+ink.ptms.adyeshach.common.entity.type.AdyArrow
     ARROW
     60
     0.5 0.5 FLYING
     ~
 
-AdyBat
+ink.ptms.adyeshach.common.entity.type.AdyBat
     BAT
     65
     0.9 0.5 FLYING
     ~
 
-AdyBee
+ink.ptms.adyeshach.common.entity.type.AdyBee
     BEE
     -1
     0.6 0.7 FLYING
     ~
 
-AdyBlaze
+ink.ptms.adyeshach.common.entity.type.AdyBlaze
     BLAZE
     61
     1.8 0.6
     ~
 
-AdyBoat
+ink.ptms.adyeshach.common.entity.type.AdyBoat
     BOAT
     1
     0.5625 1.375
     ~
 
-AdyCat
+ink.ptms.adyeshach.common.entity.type.AdyCat
     CAT
     98
     0.7 0.6
     ~
 
-AdyCaveSpider
+ink.ptms.adyeshach.common.entity.type.AdyCaveSpider
     CAVE_SPIDER
     59
     0.5 0.7
     ~
 
-AdyChicken
+ink.ptms.adyeshach.common.entity.type.AdyChicken
     CHICKEN
     93
     0.7 0.4
     ~
 
-AdyCod
+ink.ptms.adyeshach.common.entity.type.AdyCod
     COD
     -1
     0.3 0.5
     ~
 
-AdyCow
+ink.ptms.adyeshach.common.entity.type.AdyCow
     COW
     92
     1.4 0.9
     ~
 
-AdyCreeper
+ink.ptms.adyeshach.common.entity.type.AdyCreeper
     CREEPER
     50
     1.7 0.6
     ~
 
-AdyDolphin
+ink.ptms.adyeshach.common.entity.type.AdyDolphin
     DOLPHIN
     -1
     0.6 0.9
     ~
 
-AdyDonkey
+ink.ptms.adyeshach.common.entity.type.AdyDonkey
     DONKEY
     31
     1.39648 1.5
     ~
 
-AdyDragonFireball
+ink.ptms.adyeshach.common.entity.type.AdyDragonFireball
     DRAGON_FIREBALL
     93
     1.0 1.0
     ~
 
-AdyDrowned
+ink.ptms.adyeshach.common.entity.type.AdyDrowned
     DROWNED
     -1
     1.95 0.6
     ~
 
-AdyElderGuardian
+ink.ptms.adyeshach.common.entity.type.AdyElderGuardian
     ELDER_GUARDIAN
     4
     1.9975 1.9975
     ~
 
-AdyEndCrystal
+ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
     END_CRYSTAL
     51
     2.0 2.0
     ENDER_CRYSTAL
 
-AdyEndDragon
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
     ENDER_DRAGON
     63
     8.0 16.0
     ~
 
-AdyEnderman
+ink.ptms.adyeshach.common.entity.type.AdyEnderman
     ENDERMAN
     58
     3.0 16.0
     ~
 
-AdyEndermite
+ink.ptms.adyeshach.common.entity.type.AdyEndermite
     ENDERMITE
     67
     0.3 0.4
     ~
 
-AdyEvoker
+ink.ptms.adyeshach.common.entity.type.AdyEvoker
     EVOKER
     -1
     1.95 0.6
     ~
 
-AdyEvokerFangs
+ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
     EVOKER_FANGS
     -1
     0.8 0.5
     ~
 
-AdyExperienceOrb
+ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
     EXPERIENCE_ORB
     -1
     0.5 0.5
     ~
 
-AdyEyeOfEnder
+ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
     EYE_OF_ENDER
     72
     0.25 0.25 FLYING
     ENDER_SIGNAL
 
-AdyFallingBlock
+ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
     FALLING_BLOCK
     70
     0.98 0.98
     ~
 
-AdyFireworkRocket
+ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
     FIREWORK_ROCKET
     76
     0.25 0.25 FLYING
     FIREWORK
 
-AdyFox
+ink.ptms.adyeshach.common.entity.type.AdyFox
     FOX
     -1
     0.7 0.6
     ~
 
-AdyGhast
+ink.ptms.adyeshach.common.entity.type.AdyGhast
     GHAST
     56
     4.0 4.0 FLYING
     ~
 
-AdyGiant
+ink.ptms.adyeshach.common.entity.type.AdyGiant
     GIANT
     53
     12.0 3.6
     ~
 
-AdyGlowItemFrame
+ink.ptms.adyeshach.common.entity.type.AdyGlowItemFrame
     GLOW_ITEM_FRAME
     -1
     0.75 0.75
     ~
 
-AdyGlowSquid
+ink.ptms.adyeshach.common.entity.type.AdyGlowSquid
     GLOW_SQUID
     -1
     0.8 0.8
     ~
 
-AdyGoat
+ink.ptms.adyeshach.common.entity.type.AdyGoat
     GOAT
     -1
     0.9 1.3
     ~
 
-AdyGuardian
+ink.ptms.adyeshach.common.entity.type.AdyGuardian
     GUARDIAN
     68
     0.85 0.85
     ~
 
-AdyHoglin
+ink.ptms.adyeshach.common.entity.type.AdyHoglin
     HOGLIN
     -1
     1.4 1.39648
     ~
 
-AdyHorse
+ink.ptms.adyeshach.common.entity.type.AdyHorse
     HORSE
     100
     1.6 1.39648
     ~
 
-AdyHusk
+ink.ptms.adyeshach.common.entity.type.AdyHusk
     HUSK
     23
     1.95 0.6
     ~
 
-AdyIllusioner
+ink.ptms.adyeshach.common.entity.type.AdyIllusioner
     ILLUSIONER
     -1
     1.95 0.6
     ~
 
-AdyIronGolem
+ink.ptms.adyeshach.common.entity.type.AdyIronGolem
     IRON_GOLEM
     99
     2.7 1.4
     ~
 
-AdyItem
+ink.ptms.adyeshach.common.entity.type.AdyItem
     ITEM
     2
     0.25 0.25
     DROPPED_ITEM
 
-AdyItemFrame
+ink.ptms.adyeshach.common.entity.type.AdyItemFrame
     ITEM_FRAME
     71
     0.75 0.75
     ~
 
-AdyFireball
+ink.ptms.adyeshach.common.entity.type.AdyFireball
     FIREBALL
     63
     1.0 1.0 FLYING
     ~
 
-AdyLeashKnot
+ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
     LEASH_KNOT
     77
     0.5 0.375
     LEASH_HITCH
 
-AdyLlama
+ink.ptms.adyeshach.common.entity.type.AdyLlama
     LLAMA
     103
     1.87 0.9
     ~
 
-AdyLlamaSpit
+ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
     LLAMA_SPIT
     68
     0.25 0.25 FLYING
     ~
 
-AdyMagmaCube
+ink.ptms.adyeshach.common.entity.type.AdyMagmaCube
     MAGMA_CUBE
     62
     0.51000005 0.51000005
     ~
 
-AdyMinecart
+ink.ptms.adyeshach.common.entity.type.AdyMinecart
     MINECART
     10
     0.7 0.98
     ~
 
-AdyMinecartChest
+ink.ptms.adyeshach.common.entity.type.AdyMinecartChest
     MINECART_CHEST
     10
     0.7 0.98
     CHEST_MINECART
 
-AdyMinecartCommandBlock
+ink.ptms.adyeshach.common.entity.type.AdyMinecartCommandBlock
     MINECART_COMMAND
     10
     0.7 0.98
     COMMAND_BLOCK_MINECART
 
-AdyMinecartFurnace
+ink.ptms.adyeshach.common.entity.type.AdyMinecartFurnace
     MINECART_FURNACE
     10
     0.7 0.98
     FURNACE_MINECART
 
-AdyMinecartHopper
+ink.ptms.adyeshach.common.entity.type.AdyMinecartHopper
     MINECART_HOPPER
     10
     0.7 0.98
     HOPPER_MINECART
 
-AdyMinecartSpawner
+ink.ptms.adyeshach.common.entity.type.AdyMinecartSpawner
     MINECART_MOB_SPAWNER
     10
     0.7 0.98
     SPAWNER_MINECART
 
-AdyMinecartTNT
+ink.ptms.adyeshach.common.entity.type.AdyMinecartTNT
     MINECART_TNT
     10
     0.7 0.98
     TNT_MINECART
 
-AdyMule
+ink.ptms.adyeshach.common.entity.type.AdyMule
     MULE
     32
     1.6 1.39648
     ~
 
-AdyMushroom
+ink.ptms.adyeshach.common.entity.type.AdyMushroom
     MUSHROOM
     96
     1.4 0.9
     MOOSHROOM | MUSHROOM_COW
 
-AdyOcelot
+ink.ptms.adyeshach.common.entity.type.AdyOcelot
     OCELOT
     98
     0.7 0.6
     ~
 
-AdyPainting
+ink.ptms.adyeshach.common.entity.type.AdyPainting
     PAINTING
     -1
     0.0625 0.0625
     ~
 
-AdyPanda
+ink.ptms.adyeshach.common.entity.type.AdyPanda
     PANDA
     -1
     1.25 1.3
     ~
 
-AdyParrot
+ink.ptms.adyeshach.common.entity.type.AdyParrot
     PARROT
     105
     0.9 0.5 FLYING
     ~
 
-AdyPhantom
+ink.ptms.adyeshach.common.entity.type.AdyPhantom
     PHANTOM
     -1
     0.5 0.9 FLYING
     ~
 
-AdyPig
+ink.ptms.adyeshach.common.entity.type.AdyPig
     PIG
     90
     0.9 0.9
     ~
 
-AdyPiglin
+ink.ptms.adyeshach.common.entity.type.AdyPiglin
     PIGLIN
     -1
     1.95 0.6
     ~
 
-AdyPiglinBrute
+ink.ptms.adyeshach.common.entity.type.AdyPiglinBrute
     PIGLIN_BRUTE
     -1
     1.95 0.6
     ~
 
-AdyPillager
+ink.ptms.adyeshach.common.entity.type.AdyPillager
     PILLAGER
     -1
     1.95 0.6
     ~
 
-AdyPolarBear
+ink.ptms.adyeshach.common.entity.type.AdyPolarBear
     POLAR_BEAR
     102
     1.4 1.4
     ~
 
-AdyPrimedTNT
+ink.ptms.adyeshach.common.entity.type.AdyPrimedTNT
     PRIMED_TNT
     50
     0.98 0.98
     TNT
 
-AdyPufferfish
+ink.ptms.adyeshach.common.entity.type.AdyPufferfish
     PUFFERFISH
     -1
     0.7 0.7
     ~
 
-AdyRabbit
+ink.ptms.adyeshach.common.entity.type.AdyRabbit
     RABBIT
     101
     0.5 0.4
     ~
 
-AdyRavager
+ink.ptms.adyeshach.common.entity.type.AdyRavager
     RAVAGER
     -1
     2.2 1.95
     ~
 
-AdySalmon
+ink.ptms.adyeshach.common.entity.type.AdySalmon
     SALMON
     -1
     0.4 0.7
     ~
 
-AdySheep
+ink.ptms.adyeshach.common.entity.type.AdySheep
     SHEEP
     91
     1.3 0.9
     ~
 
-AdyShulker
+ink.ptms.adyeshach.common.entity.type.AdyShulker
     SHULKER
     69
     2.0 1.0
     ~
 
-AdyShulkerBullet
+ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
     SHULKER_BULLET
     67
     0.3125 0.3125 FLYING
     ~
 
-AdySilverfish
+ink.ptms.adyeshach.common.entity.type.AdySilverfish
     SILVERFISH
     60
     0.3 0.4
     ~
 
-AdySkeleton
+ink.ptms.adyeshach.common.entity.type.AdySkeleton
     SKELETON
     51
     1.99 0.6
     ~
 
-AdySkeletonHorse
+ink.ptms.adyeshach.common.entity.type.AdySkeletonHorse
     SKELETON_HORSE
     28
     1.6 1.396484
     ~
 
-AdySlime
+ink.ptms.adyeshach.common.entity.type.AdySlime
     SLIME
     55
     0.51000005 0.51000005
     ~
 
-AdySmallFireball
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
     SMALL_FIREBALL
     64
     0.3125 0.3125 FLYING
     ~
 
-AdySnowGolem
+ink.ptms.adyeshach.common.entity.type.AdySnowGolem
     SNOW_GOLEM
     97
     1.9 0.7
     SNOWMAN
 
-AdySnowball
+ink.ptms.adyeshach.common.entity.type.AdySnowball
     SNOWBALL
     61
     0.25 0.25 FLYING
     ~
 
-AdySpectralArrow
+ink.ptms.adyeshach.common.entity.type.AdySpectralArrow
     SPECTRAL_ARROW
     91
     0.5 0.5 FLYING
     ~
 
-AdySpider
+ink.ptms.adyeshach.common.entity.type.AdySpider
     SPIDER
     52
     0.9 1.4
     ~
 
-AdySquid
+ink.ptms.adyeshach.common.entity.type.AdySquid
     SQUID
     94
     0.8 0.8
     ~
 
-AdyStray
+ink.ptms.adyeshach.common.entity.type.AdyStray
     STRAY
     6
     1.99 0.6
     ~
 
-AdyStrider
+ink.ptms.adyeshach.common.entity.type.AdyStrider
     STRIDER
     6
     1.7 0.9
     ~
 
-AdyThrownEgg
+ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
     THROWN_EGG
     62
     0.25 0.25 FLYING
     EGG
 
-AdyThrownEnderPearl
+ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
     THROWN_ENDER_PEARL
     65
     0.25 0.25 FLYING
     ENDER_PEARL
 
-AdyThrownExperienceBottle
+ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
     THROWN_EXPERIENCE_BOTTLE
     75
     0.25 0.25 FLYING
     THROWN_EXP_BOTTLE | EXPERIENCE_BOTTLE
 
-AdyThrownPotion
+ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
     THROWN_POTION
     73
     0.25 0.25 FLYING
     POTION | SPLASH_POTION
 
-AdyThrownTrident
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
     THROWN_TRIDENT
     73
     0.5 0.5 FLYING
     TRIDENT
 
-AdyTraderLlama
+ink.ptms.adyeshach.common.entity.type.AdyTraderLlama
     TRADER_LLAMA
     -1
     1.87 0.9
     ~
 
-AdyTropicalFish
+ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
     TROPICAL_FISH
     -1
     0.4 0.5
     ~
 
-AdyTurtle
+ink.ptms.adyeshach.common.entity.type.AdyTurtle
     TURTLE
     -1
     0.4 1.2
     ~
 
-AdyVex
+ink.ptms.adyeshach.common.entity.type.AdyVex
     VEX
     -1
     0.8 0.4 FLYING
     ~
 
-AdyVillager
+ink.ptms.adyeshach.common.entity.type.AdyVillager
     VILLAGER
     120
     1.95 0.6
     ~
 
-AdyVindicator
+ink.ptms.adyeshach.common.entity.type.AdyVindicator
     VINDICATOR
     -1
     1.95 0.6
     ~
 
-AdyWanderingTrader
+ink.ptms.adyeshach.common.entity.type.AdyWanderingTrader
     WANDERING_TRADER
     -1
     1.95 0.6
     ~
 
-AdyWitch
+ink.ptms.adyeshach.common.entity.type.AdyWitch
     WITCH
     -1
     1.95 0.6 FLYING
     ~
 
-AdyWither
+ink.ptms.adyeshach.common.entity.type.AdyWither
     WITHER
     64
     3.5 0.9
     ~
 
-AdyWitherSkeleton
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkeleton
     WITHER_SKELETON
     5
     2.4 0.7
     ~
 
-AdyWitherSkull
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
     WITHER_SKULL
     66
     0.3125 0.3125 FLYING
     ~
 
-AdyWolf
+ink.ptms.adyeshach.common.entity.type.AdyWolf
     WOLF
     95
     0.85 0.6
     ~
 
-AdyZoglin
+ink.ptms.adyeshach.common.entity.type.AdyZoglin
     ZOGLIN
     -1
     1.4 1.39648
     ~
 
-AdyZombie
+ink.ptms.adyeshach.common.entity.type.AdyZombie
     ZOMBIE
     54
     1.95 0.6
     ~
 
-AdyZombieHorse
+ink.ptms.adyeshach.common.entity.type.AdyZombieHorse
     ZOMBIE_HORSE
     29
     1.6 1.39648
     ~
 
-AdyZombieVillager
+ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
     ZOMBIE_VILLAGER
     27
     1.95 0.6
     ~
 
-AdyZombiePigman
+ink.ptms.adyeshach.common.entity.type.AdyZombiePigman
     ZOMBIE_PIGMAN
     57
     1.95 0.6
     ~
 
-AdyZombifiedPiglin
+ink.ptms.adyeshach.common.entity.type.AdyZombifiedPiglin
     ZOMBIFIED_PIGLIN
     -1
     1.95 0.6
     ~
 
-AdyHuman
+ink.ptms.adyeshach.common.entity.type.AdyHuman
     PLAYER
     0
     1.8 0.6
     ~
 
-AdyFishingHook
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
     FISHING_HOOK
     90
     0.25 0.25

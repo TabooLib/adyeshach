@@ -67,6 +67,11 @@ interface Manager {
     fun getEntities(): List<EntityInstance>
 
     /**
+     * 根据要求获取单位管理器中的单位
+     */
+    fun getEntity(match: Function<EntityInstance, Boolean>): EntityInstance?
+
+    /**
      * 获取单位管理器中的所有单位，并进行过滤
      */
     fun getEntities(filter: Function<EntityInstance, Boolean>): List<EntityInstance>

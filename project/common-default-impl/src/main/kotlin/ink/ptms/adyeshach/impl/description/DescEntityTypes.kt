@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.common.util.getEnumOrNull
 import org.bukkit.entity.EntityType
 import taboolib.common.platform.function.info
 import java.io.InputStream
-import java.nio.charset.StandardCharsets
 
 /**
  * Adyeshach
@@ -18,44 +17,31 @@ import java.nio.charset.StandardCharsets
  * @author 坏黑
  * @since 2022/6/19 18:07
  */
-class DescEntityTypes(input: InputStream) {
+class DescEntityTypes(input: InputStream) : Description(input) {
 
     val types = ArrayList<Entity>()
 
-    init {
-        try {
-            val lines = input.readBytes().toString(StandardCharsets.UTF_8).lines()
-            var i = 0
-            while (i < lines.size) {
-                // 类型声明
-                val line = lines[i++]
-                if (line.isNotEmpty() && line[0] != ' ') {
-                    val name = lines[i++].trim()
-                    val id = lines[i++].trim().toInt()
-                    val sizeArgs = lines[i++].trim().split(" ")
-                    val size = EntitySize(sizeArgs[0].toDouble(), sizeArgs[1].toDouble())
-                    val flying = sizeArgs.getOrNull(2) == "FLYING"
-                    val path = when {
-                        flying && minecraftVersion >= 11500 -> PathType.FLY
-                        size.height <= 1 -> PathType.WALK_1
-                        size.height <= 2 -> PathType.WALK_2
-                        else -> PathType.WALK_3
-                    }
-                    val alias = lines[i++].trim()
-                    val aliases = if (alias == "~") emptyList() else alias.split("|").map { it.trim() }
-                    types += Entity(line, name, id, size, path, aliases)
-                }
-            }
-            info("Load ${types.size} entity types from the \"entity_types.desc\"")
-        } catch (ex: Throwable) {
-            throw IllegalStateException("Unable to load description file: entity_types.desc", ex)
+    override val name: String = "entity_types.desc"
+
+    override fun load(part: DescriptionBlock) {
+        val namespace = part.next()
+        val name = part.next().trim()
+        val id = part.next().trim().toInt()
+        val sizeArgs = part.next().trim().split(" ")
+        val size = EntitySize(sizeArgs[0].toDouble(), sizeArgs[1].toDouble())
+        val flying = sizeArgs.getOrNull(2) == "FLYING"
+        val path = when {
+            flying && minecraftVersion >= 11500 -> PathType.FLY
+            size.height <= 1 -> PathType.WALK_1
+            size.height <= 2 -> PathType.WALK_2
+            else -> PathType.WALK_3
         }
+        val alias = part.next().trim()
+        val aliases = if (alias == "~") emptyList() else alias.split("|").map { it.trim() }
+        types += Entity(namespace, name, id, size, path, aliases)
     }
 
-    data class Entity(val namespace: String, val name: String, val id: Int, val size: EntitySize, val path: PathType, val aliases: List<String>) {
-
-        val bukkitType = EntityType::class.java.getEnumOrNull(name, *aliases.toTypedArray())
-
-        val adyeshachType = EntityTypes::class.java.getEnum(name)
+    override fun loaded() {
+        info("Load ${types.size} entity types from the \"$name\"")
     }
 }

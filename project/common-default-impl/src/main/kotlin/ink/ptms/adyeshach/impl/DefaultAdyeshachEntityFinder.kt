@@ -24,6 +24,16 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     val api: AdyeshachAPI
         get() = Adyeshach.api()
 
+    override fun getEntity(player: Player?, match: Function<EntityInstance, Boolean>): EntityInstance? {
+        api.getPublicEntityManager().getEntity(match)?.let { return it }
+        api.getPublicEntityManager(true).getEntity(match)?.let { return it }
+        if (player != null) {
+            api.getPrivateEntityManager(player).getEntity(match)?.let { return it }
+            api.getPrivateEntityManager(player, true).getEntity(match)?.let { return it }
+        }
+        return null
+    }
+
     override fun getEntities(player: Player?, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
         val entity = ArrayList<EntityInstance>()
         entity.addAll(api.getPublicEntityManager().getEntities(filter))
@@ -44,11 +54,11 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getEntityFromEntityId(id: Int, player: Player?): EntityInstance? {
-        return getEntities(null) { it.index == id }.firstOrNull()
+        return getEntity(null) { it.index == id }
     }
 
     override fun getEntityFromUniqueId(id: String, player: Player?): EntityInstance? {
-        return getEntities(null) { it.uniqueId == id }.firstOrNull()
+        return getEntity(null) { it.uniqueId == id }
     }
 
     override fun getEntityFromClientUniqueId(id: UUID, player: Player): EntityInstance? {

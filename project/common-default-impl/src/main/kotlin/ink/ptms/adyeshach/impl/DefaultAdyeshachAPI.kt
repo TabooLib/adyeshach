@@ -18,6 +18,9 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     val entityTypeHelper = DefaultAdyeshachEntityTypeHandler()
     val entityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
     val entityControllerHandler = DefaultAdyeshachEntityControllerHandler()
+    val hologramHandler = DefaultAdyeshachHologramHandler()
+    val ketherHandler = DefaultAdyeshachKetherHandler()
+    val minecraftAPI = DefaultAdyeshachMinecraftAPI()
     val networkAPI = DefaultAdyeshachNetworkAPI()
 
     override fun getPublicEntityManager(temporary: Boolean): Manager {
@@ -49,15 +52,15 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     }
 
     override fun getHologramHandler(): AdyeshachHologramHandler {
-        TODO("Not yet implemented")
+        return hologramHandler
     }
 
     override fun getKetherHandler(): AdyeshachKetherHandler {
-        TODO("Not yet implemented")
+        return ketherHandler
     }
 
     override fun getMinecraftAPI(): AdyeshachMinecraftAPI {
-        TODO("Not yet implemented")
+        return minecraftAPI
     }
 
     override fun getNetworkAPI(): AdyeshachNetworkAPI {

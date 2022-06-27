@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
+import ink.ptms.adyeshach.impl.description.Entity
 import org.bukkit.entity.EntityType
 import taboolib.common.platform.function.releaseResourceFile
 
@@ -19,8 +20,8 @@ import taboolib.common.platform.function.releaseResourceFile
  */
 class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
 
-    val types = HashMap<EntityTypes, DescEntityTypes.Entity>()
-    val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc").readBytes().inputStream())
+    val types = HashMap<EntityTypes, Entity>()
+    val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc", true).readBytes().inputStream())
 
     init {
         description.types.forEach { types[it.adyeshachType] = it }
