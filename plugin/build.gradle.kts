@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.0")
     implementation(project(":project:common"))
     implementation(project(":project:common-api"))
     implementation(project(":project:common-default-impl"))
@@ -19,6 +20,7 @@ tasks {
         exclude("META-INF/maven/**")
         exclude("META-INF/tf/**")
         exclude("module-info.java")
+        relocate("com.github.benmanes.caffeine", "ink.ptms.adyeshach.taboolib.library.caffeine")
     }
     build {
         dependsOn(shadowJar)

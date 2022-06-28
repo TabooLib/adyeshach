@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.description
 
+import ink.ptms.adyeshach.common.util.errorBy
 import java.io.InputStream
 
 /**
@@ -60,9 +61,9 @@ class DescEntityMeta(input: InputStream) : Description(input) {
             value.endsWith('b') -> PrepareMetaTypeGeneric(GenericType.BYTE_MASKED)
             // custom
             value.startsWith('!') -> {
-                PrepareMetaTypeCustom(CustomType.values().firstOrNull { it.id == value.substring(1) } ?: error("unknown custom meta type: $value"))
+                PrepareMetaTypeCustom(CustomType.values().firstOrNull { it.id == value.substring(1) } ?: errorBy("error-unknown-meta-type", value))
             }
-            else -> error("unknown meta type: $value")
+            else -> errorBy("error-unknown-meta-type", value)
         }
     }
 

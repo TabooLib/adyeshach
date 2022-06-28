@@ -71,4 +71,9 @@ interface AdyeshachAPI {
      * 获取 Adyeshach 中的网络接口
      */
     fun getNetworkAPI(): AdyeshachNetworkAPI
+
+    /**
+     * 获取 Adyeshach 中的语言文件接口
+     */
+    fun getLanguage(): AdyeshachLanguage
 }

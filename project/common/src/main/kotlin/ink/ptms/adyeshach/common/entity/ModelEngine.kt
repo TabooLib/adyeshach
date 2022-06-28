@@ -41,4 +41,9 @@ interface ModelEngine {
      * 更新 ModelEngine 模型的名称
      */
     fun updateModelEngineNameTag()
+
+    /**
+     * 受伤效果
+     */
+    fun hurt()
 }

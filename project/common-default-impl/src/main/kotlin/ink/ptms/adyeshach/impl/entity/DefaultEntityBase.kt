@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity
 
+import com.eatthepath.uuid.FastUUID
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.entity.EntityBase
@@ -61,7 +62,7 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
     override val normalizeUniqueId: UUID
         get() {
             val id = uniqueId
-            return UUID.fromString("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
+            return FastUUID.parseUUID("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
         }
 
     override fun getWorld(): World {

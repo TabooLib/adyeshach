@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.Meta
 import org.bukkit.entity.Player
 
 /**

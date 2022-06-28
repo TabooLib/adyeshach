@@ -1,7 +1,9 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.entity.ViewPlayers
+import ink.ptms.adyeshach.common.entity.EntityBase
 import ink.ptms.adyeshach.common.entity.Viewable
+import ink.ptms.adyeshach.common.util.safeDistance
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.function.Consumer
 
@@ -14,39 +16,40 @@ import java.util.function.Consumer
  */
 interface DefaultViewable : Viewable {
 
-    override fun visible(viewer: Player, visible: Boolean): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override fun addViewer(viewer: Player) {
-        TODO("Not yet implemented")
+        viewPlayers.viewers.add(viewer.name)
+        viewPlayers.visible.add(viewer.name)
+        visible(viewer, true)
     }
 
     override fun removeViewer(viewer: Player) {
-        TODO("Not yet implemented")
+        viewPlayers.viewers.remove(viewer.name)
+        viewPlayers.visible.remove(viewer.name)
+        visible(viewer, false)
     }
 
     override fun clearViewer() {
-        TODO("Not yet implemented")
+        Bukkit.getOnlinePlayers().filter { it.name in viewPlayers.viewers }.forEach { removeViewer(it) }
     }
 
     override fun hasViewer(): Boolean {
-        TODO("Not yet implemented")
+        return viewPlayers.getViewPlayers().isNotEmpty()
     }
 
     override fun isViewer(viewer: Player): Boolean {
-        TODO("Not yet implemented")
+        return viewer.name in viewPlayers.viewers
     }
 
     override fun isVisibleViewer(viewer: Player): Boolean {
-        TODO("Not yet implemented")
+        return viewer.name in viewPlayers.viewers && viewer.name in viewPlayers.visible
     }
 
     override fun isInVisibleDistance(player: Player): Boolean {
-        TODO("Not yet implemented")
+        this as EntityBase
+        return player.location.safeDistance(getLocation()) < visibleDistance
     }
 
     override fun forViewers(viewer: Consumer<Player>) {
-        TODO("Not yet implemented")
+        viewPlayers.getViewPlayers().forEach { viewer.accept(it) }
     }
 }

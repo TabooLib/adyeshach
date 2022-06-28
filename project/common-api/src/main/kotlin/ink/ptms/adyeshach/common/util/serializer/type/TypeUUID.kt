@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.util.serializer.type
 
+import com.eatthepath.uuid.FastUUID
 import com.google.gson.*
 import ink.ptms.adyeshach.common.util.serializer.SerializerType
 import java.lang.reflect.Type
@@ -17,6 +18,6 @@ class TypeUUID : JsonSerializer<UUID>, JsonDeserializer<UUID> {
     }
 
     override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): UUID {
-        return UUID.fromString(a.asString)
+        return FastUUID.parseUUID(a.asString)
     }
 }

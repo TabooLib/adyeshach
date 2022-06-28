@@ -18,4 +18,7 @@ abstract class Controller(val entity: EntityInstance? = null) {
     open fun isAsync(): Boolean {
         return false
     }
+
+    open fun onRemove() {
+    }
 }

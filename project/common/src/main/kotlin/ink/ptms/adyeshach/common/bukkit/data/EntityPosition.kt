@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.common.entity.type.errorBy
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
@@ -53,7 +54,7 @@ class EntityPosition(
 
         fun empty(): EntityPosition {
             if (Bukkit.getWorlds().isEmpty()) {
-                error("No worlds found")
+                errorBy("error-empty-worlds")
             }
             return EntityPosition(Bukkit.getWorlds()[0], 0.0, 0.0, 0.0, 0f, 0f)
         }

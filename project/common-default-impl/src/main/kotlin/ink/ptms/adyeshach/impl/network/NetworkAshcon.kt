@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.network
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import ink.ptms.adyeshach.api.AdyeshachSettings
 import ink.ptms.adyeshach.common.api.AdyeshachNetworkAPI
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -27,18 +28,22 @@ class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
 
     init {
         TabooLibCommon.postpone(LifeCycle.ENABLE) {
-            registerBukkitListener(PlayerJoinEvent::class.java) {
-                submit(async = true) {
-                    try {
-                        profiles[it.player.name] = JsonParser().parse(readFromURL("${ashconURL[0]}${it.player.name}")).asJsonObject
-                    } catch (ignore: FileNotFoundException) {
-                    } catch (ignore: NullPointerException) {
-                    } catch (ignore: IOException) {
+            // 是否启用 AshconAPI
+            if (AdyeshachSettings.ashconAPI) {
+                // 注册监听器
+                registerBukkitListener(PlayerJoinEvent::class.java) {
+                    submit(async = true) {
+                        try {
+                            profiles[it.player.name] = JsonParser().parse(readFromURL("${ashconURL[0]}${it.player.name}")).asJsonObject
+                        } catch (ignore: FileNotFoundException) {
+                        } catch (ignore: NullPointerException) {
+                        } catch (ignore: IOException) {
+                        }
                     }
                 }
-            }
-            registerBukkitListener(PlayerQuitEvent::class.java) {
-                profiles.remove(it.player.name)
+                registerBukkitListener(PlayerQuitEvent::class.java) {
+                    profiles.remove(it.player.name)
+                }
             }
         }
     }

@@ -36,12 +36,12 @@ interface Controllable {
     /**
      * 注册控制器
      */
-    fun registerController(controller: Controller)
+    fun registerController(controller: Controller): Boolean
 
     /**
      * 注销控制器
      */
-    fun <T : Controller> unregisterController(controller: Class<T>)
+    fun <T : Controller> unregisterController(controller: Class<T>): Boolean
 
     /**
      * 重置控制器

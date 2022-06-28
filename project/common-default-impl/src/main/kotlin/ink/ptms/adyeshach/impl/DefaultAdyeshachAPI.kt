@@ -22,6 +22,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     val ketherHandler = DefaultAdyeshachKetherHandler()
     val minecraftAPI = DefaultAdyeshachMinecraftAPI()
     val networkAPI = DefaultAdyeshachNetworkAPI()
+    val language = DefaultAdyeshachLanguage()
 
     override fun getPublicEntityManager(temporary: Boolean): Manager {
         TODO("Not yet implemented")
@@ -65,5 +66,9 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun getNetworkAPI(): AdyeshachNetworkAPI {
         return networkAPI
+    }
+
+    override fun getLanguage(): AdyeshachLanguage {
+        return language
     }
 }

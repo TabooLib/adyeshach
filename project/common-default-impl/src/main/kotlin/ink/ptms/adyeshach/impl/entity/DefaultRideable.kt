@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.Rideable
+import ink.ptms.adyeshach.common.util.errorBy
 import org.bukkit.entity.Player
 
 /**
@@ -37,10 +38,10 @@ interface DefaultRideable : Rideable {
     override fun addPassenger(vararg entity: EntityInstance) {
         this as DefaultEntityInstance
         if (manager == null || entity.any { it.manager == null }) {
-            error("Entity Manager must not be null")
+            errorBy("error-entity-manager-is-null")
         }
         if (entity.any { it.manager != manager }) {
-            error("Entity Manager not match")
+            errorBy("error-entity-manager-not-match")
         }
         entity.forEach {
             // 避免循环骑乘
@@ -56,10 +57,10 @@ interface DefaultRideable : Rideable {
     override fun removePassenger(vararg entity: EntityInstance) {
         this as DefaultEntityInstance
         if (manager == null || entity.any { it.manager == null }) {
-            error("Entity Manager must not be null")
+            errorBy("error-entity-manager-is-null")
         }
         if (entity.any { it.manager != manager }) {
-            error("Entity Manager not match")
+            errorBy("error-entity-manager-not-match")
         }
         entity.forEach {
             // 事件

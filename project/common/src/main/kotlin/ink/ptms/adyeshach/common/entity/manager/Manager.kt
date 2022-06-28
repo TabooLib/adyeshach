@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.common.entity.type.errorBy
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.function.Consumer
@@ -19,6 +20,11 @@ interface Manager {
      * 是否为公开单位管理器
      */
     fun isPublic(): Boolean
+
+    /**
+     * 是否为临时单位管理器（不含持久化逻辑）
+     */
+    fun isTemporary(): Boolean
 
     /**
      * 创建单位
@@ -57,6 +63,11 @@ interface Manager {
     fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance
 
     /**
+     * 添加单位
+     */
+    fun add(entity: EntityInstance)
+
+    /**
      * 从管理器中删除单位
      */
     fun delete(entityInstance: EntityInstance)
@@ -90,13 +101,18 @@ interface Manager {
      * 通过 uuid 获取单位
      */
     fun getEntityByUniqueId(id: String): EntityInstance?
+
+    /**
+     * 在 onTick 之前插入一段回调函数
+     */
+    fun prepareTick(callback: Consumer<EntityInstance>)
 }
 
 /**
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: error("Unsupported ${T::class.java.name}")
+    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location) as T
 }
 
@@ -104,7 +120,7 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location): T {
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: error("Unsupported ${T::class.java.name}")
+    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, callback) as T
 }
 
@@ -112,7 +128,7 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location, callback: 
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, player: List<Player>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: error("Unsupported ${T::class.java.name}")
+    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, player) as T
 }
 
@@ -120,6 +136,6 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location, player: Li
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, player: List<Player>, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: error("Unsupported ${T::class.java.name}")
+    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, player, callback) as T
 }

@@ -6,6 +6,9 @@ import ink.ptms.adyeshach.common.entity.EntitySize
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.common.entity.type.errorBy
+import ink.ptms.adyeshach.impl.bytecode.EntityGenerator
+import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
 import org.bukkit.entity.EntityType
@@ -22,13 +25,14 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
 
     val types = HashMap<EntityTypes, Entity>()
     val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc", true).readBytes().inputStream())
+    val entityGenerator: EntityGenerator = SimpleEntityGenerator()
 
     init {
         description.types.forEach { types[it.adyeshachType] = it }
     }
 
     override fun getBukkitEntityType(entityType: EntityTypes): EntityType {
-        return types[entityType]!!.bukkitType ?: error("${entityType.name} is not supported")
+        return types[entityType]!!.bukkitType ?: errorBy("error-entity-type-not-supported", entityType.name)
     }
 
     override fun getBukkitEntityId(entityType: EntityTypes): Int {

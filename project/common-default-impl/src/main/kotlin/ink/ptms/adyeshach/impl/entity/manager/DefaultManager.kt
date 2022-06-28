@@ -1,11 +1,17 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
+import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.TickService
 import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.common.entity.manager.ManagerService
+import ink.ptms.adyeshach.common.util.safeDistance
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 import java.util.function.Function
 
@@ -16,57 +22,103 @@ import java.util.function.Function
  * @author 坏黑
  * @since 2022/6/28 00:19
  */
-open class DefaultManager : Manager, TickService {
+open class DefaultManager : Manager, ManagerService, TickService {
+
+    val prepareTicks = ArrayList<Consumer<EntityInstance>>()
+    val activeEntity = CopyOnWriteArrayList<EntityInstance>()
+
+    open fun getPlayers(): List<Player> {
+        return Bukkit.getOnlinePlayers().toList()
+    }
 
     override fun create(entityTypes: EntityTypes, location: Location): EntityInstance {
-        TODO("Not yet implemented")
+        return create(entityTypes, location, getPlayers()) { }.also { activeEntity.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, callback: Consumer<EntityInstance>): EntityInstance {
-        TODO("Not yet implemented")
+        return create(entityTypes, location, getPlayers(), callback).also { activeEntity.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, player: List<Player>): EntityInstance {
-        TODO("Not yet implemented")
+        return create(entityTypes, location, player) { }.also { activeEntity.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
-        TODO("Not yet implemented")
+        val typeHandler = Adyeshach.api().getEntityTypeHandler()
+        typeHandler.getBukkitEntityType(entityTypes)
+        val entityInstance = typeHandler.getEntityInstance(entityTypes)
+        entityInstance.manager = this
+        entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
+        entityInstance.viewPlayers.visible.addAll(player.filter { it.location.safeDistance(location) < entityInstance.visibleDistance }.map { it.name })
+        val event = AdyeshachEntityCreateEvent(entityInstance, location)
+        if (event.call()) {
+            function.accept(entityInstance)
+            entityInstance.spawn(event.location)
+        }
+        return entityInstance
+    }
+
+    override fun add(entity: EntityInstance) {
+        activeEntity.add(entity)
     }
 
     override fun delete(entityInstance: EntityInstance) {
-        TODO("Not yet implemented")
+        activeEntity.remove(entityInstance)
     }
 
     override fun getEntities(): List<EntityInstance> {
-        TODO("Not yet implemented")
+        return activeEntity
     }
 
     override fun getEntities(filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
-        TODO("Not yet implemented")
+        return activeEntity.filter { filter.apply(it) }
     }
 
     override fun getEntity(match: Function<EntityInstance, Boolean>): EntityInstance? {
-        TODO("Not yet implemented")
+        return activeEntity.firstOrNull { match.apply(it) }
     }
 
     override fun getEntityById(id: String): List<EntityInstance> {
-        TODO("Not yet implemented")
+        return activeEntity.filter { it.id == id }
     }
 
     override fun getEntityById(id: String, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
-        TODO("Not yet implemented")
+        return activeEntity.filter { it.id == id && filter.apply(it) }
     }
 
     override fun getEntityByUniqueId(id: String): EntityInstance? {
-        TODO("Not yet implemented")
+        return activeEntity.firstOrNull { it.uniqueId == id }
     }
 
     override fun isPublic(): Boolean {
         return true
     }
 
+    override fun isTemporary(): Boolean {
+        return true
+    }
+
+    override fun onEnable() {
+    }
+
+    override fun onDisable() {
+        activeEntity.forEach { it.destroy() }
+        activeEntity.clear()
+    }
+
+    override fun onSave() {
+    }
+
     override fun onTick() {
-        getEntities().forEach { (it as? TickService)?.onTick() }
+        getEntities().forEach {
+            if (it is TickService) {
+                prepareTicks.forEach { p -> p.accept(it) }
+                it.onTick()
+            }
+        }
+    }
+
+    override fun prepareTick(callback: Consumer<EntityInstance>) {
+        prepareTicks += callback
     }
 }

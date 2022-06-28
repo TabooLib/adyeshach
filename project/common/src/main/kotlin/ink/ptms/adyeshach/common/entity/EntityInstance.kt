@@ -99,4 +99,9 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * 播放动画数据包
      */
     fun setAnimation(animation: BukkitAnimation)
+
+    /**
+     * 克隆实体
+     */
+    fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance?
 }
