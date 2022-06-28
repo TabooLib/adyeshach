@@ -6,5 +6,5 @@ package ink.ptms.adyeshach.impl.description
  */
 interface PrepareMetaType {
 
-    fun parse(args: List<String>): PrepareMeta
+    fun parse(name: String, args: List<String>): PrepareMeta
 }

@@ -285,16 +285,18 @@ ink.ptms.adyeshach.common.entity.type.AdyOcelot
         14 !
         10 13
         09 -
-    isTrusting@14+ z
+    isTrusting z
+        @14+
         17 17
         15 -
         14 -
-    type@14- i
+    type i
+        @14-
         10 15
         09 -
 
 ink.ptms.adyeshach.common.entity.type.AdyPainting
-    paintingVariant !Painting KEBAB
+    paintingVariant !Painting
         19 8
 
 ink.ptms.adyeshach.common.entity.type.AdyPanda
@@ -652,11 +654,13 @@ ink.ptms.adyeshach.common.entity.type.AdyEntityTameable
 
 ink.ptms.adyeshach.common.entity.type.AdyHorseBase
     isTamed 2b | isSaddled 4b | hasBred 8b | isEating 16b | isRearing 32b | isMouthOpen 64b
+        @13+
         17 17
         15 -
         14 -
         13 --
     isTamed 2b | isSaddled 4b | hasChest 8b | hasBred 16b | isEating 32b | isRearing 64b | isMouthOpen 128b
+        @13-
         11 13
         09 -
 

@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
 class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, mask: Byte, def: Boolean) : MetaMasked<T>(index, key, mask, def) {
 
     override fun getMetadataParser(): MinecraftMetadataParser<Any> {
-        TODO("Not yet implemented")
+        return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(Byte.MIN_VALUE)!!
     }
 
     override fun generateMetadata(player: Player, entityInstance: EntityInstance): MinecraftMeta? {

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
-import ink.ptms.adyeshach.impl.nms.*
+import taboolib.module.nms.nmsProxy
 
 /**
  * Adyeshach
@@ -12,39 +12,39 @@ import ink.ptms.adyeshach.impl.nms.*
  */
 class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
-    val helper = DefaultMinecraftHelper()
-    val entitySpawner = DefaultMinecraftEntitySpawner()
-    val entityOperator = DefaultMinecraftEntityOperator()
-    val entityMetadataHandler = DefaultMinecraftEntityMetadataHandler()
-    val entityPlayerHandler = DefaultMinecraftEntityPlayerHandler()
-    val packetHandler = DefaultMinecraftPacketHandler()
-    val worldAccess = DefaultMinecraftWorldAccess()
+    val nmsHelper = nmsProxy<MinecraftHelper>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftHelper")
+    val nmsEntitySpawner = nmsProxy<MinecraftEntitySpawner>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntitySpawner")
+    val nmsEntityOperator = nmsProxy<MinecraftEntityOperator>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityOperator")
+    val nmsEntityMetadataHandler = nmsProxy<MinecraftEntityMetadataHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityMetadataHandler")
+    val nmsEntityPlayerHandler = nmsProxy<MinecraftEntityPlayerHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityPlayerHandler")
+    val nmsPacketHandler = nmsProxy<MinecraftPacketHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftPacketHandler")
+    val nmsWorldAccess = nmsProxy<MinecraftWorldAccess>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftWorldAccess")
 
     override fun getHelper(): MinecraftHelper {
-        return helper
+        return nmsHelper
     }
 
     override fun getEntitySpawner(): MinecraftEntitySpawner {
-        return entitySpawner
+        return nmsEntitySpawner
     }
 
     override fun getEntityOperator(): MinecraftEntityOperator {
-        return entityOperator
+        return nmsEntityOperator
     }
 
     override fun getEntityMetadataHandler(): MinecraftEntityMetadataHandler {
-        return entityMetadataHandler
+        return nmsEntityMetadataHandler
     }
 
     override fun getMinecraftEntityPlayerHandler(): MinecraftEntityPlayerHandler {
-        return entityPlayerHandler
+        return nmsEntityPlayerHandler
     }
 
     override fun getPacketHandler(): MinecraftPacketHandler {
-        return packetHandler
+        return nmsPacketHandler
     }
 
     override fun getWorldAccess(): MinecraftWorldAccess {
-        return worldAccess
+        return nmsWorldAccess
     }
 }

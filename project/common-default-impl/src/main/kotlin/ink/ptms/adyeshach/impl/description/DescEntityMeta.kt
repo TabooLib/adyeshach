@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.description
 
 import ink.ptms.adyeshach.common.util.errorBy
+import taboolib.common.platform.function.info
 import java.io.InputStream
 
 /**
@@ -19,12 +20,16 @@ class DescEntityMeta(input: InputStream) : Description(input) {
         val currentMeta = ArrayList<PrepareMeta>()
 
         fun apply() {
-
+            info(namespace)
+            info("  apply meta $currentMeta")
         }
 
         while (part.hasNext()) {
             val line = part.next()
             when {
+                line.startsWith(" ".repeat(8)) -> {
+
+                }
                 line.startsWith(" ".repeat(4)) -> {
                     if (currentMeta.isNotEmpty()) {
                         apply()
@@ -32,17 +37,16 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                     }
                     currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
                 }
-                line.startsWith(" ".repeat(8)) -> {
-
-                }
             }
         }
+
+        apply()
     }
 
     private fun parseMeta(input: String): PrepareMeta {
         val args = input.split(" ")
         val metaType = parseMetaType(args[1])
-        return metaType.parse(args.subList(1, args.size))
+        return metaType.parse(args[0], args.subList(1, args.size))
     }
 
     private fun parseMetaType(value: String): PrepareMetaType {
@@ -66,5 +70,4 @@ class DescEntityMeta(input: InputStream) : Description(input) {
             else -> errorBy("error-unknown-meta-type", value)
         }
     }
-
 }

@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
 class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T) : MetaNatural<T, E>(index, key, def) {
 
     override fun getMetadataParser(): MinecraftMetadataParser<Any> {
-        TODO("Not yet implemented")
+        return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(def)!!
     }
 
     @Suppress("UNCHECKED_CAST")

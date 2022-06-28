@@ -12,8 +12,6 @@ enum class CustomType(val id: String) {
 
     VECTOR("Vector"),
 
-    COLOR("Color"),
-
     ITEM_STACK("ItemStack"),
 
     MATERIAL("Material"),

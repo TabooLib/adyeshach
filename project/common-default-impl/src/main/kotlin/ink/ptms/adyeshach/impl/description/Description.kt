@@ -35,6 +35,9 @@ abstract class Description(val input: InputStream) {
                     part += line
                 }
             }
+            if (part.isNotEmpty()) {
+                load(DescriptionBlock(part))
+            }
             loaded()
         } catch (ex: Throwable) {
             throw IllegalStateException("Unable to load description file: $name", ex)

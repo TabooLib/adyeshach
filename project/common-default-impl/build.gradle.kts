@@ -5,7 +5,7 @@ plugins {
 }
 
 taboolib {
-    install("common", "common-5", "module-chat", "module-lang", "module-configuration", "platform-bukkit")
+    install("common", "common-5", "module-chat", "module-lang", "module-configuration", "module-nms", "module-nms-util", "platform-bukkit")
     options("skip-plugin-file", "skip-minimize", "keep-kotlin-module")
     classifier = null
     version = taboolib_version

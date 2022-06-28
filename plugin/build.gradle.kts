@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":project:common-default-impl"))
     implementation(project(":project:module-bukkit"))
     implementation(project(":project:module-editor"))
+    implementation(project(":project:module-language"))
     implementation(project(":project:module-legacy-api"))
 }
 

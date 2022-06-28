@@ -6,6 +6,8 @@ import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
 import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
+import ink.ptms.adyeshach.impl.nms.parser.*
+import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.entity.Cat
 import org.bukkit.entity.Frog
@@ -13,6 +15,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * Adyeshach
@@ -23,16 +26,46 @@ import org.bukkit.util.Vector
  */
 class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
-    override fun addParser(type: Class<*>, metadataParser: MinecraftMetadataParser<*>) {
-        TODO("Not yet implemented")
+    val registeredParser = LinkedHashMap<Class<*>, MinecraftMetadataParser<*>>()
+
+    init {
+        addParser(Int::class.java, IntParser())
+        addParser(Byte::class.java, ByteParser())
+        addParser(Float::class.java, FloatParser())
+        addParser(String::class.java, StringParser())
+        addParser(Boolean::class.java, BooleanParser())
+        addParser(Vector::class.java, VectorParser())
+        addParser(ItemStack::class.java, ItemStackParser())
+        addParser(EulerAngle::class.java, EulerAngleParser())
+        addParser(MaterialData::class.java, BlockStateParser())
+        addParser(VillagerData::class.java, VillagerDataParser())
+        addParser(TextComponent::class.java, TextComponentParser())
+        addParser(BukkitParticles::class.java, BukkitParticleParser())
+        addParser(BukkitPose::class.java, BukkitPoseParser())
+        // 1.19+
+        if (MinecraftVersion.majorLegacy >= 11900) {
+            addParser(Cat.Type::class.java, CatVariantParser())
+            addParser(Frog.Variant::class.java, FrogVariantParser())
+            addParser(Art::class.java, PaintingVariantParser())
+        }
     }
 
+    override fun addParser(type: Class<*>, metadataParser: MinecraftMetadataParser<*>) {
+        registeredParser[type] = metadataParser
+    }
+
+    @Suppress("UNCHECKED_CAST")
     override fun <T> getParser(data: T): MinecraftMetadataParser<T>? {
-        TODO("Not yet implemented")
+        registeredParser.entries.forEach { (k, v) ->
+            if (k.isAssignableFrom((data as Any).javaClass)) {
+                return v as MinecraftMetadataParser<T>
+            }
+        }
+        return null
     }
 
     override fun getParsers(): List<MinecraftMetadataParser<*>> {
-        TODO("Not yet implemented")
+        return registeredParser.values.toList()
     }
 
     override fun createByteMeta(index: Int, value: Byte): MinecraftMeta {

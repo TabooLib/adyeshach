@@ -12,6 +12,8 @@ import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
 import org.bukkit.entity.EntityType
+import taboolib.common.LifeCycle
+import taboolib.common.TabooLibCommon
 import taboolib.common.platform.function.releaseResourceFile
 
 /**
@@ -28,7 +30,10 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
     val entityGenerator: EntityGenerator = SimpleEntityGenerator()
 
     init {
-        description.types.forEach { types[it.adyeshachType] = it }
+        TabooLibCommon.postpone(LifeCycle.ENABLE) {
+            description.init()
+            description.types.forEach { types[it.adyeshachType] = it }
+        }
     }
 
     override fun getBukkitEntityType(entityType: EntityTypes): EntityType {

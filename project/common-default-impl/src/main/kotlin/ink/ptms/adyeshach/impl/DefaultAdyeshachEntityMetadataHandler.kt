@@ -6,6 +6,8 @@ import ink.ptms.adyeshach.common.entity.Meta
 import ink.ptms.adyeshach.impl.description.DescEntityMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
 import ink.ptms.adyeshach.impl.entity.DefaultMetaNatural
+import taboolib.common.LifeCycle
+import taboolib.common.TabooLibCommon
 import taboolib.common.platform.function.releaseResourceFile
 import java.util.concurrent.ConcurrentHashMap
 
@@ -19,6 +21,10 @@ import java.util.concurrent.ConcurrentHashMap
 class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
 
     val description = DescEntityMeta(releaseResourceFile("description/entity_meta.desc", true).readBytes().inputStream())
+
+    init {
+        TabooLibCommon.postpone(LifeCycle.ENABLE) { description.init() }
+    }
 
     override fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean) {
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaMasked<EntityInstance>(index, key, mask, def)
