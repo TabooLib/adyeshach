@@ -21,6 +21,8 @@ tasks {
         exclude("META-INF/tf/**")
         exclude("module-info.java")
         relocate("com.github.benmanes.caffeine", "ink.ptms.adyeshach.taboolib.library.caffeine")
+        relocate("org.checkerframework", "ink.ptms.adyeshach.taboolib.library.checkerframework")
+        relocate("com.google.errorprone", "ink.ptms.adyeshach.taboolib.library.errorprone")
     }
     build {
         dependsOn(shadowJar)
