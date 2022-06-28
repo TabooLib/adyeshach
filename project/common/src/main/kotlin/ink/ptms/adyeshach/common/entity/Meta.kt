@@ -16,7 +16,7 @@ abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val def
     /**
      * 获取元数据鉴别器
      */
-    abstract fun getMetadataParser(): MinecraftMetadataParser<T>
+    abstract fun getMetadataParser(): MinecraftMetadataParser<Any>
 
     /**
      * 生成实体元数据

@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.impl.description.DescEntityMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
 import ink.ptms.adyeshach.impl.entity.DefaultMetaNatural
 import taboolib.common.platform.function.releaseResourceFile
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -30,5 +31,6 @@ class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
     companion object {
 
         val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
+        val metaTypeLookup = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
     }
 }

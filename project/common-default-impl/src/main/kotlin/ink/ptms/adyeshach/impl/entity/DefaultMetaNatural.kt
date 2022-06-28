@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.api.MinecraftMeta
 import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
 import ink.ptms.adyeshach.common.entity.EntityInstance
@@ -15,15 +17,26 @@ import org.bukkit.entity.Player
  */
 class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T) : MetaNatural<T, E>(index, key, def) {
 
-    override fun getMetadataParser(): MinecraftMetadataParser<E> {
+    override fun getMetadataParser(): MinecraftMetadataParser<Any> {
         TODO("Not yet implemented")
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun generateMetadata(player: Player, entityInstance: EntityInstance): MinecraftMeta? {
-        TODO("Not yet implemented")
+        if (index == -1) {
+            return null
+        }
+        entityInstance as DefaultEntityInstance
+        var obj = entityInstance.metadata[key] ?: return null
+        obj = getMetadataParser().parse(obj)
+        val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this as MetaNatural<Any, out EntityInstance>, obj)
+        return if (event.call()) getMetadataParser().createMeta(index, event.value) else null
     }
 
     override fun updateEntityMetadata(entityInstance: EntityInstance) {
-        TODO("Not yet implemented")
+        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+        entityInstance.forViewers {
+            operator.updateEntityMetadata(it, entityInstance.index, generateMetadata(it, entityInstance) ?: return@forViewers)
+        }
     }
 }

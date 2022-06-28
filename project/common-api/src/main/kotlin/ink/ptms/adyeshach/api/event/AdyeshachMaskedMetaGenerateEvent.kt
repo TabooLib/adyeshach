@@ -14,8 +14,4 @@ class AdyeshachMaskedMetaGenerateEvent(
     val player: Player,
     val meta: MetaMasked<*>,
     val byteMask: MutableMap<MetaMasked<*>, Boolean>,
-) : BukkitProxyEvent() {
-
-    override val allowCancelled: Boolean
-        get() = false
-}
+) : BukkitProxyEvent()

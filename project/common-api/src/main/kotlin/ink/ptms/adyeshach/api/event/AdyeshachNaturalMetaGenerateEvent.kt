@@ -12,10 +12,6 @@ import taboolib.platform.type.BukkitProxyEvent
 class AdyeshachNaturalMetaGenerateEvent(
     val entity: EntityInstance,
     val player: Player,
-    val meta: MetaNatural<*, EntityInstance>,
+    val meta: MetaNatural<Any, out EntityInstance>,
     var value: Any,
-) : BukkitProxyEvent() {
-
-    override val allowCancelled: Boolean
-        get() = false
-}
+) : BukkitProxyEvent()
