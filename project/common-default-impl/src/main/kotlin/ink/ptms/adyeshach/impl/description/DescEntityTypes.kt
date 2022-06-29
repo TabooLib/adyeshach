@@ -1,12 +1,8 @@
 package ink.ptms.adyeshach.impl.description
 
 import ink.ptms.adyeshach.common.entity.EntitySize
-import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.type.minecraftVersion
-import ink.ptms.adyeshach.common.util.getEnum
-import ink.ptms.adyeshach.common.util.getEnumOrNull
-import org.bukkit.entity.EntityType
 import taboolib.common.platform.function.info
 import java.io.InputStream
 
@@ -36,9 +32,27 @@ class DescEntityTypes(input: InputStream) : Description(input) {
             size.height <= 2 -> PathType.WALK_2
             else -> PathType.WALK_3
         }
+        // 别名
         val alias = part.next().trim()
-        val aliases = if (alias == "~") emptyList() else alias.split("|").map { it.trim() }
-        types += Entity(namespace, name, id, size, path, aliases)
+        val aliases = if (alias == "~") {
+            emptyList()
+        } else {
+            alias.split("|").map { it.trim() }
+        }
+        // 实例类名称
+        var instance = part.next().trim()
+        var instanceWithInterface = false
+        if (instance.endsWith('@')) {
+            instance = instance.substring(0, instance.length - 1)
+            instanceWithInterface = true
+        }
+        // 标签
+        val flags = if (part.hasNext()){
+            part.next().trim().split(" ")
+        } else {
+            emptyList()
+        }
+        types += Entity(namespace, name, id, size, path, aliases, instance, instanceWithInterface, flags)
     }
 
     override fun loaded() {

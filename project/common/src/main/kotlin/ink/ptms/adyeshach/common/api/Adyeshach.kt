@@ -10,6 +10,7 @@ package ink.ptms.adyeshach.common.api
 object Adyeshach {
 
     private var api: AdyeshachAPI? = null
+    private var editor: AdyeshachEditor? = null
 
     /**
      * 获取开发者接口
@@ -19,9 +20,23 @@ object Adyeshach {
     }
 
     /**
+     * 获取编辑器接口
+     */
+    fun editor(): AdyeshachEditor? {
+        return editor
+    }
+
+    /**
      * 注册开发者接口
      */
     fun register(api: AdyeshachAPI) {
         Adyeshach.api = api
+    }
+
+    /**
+     * 注册编辑器接口
+     */
+    fun register(editor: AdyeshachEditor) {
+        Adyeshach.editor = editor
     }
 }

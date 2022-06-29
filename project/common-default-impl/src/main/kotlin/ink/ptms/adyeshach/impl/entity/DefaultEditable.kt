@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.Editable
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.Meta
 import ink.ptms.adyeshach.common.entity.Metaable
-import ink.ptms.adyeshach.module.AdyeshachEditor
 import org.bukkit.entity.Player
 
 /**
@@ -18,7 +18,7 @@ interface DefaultEditable : Editable {
 
     override fun openEditor(player: Player) {
         this as EntityInstance
-        AdyeshachEditor.openEditor(player, this)
+        Adyeshach.editor()?.openEditor(player, this)
     }
 
     override fun getEditableEntityMeta(): List<Meta<*>> {

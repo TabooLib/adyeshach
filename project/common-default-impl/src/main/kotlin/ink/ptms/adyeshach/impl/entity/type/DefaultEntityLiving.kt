@@ -10,6 +10,7 @@ import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,10 +57,31 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
     }
 
     override fun die(die: Boolean) {
-        TODO("Not yet implemented")
+        isDie = die
+        if (isDie) {
+            setHealth(-1f)
+            submit(delay = 15) {
+                if (isDie) {
+                    setHealth(1f)
+                }
+            }
+        } else {
+            respawn()
+        }
     }
 
+    @Deprecated("不安全的实现，请使用 die(Boolean)")
     override fun die(viewer: Player, die: Boolean) {
-        TODO("Not yet implemented")
+        if (die) {
+            val healthMeta = getAvailableEntityMeta().firstOrNull { it.key == "health" }!!
+            val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+            val metadataHandler = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
+            operator.updateEntityMetadata(viewer, index, metadataHandler.createFloatMeta(healthMeta.index, NumberConversions.toFloat(-1)))
+            submit(delay = 15) {
+                operator.updateEntityMetadata(viewer, index, metadataHandler.createFloatMeta(healthMeta.index, NumberConversions.toFloat(1)))
+            }
+        } else {
+            visible(viewer, true)
+        }
     }
 }

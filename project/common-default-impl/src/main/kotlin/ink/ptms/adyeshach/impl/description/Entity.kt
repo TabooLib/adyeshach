@@ -11,11 +11,23 @@ import org.bukkit.entity.EntityType
  * @author 坏黑
  * @since 2022/6/19 18:07
  */
-data class Entity(val namespace: String, val name: String, val id: Int, val size: EntitySize, val path: PathType, val aliases: List<String>) {
+data class Entity(
+    val namespace: String,
+    val name: String,
+    val id: Int,
+    val size: EntitySize,
+    val path: PathType,
+    val aliases: List<String>,
+    val instance: String,
+    val instanceWithInterface: Boolean,
+    val flags: List<String>
+) {
 
     val bukkitType = EntityType::class.java.getEnumOrNull(name, *aliases.toTypedArray())
 
     val adyeshachType = EntityTypes::class.java.getEnum(name)
 
     val adyeshachInterface: Class<*> = Class.forName(namespace)
+
+    val instanceClass: Class<*> = Class.forName(instance)
 }

@@ -25,6 +25,7 @@ interface AdyGuardian : AdyMob {
     /**
      * 低版本方法
      */
+    @Deprecated("1.11 以上不支持")
     fun setElderly(value: Boolean) {
         assert(minecraftVersion >= 11100, "setElderly", "ELDER_GUARDIAN")
         setMetadata("isElderly", value)
@@ -33,6 +34,7 @@ interface AdyGuardian : AdyMob {
     /**
      * 低版本方法
      */
+    @Deprecated("1.11 以上不支持")
     fun isElderly(): Boolean {
         assert(minecraftVersion >= 11100, "isElderly", "ELDER_GUARDIAN")
         return getMetadata("isElderly")

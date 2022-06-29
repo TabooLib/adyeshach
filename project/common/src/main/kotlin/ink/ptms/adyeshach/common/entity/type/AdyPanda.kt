@@ -23,21 +23,25 @@ interface AdyPanda : AdyEntityAgeable {
         setMetadata("isEating", value)
     }
 
+    @Deprecated("1.16 以下不支持")
     fun isSitting(): Boolean {
         assert(minecraftVersion < 11600, "isSitting")
         return getMetadata("isSitting")
     }
 
+    @Deprecated("1.16 以下不支持")
     fun setSitting(value: Boolean) {
         assert(minecraftVersion < 11600, "setSitting")
         setMetadata("isSitting", value)
     }
 
+    @Deprecated("1.16 以下不支持")
     fun isOnBack(): Boolean {
         assert(minecraftVersion < 11600, "isOnBack")
         return getMetadata("isOnBack")
     }
 
+    @Deprecated("1.16 以下不支持")
     fun setIsOnBack(value: Boolean) {
         assert(minecraftVersion < 11600, "setIsOnBack")
         setMetadata("isOnBack", value)

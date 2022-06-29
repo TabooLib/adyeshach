@@ -34,7 +34,7 @@ interface AdyeshachMinecraftAPI {
     /**
      * 获取用于控制虚拟玩家相关数据包的接口
      */
-    fun getMinecraftEntityPlayerHandler(): MinecraftEntityPlayerHandler
+    fun getEntityPlayerHandler(): MinecraftEntityPlayerHandler
 
     /**
      * 获取用于控制数据包的接口

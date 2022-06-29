@@ -50,4 +50,14 @@ interface AdyeshachEntityTypeHandler {
      * 通过与 AdyEntity 类似的接口类获取对应实体类型
      */
     fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes?
+
+    /**
+     * 注册代理类生成前的回调函数
+     */
+    fun prepareGenerate(callback: GenerateCallback)
+
+    interface GenerateCallback {
+
+        operator fun invoke(entityType: EntityTypes, interfaces: List<String>): List<String>
+    }
 }

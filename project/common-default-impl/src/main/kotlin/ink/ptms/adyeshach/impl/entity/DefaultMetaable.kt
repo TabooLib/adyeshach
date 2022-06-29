@@ -53,6 +53,7 @@ interface DefaultMetaable : Metaable {
             } else {
                 metadata[key] = event.value
             }
+            meta.updateEntityMetadata(this)
             return true
         }
         return false

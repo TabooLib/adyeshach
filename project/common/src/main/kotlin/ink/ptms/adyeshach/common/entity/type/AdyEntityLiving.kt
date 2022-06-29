@@ -57,6 +57,7 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
     /**
      * 对给定玩家切换数据包实体的死亡状态
      */
+    @Deprecated("不安全的实现，请使用 die(Boolean)")
     fun die(viewer: Player, die: Boolean = true)
 
     /**

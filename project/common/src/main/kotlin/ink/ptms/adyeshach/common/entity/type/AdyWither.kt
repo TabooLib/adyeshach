@@ -28,9 +28,18 @@ interface AdyWither : AdyMob {
         setMetadata("invulnerableTime", value)
     }
 
+    /**
+     * 获取第一个脑袋的攻击目标
+     */
     fun getFirstHeadTarget(): Entity?
 
+    /**
+     * 获取第二个脑袋的攻击目标
+     */
     fun getSecondHeadTarget(): Entity?
 
+    /**
+     * 获取第三个脑袋的攻击目标
+     */
     fun getThirdHeadTarget(): Entity?
 }

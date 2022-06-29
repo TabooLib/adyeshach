@@ -36,7 +36,7 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
         return nmsEntityMetadataHandler
     }
 
-    override fun getMinecraftEntityPlayerHandler(): MinecraftEntityPlayerHandler {
+    override fun getEntityPlayerHandler(): MinecraftEntityPlayerHandler {
         return nmsEntityPlayerHandler
     }
 

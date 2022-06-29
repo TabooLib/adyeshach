@@ -20,6 +20,10 @@ class DescriptionBlock(val source: List<String>) {
         return source[readLine++]
     }
 
+    fun peek(): String? {
+        return source.getOrNull(readLine + 1)
+    }
+
     operator fun get(index: Int): String {
         return source[index]
     }

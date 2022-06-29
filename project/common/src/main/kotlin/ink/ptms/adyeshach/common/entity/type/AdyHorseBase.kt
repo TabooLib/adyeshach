@@ -57,6 +57,7 @@ interface AdyHorseBase : AdyEntityAgeable {
     /**
      * 低版本方法
      */
+    @Deprecated("1.13 以上不支持")
     fun setHasChest(value: Boolean) {
         assert(minecraftVersion >= 11300, "setHasChest", "DONKEY")
         setMetadata("hasChest", value)
@@ -65,6 +66,7 @@ interface AdyHorseBase : AdyEntityAgeable {
     /**
      * 低版本方法
      */
+    @Deprecated("1.13 以上不支持")
     fun isHasChest(): Boolean {
         assert(minecraftVersion >= 11300, "isHasChest", "DONKEY")
         return getMetadata("hasChest")

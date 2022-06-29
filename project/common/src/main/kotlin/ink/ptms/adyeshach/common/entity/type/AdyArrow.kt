@@ -7,7 +7,6 @@ import org.bukkit.Color
  * @author sky
  * @since 2020-08-04 19:30
  */
-@Suppress("SpellCheckingInspection")
 interface AdyArrow : AdyEntity, EntityThrowable {
 
     fun setCritical(value: Boolean) {
