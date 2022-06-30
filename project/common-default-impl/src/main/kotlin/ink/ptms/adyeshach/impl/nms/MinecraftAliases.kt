@@ -52,6 +52,8 @@ typealias NMSEntityPose = net.minecraft.world.entity.EntityPose
 
 typealias NMSEntityTypes<T> = net.minecraft.world.entity.EntityTypes<T>
 
+typealias NMSVec3D = net.minecraft.world.phys.Vec3D
+
 typealias NMSVector3f = net.minecraft.core.Vector3f
 
 typealias NMSVillagerType = net.minecraft.world.entity.npc.VillagerType
@@ -75,6 +77,8 @@ typealias NMSParticleParam = net.minecraft.core.particles.ParticleParam
 typealias NMSCatVariant = net.minecraft.world.entity.animal.CatVariant
 
 typealias NMSFrogVariant = net.minecraft.world.entity.animal.FrogVariant
+
+typealias NMSMathHelper = net.minecraft.util.MathHelper
 
 typealias CraftArt19 = org.bukkit.craftbukkit.v1_19_R1.CraftArt
 
@@ -168,6 +172,8 @@ typealias NMS16ParticleParam = net.minecraft.server.v1_16_R3.ParticleParam
 
 typealias NMS16VillagerData = net.minecraft.server.v1_16_R3.VillagerData
 
+typealias NMS16MathHelper = net.minecraft.server.v1_16_R3.MathHelper
+
 typealias CraftWorld16 = org.bukkit.craftbukkit.v1_16_R3.CraftWorld
 
 typealias CraftEntity16 = org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity
@@ -200,6 +206,14 @@ typealias NMS13RegistryBlocks<T> = net.minecraft.server.v1_13_R2.RegistryBlocks<
 
 typealias NMS13EntityTypes<T> = net.minecraft.server.v1_13_R2.EntityTypes<T>
 
+typealias NMS13DataWatcherObject<T> = net.minecraft.server.v1_13_R2.DataWatcherObject<T>
+
+typealias NMS13DataWatcher = net.minecraft.server.v1_13_R2.DataWatcher
+
+typealias NMS13DataWatcherItem<T> = net.minecraft.server.v1_13_R2.DataWatcher.Item<T>
+
+typealias NMS13DataWatcherRegistry = net.minecraft.server.v1_13_R2.DataWatcherRegistry
+
 typealias NMS13IRegistry<T> = net.minecraft.server.v1_13_R2.IRegistry<T>
 
 typealias NMS13Particle<T> = net.minecraft.server.v1_13_R2.Particle<T>
@@ -209,6 +223,10 @@ typealias NMS13Particles = net.minecraft.server.v1_13_R2.Particles
 typealias NMS13MinecraftKey = net.minecraft.server.v1_13_R2.MinecraftKey
 
 typealias NMS13ParticleParam = net.minecraft.server.v1_13_R2.ParticleParam
+
+typealias NMS13Vector3f = net.minecraft.server.v1_13_R2.Vector3f
+
+typealias NMS13BlockPosition = net.minecraft.server.v1_13_R2.BlockPosition
 
 typealias CraftItemStack13 = org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack
 
@@ -241,6 +259,12 @@ typealias NMS11DataWatcherItem<T> = net.minecraft.server.v1_11_R1.DataWatcher.It
 typealias NMS11DataWatcherObject<T> = net.minecraft.server.v1_11_R1.DataWatcherObject<T>
 
 typealias NMS11DataWatcherRegistry = net.minecraft.server.v1_11_R1.DataWatcherRegistry
+
+typealias NMS11EnumGameMode = net.minecraft.server.v1_11_R1.EnumGamemode
+
+typealias NMS11PacketPlayOutPlayerInfo = net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo
+
+typealias NMS11PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 
 // 1.9
 

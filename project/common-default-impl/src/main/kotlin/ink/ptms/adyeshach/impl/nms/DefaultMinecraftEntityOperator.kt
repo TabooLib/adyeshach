@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.impl.nms
 
+import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.api.MinecraftEntityOperator
 import ink.ptms.adyeshach.common.api.MinecraftMeta
 import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
-import net.minecraft.server.v1_16_R1.PacketPlayOutEntityTeleport
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -65,43 +65,191 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {
-        TODO("Not yet implemented")
+    override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double, onGround: Boolean) {
+        if (majorLegacy >= 11400) {
+            packetHandler.sendPacket(
+                player,
+                NMSPacketPlayOutRelEntityMove(
+                    entityId,
+                    (x * 4096).toInt().toShort(),
+                    (y * 4096).toInt().toShort(),
+                    (z * 4096).toInt().toShort(),
+                    onGround
+                )
+            )
+        } else {
+            packetHandler.sendPacket(player, NMS13PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), onGround))
+        }
     }
 
     override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
-        TODO("Not yet implemented")
+        if (majorLegacy >= 11400) {
+            packetHandler.sendPacket(
+                player,
+                NMSPacketPlayOutEntityVelocity(entityId, NMSVec3D(vector.x, vector.y, vector.z))
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                NMS13PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z)
+            )
+        }
     }
 
     override fun updateHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
-        TODO("Not yet implemented")
+        if (isUniversal) {
+            val yRot = NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte()
+            val xRot = NMSMathHelper.floor(pitch * 256.0f / 360.0f).toByte()
+            packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, yRot, xRot, true))
+            packetHandler.sendPacket(
+                player,
+                NMSPacketPlayOutEntityHeadRotation::class.java.unsafeInstance(),
+                "entityId" to entityId,
+                "yHeadRot" to yRot
+            )
+        } else {
+            val yRot = NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+            val xRot = NMS16MathHelper.d(pitch * 256.0f / 360.0f).toByte()
+            packetHandler.sendPacket(player, NMS16PacketPlayOutEntityLook(entityId, yRot, xRot, true))
+            packetHandler.sendPacket(
+                player,
+                NMS16PacketPlayOutEntityHeadRotation(),
+                "a" to entityId,
+                "b" to yRot
+            )
+        }
     }
 
     override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
-        TODO("Not yet implemented")
+        updateEquipment(player, entityId, mapOf(slot to itemStack))
     }
 
     override fun updateEquipment(player: Player, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>) {
-        TODO("Not yet implemented")
+        when {
+            majorLegacy >= 11700 -> {
+                packetHandler.sendPacket(
+                    player,
+                    NMSPacketPlayOutEntityEquipment(entityId, equipment.map { Pair(it.key.toNMSEnumItemSlot(), CraftItemStack19.asNMSCopy(it.value)) })
+                )
+            }
+
+            else -> {
+                equipment.forEach { (k, v) ->
+                    packetHandler.sendPacket(
+                        player,
+                        NMS13PacketPlayOutEntityEquipment(entityId, k.toNMS13EnumItemSlot(), CraftItemStack13.asNMSCopy(v))
+                    )
+                }
+            }
+        }
     }
 
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
-        TODO("Not yet implemented")
+        val packet = NMSPacketPlayOutMount::class.java.unsafeInstance()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "vehicle" to entityId,
+                "passengers" to passengers
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to passengers
+            )
+        }
     }
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg metadata: MinecraftMeta) {
-        TODO("Not yet implemented")
+        val packet = NMSPacketPlayOutEntityMetadata::class.java.unsafeInstance()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "packedItems" to metadata.map { it.source() }.toList()
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to metadata.map { it.source() }.toList()
+            )
+        }
     }
 
     override fun updateEntityAnimation(player: Player, entityId: Int, animation: BukkitAnimation) {
-        TODO("Not yet implemented")
+        val packet = NMSPacketPlayOutAnimation::class.java.unsafeInstance()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "action" to animation.id
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to animation.id
+            )
+        }
     }
 
     override fun updateEntityAttach(player: Player, attached: Int, holding: Int) {
-        TODO("Not yet implemented")
+        val packet = NMSPacketPlayOutAttachEntity::class.java.unsafeInstance()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "sourceId" to attached,
+                "destId" to holding
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to attached,
+                "b" to holding
+            )
+        }
     }
 
     override fun updatePlayerSleeping(player: Player, entityId: Int, location: Location) {
-        TODO("Not yet implemented")
+        packetHandler.sendPacket(
+            player,
+            NMS13PacketPlayOutBed(),
+            "a" to entityId,
+            "b" to NMS13BlockPosition(location.blockX, location.blockY, location.blockZ)
+        )
+    }
+
+    fun EquipmentSlot.toNMSEnumItemSlot(): NMSEnumItemSlot {
+        return when (this) {
+            EquipmentSlot.HAND -> NMSEnumItemSlot.MAINHAND
+            EquipmentSlot.OFF_HAND -> NMSEnumItemSlot.OFFHAND
+            EquipmentSlot.FEET -> NMSEnumItemSlot.FEET
+            EquipmentSlot.LEGS -> NMSEnumItemSlot.LEGS
+            EquipmentSlot.CHEST -> NMSEnumItemSlot.CHEST
+            EquipmentSlot.HEAD -> NMSEnumItemSlot.HEAD
+            else -> error("Unknown EquipmentSlot: $this")
+        }
+    }
+
+    fun EquipmentSlot.toNMS13EnumItemSlot(): NMS13EnumItemSlot {
+        return when (this) {
+            EquipmentSlot.HAND -> NMS13EnumItemSlot.MAINHAND
+            EquipmentSlot.OFF_HAND -> NMS13EnumItemSlot.OFFHAND
+            EquipmentSlot.FEET -> NMS13EnumItemSlot.FEET
+            EquipmentSlot.LEGS -> NMS13EnumItemSlot.LEGS
+            EquipmentSlot.CHEST -> NMS13EnumItemSlot.CHEST
+            EquipmentSlot.HEAD -> NMS13EnumItemSlot.HEAD
+            else -> error("Unknown EquipmentSlot: $this")
+        }
     }
 }

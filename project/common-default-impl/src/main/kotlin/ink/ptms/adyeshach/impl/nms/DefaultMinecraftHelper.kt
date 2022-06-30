@@ -64,7 +64,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
             majorLegacy >= 11400 -> {
                 NMS16Particles::class.java.getProperty<Any>(particles.name, fixed = true) ?: NMS16Particles.FLAME
             }
-            majorLegacy == 11300 -> {
+            majorLegacy >= 11300 -> {
                 val particle = nms13ParticleRegistryBlocks.invokeMethod("get", NMS13MinecraftKey(particles.name.lowercase())) ?: NMS13Particles.y
                 if (particle is NMS13Particle<*>) {
                     particle.f()

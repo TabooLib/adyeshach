@@ -191,10 +191,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                     )
                 }
 
-                majorLegacy >= 11400 -> {
-                    NMS16DataWatcherItem(
-                        NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.h),
-                        Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers16.getBlock(blockData))
+                majorLegacy >= 11300 -> {
+                    NMS13DataWatcherItem(
+                        NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.h),
+                        Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers13.getBlock(blockData))
                     )
                 }
 
@@ -220,11 +220,9 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 majorLegacy >= 11900 -> {
                     NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.BOOLEAN), value)
                 }
-
-                majorLegacy >= 11400 -> {
-                    NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.i), value)
+                majorLegacy >= 11300 -> {
+                    NMS13DataWatcherItem(NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.i), value)
                 }
-
                 else -> {
                     NMS11DataWatcherItem(NMS11DataWatcherObject(index, NMS11DataWatcherRegistry.h), value)
                 }
@@ -256,10 +254,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                     )
                 }
 
-                majorLegacy >= 11400 -> {
-                    NMS16DataWatcherItem(
-                        NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.m),
-                        Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMS16BlockPosition(vector.x, vector.y, vector.z))
+                majorLegacy >= 11300 -> {
+                    NMS13DataWatcherItem(
+                        NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.m),
+                        Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMS13BlockPosition(vector.x, vector.y, vector.z))
                     )
                 }
 
@@ -285,10 +283,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                     )
                 }
 
-                majorLegacy >= 11400 -> {
-                    NMS16DataWatcherItem(
-                        NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.k),
-                        NMS16Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
+                majorLegacy >= 11300 -> {
+                    NMS13DataWatcherItem(
+                        NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.k),
+                        NMS13Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
                     )
                 }
 

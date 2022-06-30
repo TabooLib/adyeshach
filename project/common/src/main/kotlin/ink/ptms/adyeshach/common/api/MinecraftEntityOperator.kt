@@ -41,8 +41,9 @@ interface MinecraftEntityOperator {
      * @param x x 轴移动量
      * @param y y 轴移动量
      * @param z z 轴移动量
+     * @param onGround 是否在地面
      */
-    fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double)
+    fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double, onGround: Boolean)
 
     /**
      * 更新数据包实体的移动量，在 Adyeshach 中仅在 Item 类型的实体生成中被使用，用于防止实体飞溅

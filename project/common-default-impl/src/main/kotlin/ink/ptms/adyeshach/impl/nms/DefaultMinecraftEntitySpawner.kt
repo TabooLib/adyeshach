@@ -115,7 +115,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 "b" to uuid,
                 "c" to when {
                     majorLegacy >= 11400 -> nms16EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), fixed = true)
-                    majorLegacy == 11300 -> nms13EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), fixed = true)
+                    majorLegacy >= 11300 -> nms13EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), fixed = true)
                     else -> typeHandler.getBukkitEntityId(entityType)
                 },
                 "d" to location.x,
