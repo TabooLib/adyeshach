@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.api.MinecraftMeta
 import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
 import ink.ptms.adyeshach.common.util.getEnumOrNull
-import org.bukkit.entity.Villager
 
 /**
  * Adyeshach
@@ -18,8 +17,8 @@ class VillagerDataParser : MinecraftMetadataParser<VillagerData>() {
     override fun parse(value: Any): VillagerData {
         return if (value is Map<*, *>) {
             VillagerData(
-                Villager.Type::class.java.getEnumOrNull(value["type"]!!) ?: Villager.Type.PLAINS,
-                Villager.Profession::class.java.getEnumOrNull(value["profession"]!!) ?: Villager.Profession.NONE,
+                VillagerData.Type::class.java.getEnumOrNull(value["type"]!!) ?: VillagerData.Type.PLAINS,
+                VillagerData.Profession::class.java.getEnumOrNull(value["profession"]!!) ?: VillagerData.Profession.NONE,
             )
         } else {
             value as VillagerData

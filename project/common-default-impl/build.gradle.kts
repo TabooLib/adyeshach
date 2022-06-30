@@ -19,5 +19,5 @@ dependencies {
     compileOnly(project(":project:module-editor"))
     compileOnly("io.netty:netty-all:4.1.77.Final")
     compileOnly("com.eatthepath:fast-uuid:0.2.0")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.1.0")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:2.8.5")
 }

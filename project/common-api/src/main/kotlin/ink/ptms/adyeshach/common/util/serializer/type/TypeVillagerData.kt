@@ -25,8 +25,8 @@ class TypeVillagerData : JsonSerializer<VillagerData>, JsonDeserializer<Villager
 
     override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): VillagerData {
         return VillagerData(
-            Villager.Type::class.java.getEnum(a.asJsonObject.get("type").asString),
-            Villager.Profession::class.java.getEnum(a.asJsonObject.get("profession").asString)
+            VillagerData.Type::class.java.getEnum(a.asJsonObject.get("type").asString),
+            VillagerData.Profession::class.java.getEnum(a.asJsonObject.get("profession").asString)
         )
     }
 }

@@ -13,7 +13,7 @@ import taboolib.common5.Coerce
  * @author 坏黑
  * @since 2022/6/28 19:06
  */
-class VectorParser : MinecraftMetadataParser<Vector>() {
+class BlockPosParser : MinecraftMetadataParser<Vector>() {
 
     override fun parse(value: Any): Vector {
         return if (value is Map<*, *>) {
@@ -28,6 +28,6 @@ class VectorParser : MinecraftMetadataParser<Vector>() {
     }
 
     override fun createMeta(index: Int, value: Vector): MinecraftMeta {
-        return metadataHandler().createRotationsMeta(index, value)
+        return metadataHandler().createBlockPosMeta(index, value)
     }
 }

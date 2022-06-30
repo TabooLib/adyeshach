@@ -56,14 +56,7 @@ interface MinecraftEntityMetadataHandler {
     fun createStringMeta(index: Int, value: String): MinecraftMeta
 
     /**
-     * 生成 IChatBaseComponent 类型的元数据，对应 COMPONENT 字段。
-     */
-    fun createComponentMeta(index: Int, text: String): MinecraftMeta
-    
-    /**
      * 生成 Optional<IChatBaseComponent\> 类型的元数据，对应 OPTIONAL_COMPONENT 字段。
-     * 
-     * 1.13+
      */
     fun createOptionalComponentMeta(index: Int, text: String?): MinecraftMeta
 
@@ -90,14 +83,14 @@ interface MinecraftEntityMetadataHandler {
     fun createParticleMeta(index: Int, particle: BukkitParticles): MinecraftMeta
 
     /**
-     * 生成 Vector3f 类型的元数据，对应 ROTATIONS 字段
+     * 生成 Vector3f 类型的元数据，对应 OPTIONAL_BLOCK_POS 字段
      */
-    fun createRotationsMeta(index: Int, vector: Vector?): MinecraftMeta
+    fun createBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta
 
     /**
-     * 生成 Vector3f 类型的元数据，封装自 [createRotationsMeta] 方法
+     * 生成 Vector3f 类型的元数据，对应 ROTATIONS 字段
      */
-    fun createEulerAngleMetaMeta(index: Int, value: EulerAngle): MinecraftMeta
+    fun createEulerAngleMeta(index: Int, value: EulerAngle): MinecraftMeta
 
     /**
      * 生成 VillagerData 类型的元数据，对应 VILLAGER_DATA 字段

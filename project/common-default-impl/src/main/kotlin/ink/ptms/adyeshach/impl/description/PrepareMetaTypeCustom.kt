@@ -43,7 +43,7 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             )
             CustomType.PAINTING -> PrepareMetaNatural(name, BukkitPaintings.KEBAB)
             CustomType.SHEEP_COLOR -> PrepareMetaNatural(name, 0)
-            CustomType.VILLAGER_DATA -> PrepareMetaNatural(name, VillagerData(Villager.Type.PLAINS, Villager.Profession.NONE))
+            CustomType.VILLAGER_DATA -> PrepareMetaNatural(name, VillagerData(VillagerData.Type.PLAINS, VillagerData.Profession.NONE))
             CustomType.TEXT_COMPONENT -> PrepareMetaNatural(name, TextComponent(""))
             CustomType.BUKKIT_POSE -> PrepareMetaNatural(name, BukkitPose.STANDING)
         }

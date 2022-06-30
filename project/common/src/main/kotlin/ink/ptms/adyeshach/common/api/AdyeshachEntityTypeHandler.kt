@@ -18,6 +18,7 @@ interface AdyeshachEntityTypeHandler {
 
     /**
      * 获取 Bukkit 对应的实体类型
+     * 无法获取时会产生 [error-entity-type-not-supported] 异常
      */
     fun getBukkitEntityType(entityType: EntityTypes): EntityType
 

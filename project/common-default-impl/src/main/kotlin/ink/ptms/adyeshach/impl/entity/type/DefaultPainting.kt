@@ -27,7 +27,7 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
     private var direction = BukkitDirection.NORTH
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
-        if (MinecraftVersion.majorLegacy < 11900) {
+        if (MinecraftVersion.majorLegacy >= 11900) {
             return super.visible(viewer, visible)
         }
         // 低版本使用独立的 Painting 包生成实体

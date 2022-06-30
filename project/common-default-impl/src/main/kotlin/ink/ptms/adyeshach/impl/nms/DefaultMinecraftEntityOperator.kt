@@ -1,13 +1,18 @@
 package ink.ptms.adyeshach.impl.nms
 
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.api.MinecraftEntityOperator
 import ink.ptms.adyeshach.common.api.MinecraftMeta
+import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
+import net.minecraft.server.v1_16_R1.PacketPlayOutEntityTeleport
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * Adyeshach
@@ -18,12 +23,46 @@ import org.bukkit.util.Vector
  */
 class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
+    val isUniversal = MinecraftVersion.isUniversal
+
+    val majorLegacy = MinecraftVersion.majorLegacy
+
+    val packetHandler: MinecraftPacketHandler
+        get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()
+
     override fun destroyEntity(player: Player, entityId: Int) {
-        TODO("Not yet implemented")
+        packetHandler.sendPacket(player, NMSPacketPlayOutEntityDestroy(entityId))
     }
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location) {
-        TODO("Not yet implemented")
+        val packet = NMSPacketPlayOutEntityTeleport::class.java.unsafeInstance()
+        val yRot = (location.yaw * 256 / 360).toInt().toByte()
+        val xRot = (location.pitch * 256 / 360).toInt().toByte()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "yRot" to yRot,
+                "xRot" to xRot,
+                "onGround" to false
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to yRot,
+                "f" to xRot,
+                "g" to false // onGround
+            )
+        }
     }
 
     override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {

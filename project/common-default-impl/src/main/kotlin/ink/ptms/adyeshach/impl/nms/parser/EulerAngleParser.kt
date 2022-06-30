@@ -18,6 +18,6 @@ class EulerAngleParser : MinecraftMetadataParser<EulerAngle>() {
     }
 
     override fun createMeta(index: Int, value: EulerAngle): MinecraftMeta {
-        return metadataHandler().createEulerAngleMetaMeta(index, value)
+        return metadataHandler().createEulerAngleMeta(index, value)
     }
 }

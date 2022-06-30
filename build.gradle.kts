@@ -18,8 +18,9 @@ subprojects {
         compileOnly("ink.ptms:nms-all:1.0.0")
         compileOnly("com.google.code.gson:gson:2.8.5")
         compileOnly("com.google.guava:guava:21.0")
+        compileOnly("ink.ptms.core:v11604:11604")
         compileOnly("ink.ptms.core:v11900:11900:mapped")
-        compileOnly("ink.ptms.core:v11900:11900-minimize:universal")
+        compileOnly("ink.ptms.core:v11900:11900:universal")
     }
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
@@ -27,7 +28,7 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-Xjvm-default=all")
+            freeCompilerArgs = listOf("-Xjvm-default=all", "-Xextended-compiler-checks")
         }
     }
     configure<JavaPluginConvention> {

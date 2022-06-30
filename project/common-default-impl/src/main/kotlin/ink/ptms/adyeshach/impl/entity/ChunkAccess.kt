@@ -19,6 +19,6 @@ class ChunkAccess(val world: World) {
         .build<Long, Boolean> { world.isChunkLoaded(ChunkPos.getX(it), ChunkPos.getZ(it)) }
 
     fun isChunkLoaded(x: Int, z: Int): Boolean {
-        return map.get(ChunkPos.asLong(x, z))
+        return map.get(ChunkPos.asLong(x, z))!!
     }
 }

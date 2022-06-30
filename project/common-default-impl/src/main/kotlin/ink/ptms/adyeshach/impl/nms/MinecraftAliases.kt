@@ -1,10 +1,10 @@
-package ink.ptms.adyeshach.impl
+package ink.ptms.adyeshach.impl.nms
 
 import com.google.common.base.Optional
 
 // Universal
 
-typealias NMSPacketOutSpawnEntity = net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity
+typealias NMSPacketPlayOutSpawnEntity = net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity
 
 typealias NMSPacketPlayOutSpawnEntityPlayer = net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn
 
@@ -38,15 +38,19 @@ typealias NMSPacketPlayOutAttachEntity = net.minecraft.network.protocol.game.Pac
 
 typealias NMSBlock = net.minecraft.world.level.block.Block
 
+typealias NMSBlocks = net.minecraft.world.level.block.Blocks
+
 typealias NMSEnumDirection = net.minecraft.core.EnumDirection
 
 typealias NMSEnumGameMode = net.minecraft.world.level.EnumGamemode
 
 typealias NMSEnumItemSlot = net.minecraft.world.entity.EnumItemSlot
 
-typealias NMSBlockPosition = net.minecraft.core.Position
+typealias NMSBlockPosition = net.minecraft.core.BlockPosition
 
 typealias NMSEntityPose = net.minecraft.world.entity.EntityPose
+
+typealias NMSEntityTypes<T> = net.minecraft.world.entity.EntityTypes<T>
 
 typealias NMSVector3f = net.minecraft.core.Vector3f
 
@@ -66,6 +70,16 @@ typealias NMSDataWatcherRegistry = net.minecraft.network.syncher.DataWatcherRegi
 
 typealias NMSIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent
 
+typealias NMSParticleParam = net.minecraft.core.particles.ParticleParam
+
+typealias NMSCatVariant = net.minecraft.world.entity.animal.CatVariant
+
+typealias NMSFrogVariant = net.minecraft.world.entity.animal.FrogVariant
+
+typealias CraftArt19 = org.bukkit.craftbukkit.v1_19_R1.CraftArt
+
+typealias CraftEntity19 = org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
+
 typealias CraftItemStack19 = org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
 
 typealias CraftMagicNumbers19 = org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers
@@ -74,7 +88,7 @@ typealias CraftTropicalFishPattern19 = org.bukkit.craftbukkit.v1_19_R1.entity.Cr
 
 // 1.16
 
-typealias NMS16PacketOutSpawnEntity = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity
+typealias NMS16PacketPlayOutSpawnEntity = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity
 
 typealias NMS16PacketPlayOutSpawnEntityPlayer = net.minecraft.server.v1_16_R3.PacketPlayOutNamedEntitySpawn
 
@@ -110,9 +124,13 @@ typealias NMS16PacketPlayOutAttachEntity = net.minecraft.server.v1_16_R3.PacketP
 
 typealias NMS16EntityTypes<T> = net.minecraft.server.v1_16_R3.EntityTypes<T>
 
+typealias NMS16RegistryBlocks<T> = net.minecraft.server.v1_16_R3.RegistryBlocks<T>
+
 typealias NMS16IRegistry<T> = net.minecraft.server.v1_16_R3.IRegistry<T>
 
 typealias NMS16Block = net.minecraft.server.v1_16_R3.Block
+
+typealias NMS16Blocks = net.minecraft.server.v1_16_R3.Blocks
 
 typealias NMS16EnumDirection = net.minecraft.server.v1_16_R3.EnumDirection
 
@@ -144,6 +162,16 @@ typealias NMS16DataWatcherRegistry = net.minecraft.server.v1_16_R3.DataWatcherRe
 
 typealias NMS16IChatBaseComponent = net.minecraft.server.v1_16_R3.IChatBaseComponent
 
+typealias NMS16Vec3D = net.minecraft.server.v1_16_R3.Vec3D
+
+typealias NMS16ParticleParam = net.minecraft.server.v1_16_R3.ParticleParam
+
+typealias NMS16VillagerData = net.minecraft.server.v1_16_R3.VillagerData
+
+typealias CraftWorld16 = org.bukkit.craftbukkit.v1_16_R3.CraftWorld
+
+typealias CraftEntity16 = org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity
+
 typealias CraftItemStack16 = org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack
 
 typealias CraftMagicNumbers16 = org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers
@@ -168,9 +196,19 @@ typealias NMS13PacketPlayOutEntityMetadata = net.minecraft.server.v1_13_R2.Packe
 
 typealias NMS13EnumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot
 
+typealias NMS13RegistryBlocks<T> = net.minecraft.server.v1_13_R2.RegistryBlocks<T>
+
 typealias NMS13EntityTypes<T> = net.minecraft.server.v1_13_R2.EntityTypes<T>
 
 typealias NMS13IRegistry<T> = net.minecraft.server.v1_13_R2.IRegistry<T>
+
+typealias NMS13Particle<T> = net.minecraft.server.v1_13_R2.Particle<T>
+
+typealias NMS13Particles = net.minecraft.server.v1_13_R2.Particles
+
+typealias NMS13MinecraftKey = net.minecraft.server.v1_13_R2.MinecraftKey
+
+typealias NMS13ParticleParam = net.minecraft.server.v1_13_R2.ParticleParam
 
 typealias CraftItemStack13 = org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemStack
 
@@ -180,15 +218,25 @@ typealias CraftMagicNumbers13 = org.bukkit.craftbukkit.v1_13_R2.util.CraftMagicN
 
 typealias NMS12DataWatcher = net.minecraft.server.v1_12_R1.DataWatcher
 
+typealias NMS12DataWatcherItem<T> = net.minecraft.server.v1_12_R1.DataWatcher.Item<T>
+
 typealias NMS12DataWatcherObject<T> = net.minecraft.server.v1_12_R1.DataWatcherObject<T>
 
 typealias NMS12DataWatcherRegistry = net.minecraft.server.v1_12_R1.DataWatcherRegistry
+
+typealias NMS12BlockPosition = net.minecraft.server.v1_12_R1.BlockPosition
+
+typealias NMS12Vector3f = net.minecraft.server.v1_12_R1.Vector3f
+
+typealias CraftItemStack12 = org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack
 
 typealias CraftMagicNumbers12 = org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers
 
 // 1.11
 
 typealias NMS11DataWatcher = net.minecraft.server.v1_11_R1.DataWatcher
+
+typealias NMS11DataWatcherItem<T> = net.minecraft.server.v1_11_R1.DataWatcher.Item<T>
 
 typealias NMS11DataWatcherObject<T> = net.minecraft.server.v1_11_R1.DataWatcherObject<T>
 
@@ -205,6 +253,14 @@ typealias NMS9PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server
 typealias NMS9EnumDirection = net.minecraft.server.v1_9_R2.EnumDirection
 
 typealias NMS9EnumGameMode = net.minecraft.server.v1_9_R2.WorldSettings.EnumGamemode
+
+typealias NMS9DataWatcher = net.minecraft.server.v1_9_R2.DataWatcher
+
+typealias NMS9DataWatcherItem<T> = net.minecraft.server.v1_9_R2.DataWatcher.Item<T>
+
+typealias NMS9DataWatcherObject<T> = net.minecraft.server.v1_9_R2.DataWatcherObject<T>
+
+typealias NMS9DataWatcherRegistry = net.minecraft.server.v1_9_R2.DataWatcherRegistry
 
 typealias CraftItemStack9 = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack
 

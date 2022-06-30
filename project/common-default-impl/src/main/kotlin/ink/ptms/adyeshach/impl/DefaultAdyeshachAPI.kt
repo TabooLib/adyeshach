@@ -2,7 +2,14 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
 import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
+import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerQuitEvent
+import taboolib.common.LifeCycle
+import taboolib.common.TabooLibCommon
+import taboolib.common.platform.function.registerBukkitListener
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -24,12 +31,29 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     val networkAPI = DefaultAdyeshachNetworkAPI()
     val language = DefaultAdyeshachLanguage()
 
+    val publicEntityManager = DefaultManager()
+
+    init {
+        TabooLibCommon.postpone(LifeCycle.ENABLE) {
+            // 释放资源
+            registerBukkitListener(PlayerQuitEvent::class.java) {
+                playerEntityManagerMap.remove(it.player.name)
+            }
+        }
+    }
+
     override fun getPublicEntityManager(temporary: Boolean): Manager {
-        TODO("Not yet implemented")
+        return publicEntityManager
     }
 
     override fun getPrivateEntityManager(player: Player, temporary: Boolean): Manager {
-        TODO("Not yet implemented")
+        return if (playerEntityManagerMap.containsKey(player.name)) {
+            playerEntityManagerMap[player.name]!!
+        } else {
+            val manager = DefaultPlayerManager(player)
+            playerEntityManagerMap[player.name] = manager
+            manager
+        }
     }
 
     override fun getEntityFinder(): AdyeshachEntityFinder {
@@ -70,5 +94,10 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun getLanguage(): AdyeshachLanguage {
         return language
+    }
+
+    companion object {
+
+        val playerEntityManagerMap = ConcurrentHashMap<String, Manager>()
     }
 }

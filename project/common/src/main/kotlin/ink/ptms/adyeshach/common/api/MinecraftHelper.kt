@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
@@ -28,7 +27,7 @@ interface MinecraftHelper {
     /**
      * 将 Location 转换为 NMS 中的 BlockPosition 类型
      */
-    fun adapt(type: Location): Any
+    fun adapt(location: Location): Any
 
     /**
      * 将 [BukkitPaintings] 转换为 NMS 中的 Paintings 类型
