@@ -184,7 +184,9 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
 
     fun updateEquipment() {
         forViewers {
-            EquipmentSlot.values().forEach { e -> NMS.INSTANCE.updateEquipment(it, index, e, getEquipment(e) ?: return@forEach) }
+            EquipmentSlot.values().forEach { e ->
+                NMS.INSTANCE.updateEquipment(it, index, e, getEquipment(e) ?: return@forEach)
+            }
         }
     }
 

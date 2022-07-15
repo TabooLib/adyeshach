@@ -9,10 +9,10 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.editor.minecraftVersion
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove
+import net.minecraft.server.v1_8_R3.WorldSettings
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -37,7 +37,6 @@ import taboolib.common.reflect.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.*
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
-import kotlin.RuntimeException
 
 /**
  * @author Arasple
@@ -83,7 +82,7 @@ class NMSImpl : NMS() {
             )
         } else {
             //protocol 47兼容
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntity(),
                     "a" to entityId,
@@ -135,7 +134,7 @@ class NMSImpl : NMS() {
                 "yHeadRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte()
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntityLiving(),
                     "a" to entityId,
@@ -189,18 +188,18 @@ class NMSImpl : NMS() {
                 "xRot" to (location.pitch * 256 / 360).toInt().toByte()
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
-                    PacketPlayOutNamedEntitySpawn(),
+                    net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn(),
                     "a" to entityId,
                     "b" to uuid,
-                    "c" to location.x,
-                    "d" to location.y,
-                    "e" to location.z,
+                    "c" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.x * 32.0),
+                    "d" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.y * 32.0),
+                    "e" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.z * 32.0),
                     "f" to (location.yaw * 256 / 360).toInt().toByte(),
                     "g" to (location.pitch * 256 / 360).toInt().toByte(),
                     "h" to 0, //held item
-                    "j" to DataWatcher(null)
+                    "i" to DataWatcher(null)
                 )
             } else {
                 player.sendPacketI(
@@ -251,7 +250,7 @@ class NMSImpl : NMS() {
                 "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntity(),
                     "a" to entityId,
@@ -325,7 +324,7 @@ class NMSImpl : NMS() {
                 "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntityPainting(),
                     "a" to entityId,
@@ -377,7 +376,11 @@ class NMSImpl : NMS() {
         } else {
             val info = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo()
             infoData.setProperty("b", ping)
-            infoData.setProperty("c", EnumGamemode.values()[0])
+            if (majorLegacy == 10806) {
+                infoData.setProperty("c", WorldSettings.EnumGamemode.values()[0])
+            } else {
+                infoData.setProperty("c", EnumGamemode.values()[0])
+            }
             infoData.setProperty("d", profile)
             infoData.setProperty("e", craftChatMessageFromString(name))
             player.sendPacketI(
@@ -431,9 +434,9 @@ class NMSImpl : NMS() {
             player.sendPacketI(
                 PacketPlayOutEntityTeleport(),
                 "a" to entityId,
-                "b" to location.x,
-                "c" to location.y,
-                "d" to location.z,
+                "b" to if (majorLegacy == 108006) MathHelper.floor(location.x * 32.0) else location.x,
+                "c" to if (majorLegacy == 108006) MathHelper.floor(location.y * 32.0) else location.y,
+                "d" to if (majorLegacy == 108006) MathHelper.floor(location.z * 32.0) else location.z,
                 "e" to (location.yaw * 256 / 360).toInt().toByte(),
                 "f" to (location.pitch * 256 / 360).toInt().toByte(),
                 "g" to false // onGround
@@ -453,7 +456,7 @@ class NMSImpl : NMS() {
                 )
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(PacketPlayOutRelEntityMove(entityId, (x * 32).toInt().toByte(), (y * 32).toInt().toByte(), (z * 32).toInt().toByte(), true))
             } else {
                 player.sendPacketI(net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
@@ -575,14 +578,7 @@ class NMSImpl : NMS() {
                 "passengers" to passengers
             )
         } else {
-            if (majorLegacy == 10800) {
-                player.sendPacketI(
-                    PacketPlayOutAttachEntity(),
-                    "a" to 1, //If true leashes the entity to the vehicle
-                    "b" to entityId,
-                    "c" to passengers
-                )
-            } else {
+            if (majorLegacy != 10806) {
                 player.sendPacketI(
                     PacketPlayOutMount(),
                     "a" to entityId,
@@ -609,7 +605,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
-        return if (majorLegacy == 10800) {
+        return if (majorLegacy == 10806) {
             net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(2, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.b), value)
@@ -617,7 +613,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityFloat(index: Int, value: Float): Any {
-        return if (majorLegacy == 10800) {
+        return if (majorLegacy == 10806) {
             net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(3, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.c), value)
@@ -625,7 +621,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityString(index: Int, value: String): Any {
-        return if (majorLegacy == 10800) {
+        return if (majorLegacy == 10806) {
             net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(4, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.d), value)
@@ -636,7 +632,7 @@ class NMSImpl : NMS() {
         return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, if (value) 1 else 0)
             } else {
                 net.minecraft.server.v1_11_R1.DataWatcher.Item(
@@ -650,7 +646,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
-        return if (majorLegacy == 10800) {
+        return if (majorLegacy == 10806) {
             net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(2, index, 0)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam)
@@ -658,7 +654,7 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
-        return if (majorLegacy == 10800) {
+        return if (majorLegacy == 10806) {
             net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.a), value)
@@ -669,7 +665,7 @@ class NMSImpl : NMS() {
         return if (MinecraftVersion.major >= 5) {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(7, index, Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
             } else {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
@@ -689,7 +685,7 @@ class NMSImpl : NMS() {
                 Optional.ofNullable(if (value == null || value is VectorNull) null else BlockPosition(value.x, value.y, value.z))
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 if (value == null) {
                     throw RuntimeException("currently not supported")
                 } else {
@@ -717,7 +713,7 @@ class NMSImpl : NMS() {
                 Optional.ofNullable(if (value == null) null else CraftMagicNumbers.getBlock(value))
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 throw RuntimeException("not supported version")
             }
 
@@ -744,7 +740,7 @@ class NMSImpl : NMS() {
                 Optional.ofNullable(if (name == null) null else (craftChatMessageFromString(name) as IChatBaseComponent))
             )
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 throw RuntimeException("not supported version")
             }
 
@@ -772,7 +768,7 @@ class NMSImpl : NMS() {
                 )
             }
             else -> {
-                if (majorLegacy == 10800) {
+                if (majorLegacy == 10806) {
                     throw RuntimeException("not supported version")
                 }
 
@@ -941,7 +937,7 @@ class NMSImpl : NMS() {
         if (isUniversal) {
             player.sendPacketI(PacketPlayOutAttachEntity::class.java.unsafeInstance(), "sourceId" to attached, "destId" to holding)
         } else {
-            if (majorLegacy == 10800) {
+            if (majorLegacy == 10806) {
                 player.sendPacketI(
                     PacketPlayOutAttachEntity(),
                     "a" to 1, //If true leashes the entity to the vehicle
