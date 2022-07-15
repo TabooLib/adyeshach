@@ -13,6 +13,8 @@ import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove
 import net.minecraft.server.v1_8_R3.WorldSettings
+import net.minecraft.server.v1_9_R2.BlockStateList
+import net.minecraft.server.v1_9_R2.IBlockData
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -883,7 +885,11 @@ class NMSImpl : NMS() {
     }
 
     override fun parseVec3d(obj: Any): Vector {
-        return Vector((obj as Vec3D).x, obj.y, obj.z)
+        return if (MinecraftVersion.major == 0) {
+            Vector((obj as net.minecraft.server.v1_8_R3.Vec3D).a, obj.b, obj.c)
+        } else {
+            Vector((obj as Vec3D).x, obj.y, obj.z)
+        }
     }
 
     override fun getBlockHeight(block: org.bukkit.block.Block): Double {
@@ -919,11 +925,16 @@ class NMSImpl : NMS() {
                     if (block.isEmpty) {
                         0.0
                     } else {
-                        val p = net.minecraft.server.v1_9_R2.BlockPosition(block.x, block.y, block.z)
-                        val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
                         if (block.type.isSolid) {
-                            val a = b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)
-                            a?.e ?: 0.0
+                            if (MinecraftVersion.major == 0) {
+                                val p = net.minecraft.server.v1_8_R3.BlockPosition(block.x, block.y, block.z)
+                                val b = (block.world as org.bukkit.craftbukkit.v1_8_R3.CraftWorld).handle.getType(p)
+                                b.block.a((block.world as org.bukkit.craftbukkit.v1_8_R3.CraftWorld).handle,p,b.block.blockData)?.e ?: 0.0
+                            } else {
+                                val p = net.minecraft.server.v1_9_R2.BlockPosition(block.x, block.y, block.z)
+                                val b = (block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle.getType(p)
+                                b.c((block.world as org.bukkit.craftbukkit.v1_9_R2.CraftWorld).handle, p)?.e ?: 0.0
+                            }
                         } else {
                             0.0
                         }
