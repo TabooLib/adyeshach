@@ -91,7 +91,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
             // 若未生成 ModelEngine 模型则发送原版数据包
             // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
-            if (this is ModelEngine && !showModelEngine(viewer)) {
+            if (this !is ModelEngine || !showModelEngine(viewer)) {
                 spawn.run()
             }
             // 更新单位属性

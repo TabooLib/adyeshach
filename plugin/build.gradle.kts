@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation("com.eatthepath:fast-uuid:0.2.0")
     implementation("com.github.ben-manes.caffeine:caffeine:2.8.5")
     implementation(project(":project:common"))
     implementation(project(":project:common-api"))
@@ -25,6 +26,7 @@ tasks {
         relocate("com.github.benmanes.caffeine", "ink.ptms.adyeshach.taboolib.library.caffeine")
         relocate("org.checkerframework", "ink.ptms.adyeshach.taboolib.library.checkerframework")
         relocate("com.google.errorprone", "ink.ptms.adyeshach.taboolib.library.errorprone")
+        relocate("com.eatthepath.uuid", "ink.ptms.adyeshach.taboolib.library.uuid")
     }
     build {
         dependsOn(shadowJar)

@@ -13,6 +13,21 @@ import org.bukkit.entity.Player
 interface AdyeshachAPI {
 
     /**
+     * 初始化玩家管理器
+     */
+    fun setupEntityManager(player: Player)
+
+    /**
+     * 释放玩家管理器
+     */
+    fun releaseEntityManager(player: Player)
+
+    /**
+     * 刷新玩家管理器（重新显示所有单位）
+     */
+    fun refreshEntityManager(player: Player)
+
+    /**
      * 获取公共单位管理器
      *
      * @param temporary 是否为临时容器

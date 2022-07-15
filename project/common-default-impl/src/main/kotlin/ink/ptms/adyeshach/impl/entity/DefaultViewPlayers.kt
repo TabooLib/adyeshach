@@ -36,4 +36,8 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
     override fun getOutsidePlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name !in visible }
     }
+
+    override fun toString(): String {
+        return "DefaultViewPlayers(viewers=$viewers, visible=$visible)"
+    }
 }

@@ -9,9 +9,8 @@ taboolib {
     options("skip-minimize", "keep-kotlin-module")
     classifier = null
     version = taboolib_version
-    relocate("com.eatthepath.uuid", "ink.ptms.adyeshach.taboolib.library.uuid")
 }
 
 dependencies {
-    taboo("com.eatthepath:fast-uuid:0.2.0")
+    compileOnly("com.eatthepath:fast-uuid:0.2.0")
 }

@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import taboolib.common.util.Vector
 
 /**
@@ -33,7 +32,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var isDeleted: Boolean
 
     /**
-     * 是否公开取决于 manager 是否为 ManagerPublic 即由谁管理，而非其他参数
+     * 取决于是否被公开的单位管理器管理
      */
     fun isPublic(): Boolean
 

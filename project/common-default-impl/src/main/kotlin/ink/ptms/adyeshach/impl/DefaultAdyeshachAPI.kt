@@ -2,6 +2,8 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
 import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.common.entity.manager.ManagerService
+import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
@@ -32,6 +34,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     val language = DefaultAdyeshachLanguage()
 
     val publicEntityManager = DefaultManager()
+    val publicEntityManagerTemp = DefaultManager()
 
     init {
         TabooLibCommon.postpone(LifeCycle.ENABLE) {
@@ -42,8 +45,41 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         }
     }
 
+    override fun setupEntityManager(player: Player) {
+        if (player.isOnline) {
+            // 公共管理器
+            getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
+                it.viewPlayers.viewers += player.name
+            }
+            getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
+                it.viewPlayers.viewers += player.name
+            }
+            // 私有管理器
+            (getPrivateEntityManager(player) as ManagerService).onEnable()
+        }
+    }
+
+    override fun releaseEntityManager(player: Player) {
+        // 公共管理器
+        getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
+            it.removeViewer(player)
+        }
+        getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
+            it.removeViewer(player)
+        }
+        // 私有管理器
+        (getPrivateEntityManager(player) as ManagerService).onSave()
+    }
+
+    override fun refreshEntityManager(player: Player) {
+        // 对范围内可视且在观察者列表的实体进行刷新
+        entityFinder.getEntities(player) { it.isViewer(player) && it.getLocation().safeDistance(player.location) < it.visibleDistance }.forEach {
+            it.visible(player, true)
+        }
+    }
+
     override fun getPublicEntityManager(temporary: Boolean): Manager {
-        return publicEntityManager
+        return if (temporary) publicEntityManagerTemp else publicEntityManager
     }
 
     override fun getPrivateEntityManager(player: Player, temporary: Boolean): Manager {
