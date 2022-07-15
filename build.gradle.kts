@@ -67,6 +67,7 @@ dependencies {
     compileOnly("ink.ptms.core:v11100:11100")
     compileOnly("ink.ptms.core:v11000:11000")
     compileOnly("ink.ptms.core:v10900:10900")
+    compileOnly("ink.ptms.core:v10800:10800@jar")
     compileOnly(kotlin("stdlib"))
     taboo(fileTree("libs"))
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.6.0")
