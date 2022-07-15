@@ -79,7 +79,7 @@ object ListenerEntity {
                                 AdyeshachEntityInteractEvent(
                                     entity,
                                     e.player,
-                                    e.packet.read<Any>("d").toString() == "MAIN_HAND",
+                                    if (MinecraftVersion.major == 0) true else e.packet.read<Any>("d").toString() == "MAIN_HAND",
                                     if (location == null) Vector(0, 0, 0) else NMS.INSTANCE.parseVec3d(location)
                                 ).call()
                             }

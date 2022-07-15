@@ -28,6 +28,7 @@ import taboolib.expansion.createHelper
 import taboolib.library.xseries.XMaterial
 import taboolib.library.xseries.parseToXMaterial
 import taboolib.module.chat.TellrawJson
+import taboolib.module.nms.MinecraftVersion
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.asLangText
@@ -663,7 +664,11 @@ internal object Command {
                             entity.unregisterController(controller.type)
                             it.inventory.setItem(it.rawSlot, build(slots[it.rawSlot]!!, controller))
                         }
-                        sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                        if (MinecraftVersion.major == 0) {
+                            sender.playSound(sender.location, "random.orb", 1f, 2f)
+                        } else {
+                            sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                        }
                     }
                 }
                 onClose {

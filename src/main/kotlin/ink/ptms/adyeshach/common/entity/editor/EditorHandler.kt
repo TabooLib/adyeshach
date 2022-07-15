@@ -28,6 +28,7 @@ import taboolib.common.platform.function.warning
 import taboolib.common.util.nonPrimitive
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.TellrawJson
+import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.getName
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
@@ -313,7 +314,7 @@ object EditorHandler {
     @SubscribeEvent
     private fun e(e: PlayerInteractEvent) {
         // 管理员且主手交互
-        if (e.player.isOp && e.hand == EquipmentSlot.HAND) {
+        if (e.player.isOp && (MinecraftVersion.major == 0 || e.hand == EquipmentSlot.HAND)) {
             // 编辑模式
             if (armorStandLookup.containsKey(e.player.name) && e.player.inventory.itemInMainHand.hasLore(e.player.asLangText("editor-armorstand-tool-lore"))) {
                 e.isCancelled = true

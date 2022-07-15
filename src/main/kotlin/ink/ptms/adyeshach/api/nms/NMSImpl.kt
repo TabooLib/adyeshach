@@ -139,9 +139,9 @@ class NMSImpl : NMS() {
                     PacketPlayOutSpawnEntityLiving(),
                     "a" to entityId,
                     "b" to entityType.bukkitId,
-                    "c" to location.x,
-                    "d" to location.y,
-                    "e" to location.z,
+                    "c" to MathHelper.floor(location.x * 32.0),
+                    "d" to MathHelper.floor(location.y * 32.0),
+                    "e" to MathHelper.floor(location.z * 32.0),
                     "f" to 0,
                     "g" to 0,
                     "h" to 0,
@@ -434,9 +434,9 @@ class NMSImpl : NMS() {
             player.sendPacketI(
                 PacketPlayOutEntityTeleport(),
                 "a" to entityId,
-                "b" to if (majorLegacy == 108006) MathHelper.floor(location.x * 32.0) else location.x,
-                "c" to if (majorLegacy == 108006) MathHelper.floor(location.y * 32.0) else location.y,
-                "d" to if (majorLegacy == 108006) MathHelper.floor(location.z * 32.0) else location.z,
+                "b" to if (majorLegacy == 10806) MathHelper.floor(location.x * 32.0) else location.x,
+                "c" to if (majorLegacy == 10806) MathHelper.floor(location.y * 32.0) else location.y,
+                "d" to if (majorLegacy == 10806) MathHelper.floor(location.z * 32.0) else location.z,
                 "e" to (location.yaw * 256 / 360).toInt().toByte(),
                 "f" to (location.pitch * 256 / 360).toInt().toByte(),
                 "g" to false // onGround
@@ -596,11 +596,19 @@ class NMSImpl : NMS() {
                 "packedItems" to objects.map { it as DataWatcher.Item<*> }.toList()
             )
         } else {
-            player.sendPacketI(
-                PacketPlayOutEntityMetadata(),
-                "a" to entityId,
-                "b" to objects.map { it as DataWatcher.Item<*> }.toList()
-            )
+            if (majorLegacy == 10806) {
+                player.sendPacketI(
+                    PacketPlayOutEntityMetadata(),
+                    "a" to entityId,
+                    "b" to objects.map { it as net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject }.toList()
+                )
+            } else {
+                player.sendPacketI(
+                    PacketPlayOutEntityMetadata(),
+                    "a" to entityId,
+                    "b" to objects.map { it as DataWatcher.Item<*> }.toList()
+                )
+            }
         }
     }
 
