@@ -99,13 +99,13 @@ object EntityMetas {
             natural(at(11700 to 8, 11600 to 7), "item", ItemStack(Material.AIR))
         }
         from<AdyItem> {
-            natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5), "item", buildItem(XMaterial.BEDROCK))
+            natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5, 10800 to 10), "item", buildItem(XMaterial.BEDROCK))
         }
         from<AdySlime> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "size", 1)
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 16), "size", 1)
         }
         from<AdyPig> {
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "hasSaddle", false)
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 16), "hasSaddle", false)
         }
         from<AdyWitch> {
             natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11300 to 12), "isDrinkingPotion", false)
@@ -135,7 +135,7 @@ object EntityMetas {
             natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 13, 11100 to 12), "attackMode", false)
         }
         from<AdyWitherSkull> {
-            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "invulnerable", false)
+            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5, 10800 to 20), "invulnerable", false)
         }
         from<AdyThrownEgg> {
             natural(at(11700 to 8, 11600 to 7), "item", buildItem(XMaterial.EGG))
@@ -150,13 +150,13 @@ object EntityMetas {
             natural(at(11700 to 8, 11600 to 7), "item", buildItem(XMaterial.FIRE_CHARGE))
         }
         from<AdySpider> {
-            mask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isClimbing", 0x01)
+            mask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 16), "isClimbing", 0x01)
         }
         from<AdyEyeOfEnder> {
             natural(at(11700 to 8, 11400 to 7), "item", buildItem(XMaterial.ENDER_EYE))
         }
         from<AdyFireworkRocket> {
-            natural(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9), "fireworkInfo", ItemStack(Material.AIR))
+            natural(at(11700 to 8, 11400 to 7, 11100 to 6, 10900 to 9, 10800 to 8), "fireworkInfo", ItemStack(Material.AIR))
         }
         from<AdySnowGolem> {
             mask(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "hasPumpkinHat", 0x10, true)
@@ -179,16 +179,16 @@ object EntityMetas {
             natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "showBottom", true)
         }
         from<AdyItemFrame> {
-            natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5), "item", ItemStack(Material.AIR))
-            natural(at(11700 to 9, 11300 to 8, 11000 to 7, 10900 to 6), "rotation", 0)
+            natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5, 10800 to 8), "item", ItemStack(Material.AIR))
+            natural(at(11700 to 9, 11300 to 8, 11000 to 7, 10900 to 6, 10800 to 9), "rotation", 0)
         }
         from<AdyEnderman> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "carriedBlock", MaterialData(Material.AIR))
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isScreaming", false)
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 16), "carriedBlock", MaterialData(Material.AIR))
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 18), "isScreaming", false)
             natural(at(11700 to 18, 11500 to 17), "isStaring", false)
         }
         from<AdyArrow> {
-            mask(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5), "isCritical", 0x01)
+            mask(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5, 10800 to 16), "isCritical", 0x01)
             mask(at(11700 to 8, 11400 to 7), "noclip", 0x02)
             natural(at(11700 to 9, 11600 to 8, 11500 to 9), "piercingLevel", 0.toByte())
             natural(at(11700 to 10, 11600 to 9), "color", -1) { it.useColorEditor() }
@@ -200,10 +200,10 @@ object EntityMetas {
             natural(at(11700 to 11, 11600 to 10), "particle", BukkitParticles.EFFECT) { it.useEnumsEditor() }
         }
         from<AdyGuardian> {
-            mask(at(11200 to -1, 11000 to 12, 10900 to 11), "isRetractingSpikes", 0x02)
-            mask(at(11200 to -1, 11000 to 12, 10900 to 11), "isElderly", 0x04)
+            mask(at(11200 to -1, 11000 to 12, 10900 to 11, 10800 to 16), "isRetractingSpikes", 0x02)
+            mask(at(11200 to -1, 11000 to 12, 10900 to 11, 10800 to 16), "isElderly", 0x04)
             natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 13), "isRetractingSpikes", false)
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "targetEntity", 0) {
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 17), "targetEntity", 0) {
                 it.editable = false
             }
         }
@@ -235,27 +235,27 @@ object EntityMetas {
             natural(index + 2, "hasRightHorn", true)
         }
         from<AdyArmorStand> {
-            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "isSmall", 0x01)
-            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "hasArms", 0x04)
-            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "noBasePlate", 0x08)
-            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10900 to 10), "isMarker", 0x10)
-            mask(at(11000 to -1, 10900 to 10), "hasGravity", 0x02)
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "angleHead", EulerAngle(0.0, 0.0, 0.0)) {
+            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10800 to 10), "isSmall", 0x01)
+            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10800 to 10), "hasArms", 0x04)
+            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10800 to 10), "noBasePlate", 0x08)
+            mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11, 10800 to 10), "isMarker", 0x10)
+            mask(at(11000 to -1, 10800 to 10), "hasGravity", 0x02)
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10800 to 11), "angleHead", EulerAngle(0.0, 0.0, 0.0)) {
                 it.editable = false
             }
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "angleBody", EulerAngle(0.0, 0.0, 0.0)) {
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10800 to 12), "angleBody", EulerAngle(0.0, 0.0, 0.0)) {
                 it.editable = false
             }
-            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "angleLeftArm", EulerAngle(-10.0, 0.0, -10.0)) {
+            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10800 to 13), "angleLeftArm", EulerAngle(-10.0, 0.0, -10.0)) {
                 it.editable = false
             }
-            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "angleRightArm", EulerAngle(-15.0, 0.0, 10.0)) {
+            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10800 to 14), "angleRightArm", EulerAngle(-15.0, 0.0, 10.0)) {
                 it.editable = false
             }
-            natural(at(11700 to 20, 11500 to 19, 11400 to 18, 11000 to 16, 10900 to 15), "angleLeftLeg", EulerAngle(-1.0, 0.0, -1.0)) {
+            natural(at(11700 to 20, 11500 to 19, 11400 to 18, 11000 to 16, 10800 to 15), "angleLeftLeg", EulerAngle(-1.0, 0.0, -1.0)) {
                 it.editable = false
             }
-            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11000 to 17, 10900 to 16), "angleRightLeg", EulerAngle(1.0, 0.0, 1.0)) {
+            natural(at(11700 to 21, 11500 to 20, 11400 to 19, 11000 to 17, 10800 to 16), "angleRightLeg", EulerAngle(1.0, 0.0, 1.0)) {
                 it.editable = false
             }
             naturalEditor("angle") {
@@ -511,7 +511,7 @@ object EntityMetas {
             mask(at(11700 to 8), "isHandActive", 0x01)
             mask(at(11700 to 8), "activeHand", 0x02)
             mask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
-            natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6), "health", 1.0f)
+            natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10800 to 6), "health", 1.0f)
             natural(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0) { it.useColorEditor() }
             naturalEditor("equipment") { it.useHybridEquipmentEditor() }
             naturalEditor("isDie") {
@@ -649,13 +649,13 @@ object EntityMetas {
             }
         }
         from<AdyHuman> {
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinCape", 0x01, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinJacket", 0x02, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftSleeve", 0x04, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightSleeve", 0x08, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinLeftPants", 0x10, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinRightPants", 0x20, false)
-            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "skinHat", 0x40, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinCape", 0x01, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinJacket", 0x02, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinLeftSleeve", 0x04, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinRightSleeve", 0x08, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinLeftPants", 0x10, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinRightPants", 0x20, false)
+            mask(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 10), "skinHat", 0x40, false)
             natural(at(11700 to 12, 11600 to 11), "arrowsInEntity", 0)
             natural(at(11700 to 13, 11600 to 12), "beeStingersInEntity", 0)
             naturalEditor("isSleepingLegacy") {
@@ -677,21 +677,24 @@ object EntityMetas {
             naturalEditor("playerName") {
                 it.reset { _, entity -> entity.setName("Adyeshach") }
                 it.modify { player, entity ->
-                    player.edit(entity, entity.getName()) { name -> entity.setName(if (name.length > 16) name.substring(0, 16) else name) }
+                    player.edit(entity, entity.getName()) { name ->
+                        val cleanedName = name.replace("\"", "")
+                        entity.setName(if (cleanedName.length > 16) cleanedName.substring(0, 16) else cleanedName)
+                    }
                 }
                 it.display { _, entity -> entity.getName() }
             }
             naturalEditor("playerPing") {
                 it.reset { _, entity -> entity.setPing(0) }
                 it.modify { player, entity ->
-                    player.edit(entity, entity.getPing()) { args -> entity.setPing(Coerce.toInteger(args)) }
+                    player.edit(entity, entity.getPing()) { args -> entity.setPing(Coerce.toInteger(args.replace("\"", ""))) }
                 }
                 it.display { _, entity -> entity.getPing() }
             }
             naturalEditor("playerTexture") {
                 it.reset { _, entity -> entity.resetTexture() }
                 it.modify { player, entity ->
-                    player.edit(entity, entity.getTextureName()) { args -> entity.setTexture(args) }
+                    player.edit(entity, entity.getTextureName()) { args -> entity.setTexture(args.replace("\"", "")) }
                 }
                 it.display { _, entity -> entity.getTextureName().ifEmpty { "§7_" } }
             }

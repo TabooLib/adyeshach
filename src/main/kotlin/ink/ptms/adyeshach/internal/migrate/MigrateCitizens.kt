@@ -13,6 +13,7 @@ import org.bukkit.entity.*
 import org.bukkit.inventory.EquipmentSlot
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * @author sky
@@ -124,7 +125,9 @@ class MigrateCitizens : Migrate() {
             if (entity is AdyEntityLiving && npc.entity is LivingEntity) {
                 (npc.entity as LivingEntity).equipment?.apply {
                     entity.setEquipment(EquipmentSlot.HAND, itemInMainHand)
-                    entity.setEquipment(EquipmentSlot.OFF_HAND, itemInOffHand)
+                    if (MinecraftVersion.major > 0) {
+                        entity.setEquipment(EquipmentSlot.OFF_HAND, itemInOffHand)
+                    }
                     helmet?.apply { entity.setEquipment(EquipmentSlot.HEAD, this) }
                     chestplate?.apply { entity.setEquipment(EquipmentSlot.CHEST, this) }
                     leggings?.apply { entity.setEquipment(EquipmentSlot.LEGS, this) }

@@ -10,6 +10,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.util.Vector
+import taboolib.module.nms.MinecraftVersion
 
 object Patch {
 

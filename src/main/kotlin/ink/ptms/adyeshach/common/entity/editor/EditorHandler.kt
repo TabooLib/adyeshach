@@ -300,8 +300,10 @@ object EditorHandler {
     @Schedule(period = 20)
     private fun e() {
         Bukkit.getOnlinePlayers().forEach {
-            if (it.isOp && armorStandLookup.containsKey(it.name) && it.inventory.itemInMainHand.hasLore(it.asLangText("editor-armorstand-tool-lore"))) {
-                it.sendLang("armor-stand-editor-2")
+            if (it.isOp && armorStandLookup.containsKey(it.name)) {
+                if ((if (MinecraftVersion.major == 0) it.inventory.itemInHand else it.inventory.itemInMainHand).hasLore(it.asLangText("editor-armorstand-tool-lore"))) {
+                    it.sendLang("armor-stand-editor-2")
+                }
             }
         }
     }
@@ -316,7 +318,7 @@ object EditorHandler {
         // 管理员且主手交互
         if (e.player.isOp && (MinecraftVersion.major == 0 || e.hand == EquipmentSlot.HAND)) {
             // 编辑模式
-            if (armorStandLookup.containsKey(e.player.name) && e.player.inventory.itemInMainHand.hasLore(e.player.asLangText("editor-armorstand-tool-lore"))) {
+            if (armorStandLookup.containsKey(e.player.name) && (if (MinecraftVersion.major == 0) e.player.inventory.itemInHand else e.player.inventory.itemInMainHand).hasLore(e.player.asLangText("editor-armorstand-tool-lore"))) {
                 e.isCancelled = true
                 if (e.player.isSneaking) {
                     val bind = armorStandLookup[e.player.name]!!.first
@@ -326,7 +328,11 @@ object EditorHandler {
                     } else if (e.action == Action.LEFT_CLICK_AIR || e.action == Action.LEFT_CLICK_BLOCK) {
                         angle.subtract.invoke(bind)
                     }
-                    e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                    if (MinecraftVersion.major == 0) {
+                        e.player.playSound(e.player.location, "random.orb", 1f, 2f)
+                    } else {
+                        e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                    }
                 } else {
                     e.player.openMenu<Basic>(e.player.asLangText("armor-stand-editor-name")) {
                         rows(3)
@@ -339,9 +345,15 @@ object EditorHandler {
                                 val angle = ArmorStandAngle.values()[it.rawSlot]
                                 armorStandLookup[e.player.name] = bind to angle
                                 e.player.closeInventory()
-                                e.player.inventory.setItemInMainHand(e.player.inventory.itemInMainHand.modifyMeta<ItemMeta> {
-                                    setDisplayName("§7${e.player.asLangText("editor-armorstand-tool-name", angle.name)}")
-                                })
+                                if (MinecraftVersion.major == 0) {
+                                    e.player.inventory.setItemInHand(e.player.inventory.itemInHand.modifyMeta<ItemMeta> {
+                                        setDisplayName("§7${e.player.asLangText("editor-armorstand-tool-name", angle.name)}")
+                                    })
+                                } else {
+                                    e.player.inventory.setItemInMainHand(e.player.inventory.itemInMainHand.modifyMeta<ItemMeta> {
+                                        setDisplayName("§7${e.player.asLangText("editor-armorstand-tool-name", angle.name)}")
+                                    })
+                                }
                                 e.player.sendLang("armor-stand-editor-1", angle.name)
                                 e.player.sendLang("armor-stand-editor-2")
                             }

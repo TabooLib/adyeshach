@@ -30,7 +30,8 @@ object MojangAPI {
         val file = File(Adyeshach.plugin.dataFolder, "skin/$name")
         if (file.exists() && file.length() > 1) {
             val json = JsonParser().parse(file.readText(StandardCharsets.UTF_8)).asJsonObject
-            if (json.size() == 0) {
+            //old gson not supported method size
+            if (json.entrySet().size == 0) {
                 warning("Unable to read valid data for $name from $file, please delete it.")
                 return null
             }
@@ -53,7 +54,7 @@ object MojangAPI {
             }
         } else {
             val json = AshconAPI.getProfile(name)
-            if (json.size() == 0) {
+            if (json.entrySet().size == 0) {
                 warning("Unable to request valid data for $name from AshconAPI")
                 return null
             }

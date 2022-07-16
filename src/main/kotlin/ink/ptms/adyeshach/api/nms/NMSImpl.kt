@@ -88,9 +88,9 @@ class NMSImpl : NMS() {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntity(),
                     "a" to entityId,
-                    "b" to location.x,
-                    "c" to location.y,
-                    "d" to location.z,
+                    "b" to MathHelper.floor(location.x * 32.0),
+                    "c" to MathHelper.floor(location.y * 32.0),
+                    "d" to MathHelper.floor(location.z * 32.0),
                     "e" to 0,
                     "f" to 0,
                     "g" to 0,
@@ -192,12 +192,12 @@ class NMSImpl : NMS() {
         } else {
             if (majorLegacy == 10806) {
                 player.sendPacketI(
-                    net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn(),
+                    PacketPlayOutNamedEntitySpawn(),
                     "a" to entityId,
                     "b" to uuid,
-                    "c" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.x * 32.0),
-                    "d" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.y * 32.0),
-                    "e" to net.minecraft.server.v1_8_R3.MathHelper.floor(location.z * 32.0),
+                    "c" to MathHelper.floor(location.x * 32.0),
+                    "d" to MathHelper.floor(location.y * 32.0),
+                    "e" to MathHelper.floor(location.z * 32.0),
                     "f" to (location.yaw * 256 / 360).toInt().toByte(),
                     "g" to (location.pitch * 256 / 360).toInt().toByte(),
                     "h" to 0, //held item
@@ -550,17 +550,22 @@ class NMSImpl : NMS() {
                     )
                 )
             }
-            major == 0 -> {
-                val nmsSlot = when (slot) {
-                    EquipmentSlot.HAND -> 0
-                    EquipmentSlot.FEET -> 1
-                    EquipmentSlot.LEGS -> 2
-                    EquipmentSlot.CHEST -> 3
-                    EquipmentSlot.HEAD -> 4
-                    else -> {
-                        error("unsupported version")
+            else -> {
+                val nmsSlot =
+                    if (slot == EquipmentSlot.HAND) {
+                        0
+                    } else if (slot == EquipmentSlot.FEET) {
+                        1
+                    } else if (slot == EquipmentSlot.LEGS) {
+                        2
+                    } else if (slot == EquipmentSlot.CHEST) {
+                        3
+                    } else if (slot == EquipmentSlot.HEAD) {
+                        4
+                    } else {
+                        0
                     }
-                }
+
                 player.sendPacketI(
                     net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment(
                         entityId,
@@ -643,7 +648,7 @@ class NMSImpl : NMS() {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
         } else {
             if (majorLegacy == 10806) {
-                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, if (value) 1 else 0)
+                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, (if (value) 1 else 0).toByte())
             } else {
                 net.minecraft.server.v1_11_R1.DataWatcher.Item(
                     net.minecraft.server.v1_11_R1.DataWatcherObject(

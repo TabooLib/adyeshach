@@ -12,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -102,6 +103,10 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     }
 
     override fun setItemInOffHand(itemStack: ItemStack) {
+        if (MinecraftVersion.major == 0) {
+            return
+        }
+
         equipment[EquipmentSlot.OFF_HAND] = itemStack
         forViewers {
             NMS.INSTANCE.updateEquipment(it, index, EquipmentSlot.OFF_HAND, itemStack)
@@ -161,24 +166,36 @@ open class AdyEntityLiving(entityTypes: EntityTypes) : AdyEntity(entityTypes), E
     }
 
     fun setEquipment(equipmentSlot: EquipmentSlot, itemStack: ItemStack) {
-        when (equipmentSlot) {
-            EquipmentSlot.HAND -> setItemInMainHand(itemStack)
-            EquipmentSlot.OFF_HAND -> setItemInOffHand(itemStack)
-            EquipmentSlot.FEET -> setBoots(itemStack)
-            EquipmentSlot.LEGS -> setLeggings(itemStack)
-            EquipmentSlot.CHEST -> setChestplate(itemStack)
-            EquipmentSlot.HEAD -> setHelmet(itemStack)
+        if (equipmentSlot == EquipmentSlot.HAND) {
+            setItemInMainHand(itemStack)
+        } else if (equipmentSlot == EquipmentSlot.FEET) {
+            setBoots(itemStack)
+        } else if (equipmentSlot == EquipmentSlot.LEGS) {
+            setLeggings(itemStack)
+        } else if (equipmentSlot == EquipmentSlot.CHEST) {
+            setChestplate(itemStack)
+        } else if (equipmentSlot == EquipmentSlot.HEAD) {
+            setHelmet(itemStack)
+        } else if (MinecraftVersion.major > 0 && equipmentSlot == EquipmentSlot.OFF_HAND) {
+            setItemInOffHand(itemStack)
         }
     }
 
     fun getEquipment(equipmentSlot: EquipmentSlot): ItemStack? {
-        return when (equipmentSlot) {
-            EquipmentSlot.HAND -> getItemInMainHand()
-            EquipmentSlot.OFF_HAND -> getItemInOffHand()
-            EquipmentSlot.FEET -> getBoots()
-            EquipmentSlot.LEGS -> getLeggings()
-            EquipmentSlot.CHEST -> getChestplate()
-            EquipmentSlot.HEAD -> getHelmet()
+        return if (equipmentSlot == EquipmentSlot.HAND) {
+            getItemInMainHand()
+        } else if (equipmentSlot == EquipmentSlot.FEET) {
+            getBoots()
+        } else if (equipmentSlot == EquipmentSlot.LEGS) {
+            getLeggings()
+        } else if (equipmentSlot == EquipmentSlot.CHEST) {
+            getChestplate()
+        } else if (equipmentSlot == EquipmentSlot.HEAD) {
+            getHelmet()
+        } else if (MinecraftVersion.major > 0 && equipmentSlot == EquipmentSlot.OFF_HAND) {
+            getItemInOffHand()
+        } else {
+            null
         }
     }
 

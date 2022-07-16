@@ -17,6 +17,7 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Baffle
 import taboolib.common5.Coerce
+import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.asLangText
 import taboolib.platform.util.sendLang
 import java.util.concurrent.ConcurrentHashMap
@@ -87,7 +88,11 @@ object EditorPicker {
             if (maxY != entity.position.y) {
                 val distance = entity.position.y - maxY
                 if (distance < 0.5 && cooldown.hasNext(player.name)) {
-                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.1f, 2f)
+                    if (MinecraftVersion.major == 0) {
+                        player.playSound(player.location, "random.click", 0.1f, 2f)
+                    } else {
+                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.1f, 2f)
+                    }
                     adaptPlayer(player).sendActionBar(player.asLangText("editor-picker-ground", Coerce.format(distance)))
                 }
             }
