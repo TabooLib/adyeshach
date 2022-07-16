@@ -756,15 +756,15 @@ class NMSImpl : NMS() {
             )
         } else {
             if (majorLegacy == 10806) {
-                throw RuntimeException("not supported version")
+                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(4, index, name ?: "")
+            } else {
+                net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                    net.minecraft.server.v1_12_R1.DataWatcherObject(
+                        index,
+                        net.minecraft.server.v1_12_R1.DataWatcherRegistry.d
+                    ), name ?: ""
+                )
             }
-
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(
-                net.minecraft.server.v1_12_R1.DataWatcherObject(
-                    index,
-                    net.minecraft.server.v1_12_R1.DataWatcherRegistry.d
-                ), name ?: ""
-            )
         }
     }
 
