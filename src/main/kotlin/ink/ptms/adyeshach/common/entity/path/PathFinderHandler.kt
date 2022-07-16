@@ -29,7 +29,7 @@ object PathFinderHandler {
                     val time = System.currentTimeMillis()
                     val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
                     val path = pathFinder.findPath(target, distance = 32f)
-                    if (AdyeshachSettings.debug) {
+                    if (AdyeshachSettings.debug && MinecraftVersion.major > 0) {
                         path?.nodes?.forEach { it.display(target.world!!) }
                     }
                     call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
