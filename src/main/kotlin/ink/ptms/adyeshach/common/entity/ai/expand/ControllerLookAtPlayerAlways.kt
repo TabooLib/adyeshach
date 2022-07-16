@@ -18,9 +18,7 @@ class ControllerLookAtPlayerAlways(entity: EntityInstance) : Controller(entity) 
     }
 
     override fun shouldExecute(): Boolean {
-//        return entity!!.getTag("isFreeze") == "true" || !entity.isControllerMoving()
-
-        return true
+        return entity!!.getTag("isFreeze") == "true" || !entity.isControllerMoving()
     }
 
     override fun onTick() {
