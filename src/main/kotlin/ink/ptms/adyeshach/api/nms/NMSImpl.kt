@@ -11,10 +11,9 @@ import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
+import net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove
 import net.minecraft.server.v1_8_R3.WorldSettings
-import net.minecraft.server.v1_9_R2.BlockStateList
-import net.minecraft.server.v1_9_R2.IBlockData
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -607,7 +606,7 @@ class NMSImpl : NMS() {
                 player.sendPacketI(
                     PacketPlayOutEntityMetadata(),
                     "a" to entityId,
-                    "b" to objects.map { it as net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject }.toList()
+                    "b" to objects.map { it as WatchableObject }.toList()
                 )
             } else {
                 player.sendPacketI(
@@ -621,7 +620,7 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityInt(index: Int, value: Int): Any {
         return if (majorLegacy == 10806) {
-            net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(2, index, value)
+            WatchableObject(2, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.b), value)
         }
@@ -629,7 +628,7 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityFloat(index: Int, value: Float): Any {
         return if (majorLegacy == 10806) {
-            net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(3, index, value)
+            WatchableObject(3, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.c), value)
         }
@@ -637,7 +636,7 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityString(index: Int, value: String): Any {
         return if (majorLegacy == 10806) {
-            net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(4, index, value)
+            WatchableObject(4, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.d), value)
         }
@@ -648,7 +647,7 @@ class NMSImpl : NMS() {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.i), value)
         } else {
             if (majorLegacy == 10806) {
-                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, (if (value) 1 else 0).toByte())
+                WatchableObject(0, index, (if (value) 1 else 0).toByte())
             } else {
                 net.minecraft.server.v1_11_R1.DataWatcher.Item(
                     net.minecraft.server.v1_11_R1.DataWatcherObject(
@@ -662,7 +661,7 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityParticle(index: Int, value: BukkitParticles): Any {
         return if (majorLegacy == 10806) {
-            net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(2, index, 0)
+            WatchableObject(2, index, 0)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.j), getParticleNMS(value) as ParticleParam)
         }
@@ -670,7 +669,7 @@ class NMSImpl : NMS() {
 
     override fun getMetaEntityByte(index: Int, value: Byte): Any {
         return if (majorLegacy == 10806) {
-            net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(0, index, value)
+            WatchableObject(0, index, value)
         } else {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.a), value)
         }
@@ -681,7 +680,7 @@ class NMSImpl : NMS() {
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.k), Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
         } else {
             if (majorLegacy == 10806) {
-                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(7, index, Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
+                WatchableObject(7, index, Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat()))
             } else {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
                     net.minecraft.server.v1_12_R1.DataWatcherObject(
@@ -701,11 +700,7 @@ class NMSImpl : NMS() {
             )
         } else {
             if (majorLegacy == 10806) {
-                if (value == null) {
-                    throw RuntimeException("currently not supported")
-                } else {
-                    net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(6, index, BlockPosition(value.x, value.y, value.z))
-                }
+                WatchableObject(6, index, BlockPosition(value?.x ?: 0.0, value?.y ?: 0.0, value?.z ?: 0.0))
             } else {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
                     net.minecraft.server.v1_12_R1.DataWatcherObject(index, net.minecraft.server.v1_12_R1.DataWatcherRegistry.k),
@@ -729,22 +724,26 @@ class NMSImpl : NMS() {
             )
         } else {
             if (majorLegacy == 10806) {
-                throw RuntimeException("not supported version")
-            }
+                val iBlockData = org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value?.itemType ?: Material.AIR)
+                        .fromLegacyData(value?.data?.toInt() ?: 0)
 
-            net.minecraft.server.v1_12_R1.DataWatcher.Item(
-                net.minecraft.server.v1_12_R1.DataWatcherObject(
-                    index,
-                    net.minecraft.server.v1_12_R1.DataWatcherRegistry.g
-                ),
-                com.google.common.base.Optional.fromNullable(
-                    if (value != null) {
-                        org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType).fromLegacyData(value.data.toInt())
-                    } else {
-                        null
-                    }
+                WatchableObject(1, index, (net.minecraft.server.v1_12_R1.Block.getCombinedId(iBlockData) and '\uffff'.code).toShort())
+            } else {
+                net.minecraft.server.v1_12_R1.DataWatcher.Item(
+                    net.minecraft.server.v1_12_R1.DataWatcherObject(
+                        index,
+                        net.minecraft.server.v1_12_R1.DataWatcherRegistry.g
+                    ),
+                    com.google.common.base.Optional.fromNullable(
+                        if (value != null) {
+                            org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getBlock(value.itemType)
+                                .fromLegacyData(value.data.toInt())
+                        } else {
+                            null
+                        }
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -756,7 +755,7 @@ class NMSImpl : NMS() {
             )
         } else {
             if (majorLegacy == 10806) {
-                net.minecraft.server.v1_8_R3.DataWatcher.WatchableObject(4, index, name ?: "")
+                WatchableObject(4, index, name ?: "")
             } else {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
                     net.minecraft.server.v1_12_R1.DataWatcherObject(
@@ -782,12 +781,11 @@ class NMSImpl : NMS() {
                     ), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
                 )
             }
+            major == 0 -> {
+                WatchableObject(5, index, CraftItemStack.asNMSCopy(itemStack))
+            }
             else -> {
-                if (majorLegacy == 10806) {
-                    throw RuntimeException("not supported version")
-                }
-
-                return net.minecraft.server.v1_9_R2.DataWatcher.Item(
+                 net.minecraft.server.v1_9_R2.DataWatcher.Item(
                     net.minecraft.server.v1_9_R2.DataWatcherObject(
                         6,
                         net.minecraft.server.v1_9_R2.DataWatcherRegistry.f

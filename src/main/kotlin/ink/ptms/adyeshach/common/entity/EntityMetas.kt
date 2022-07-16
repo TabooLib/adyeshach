@@ -102,7 +102,12 @@ object EntityMetas {
             natural(at(11700 to 8, 11300 to 7, 11000 to 6, 10900 to 5, 10800 to 10), "item", buildItem(XMaterial.BEDROCK))
         }
         from<AdySlime> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 16), "size", 1)
+            if (MinecraftVersion.major == 0) {
+                //only 1.8.x byte type
+                natural(16, "size", 1.toByte())
+            } else {
+                natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "size", 1)
+            }
         }
         from<AdyPig> {
             natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 16), "hasSaddle", false)
