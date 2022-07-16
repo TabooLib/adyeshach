@@ -135,7 +135,7 @@ object EntityMetas {
             natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11300 to 13, 11100 to 12), "attackMode", false)
         }
         from<AdyWitherSkull> {
-            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5, 10800 to 20), "invulnerable", false)
+            natural(at(11700 to 8, 11400 to 7, 11000 to 6, 10900 to 5), "invulnerable", false)
         }
         from<AdyThrownEgg> {
             natural(at(11700 to 8, 11600 to 7), "item", buildItem(XMaterial.EGG))
@@ -283,7 +283,7 @@ object EntityMetas {
     @Awake(LifeCycle.ENABLE)
     private fun init2() {
         from<AdyRabbit> {
-            val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
+            val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 18)
             natural(index, "type", Rabbit.Type.BLACK.ordinal) { it.useIndexEditor(Rabbit.Type::class.java, "type") }
         }
         from<AdyParrot> {
@@ -295,7 +295,7 @@ object EntityMetas {
             natural(index, "spell", 0) { it.useIndexEditor(Spellcaster.Spell::class.java, "spell") }
         }
         from<AdySheep> {
-            val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12)
+            val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 16)
             natural(index, "dyeColor", 0) { it.useIndexEditor(DyeColor::class.java, "dyeColor") }
             mask(index, "isSheared", 0x10)
         }
@@ -310,16 +310,16 @@ object EntityMetas {
             }
         }
         from<AdyWolf> {
-            natural(at(11700 to 19, 11400 to 18, 11000 to 16, 10900 to 15), "isBegging", false)
-            natural(at(11700 to 20, 11400 to 19, 11000 to 17, 10900 to 16), "collarColor", DyeColor.RED.ordinal) {
+            natural(at(11700 to 19, 11400 to 18, 11000 to 16, 10900 to 15, 10800 to 19), "isBegging", false)
+            natural(at(11700 to 20, 11400 to 19, 11000 to 17, 10900 to 16, 10800 to 20), "collarColor", DyeColor.RED.ordinal) {
                 it.useIndexEditor(type = DyeColor::class.java, key = "collarColor")
             }
         }
         from<AdyCreeper> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "state", BukkitCreeperState.IDLE.ordinal) {
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 16), "state", BukkitCreeperState.IDLE.ordinal) {
                 it.useIndexEditor(BukkitCreeperState::class.java, "state")
             }
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "isCharged", false)
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 17), "isCharged", false)
             natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "isIgnited", false)
         }
         from<AdyLlama> {
@@ -334,7 +334,7 @@ object EntityMetas {
             naturalEditor("amount") {
                 it.reset { _, entity -> entity.amount = 1 }
                 it.modify { player, entity ->
-                    player.edit(entity, entity.amount) { args -> entity.amount = Coerce.toInteger(args) }
+                    player.edit(entity, entity.amount) { args -> entity.amount = Coerce.toInteger(args.replace("\"", "")) }
                 }
                 it.display { _, entity -> entity.amount }
             }
@@ -393,32 +393,32 @@ object EntityMetas {
             }
         }
         from<AdyZombie> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "isBaby", false)
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 12), "isBaby", false)
             if (MinecraftVersion.majorLegacy >= 11700) {
                 natural(at(11700 to 18), "isBecomingDrowned", false)
             } else {
                 natural(at(11500 to 17, 11400 to 16, 11300 to 15), "isDrowning", false)
-                natural(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13), "isConverting", false)
+                natural(at(11500 to 18, 11400 to 17, 11300 to 16, 11100 to 15, 11000 to 14, 10900 to 13, 10800 to 14), "isConverting", false)
             }
             natural(at(11400 to -1, 11200 to 14, 11000 to 15, 10900 to 14), "isHandsHeldUp", false)
-            natural(at(11100 to -1, 11000 to 13, 10900 to 12), "zombieType", 0)
+            natural(at(11100 to -1, 11000 to 13, 10900 to 12, 10800 to 13), "zombieType", 0)
         }
         from<AdyWither> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11), "firstHeadTarget", 0) {
+            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11000 to 12, 10900 to 11, 10800 to 17), "firstHeadTarget", 0) {
                 it.editable = false
             }
-            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12), "secondHeadTarget", 0) {
+            natural(at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 18), "secondHeadTarget", 0) {
                 it.editable = false
             }
-            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13), "thirdHeadTarget", 0) {
+            natural(at(11700 to 18, 11500 to 17, 11400 to 16, 11000 to 14, 10900 to 13, 10800 to 19), "thirdHeadTarget", 0) {
                 it.editable = false
             }
-            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "invulnerableTime", 0)
+            natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14, 10800 to 20), "invulnerableTime", 0)
         }
         from<AdyBoat> {
-            natural(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5), "sinceLastHit", 0)
-            natural(at(11700 to 9, 11600 to 8, 11000 to 7, 10900 to 6), "forwardDirection", 1)
-            natural(at(11700 to 10, 11600 to 9, 11000 to 8, 10900 to 7), "damageTaken", 0f)
+            natural(at(11700 to 8, 11600 to 7, 11000 to 6, 10900 to 5, 10800 to 17), "sinceLastHit", 0)
+            natural(at(11700 to 9, 11600 to 8, 11000 to 7, 10900 to 6, 10800 to 18), "forwardDirection", 1)
+            natural(at(11700 to 10, 11600 to 9, 11000 to 8, 10900 to 7, 10800 to 19), "damageTaken", 0f)
             natural(at(11700 to 11, 11600 to 10, 11000 to 9, 10900 to 8), "type", BukkitBoat.OAK.ordinal) {
                 it.useIndexEditor(type = BukkitBoat::class.java, key = "type")
             }
@@ -511,8 +511,8 @@ object EntityMetas {
             mask(at(11700 to 8), "isHandActive", 0x01)
             mask(at(11700 to 8), "activeHand", 0x02)
             mask(at(11700 to 8), "isInRiptideSpinAttack", 0x04)
-            natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10800 to 6), "health", 1.0f)
-            natural(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7), "potionEffectColor", 0) { it.useColorEditor() }
+            natural(at(11700 to 9, 11400 to 8, 11000 to 7, 10900 to 6, 10800 to 6), "health", 1.0f)
+            natural(at(11700 to 10, 11400 to 9, 11000 to 8, 10900 to 7, 10800 to 7), "potionEffectColor", 0) { it.useColorEditor() }
             naturalEditor("equipment") { it.useHybridEquipmentEditor() }
             naturalEditor("isDie") {
                 it.reset { _, entity -> entity.die(false) }
