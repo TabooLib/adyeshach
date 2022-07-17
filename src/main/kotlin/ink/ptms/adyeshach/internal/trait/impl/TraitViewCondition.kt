@@ -43,36 +43,6 @@ object TraitViewCondition : Trait() {
         }
     }
 
-    @SubscribeEvent
-    fun e(e: AdyeshachEntityTickEvent) {
-        if (data.contains(e.entity.uniqueId) && Coerce.toLong(e.entity.getTag("view-condition-next") ?: 0) < System.currentTimeMillis()) {
-            val script = data.getStringList(e.entity.uniqueId)
-            // 设置冷却
-            e.entity.setTag("view-condition-next", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
-            // 获取玩家
-            e.entity.viewPlayers.getPlayersInViewDistance().forEach {
-                runKether {
-                    KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
-                        rootFrame().variables()["@entities"] = listOf(e.entity)
-                    }.thenAccept { cond ->
-                        if (Coerce.toBoolean(cond)) {
-                            // 看不见但是满足可视条件
-                            if (it.name !in e.entity.viewPlayers.visible) {
-                                e.entity.visible(it, true)
-                            }
-                        } else {
-                            // 看得见但不满足可视条件
-                            if (it.name in e.entity.viewPlayers.visible) {
-                                e.entity.visible(it, false)
-                                e.entity.viewPlayers.visible.remove(it.name)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     override fun getName(): String {
         return "view-condition"
     }
@@ -113,5 +83,34 @@ fun EntityInstance.setViewCondition(condition: List<String>?) {
         TraitViewCondition.data[uniqueId] = condition
         destroy()
         respawn()
+    }
+}
+
+fun EntityInstance.updateViewCondition() {
+    if (TraitViewCondition.data.contains(e.entity.uniqueId) && Coerce.toLong(e.entity.getTag("view-condition-next") ?: 0) < System.currentTimeMillis()) {
+        val script = TraitViewCondition.data.getStringList(e.entity.uniqueId)
+        // 设置冷却
+        e.entity.setTag("view-condition-next", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
+        // 获取玩家
+        e.entity.viewPlayers.getPlayersInViewDistance().forEach {
+            runKether {
+                KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
+                    rootFrame().variables()["@entities"] = listOf(e.entity)
+                }.thenAccept { cond ->
+                    if (Coerce.toBoolean(cond)) {
+                        // 看不见但是满足可视条件
+                        if (it.name !in e.entity.viewPlayers.visible) {
+                            e.entity.visible(it, true)
+                        }
+                    } else {
+                        // 看得见但不满足可视条件
+                        if (it.name in e.entity.viewPlayers.visible) {
+                            e.entity.visible(it, false)
+                            e.entity.viewPlayers.visible.remove(it.name)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

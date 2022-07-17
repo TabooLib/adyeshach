@@ -27,6 +27,7 @@ import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.compat.CompatServerTours
+import ink.ptms.adyeshach.internal.trait.impl.updateViewCondition
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -765,9 +766,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 实体计算（async）
      */
     open fun onTick() {
-        if (!AdyeshachEntityTickEvent(this).call()) {
-            return
-        }
+//        if (!AdyeshachEntityTickEvent(this).call()) {
+//            return
+//        }
+        // 临时修复
+        updateViewCondition()
         // 确保客户端显示实体正常
         if (viewPlayers.visibleRefreshLocker.hasNext()) {
             // 复活
@@ -877,20 +880,17 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 val entityModeled = EntityModeled(this)
                 val model = modelManager.createActiveModel(modelEngineName)
                 if (model == null) {
-                    respawn()
                     warning("Failed to load model: $modelEngineName")
                     return false
                 }
                 val modeledEntity = modelManager.createModeledEntity(entityModeled)
                 if (modeledEntity == null) {
-                    respawn()
                     warning("Failed to create modeled entity")
                     return false
                 }
                 try {
                     modeledEntity.addActiveModel(model)
                 } catch (ex: NullPointerException) {
-                    respawn()
                     warning("Failed to load model: $modelEngineName (${ex.message})")
                     return false
                 }

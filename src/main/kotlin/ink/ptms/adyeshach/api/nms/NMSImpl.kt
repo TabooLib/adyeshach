@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.VectorNull
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.editor.minecraftVersion
 import net.minecraft.server.v1_13_R2.PacketPlayOutBed
 import net.minecraft.server.v1_16_R1.*
 import org.bukkit.Location
@@ -23,7 +22,6 @@ import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
-import org.bukkit.entity.Villager
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -33,9 +31,9 @@ import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.reflect.Reflex.Companion.invokeMethod
 import taboolib.common.reflect.Reflex.Companion.setProperty
 import taboolib.common.reflect.Reflex.Companion.unsafeInstance
-import taboolib.module.nms.*
 import taboolib.module.nms.MinecraftVersion
-import taboolib.platform.util.serializeToByteArray
+import taboolib.module.nms.nmsClass
+import taboolib.module.nms.obcClass
 import java.util.*
 
 /**
@@ -49,19 +47,6 @@ class NMSImpl : NMS() {
     val majorLegacy = MinecraftVersion.majorLegacy
 
     val classPlayerInfoData = nmsClass("PacketPlayOutPlayerInfo\$PlayerInfoData")
-
-    fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>) {
-        sendPacket(setFields(packet, *fields))
-    }
-
-    fun setFields(any: Any, vararg fields: Pair<String, Any?>): Any {
-        fields.forEach { (key, value) ->
-            if (value != null) {
-                any.setProperty(key, value)
-            }
-        }
-        return any
-    }
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         if (isUniversal) {
@@ -382,7 +367,7 @@ class NMSImpl : NMS() {
         if (majorLegacy >= 11400) {
             player.sendPacketI(PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
         } else {
-            player.sendPacketI(net.minecraft.server.v1_12_R1.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
+            player.sendPacketI(net.minecraft.server.v1_13_R2.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
         }
     }
 
@@ -611,7 +596,7 @@ class NMSImpl : NMS() {
             major >= 4 -> {
                 net.minecraft.server.v1_12_R1.DataWatcher.Item(
                     net.minecraft.server.v1_12_R1.DataWatcherObject(
-                        6,
+                        index,
                         net.minecraft.server.v1_12_R1.DataWatcherRegistry.f
                     ), org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asNMSCopy(itemStack)
                 )
@@ -619,7 +604,7 @@ class NMSImpl : NMS() {
             else -> {
                 return net.minecraft.server.v1_9_R2.DataWatcher.Item(
                     net.minecraft.server.v1_9_R2.DataWatcherObject(
-                        6,
+                        index,
                         net.minecraft.server.v1_9_R2.DataWatcherRegistry.f
                     ), com.google.common.base.Optional.fromNullable(org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack.asNMSCopy(itemStack))
                 )
@@ -628,39 +613,27 @@ class NMSImpl : NMS() {
     }
 
     override fun getMetaVillagerData(index: Int, villagerData: ink.ptms.adyeshach.common.bukkit.data.VillagerData): Any {
-        return DataWatcher.Item(
-            DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(
-                when (villagerData.type) {
-                    Villager.Type.DESERT -> VillagerType.DESERT
-                    Villager.Type.JUNGLE -> VillagerType.JUNGLE
-                    Villager.Type.PLAINS -> VillagerType.PLAINS
-                    Villager.Type.SAVANNA -> VillagerType.SAVANNA
-                    Villager.Type.SNOW -> VillagerType.SNOW
-                    Villager.Type.SWAMP -> VillagerType.SWAMP
-                    Villager.Type.TAIGA -> VillagerType.TAIGA
-                }, when (villagerData.profession) {
-                    Villager.Profession.NONE -> VillagerProfession.NONE
-                    Villager.Profession.ARMORER -> VillagerProfession.ARMORER
-                    Villager.Profession.BUTCHER -> VillagerProfession.BUTCHER
-                    Villager.Profession.CARTOGRAPHER -> VillagerProfession.CARTOGRAPHER
-                    Villager.Profession.CLERIC -> VillagerProfession.CLERIC
-                    Villager.Profession.FARMER -> VillagerProfession.FARMER
-                    Villager.Profession.FISHERMAN -> VillagerProfession.FISHERMAN
-                    Villager.Profession.FLETCHER -> VillagerProfession.FLETCHER
-                    Villager.Profession.LEATHERWORKER -> VillagerProfession.LEATHERWORKER
-                    Villager.Profession.LIBRARIAN -> VillagerProfession.LIBRARIAN
-                    Villager.Profession.MASON -> VillagerProfession.MASON
-                    Villager.Profession.NITWIT -> VillagerProfession.NITWIT
-                    Villager.Profession.SHEPHERD -> VillagerProfession.SHEPHERD
-                    Villager.Profession.TOOLSMITH -> VillagerProfession.TOOLSMITH
-                    Villager.Profession.WEAPONSMITH -> VillagerProfession.WEAPONSMITH
-                }, 1
-            )
-        )
+        return if (majorLegacy >= 11900) {
+            val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, fixed = true)
+            val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, fixed = true)!!
+            NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), NMSVillagerData(villagerType, villagerProfession, 1))
+        } else {
+            val villagerType = VillagerType::class.java.getProperty<VillagerType>(villagerData.type.name, fixed = true)
+            val villagerProfession = VillagerProfession::class.java.getProperty<VillagerProfession>(villagerData.profession.name, fixed = true)
+            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(villagerType, villagerProfession, 1))
+        }
     }
 
     override fun getMetaEntityPose(index: Int, pose: BukkitPose): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING))
+        return if (majorLegacy >= 11900) {
+            net.minecraft.network.syncher.DataWatcher.Item(
+                net.minecraft.network.syncher.DataWatcherObject(index, net.minecraft.network.syncher.DataWatcherRegistry.POSE),
+                Enums.getIfPresent(net.minecraft.world.entity.EntityPose::class.java, pose.name)
+                    .or(net.minecraft.world.entity.EntityPose.STANDING)
+            )
+        } else {
+            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.s), Enums.getIfPresent(EntityPose::class.java, pose.name).or(EntityPose.STANDING))
+        }
     }
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
@@ -787,7 +760,9 @@ class NMSImpl : NMS() {
     }
 
     override fun sendPlayerSleeping(player: Player, id: Int, location: Location) {
-        player.sendPacketI(PacketPlayOutBed(), "a" to id, "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
+        player.sendPacketI(PacketPlayOutBed(),
+            "a" to id,
+            "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
     }
 
     override fun getTropicalFishPattern(data: Int): TropicalFish.Pattern {

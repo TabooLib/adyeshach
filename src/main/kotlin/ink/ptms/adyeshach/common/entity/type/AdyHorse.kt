@@ -9,37 +9,6 @@ import org.bukkit.entity.Horse
  */
 class AdyHorse : AdyHorseBase(EntityTypes.HORSE) {
 
-    init {
-        testing = true
-        /**
-         * Variant (Color & Style)
-         *
-         * 1.15 -> 18
-         * 1.14 -> 17
-         * 1.10 -> 15
-         * 1.9 -> 14
-         */
-//        natural(at(11700 to 19, 11500 to 18, 11400 to 17, 11000 to 15, 10900 to 14), "variant", 0)
-//                .canEdit(false)
-//                .build()
-//        naturalEditor("horseColor")
-//                .from(Editors.enums(Horse.Color::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_color ${entity.uniqueId} ${meta.key} $e" })
-//                .reset { _, _ ->
-//                    setColor(Horse.Color.WHITE)
-//                }
-//                .display { _, _, _ ->
-//                    getColor().name
-//                }.build()
-//        naturalEditor("horseStyle")
-//                .from(Editors.enums(Horse.Style::class) { _, entity, meta, _, e -> "/adyeshachapi edit horse_style ${entity.uniqueId} ${meta.key} $e" })
-//                .reset { _, _ ->
-//                    setStyle(Horse.Style.NONE)
-//                }
-//                .display { _, _, _ ->
-//                    getStyle().name
-//                }.build()
-    }
-
     fun getVariant(): Int {
         return getMetadata("variant")
     }

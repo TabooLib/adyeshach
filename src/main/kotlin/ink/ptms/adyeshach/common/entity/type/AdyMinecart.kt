@@ -16,6 +16,7 @@ open class AdyMinecart(entityTypes: EntityTypes) : AdyEntity(entityTypes) {
 
     @Expose
     private var customBlock: Material = Material.AIR
+
     @Expose
     private var customBlockData: Byte = 0
 

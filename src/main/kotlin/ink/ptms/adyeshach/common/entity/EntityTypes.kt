@@ -25,6 +25,7 @@ enum class EntityTypes(
         -1,
         EntitySize(0.6, 0.35),
         AdyAllay::class.java,
+        flying = true
     ),
 
     AREA_EFFECT_CLOUD(
@@ -292,7 +293,6 @@ enum class EntityTypes(
         EntitySize(1.39648, 1.6),
         AdyHorse::class.java
     ),
-
 
     HUSK(
         Enums.getIfPresent(EntityType::class.java, "HUSK").orNull(),
