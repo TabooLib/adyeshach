@@ -334,7 +334,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 destroy()
                 respawn()
             } else {
-                forViewers { NMS.INSTANCE.teleportEntity(it, index, location) }
+                pool.submit { forViewers { NMS.INSTANCE.teleportEntity(it, index, location) } }
             }
         }
     }

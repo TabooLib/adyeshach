@@ -87,26 +87,26 @@ fun EntityInstance.setViewCondition(condition: List<String>?) {
 }
 
 fun EntityInstance.updateViewCondition() {
-    if (TraitViewCondition.data.contains(e.entity.uniqueId) && Coerce.toLong(e.entity.getTag("view-condition-next") ?: 0) < System.currentTimeMillis()) {
-        val script = TraitViewCondition.data.getStringList(e.entity.uniqueId)
+    if (TraitViewCondition.data.contains(uniqueId) && Coerce.toLong(getTag("view-condition-next") ?: 0) < System.currentTimeMillis()) {
+        val script = TraitViewCondition.data.getStringList(uniqueId)
         // 设置冷却
-        e.entity.setTag("view-condition-next", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
+        setTag("view-condition-next", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
         // 获取玩家
-        e.entity.viewPlayers.getPlayersInViewDistance().forEach {
+        viewPlayers.getPlayersInViewDistance().forEach {
             runKether {
                 KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
-                    rootFrame().variables()["@entities"] = listOf(e.entity)
+                    rootFrame().variables()["@entities"] = listOf(this)
                 }.thenAccept { cond ->
                     if (Coerce.toBoolean(cond)) {
                         // 看不见但是满足可视条件
-                        if (it.name !in e.entity.viewPlayers.visible) {
-                            e.entity.visible(it, true)
+                        if (it.name !in viewPlayers.visible) {
+                            visible(it, true)
                         }
                     } else {
                         // 看得见但不满足可视条件
-                        if (it.name in e.entity.viewPlayers.visible) {
-                            e.entity.visible(it, false)
-                            e.entity.viewPlayers.visible.remove(it.name)
+                        if (it.name in viewPlayers.visible) {
+                            visible(it, false)
+                            viewPlayers.visible.remove(it.name)
                         }
                     }
                 }
