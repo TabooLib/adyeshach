@@ -29,6 +29,11 @@ abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyMob(entityTypes) 
     }
 
     open fun isBaby(): Boolean {
+        if (MinecraftVersion.major == 0) {
+            val age: Byte = getMetadata("isBaby")
+            return age < 0
+        }
+
         return getMetadata("isBaby")
     }
 }
