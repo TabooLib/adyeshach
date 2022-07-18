@@ -255,9 +255,9 @@ class NMSImpl : NMS() {
                 player.sendPacketI(
                     PacketPlayOutSpawnEntity(),
                     "a" to entityId,
-                    "b" to location.x,
-                    "c" to location.y,
-                    "d" to location.z,
+                    "b" to MathHelper.floor(location.x * 32.0),
+                    "c" to MathHelper.floor(location.y * 32.0),
+                    "d" to MathHelper.floor(location.z * 32.0),
                     "e" to 0,
                     "f" to 0,
                     "g" to 0,
