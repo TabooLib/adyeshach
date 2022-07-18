@@ -44,7 +44,25 @@ object EntityMetas {
             natural(at(11700 to 16, 11500 to 15, 11400 to 14), "isCelebrating", false)
         }
         from<AdyEntityAgeable> {
-            natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 12, 10900 to 11), "isBaby", false)
+            if (MinecraftVersion.major == 0) {
+                //Negative = Child
+                natural(at(10800 to 12), "isBaby", 0.toByte()) {
+                    it.modify { player, entity ->
+                        val origin = entity.getMetadata<Byte>("isBaby")
+                        entity.setMetadata("isBaby", (if (origin == 0.toByte()) -1 else 0).toByte())
+                        entity.openEditor(player)
+                    }
+                    it.display { player, entity ->
+                        if (entity.getMetadata<Byte>("isBaby") < 0) {
+                            true
+                        } else {
+                            false
+                        }.toDisplay(player)
+                    }
+                }
+            } else {
+                natural(at(11700 to 16, 11500 to 15, 11400 to 14, 11100 to 12, 10900 to 11), "isBaby", false)
+            }
         }
         from<AdyMob> {
             mask(at(11700 to 15, 11500 to 14, 11400 to 13, 11000 to 11), "isLeftHanded", 0x02)
@@ -289,7 +307,7 @@ object EntityMetas {
     private fun init2() {
         from<AdyRabbit> {
             val index = at(11700 to 17, 11500 to 16, 11400 to 15, 11000 to 13, 10900 to 12, 10800 to 18)
-            natural(index, "type", Rabbit.Type.BLACK.ordinal) { it.useIndexEditor(Rabbit.Type::class.java, "type") }
+            natural(index, "type", if (MinecraftVersion.major == 0) Rabbit.Type.BLACK.ordinal.toByte() else Rabbit.Type.BLACK.ordinal) { it.useIndexEditor(Rabbit.Type::class.java, "type") }
         }
         from<AdyParrot> {
             val index = at(11700 to 19, 11500 to 18, 11400 to 17, 11200 to 15)

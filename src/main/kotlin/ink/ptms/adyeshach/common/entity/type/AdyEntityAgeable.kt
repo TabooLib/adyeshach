@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.entity.type
 
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * @author sky
@@ -19,7 +20,12 @@ abstract class AdyEntityAgeable(entityTypes: EntityTypes) : AdyMob(entityTypes) 
     }
 
     open fun setBaby(value: Boolean) {
-        setMetadata("isBaby", value)
+        if (MinecraftVersion.major == 0) {
+            //Negative = Child
+            setMetadata("isBaby", (if (value) -1 else 0).toByte())
+        } else {
+            setMetadata("isBaby", value)
+        }
     }
 
     open fun isBaby(): Boolean {
