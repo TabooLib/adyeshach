@@ -35,6 +35,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.util.Vector
+import taboolib.common.util.unsafeLazy
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
@@ -111,7 +112,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 实体序号，用于发包
      */
-    val index by lazy { Indexs.nextIndex() }
+    val index by unsafeLazy { Indexs.nextIndex() }
 
     /**
      * 单位管理器
