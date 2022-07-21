@@ -9,7 +9,9 @@ import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.minecraftVersion
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 
@@ -40,17 +42,6 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             }
             field = value
         }
-
-    init {
-        // 刷新皮肤
-        submit(async = true, delay = 200, period = 200) {
-            if (manager != null) {
-                forViewers { refreshPlayerInfo(it) }
-            } else {
-                cancel()
-            }
-        }
-    }
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
@@ -164,5 +155,21 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     protected fun removePlayerInfo(viewer: Player) {
         Adyeshach.api().getMinecraftAPI().getEntityPlayerHandler().removePlayerInfo(viewer, playerUUID)
+    }
+
+    companion object {
+
+        @Schedule(delay = 200, period = 200)
+        internal fun playerTextureRefresh200() {
+            val finder = Adyeshach.api().getEntityFinder()
+            var i = 0L
+            Bukkit.getOnlinePlayers().forEach {
+                submit(async = true, delay = i++) {
+                    finder.getVisibleEntities(it).filterIsInstance<AdyHuman>().forEach { human ->
+                        human.refreshPlayerInfo(it)
+                    }
+                }
+            }
+        }
     }
 }

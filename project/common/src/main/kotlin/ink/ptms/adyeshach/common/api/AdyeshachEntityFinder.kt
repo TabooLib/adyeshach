@@ -18,12 +18,17 @@ interface AdyeshachEntityFinder {
     /**
      * 通过过滤器获取单位
      */
-    fun getEntity(player: Player? = null, match: Function<EntityInstance, Boolean>): EntityInstance?
+    fun getEntity(player: Player? = null, match: Function<EntityInstance, Boolean> = Function { true }): EntityInstance?
 
     /**
      * 通过过滤器获取单位
      */
-    fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean>): List<EntityInstance>
+    fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean> = Function { true }): List<EntityInstance>
+
+    /**
+     * 通过过滤器获取所有可见单位
+     */
+    fun getVisibleEntities(player: Player? = null, filter: Function<EntityInstance, Boolean> = Function { true }): List<EntityInstance>
 
     /**
      * 通过单位 id 获取单位
@@ -53,12 +58,12 @@ interface AdyeshachEntityFinder {
     /**
      * 通过过滤器获取玩家就近的单位（通过所有单位管理器）
      */
-    fun getNearestEntity(player: Player, filter: Function<EntityInstance, Boolean>): EntityInstance?
+    fun getNearestEntity(player: Player, filter: Function<EntityInstance, Boolean> = Function { true }): EntityInstance?
 
     /**
      * 通过过滤器获取坐标就近的单位（通过公共单位管理器）
      */
-    fun getNearestEntity(location: Location, filter: Function<EntityInstance, Boolean>): EntityInstance?
+    fun getNearestEntity(location: Location, filter: Function<EntityInstance, Boolean> = Function { true }): EntityInstance?
 
     /**
      * 通过单位 id 获取单位
