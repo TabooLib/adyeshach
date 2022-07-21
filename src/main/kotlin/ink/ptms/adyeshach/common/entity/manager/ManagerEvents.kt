@@ -52,21 +52,13 @@ internal object ManagerEvents {
     @Awake(LifeCycle.ACTIVE)
     fun onTick() {
         submit(period = 1) {
-            mirrorNow("ManagerPublic:onTick") {
-                AdyeshachAPI.getEntityManagerPublic().onTick()
-            }
-            mirrorNow("ManagerPublic:onTick(temporary)") {
-                AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
-            }
+            AdyeshachAPI.getEntityManagerPublic().onTick()
+            AdyeshachAPI.getEntityManagerPublicTemporary().onTick()
         }
         submit(period = 1) {
             Bukkit.getOnlinePlayers().forEach { player ->
-                mirrorNow("ManagerPrivate:onTick") {
-                    AdyeshachAPI.getEntityManagerPrivate(player).onTick()
-                }
-                mirrorNow("ManagerPrivate:onTick(temporary)") {
-                    AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
-                }
+                AdyeshachAPI.getEntityManagerPrivate(player).onTick()
+                AdyeshachAPI.getEntityManagerPrivateTemporary(player).onTick()
             }
         }
     }
@@ -74,15 +66,11 @@ internal object ManagerEvents {
     @Awake(LifeCycle.ACTIVE)
     fun onSave() {
         submit(delay = 1200, period = 1200, async = true) {
-            mirrorNow("ManagerPublic:onSave(async)") {
-                AdyeshachAPI.getEntityManagerPublic().onSave()
-            }
+            AdyeshachAPI.getEntityManagerPublic().onSave()
         }
         submit(delay = 600, period = 600, async = true) {
             Bukkit.getOnlinePlayers().forEach {
-                mirrorNow("ManagerPrivate:onSave(async)") {
-                    AdyeshachAPI.getEntityManagerPrivate(it).onSave()
-                }
+                AdyeshachAPI.getEntityManagerPrivate(it).onSave()
             }
         }
     }
@@ -122,9 +110,7 @@ internal object ManagerEvents {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
         }
-        mirrorNow("ManagerPrivate:onSave(async)") {
-            AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
-        }
+        AdyeshachAPI.getEntityManagerPrivate(e.player).onSave()
     }
 
     fun spawn(player: Player) {
@@ -135,9 +121,7 @@ internal object ManagerEvents {
             AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers.add(player.name)
             }
-            mirrorNow("ManagerPrivate:onLoad(async)") {
-                AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
-            }
+            AdyeshachAPI.getEntityManagerPrivate(player).onEnable()
         }
     }
 }

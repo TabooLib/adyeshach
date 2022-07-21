@@ -12,7 +12,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
-import taboolib.common.reflect.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 

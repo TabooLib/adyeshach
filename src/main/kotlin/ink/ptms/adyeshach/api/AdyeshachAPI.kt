@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.api
 import com.google.gson.JsonParser
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
+import ink.ptms.adyeshach.api.nms.NMS.Companion.shutdownPool
 import ink.ptms.adyeshach.common.entity.*
 import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
 import ink.ptms.adyeshach.common.entity.editor.EditorHandler
@@ -11,6 +12,7 @@ import ink.ptms.adyeshach.common.entity.manager.*
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseLocal
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseMongodb
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseNull
+import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
@@ -22,6 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.WorldUnloadEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.onlinePlayers
@@ -226,6 +229,19 @@ object AdyeshachAPI {
     }
 
     /**
+     * 获取所有可见单位
+     */
+    fun getVisibleEntities(player: Player): List<EntityInstance> {
+        val distance = AdyeshachSettings.visibleDistance
+        val entity = ArrayList<EntityInstance>()
+        entity.addAll(getEntityManagerPublic().getEntities().filter { it.position.toLocation().safeDistance(player.location) <= distance })
+        entity.addAll(getEntityManagerPublicTemporary().getEntities().filter { it.position.toLocation().safeDistance(player.location) <= distance })
+        entity.addAll(getEntityManagerPrivate(player).getEntities().filter { it.position.toLocation().safeDistance(player.location) <= distance })
+        entity.addAll(getEntityManagerPrivateTemporary(player).getEntities().filter { it.position.toLocation().safeDistance(player.location) <= distance })
+        return entity
+    }
+
+    /**
      * 注册元数据模型（布尔值）
      */
     fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean = false) {
@@ -332,13 +348,25 @@ object AdyeshachAPI {
     }
 
     @Awake(LifeCycle.DISABLE)
-    internal fun e() {
+    internal fun onDisable() {
         onlinePlayers().forEach { database.push(it.cast()) }
+    }
+
+    @Schedule(delay = 200, period = 200)
+    internal fun playerTextureRefresh200() {
+        var i = 0L
+        Bukkit.getOnlinePlayers().forEach {
+            submit(async = true, delay = i++) {
+                getVisibleEntities(it).filterIsInstance<AdyHuman>().forEach { human ->
+                    human.refreshPlayerInfo(it)
+                }
+            }
+        }
     }
 
     // 当世界被卸载时, 该世界的所有虚拟实体应当被清除
     @SubscribeEvent
-    fun e(e: WorldUnloadEvent) {
+    internal fun onWorldChange(e: WorldUnloadEvent) {
         getEntities { true }
             .filter { it.getWorld().uid == e.world.uid }
             .forEach {
@@ -356,5 +384,6 @@ object AdyeshachAPI {
             database.push(e.player)
             database.release(e.player)
         }
+        e.player.shutdownPool()
     }
 }

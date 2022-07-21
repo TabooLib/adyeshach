@@ -38,6 +38,10 @@ object Adyeshach : Plugin() {
         }
     }
 
+    override fun onEnable() {
+        File(getDataFolder(), "skin/upload").mkdirs()
+    }
+
     @Awake(LifeCycle.INIT)
     fun checkVersion() {
         if (File(getDataFolder(), "npc").listFiles()?.isNotEmpty() == true) {

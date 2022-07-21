@@ -27,10 +27,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
-import taboolib.common.reflect.Reflex.Companion.setProperty
-import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.setProperty
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass
@@ -40,6 +40,7 @@ import java.util.*
  * @author Arasple
  * @date 2020/8/3 21:51
  */
+@Suppress("DuplicatedCode")
 class NMSImpl : NMS() {
 
     val isUniversal = MinecraftVersion.isUniversal
@@ -153,7 +154,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (isUniversal) {
-            val block = Blocks::class.java.getProperty<Any>(material.name, fixed = true)
+            val block = Blocks::class.java.getProperty<Any>(material.name, isStatic =true)
             player.sendPacketI(
                 PacketPlayOutSpawnEntity::class.java.unsafeInstance(),
                 "id" to entityId,
@@ -170,7 +171,7 @@ class NMSImpl : NMS() {
                 "data" to net.minecraft.world.level.block.Block.getId(((block ?: Blocks.STONE) as net.minecraft.world.level.block.Block).defaultBlockState())
             )
         } else if (majorLegacy >= 11300) {
-            val block = Blocks::class.java.getProperty<Any>(material.name, fixed = true)
+            val block = Blocks::class.java.getProperty<Any>(material.name, isStatic =true)
             player.sendPacketI(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
@@ -260,14 +261,15 @@ class NMSImpl : NMS() {
         val infoData = classPlayerInfoData.unsafeInstance()
         if (isUniversal) {
             val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
-            infoData.setProperty("a", ping)
-            infoData.setProperty("b", EnumGamemode.values()[0])
-            infoData.setProperty("c", profile)
-            infoData.setProperty("d", craftChatMessageFromString(name))
+            infoData.setProperty("a", ping, remap = false)
+            infoData.setProperty("b", EnumGamemode.values()[0], remap = false)
+            infoData.setProperty("c", profile, remap = false)
+            infoData.setProperty("d", craftChatMessageFromString(name), remap = false)
             player.sendPacketI(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
-                "b" to listOf(infoData)
+                "b" to listOf(infoData),
+                remap = false
             )
         } else if (majorLegacy >= 11000) {
             val info = PacketPlayOutPlayerInfo()
@@ -298,12 +300,13 @@ class NMSImpl : NMS() {
         val infoData = classPlayerInfoData.unsafeInstance()
         if (isUniversal) {
             val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
-            infoData.setProperty("a", -1)
-            infoData.setProperty("c", GameProfile(uuid, ""))
+            infoData.setProperty("a", -1, remap = false)
+            infoData.setProperty("c", GameProfile(uuid, ""), remap = false)
             player.sendPacketI(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
-                "b" to listOf(infoData)
+                "b" to listOf(infoData),
+                remap = false
             )
         } else {
             val info = PacketPlayOutPlayerInfo()
@@ -325,13 +328,14 @@ class NMSImpl : NMS() {
         if (isUniversal) {
             player.sendPacketI(
                 PacketPlayOutEntityTeleport::class.java.unsafeInstance(),
-                "id" to entityId,
-                "x" to location.x,
-                "y" to location.y,
-                "z" to location.z,
-                "yRot" to (location.yaw * 256 / 360).toInt().toByte(),
-                "xRot" to (location.pitch * 256 / 360).toInt().toByte(),
-                "onGround" to false
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to (location.yaw * 256 / 360).toInt().toByte(),
+                "f" to (location.pitch * 256 / 360).toInt().toByte(),
+                "g" to false,
+                remap = false,
             )
         } else {
             player.sendPacketI(
@@ -375,8 +379,9 @@ class NMSImpl : NMS() {
         if (isUniversal) {
             player.sendPacketI(
                 PacketPlayOutEntityHeadRotation::class.java.unsafeInstance(),
-                "entityId" to entityId,
-                "yHeadRot" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+                "a" to entityId,
+                "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
+                remap = false,
             )
         } else {
             player.sendPacketI(
@@ -401,20 +406,14 @@ class NMSImpl : NMS() {
         when {
             major >= 8 -> {
                 val enumItemSlot: EnumItemSlot
-                if (slot == EquipmentSlot.HAND) {
-                    enumItemSlot = EnumItemSlot.MAINHAND
-                } else if (slot == EquipmentSlot.OFF_HAND) {
-                    enumItemSlot = EnumItemSlot.OFFHAND
-                } else if (slot == EquipmentSlot.FEET) {
-                    enumItemSlot = EnumItemSlot.FEET
-                } else if (slot == EquipmentSlot.LEGS) {
-                    enumItemSlot = EnumItemSlot.LEGS
-                } else if (slot == EquipmentSlot.CHEST) {
-                    enumItemSlot = EnumItemSlot.CHEST
-                } else if (slot == EquipmentSlot.HEAD) {
-                    enumItemSlot = EnumItemSlot.HEAD
-                } else {
-                    error("out of case")
+                when (slot) {
+                    EquipmentSlot.HAND -> enumItemSlot = EnumItemSlot.MAINHAND
+                    EquipmentSlot.OFF_HAND -> enumItemSlot = EnumItemSlot.OFFHAND
+                    EquipmentSlot.FEET -> enumItemSlot = EnumItemSlot.FEET
+                    EquipmentSlot.LEGS -> enumItemSlot = EnumItemSlot.LEGS
+                    EquipmentSlot.CHEST -> enumItemSlot = EnumItemSlot.CHEST
+                    EquipmentSlot.HEAD -> enumItemSlot = EnumItemSlot.HEAD
+                    else -> error("out of case")
                 }
                 player.sendPacketI(
                     PacketPlayOutEntityEquipment(entityId,
@@ -424,20 +423,14 @@ class NMSImpl : NMS() {
             }
             major >= 1 -> {
                 val enumItemSlot: net.minecraft.server.v1_13_R2.EnumItemSlot
-                if (slot == EquipmentSlot.HAND) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.MAINHAND
-                } else if (slot == EquipmentSlot.OFF_HAND) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.OFFHAND
-                } else if (slot == EquipmentSlot.FEET) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.FEET
-                } else if (slot == EquipmentSlot.LEGS) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.LEGS
-                } else if (slot == EquipmentSlot.CHEST) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.CHEST
-                } else if (slot == EquipmentSlot.HEAD) {
-                    enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
-                } else {
-                    error("out of case")
+                when (slot) {
+                    EquipmentSlot.HAND -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.MAINHAND
+                    EquipmentSlot.OFF_HAND -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.OFFHAND
+                    EquipmentSlot.FEET -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.FEET
+                    EquipmentSlot.LEGS -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.LEGS
+                    EquipmentSlot.CHEST -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.CHEST
+                    EquipmentSlot.HEAD -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
+                    else -> error("out of case")
                 }
                 player.sendPacketI(
                     net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
@@ -470,8 +463,9 @@ class NMSImpl : NMS() {
         if (isUniversal) {
             player.sendPacketI(
                 PacketPlayOutEntityMetadata::class.java.unsafeInstance(),
-                "id" to entityId,
-                "packedItems" to objects.map { it as DataWatcher.Item<*> }.toList()
+                "a" to entityId,
+                "b" to objects.map { it as DataWatcher.Item<*> }.toList(),
+                remap = false,
             )
         } else {
             player.sendPacketI(
@@ -614,12 +608,12 @@ class NMSImpl : NMS() {
 
     override fun getMetaVillagerData(index: Int, villagerData: ink.ptms.adyeshach.common.bukkit.data.VillagerData): Any {
         return if (majorLegacy >= 11900) {
-            val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, fixed = true)
-            val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, fixed = true)!!
+            val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, isStatic =true)
+            val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, isStatic =true)!!
             NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), NMSVillagerData(villagerType, villagerProfession, 1))
         } else {
-            val villagerType = VillagerType::class.java.getProperty<VillagerType>(villagerData.type.name, fixed = true)
-            val villagerProfession = VillagerProfession::class.java.getProperty<VillagerProfession>(villagerData.profession.name, fixed = true)
+            val villagerType = VillagerType::class.java.getProperty<VillagerType>(villagerData.type.name, isStatic =true)
+            val villagerProfession = VillagerProfession::class.java.getProperty<VillagerProfession>(villagerData.profession.name, isStatic =true)
             DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.q), VillagerData(villagerType, villagerProfession, 1))
         }
     }
@@ -638,7 +632,7 @@ class NMSImpl : NMS() {
 
     override fun getEntityTypeNMS(entityTypes: EntityTypes): Any {
         return if (MinecraftVersion.major >= 5) {
-            net.minecraft.server.v1_16_R1.EntityTypes::class.java.getProperty<Any>(entityTypes.internalName ?: entityTypes.name, fixed = true)!!
+            net.minecraft.server.v1_16_R1.EntityTypes::class.java.getProperty<Any>(entityTypes.internalName ?: entityTypes.name, isStatic =true)!!
         } else {
             entityTypes.bukkitId
         }
@@ -650,7 +644,7 @@ class NMSImpl : NMS() {
 
     override fun getPaintingNMS(bukkitPaintings: BukkitPaintings): Any {
         return if (MinecraftVersion.major >= 5) {
-            Paintings::class.java.getProperty<Any>(bukkitPaintings.index.toString(), fixed = true)!!
+            Paintings::class.java.getProperty<Any>(bukkitPaintings.index.toString(), isStatic =true)!!
         } else {
             bukkitPaintings.legacy
         }
@@ -659,7 +653,7 @@ class NMSImpl : NMS() {
     override fun getParticleNMS(bukkitParticles: BukkitParticles): Any {
         return when {
             majorLegacy >= 11400 -> {
-                Particles::class.java.getProperty<Any>(bukkitParticles.name, fixed = true) ?: Particles.FLAME
+                Particles::class.java.getProperty<Any>(bukkitParticles.name, isStatic =true) ?: Particles.FLAME
             }
             majorLegacy == 11300 -> {
                 val p =
@@ -680,7 +674,7 @@ class NMSImpl : NMS() {
 
     override fun toBlockId(materialData: MaterialData): Int {
         return if (MinecraftVersion.major >= 10) {
-            net.minecraft.world.level.block.Block::class.java.invokeMethod("getId", CraftMagicNumbers.getBlock(materialData), fixed = true)!!
+            net.minecraft.world.level.block.Block::class.java.invokeMethod("getId", CraftMagicNumbers.getBlock(materialData), isStatic =true)!!
         } else if (MinecraftVersion.major >= 5) {
             Block.getCombinedId(CraftMagicNumbers.getBlock(materialData))
         } else {
@@ -774,6 +768,6 @@ class NMSImpl : NMS() {
     }
 
     private fun craftChatMessageFromString(message: String): Any? {
-        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, fixed = true)!![0]
+        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, isStatic =true)!![0]
     }
 }

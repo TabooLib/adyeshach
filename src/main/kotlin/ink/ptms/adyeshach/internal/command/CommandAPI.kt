@@ -63,12 +63,9 @@ internal object CommandAPI {
     @CommandBody
     val mirror = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            sender.sendLang("command-test-mirror-header")
-            sender.sendLang("command-test-mirror-bottom")
-            submit(async = true) {
-                Mirror.report(adaptCommandSender(sender))
-                sender.sendLang("command-test-mirror-bottom")
-            }
+            sender.sendMessage("§c[Adyeshach] §7Mirror system is disabled, please use professional performance monitoring tools.")
+            sender.sendMessage("§c[Adyeshach] §7spark: §f§nhttps://spark.lucko.me")
+            sender.sendMessage("§c[Adyeshach] §7async-profiler: §f§nhttps://github.com/jvm-profiling-tools/async-profiler")
         }
     }
 
@@ -130,25 +127,30 @@ internal object CommandAPI {
                                     entity.setMetadata(meta.key, Coerce.toInteger(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "byte" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, Coerce.toByte(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "text" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, args[1])
                                     entity.openEditor(sender)
                                 }
+
                                 "pose" -> {
                                     entity.setPose(Enums.getIfPresent(BukkitPose::class.java, args[1]).get())
                                     entity.openEditor(sender)
                                 }
+
                                 "meta" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     val editor = meta.editor ?: return@execute
                                     (editor as MetaEditor<EntityInstance>).modifyMethod?.invoke(sender, entity)
                                 }
+
                                 "reset" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     if (meta.editor?.resetMethod != null) {
@@ -158,44 +160,54 @@ internal object CommandAPI {
                                     }
                                     entity.openEditor(sender)
                                 }
+
                                 "particle" -> {
                                     val meta = entity.getEditableEntityMeta().firstOrNull { it.key == args[0] } ?: return@execute
                                     entity.setMetadata(meta.key, Enums.getIfPresent(BukkitParticles::class.java, args[1]).get())
                                     entity.openEditor(sender)
                                 }
+
                                 "villager_profession" -> {
                                     val data = (entity as EntityVillager).getVillagerData()
                                     entity.setVillagerData(VillagerData(data.type, Enums.getIfPresent(Villager.Profession::class.java, args[1]).get()))
                                     entity.openEditor(sender)
                                 }
+
                                 "villager_profession_legacy" -> {
                                     (entity as EntityVillager).setLegacyProfession(BukkitProfession.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "painting_painting" -> {
                                     (entity as AdyPainting).setPainting(BukkitPaintings.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "painting_direction" -> {
                                     (entity as AdyPainting).setDirection(BukkitDirection.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "pattern_color" -> {
                                     (entity as AdyTropicalFish).setPatternColor(DyeColor.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "body_color" -> {
                                     (entity as AdyTropicalFish).setBodyColor(DyeColor.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "pattern" -> {
                                     (entity as AdyTropicalFish).setPattern(TropicalFish.Pattern.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "horse_color" -> {
                                     (entity as AdyHorse).setColor(Horse.Color.valueOf(args[1]))
                                     entity.openEditor(sender)
                                 }
+
                                 "horse_style" -> {
                                     (entity as AdyHorse).setStyle(Horse.Style.valueOf(args[1]))
                                     entity.openEditor(sender)

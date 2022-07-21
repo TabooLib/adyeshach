@@ -25,27 +25,23 @@ object PathFinderHandler {
         submit(async = !AdyeshachSettings.pathfinderSync) {
             val startTime = System.currentTimeMillis()
             if (request == Request.NAVIGATION) {
-                mirrorNow("PathFinderProxy:Native:Navigation") {
-                    val time = System.currentTimeMillis()
-                    val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
-                    val path = pathFinder.findPath(target, distance = 32f)
-                    if (AdyeshachSettings.debug) {
-                        path?.nodes?.forEach { it.display(target.world!!) }
-                    }
-                    call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
+                val time = System.currentTimeMillis()
+                val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
+                val path = pathFinder.findPath(target, distance = 32f)
+                if (AdyeshachSettings.debug) {
+                    path?.nodes?.forEach { it.display(target.world!!) }
                 }
+                call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
             } else {
-                mirrorNow("PathFinderProxy:Native:RandomPosition") {
-                    val time = System.currentTimeMillis()
-                    var vec: Vector? = null
-                    repeat(10) {
-                        if (vec == null) {
-                            vec = RandomPositionGenerator.generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
-                        }
+                val time = System.currentTimeMillis()
+                var vec: Vector? = null
+                repeat(10) {
+                    if (vec == null) {
+                        vec = RandomPositionGenerator.generateLand(NodeEntity(start, pathType.height, pathType.width), 10, 7)
                     }
-                    if (vec != null) {
-                        call(ResultRandomPosition(vec, startTime, time))
-                    }
+                }
+                if (vec != null) {
+                    call(ResultRandomPosition(vec, startTime, time))
                 }
             }
         }

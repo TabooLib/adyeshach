@@ -42,19 +42,6 @@ class AdyHuman : AdyEntityLiving(EntityTypes.PLAYER) {
             field = value
         }
 
-    init {
-        // refresh skin
-        submit(async = true, delay = 200, period = 200) {
-            if (manager != null) {
-                forViewers {
-                    refreshPlayerInfo(it)
-                }
-            } else {
-                cancel()
-            }
-        }
-    }
-
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             spawn(viewer) {

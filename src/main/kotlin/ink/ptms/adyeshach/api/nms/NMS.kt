@@ -18,10 +18,13 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import taboolib.common.reflect.Reflex.Companion.setProperty
+import taboolib.library.reflex.Reflex.Companion.setProperty
 import taboolib.module.nms.nmsProxy
-import taboolib.module.nms.sendPacket
+import taboolib.module.nms.sendPacketBlocking
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * @author Arasple
@@ -115,12 +118,12 @@ abstract class NMS {
 
     abstract fun getTropicalFishDataValue(pattern: TropicalFish.Pattern): Int
 
-    protected fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>) {
-        sendPacket(fields(packet, *fields))
+    protected fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true) {
+        pool().submit { sendPacketBlocking(fields(packet, *fields, remap = remap)) }
     }
 
-    protected fun fields(packet: Any, vararg fields: Pair<String, Any?>): Any {
-        fields.filter { it.second != null }.forEach { (key, value) -> packet.setProperty(key, value) }
+    protected fun fields(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true): Any {
+        fields.filter { it.second != null }.forEach { (key, value) -> packet.setProperty(key, value, findToParent = false, remap = remap) }
         return packet
     }
 
@@ -128,5 +131,15 @@ abstract class NMS {
 
         @JvmStatic
         val INSTANCE by lazy { nmsProxy<NMS>() }
+
+        val playerPool = ConcurrentHashMap<String, ExecutorService>()
+
+        fun Player.pool(): ExecutorService {
+            return playerPool.computeIfAbsent(name) { Executors.newSingleThreadExecutor() }
+        }
+
+        fun Player.shutdownPool() {
+            playerPool.remove(name)?.shutdown()
+        }
     }
 }
