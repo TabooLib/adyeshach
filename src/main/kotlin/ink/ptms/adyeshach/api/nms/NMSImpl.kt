@@ -82,7 +82,7 @@ class NMSImpl : NMS() {
     }
 
     override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
-        if (entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) {
+        if ((entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) || majorLegacy >= 11900) {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
         if (isUniversal) {
