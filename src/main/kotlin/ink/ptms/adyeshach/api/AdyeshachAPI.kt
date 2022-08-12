@@ -10,7 +10,6 @@ import ink.ptms.adyeshach.common.entity.editor.EditorHandler
 import ink.ptms.adyeshach.common.entity.editor.MetaEditor
 import ink.ptms.adyeshach.common.entity.manager.*
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseLocal
-import ink.ptms.adyeshach.common.entity.manager.database.DatabaseMongodb
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseNull
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.serializer.Converter
@@ -65,7 +64,7 @@ object AdyeshachAPI {
     internal val database by lazy {
         when (val db = Adyeshach.conf.getString("Database.method")!!.uppercase()) {
             "LOCAL" -> DatabaseLocal()
-            "MONGODB" -> DatabaseMongodb()
+            // "MONGODB" -> DatabaseMongodb()
             "DISABLE" -> DatabaseNull()
             else -> {
                 val event = CustomDatabaseEvent(db)

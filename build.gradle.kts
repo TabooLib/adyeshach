@@ -24,7 +24,7 @@ taboolib {
     install("common")
     install("common-5")
     install("module-database")
-    install("module-database-mongodb")
+    // install("module-database-mongodb")
     install("module-configuration")
     install("module-kether")
     install("module-chat")
