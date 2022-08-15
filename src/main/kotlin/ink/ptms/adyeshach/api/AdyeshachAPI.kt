@@ -303,6 +303,13 @@ object AdyeshachAPI {
     /**
      * 创建全息
      */
+    fun createHologram(location: Location, content: List<String>): Hologram<*> {
+        return Hologram.AdyeshachImpl().also { it.create(location, content) }
+    }
+
+    /**
+     * 创建全息
+     */
     fun createHologram(player: Player, location: Location, content: List<String>): Hologram<*> {
         return Hologram.AdyeshachImpl().also { it.create(player, location, content) }
     }

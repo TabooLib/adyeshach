@@ -9,11 +9,13 @@ object ListenerServerTour {
 
     var touringPlayer = ConcurrentSet<String>()
 
+    @Ghost
     @SubscribeEvent
     fun e(e: RoutePlayBeginEvent) {
         touringPlayer.add(e.player.name)
     }
 
+    @Ghost
     @SubscribeEvent
     fun e(e: RoutePlayEndEvent) {
         touringPlayer.remove(e.player.name)
