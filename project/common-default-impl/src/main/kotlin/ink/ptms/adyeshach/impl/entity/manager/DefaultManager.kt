@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 import java.util.function.Function
@@ -24,23 +25,25 @@ import java.util.function.Function
  */
 open class DefaultManager : Manager, ManagerService, TickService {
 
-    val prepareTicks = ArrayList<Consumer<EntityInstance>>()
-    val activeEntity = CopyOnWriteArrayList<EntityInstance>()
+    val prepareTicks = LinkedList<Consumer<EntityInstance>>()
+    val activeEntity = LinkedList<EntityInstance>()
+    val pushList = CopyOnWriteArrayList<EntityInstance>()
+    val removeList = CopyOnWriteArrayList<EntityInstance>()
 
     open fun getPlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().toList()
     }
 
     override fun create(entityTypes: EntityTypes, location: Location): EntityInstance {
-        return create(entityTypes, location, getPlayers()) { }.also { activeEntity.add(it) }
+        return create(entityTypes, location, getPlayers()) { }.also { pushList.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, callback: Consumer<EntityInstance>): EntityInstance {
-        return create(entityTypes, location, getPlayers(), callback).also { activeEntity.add(it) }
+        return create(entityTypes, location, getPlayers(), callback).also { pushList.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, player: List<Player>): EntityInstance {
-        return create(entityTypes, location, player) { }.also { activeEntity.add(it) }
+        return create(entityTypes, location, player) { }.also { pushList.add(it) }
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
@@ -59,11 +62,11 @@ open class DefaultManager : Manager, ManagerService, TickService {
     }
 
     override fun add(entity: EntityInstance) {
-        activeEntity.add(entity)
+        pushList.add(entity)
     }
 
     override fun delete(entityInstance: EntityInstance) {
-        activeEntity.remove(entityInstance)
+        removeList.remove(entityInstance)
     }
 
     override fun getEntities(): List<EntityInstance> {
@@ -110,6 +113,14 @@ open class DefaultManager : Manager, ManagerService, TickService {
     }
 
     override fun onTick() {
+        if (pushList.isNotEmpty()) {
+            activeEntity += pushList
+            pushList.clear()
+        }
+        if (removeList.isNotEmpty()) {
+            activeEntity -= removeList
+            removeList.clear()
+        }
         getEntities().forEach {
             if (it is TickService) {
                 prepareTicks.forEach { p -> p.accept(it) }

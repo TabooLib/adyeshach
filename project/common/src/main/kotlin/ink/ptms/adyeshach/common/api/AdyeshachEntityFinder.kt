@@ -26,9 +26,9 @@ interface AdyeshachEntityFinder {
     fun getEntities(player: Player? = null, filter: Function<EntityInstance, Boolean> = Function { true }): List<EntityInstance>
 
     /**
-     * 通过过滤器获取所有可见单位
+     * 通过过滤器获取所有玩家可见单位
      */
-    fun getVisibleEntities(player: Player? = null, filter: Function<EntityInstance, Boolean> = Function { true }): List<EntityInstance>
+    fun getVisibleEntities(player: Player, filter: Function<EntityInstance, Boolean> = Function { true }): List<EntityInstance>
 
     /**
      * 通过单位 id 获取单位
