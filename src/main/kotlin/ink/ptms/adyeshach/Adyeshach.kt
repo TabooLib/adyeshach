@@ -34,6 +34,7 @@ object Adyeshach : Plugin() {
     override fun onLoad() {
         if (MinecraftVersion.majorLegacy < 10900 || !MinecraftVersion.isSupported) {
             console().sendLang("not-support")
+            console().sendLang("not-support-version", MinecraftVersion.minecraftVersion)
             disablePlugin()
         }
     }

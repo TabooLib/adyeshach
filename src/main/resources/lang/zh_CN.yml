@@ -1,4 +1,5 @@
 not-support: '&4[Adyeshach] &c抱歉, Adyeshach 不支持当前服务端版本!'
+not-support-version: '&4[Adyeshach] &c{0}'
 not-support-new-version:
   - '&4[Adyeshach] &c抱歉, Adyeshach 暂时不支持新的服务端版本!'
   - '&4[Adyeshach] &c请等待兼容工作完成.'

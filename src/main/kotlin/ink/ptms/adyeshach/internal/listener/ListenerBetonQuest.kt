@@ -34,7 +34,7 @@ object ListenerBetonQuest {
             if (CombatTagger.isTagged(playerID)) {
                 try {
                     Config.sendNotify(null, playerID, "busy", "busy,error")
-                } catch (ex: QuestRuntimeException) {
+                } catch (ex: Throwable) {
                     warning("The notify system was unable to play a sound for the 'busy' category. Error was: '${ex.message}'")
                     ex.printStackTrace()
                 }
@@ -50,7 +50,7 @@ object ListenerBetonQuest {
             if (org.betonquest.betonquest.conversation.CombatTagger.isTagged(playerID)) {
                 try {
                     org.betonquest.betonquest.config.Config.sendNotify(null, playerID, "busy", "busy,error")
-                } catch (ex: QuestRuntimeException) {
+                } catch (ex: Throwable) {
                     warning("The notify system was unable to play a sound for the 'busy' category. Error was: '${ex.message}'")
                     ex.printStackTrace()
                 }
