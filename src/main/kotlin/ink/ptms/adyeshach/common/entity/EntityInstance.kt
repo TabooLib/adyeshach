@@ -367,13 +367,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     fun setHeadRotation(yaw: Float, pitch: Float) {
         val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
         if (event.call()) {
-            position = position.run {
-                this.yaw = event.yaw
-                this.pitch = event.pitch
-                this
-            }
-            forViewers {
-                NMS.INSTANCE.setHeadRotation(it, index, event.yaw, event.pitch)
+            // 如果数字变更，则更新视角
+            val hasUpdate = position.yaw != yaw || position.pitch != pitch
+            if (hasUpdate) {
+                position = position.run {
+                    this.yaw = event.yaw
+                    this.pitch = event.pitch
+                    this
+                }
+                forViewers { NMS.INSTANCE.setHeadRotation(it, index, event.yaw, event.pitch) }
             }
         }
     }
