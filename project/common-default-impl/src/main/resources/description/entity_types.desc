@@ -161,14 +161,14 @@ ink.ptms.adyeshach.common.entity.type.AdyEndermite
 
 ink.ptms.adyeshach.common.entity.type.AdyEvoker
     EVOKER
-    -1
+    34
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
 
 ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
     EVOKER_FANGS
-    -1
+    79
     0.8 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
@@ -275,7 +275,7 @@ ink.ptms.adyeshach.common.entity.type.AdyHusk
 
 ink.ptms.adyeshach.common.entity.type.AdyIllusioner
     ILLUSIONER
-    -1
+    37
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
@@ -412,6 +412,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPainting
     0.0625 0.0625
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultPainting
+    INVALID
 
 ink.ptms.adyeshach.common.entity.type.AdyPanda
     PANDA
@@ -669,7 +670,7 @@ ink.ptms.adyeshach.common.entity.type.AdyTurtle
 
 ink.ptms.adyeshach.common.entity.type.AdyVex
     VEX
-    -1
+    35
     0.8 0.4 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
@@ -684,7 +685,7 @@ ink.ptms.adyeshach.common.entity.type.AdyVillager
 
 ink.ptms.adyeshach.common.entity.type.AdyVindicator
     VINDICATOR
-    -1
+    36
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
@@ -698,15 +699,15 @@ ink.ptms.adyeshach.common.entity.type.AdyWanderingTrader
 
 ink.ptms.adyeshach.common.entity.type.AdyWitch
     WITCH
-    -1
-    1.95 0.6 FLYING
+    66
+    1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
 
 ink.ptms.adyeshach.common.entity.type.AdyWither
     WITHER
     64
-    3.5 0.9
+    3.5 0.9 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultWither
 

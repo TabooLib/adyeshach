@@ -3,9 +3,10 @@ package ink.ptms.adyeshach.impl.entity.type
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyMinecart
+import ink.ptms.adyeshach.common.entity.type.*
 import org.bukkit.Material
 import org.bukkit.material.MaterialData
+import taboolib.library.xseries.XMaterial
 
 /**
  * Adyeshach
@@ -14,10 +15,19 @@ import org.bukkit.material.MaterialData
  * @author 坏黑
  * @since 2022/6/29 19:06
  */
+@Suppress("LeakingThis")
 abstract class DefaultMinecart(entityTypes: EntityTypes) : DefaultEntity(entityTypes), AdyMinecart {
 
     @Expose
-    private var customBlock: Material = Material.AIR
+    private var customBlock: Material = when (this) {
+        is AdyMinecartChest -> Material.CHEST
+        is AdyMinecartFurnace -> Material.FURNACE
+        is AdyMinecartHopper -> Material.HOPPER
+        is AdyMinecartSpawner -> XMaterial.SPAWNER.parseMaterial()!!
+        is AdyMinecartCommandBlock -> XMaterial.COMMAND_BLOCK.parseMaterial()!!
+        is AdyMinecartTNT -> Material.TNT
+        else -> Material.AIR
+    }
 
     @Expose
     private var customBlockData: Byte = 0

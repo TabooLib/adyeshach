@@ -99,6 +99,10 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
         return entityClass[entityType]!!.invokeConstructor(entityType) as EntityInstance
     }
 
+    override fun getEntityFlags(entityType: EntityTypes): List<String> {
+        return types[entityType]!!.flags
+    }
+
     override fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes? {
         return types.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }
