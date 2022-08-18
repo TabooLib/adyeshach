@@ -1,8 +1,5 @@
 package ink.ptms.adyeshach.common.entity
 
-import java.util.function.Consumer
-import java.util.function.Function
-
 /**
  * Adyeshach
  * ink.ptms.adyeshach.common.entity.TickService

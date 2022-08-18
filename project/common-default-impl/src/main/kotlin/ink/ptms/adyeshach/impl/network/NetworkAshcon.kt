@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
 import taboolib.common.platform.function.registerBukkitListener
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
@@ -32,7 +32,7 @@ class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
             if (AdyeshachSettings.ashconAPI) {
                 // 注册监听器
                 registerBukkitListener(PlayerJoinEvent::class.java) {
-                    submit(async = true) {
+                    submitAsync {
                         try {
                             profiles[it.player.name] = JsonParser().parse(readFromURL("${ashconURL[0]}${it.player.name}")).asJsonObject
                         } catch (ignore: FileNotFoundException) {

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.Adyeshach
+import taboolib.common.util.unsafeLazy
 
 /**
  * Adyeshach
@@ -9,12 +10,14 @@ import ink.ptms.adyeshach.common.api.Adyeshach
  * @author 坏黑
  * @since 2022/6/19 17:12
  */
-class DefaultAdyeshachBooster {
+object DefaultAdyeshachBooster {
+
+    val api by unsafeLazy { DefaultAdyeshachAPI() }
 
     /**
      * 启动 Adyeshach 服务
      */
     fun startup() {
-        Adyeshach.register(DefaultAdyeshachAPI())
+        Adyeshach.register(api)
     }
 }

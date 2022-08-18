@@ -1,16 +1,11 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
-import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.manager.ManagerService
 import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerQuitEvent
-import taboolib.common.LifeCycle
-import taboolib.common.TabooLibCommon
-import taboolib.common.platform.function.registerBukkitListener
+import taboolib.platform.util.setMeta
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -22,31 +17,24 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class DefaultAdyeshachAPI : AdyeshachAPI {
 
-    val entityFinder = DefaultAdyeshachEntityFinder()
-    val entitySerializer = DefaultAdyeshachEntitySerializer()
-    val entityTypeHelper = DefaultAdyeshachEntityTypeHandler()
-    val entityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
-    val entityControllerHandler = DefaultAdyeshachEntityControllerHandler()
-    val hologramHandler = DefaultAdyeshachHologramHandler()
-    val ketherHandler = DefaultAdyeshachKetherHandler()
-    val minecraftAPI = DefaultAdyeshachMinecraftAPI()
-    val networkAPI = DefaultAdyeshachNetworkAPI()
-    val language = DefaultAdyeshachLanguage()
+    var entityFinder = DefaultAdyeshachEntityFinder()
+    var entitySerializer = DefaultAdyeshachEntitySerializer()
+    var entityTypeHelper = DefaultAdyeshachEntityTypeHandler()
+    var entityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
+    var entityControllerHandler = DefaultAdyeshachEntityControllerHandler()
+    var hologramHandler = DefaultAdyeshachHologramHandler()
+    var ketherHandler = DefaultAdyeshachKetherHandler()
+    var minecraftAPI = DefaultAdyeshachMinecraftAPI()
+    var networkAPI = DefaultAdyeshachNetworkAPI()
+    var language = DefaultAdyeshachLanguage()
 
-    val publicEntityManager = DefaultManager()
-    val publicEntityManagerTemp = DefaultManager()
-
-    init {
-        TabooLibCommon.postpone(LifeCycle.ENABLE) {
-            // 释放资源
-            registerBukkitListener(PlayerQuitEvent::class.java) {
-                playerEntityManagerMap.remove(it.player.name)
-            }
-        }
-    }
+    var publicEntityManager = DefaultManager()
+    var publicEntityManagerTemp = DefaultManager()
 
     override fun setupEntityManager(player: Player) {
-        if (player.isOnline) {
+        if (player.isOnline && !player.hasMetadata("adyeshach_setup")) {
+            // 设置标签避免重复执行
+            player.setMeta("adyeshach_setup", true)
             // 公共管理器
             getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers += player.name
@@ -55,20 +43,29 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
                 it.viewPlayers.viewers += player.name
             }
             // 私有管理器
-            (getPrivateEntityManager(player) as ManagerService).onEnable()
+            getPrivateEntityManager(player).onEnable()
         }
     }
 
     override fun releaseEntityManager(player: Player) {
-        // 公共管理器
-        getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
-            it.removeViewer(player)
+        if (player.hasMetadata("adyeshach_setup")) {
+            // 公共管理器
+            getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
+                it.removeViewer(player)
+            }
+            getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
+                it.removeViewer(player)
+            }
+            // 私有管理器
+            var privateManager = getPrivateEntityManager(player)
+            privateManager.onDisable()
+            privateManager.onSave()
+            privateManager = getPrivateEntityManager(player, true)
+            privateManager.onDisable()
+            // 移除管理器
+            playerEntityManagerMap.remove(player.name)
+            playerEntityTemporaryManagerMap.remove(player.name)
         }
-        getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
-            it.removeViewer(player)
-        }
-        // 私有管理器
-        (getPrivateEntityManager(player) as ManagerService).onSave()
     }
 
     override fun refreshEntityManager(player: Player) {
@@ -78,16 +75,17 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         }
     }
 
-    override fun getPublicEntityManager(temporary: Boolean): Manager {
+    override fun getPublicEntityManager(temporary: Boolean): DefaultManager {
         return if (temporary) publicEntityManagerTemp else publicEntityManager
     }
 
-    override fun getPrivateEntityManager(player: Player, temporary: Boolean): Manager {
-        return if (playerEntityManagerMap.containsKey(player.name)) {
-            playerEntityManagerMap[player.name]!!
+    override fun getPrivateEntityManager(player: Player, temporary: Boolean): DefaultPlayerManager {
+        val map = if (temporary) playerEntityTemporaryManagerMap else playerEntityManagerMap
+        return if (map.containsKey(player.name)) {
+            map[player.name]!!
         } else {
             val manager = DefaultPlayerManager(player)
-            playerEntityManagerMap[player.name] = manager
+            map[player.name] = manager
             manager
         }
     }
@@ -134,6 +132,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     companion object {
 
-        val playerEntityManagerMap = ConcurrentHashMap<String, Manager>()
+        val playerEntityManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
+        val playerEntityTemporaryManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
     }
 }

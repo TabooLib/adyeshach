@@ -27,11 +27,6 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var manager: Manager?
 
     /**
-     * 是否被删除，执行 delete() 方法后该属性为 true，该属性仅做标记无实际意义
-     */
-    var isDeleted: Boolean
-
-    /**
      * 取决于是否被公开的单位管理器管理
      */
     fun isPublic(): Boolean
@@ -52,8 +47,16 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     fun respawn()
 
     /**
+     * 删除实体
+     * @param destroyPacket 是否销毁数据包
+     * @param removeFromManager 是否从管理器中移除
+     */
+    fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false)
+
+    /**
      * 销毁实体，从玩家视野中移除该实体
      */
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn()"))
     fun destroy()
 
     /**
@@ -62,11 +65,13 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * + 被移除管理器后该单位将失去所有主动行为（包括玩家类型的皮肤刷新）
      * + 同时该单位将无法被指令控制
      */
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(destroyPacket = false, removeFromManager = true)"))
     fun remove()
 
     /**
      * 删除实体，并销毁
      */
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(removeFromManager = true)"))
     fun delete()
 
     /**

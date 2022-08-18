@@ -3,8 +3,8 @@ package ink.ptms.adyeshach.impl.entity
 import ink.ptms.adyeshach.common.entity.EntityBase
 import ink.ptms.adyeshach.common.entity.Viewable
 import ink.ptms.adyeshach.common.util.safeDistance
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import taboolib.platform.util.onlinePlayers
 import java.util.function.Consumer
 
 /**
@@ -29,7 +29,7 @@ interface DefaultViewable : Viewable {
     }
 
     override fun clearViewer() {
-        Bukkit.getOnlinePlayers().filter { it.name in viewPlayers.viewers }.forEach { removeViewer(it) }
+        onlinePlayers.filter { it.name in viewPlayers.viewers }.forEach { removeViewer(it) }
     }
 
     override fun hasViewer(): Boolean {

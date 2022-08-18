@@ -9,11 +9,12 @@ import ink.ptms.adyeshach.common.bukkit.data.GameProfile
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.minecraftVersion
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.chat.colored
+import taboolib.platform.util.onlinePlayers
 
 /**
  * Adyeshach
@@ -80,7 +81,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     override fun setTexture(name: String) {
         gameProfile.textureName = name
         // 延迟加载皮肤
-        submit(async = true) {
+        submitAsync {
             try {
                 Adyeshach.api().getNetworkAPI().getSkin().getTexture(name)?.also {
                     setTexture(it.value(), it.signature())
@@ -163,8 +164,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         internal fun playerTextureRefresh200() {
             val finder = Adyeshach.api().getEntityFinder()
             var i = 0L
-            Bukkit.getOnlinePlayers().forEach {
-                submit(async = true, delay = i++) {
+            onlinePlayers.forEach {
+                submitAsync(delay = i++) {
                     finder.getVisibleEntities(it).filterIsInstance<AdyHuman>().forEach { human ->
                         human.refreshPlayerInfo(it)
                     }

@@ -46,4 +46,9 @@ interface ViewPlayers {
      * 获取允许看到但不在可视范围内的所有玩家
      */
     fun getOutsidePlayers(): List<Player>
+
+    /**
+     * 是否存在任何可见玩家
+     */
+    fun hasVisiblePlayer(): Boolean
 }

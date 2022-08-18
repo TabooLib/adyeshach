@@ -161,9 +161,11 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
         return entityInstance.getController(GeneralMove::class.java)?.target?.z ?: 0.0
     }
 
+    @Deprecated("Deprecated in Java")
     override fun saveModelList(models: MutableMap<String, ActiveModel>) {
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith("ArrayList()", "java.util.ArrayList"))
     override fun getModelList(): MutableList<String> {
         return ArrayList()
     }

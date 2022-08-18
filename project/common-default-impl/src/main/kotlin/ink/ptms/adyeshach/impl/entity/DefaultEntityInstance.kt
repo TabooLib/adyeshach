@@ -20,6 +20,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.world.WorldUnloadEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.common.util.Vector
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -45,8 +46,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             }
             field = value
         }
-
-    override var isDeleted = false
 
     @Expose
     override var moveSpeed = 0.2
@@ -134,34 +133,46 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         spawn(position.toLocation())
     }
 
+    override fun despawn(destroyPacket: Boolean, removeFromManager: Boolean) {
+        if (destroyPacket) {
+            forViewers { visible(it, false) }
+            AdyeshachEntityDestroyEvent(this).call()
+        }
+        if (removeFromManager) {
+            if (manager != null) {
+                manager!!.delete(this)
+                manager = null
+                AdyeshachEntityRemoveEvent(this).call()
+            }
+        }
+    }
+
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn()"))
     override fun destroy() {
-        forViewers { visible(it, false) }
-        AdyeshachEntityDestroyEvent(this).call()
+        despawn()
     }
 
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(destroyPacket = false, removeFromManager = true)"))
     override fun remove() {
-        if (manager != null) {
-            manager!!.delete(this)
-            manager = null
-            AdyeshachEntityRemoveEvent(this).call()
-        }
+        despawn(destroyPacket = false, removeFromManager = true)
     }
 
+    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(removeFromManager = true)"))
     override fun delete() {
-        if (!isDeleted) {
-            isDeleted = true
-            destroy()
-            remove()
-        }
+        despawn(removeFromManager = true)
     }
 
     override fun teleport(location: Location) {
         val event = AdyeshachEntityTeleportEvent(this, location)
         if (event.call()) {
-            position = EntityPosition.fromLocation(event.location)
+            val newPosition = EntityPosition.fromLocation(event.location)
+            if (newPosition == position) {
+                return
+            }
+            position = newPosition
             // 切换世界
             if (position.world.name != location.world?.name) {
-                destroy()
+                despawn()
                 respawn()
             } else {
                 forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(it, index, location) }
@@ -193,12 +204,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun setHeadRotation(yaw: Float, pitch: Float) {
         val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
         if (event.call()) {
-            position = position.run {
-                this.yaw = event.yaw
-                this.pitch = event.pitch
-                this
+            // 如果数字变更，则更新视角
+            val hasUpdate = position.yaw != yaw || position.pitch != pitch
+            if (hasUpdate) {
+                position = position.run {
+                    this.yaw = event.yaw
+                    this.pitch = event.pitch
+                    this
+                }
+                forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(it, index, event.yaw, event.pitch) }
             }
-            forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(it, index, event.yaw, event.pitch) }
         }
     }
 
@@ -230,16 +245,19 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
                 }
             }
         }
-        val loc = getLocation()
-        // 实体逻辑处理
-        controller.filter { getChunkAccess(getWorld()).isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) && it.shouldExecute() }.forEach {
-            when {
-                it is PrepareController -> {
-                    controller.add(it.controller.generator.apply(this))
-                    controller.remove(it)
+        // 只有存在可见玩家时才会处理实体控制器
+        if (viewPlayers.hasVisiblePlayer()) {
+            val loc = getLocation()
+            // 实体逻辑处理
+            controller.filter { getChunkAccess(getWorld()).isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) && it.shouldExecute() }.forEach {
+                when {
+                    it is PrepareController -> {
+                        controller.add(it.controller.generator.apply(this))
+                        controller.remove(it)
+                    }
+                    it.isAsync() -> pool.submit { it.onTick() }
+                    else -> it.onTick()
                 }
-                it.isAsync() -> pool.submit { it.onTick() }
-                else -> it.onTick()
             }
         }
     }
@@ -282,7 +300,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
         @SubscribeEvent
         private fun e(e: WorldUnloadEvent) {
-            chunkAccess.remove(e.world.name)
+            submitAsync { chunkAccess.remove(e.world.name) }
         }
     }
 }
