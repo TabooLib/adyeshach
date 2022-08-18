@@ -11,7 +11,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
-import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.common.platform.function.info
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
 
 /**
@@ -132,7 +133,6 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     NMSPacketPlayOutEntityEquipment(entityId, equipment.map { Pair(it.key.toNMSEnumItemSlot(), CraftItemStack19.asNMSCopy(it.value)) })
                 )
             }
-
             else -> {
                 equipment.forEach { (k, v) ->
                     packetHandler.sendPacket(

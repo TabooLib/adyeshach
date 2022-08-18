@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import taboolib.common5.Baffle
 import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.CopyOnWriteArraySet
+import java.util.function.Function
 
 /**
  * Adyeshach
@@ -33,8 +34,16 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         return onlinePlayers.filter { it.name in viewers && it.name in visible }
     }
 
+    override fun getViewPlayers(cond: Function<Player, Boolean>): List<Player> {
+        return onlinePlayers.filter { it.name in viewers && it.name in visible && cond.apply(it) }
+    }
+
     override fun getOutsidePlayers(): List<Player> {
         return onlinePlayers.filter { it.name in viewers && it.name !in visible }
+    }
+
+    override fun getOutsidePlayers(cond: Function<Player, Boolean>): List<Player> {
+        return onlinePlayers.filter { it.name in viewers && it.name !in visible && cond.apply(it) }
     }
 
     override fun hasVisiblePlayer(): Boolean {

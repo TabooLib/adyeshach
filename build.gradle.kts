@@ -11,6 +11,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
     dependencies {

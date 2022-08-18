@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.obcClass
 import java.util.*
@@ -132,14 +132,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (text == null) null else craftChatMessageFromString(text) as NMSIChatBaseComponent)
                     )
                 }
-
                 majorLegacy >= 11400 -> {
                     NMS16DataWatcherItem(
                         NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.f),
                         Optional.ofNullable(if (text == null) null else craftChatMessageFromString(text) as NMS16IChatBaseComponent)
                     )
                 }
-
                 else -> {
                     NMS12DataWatcherItem(NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.d), text ?: "")
                 }
@@ -156,21 +154,18 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         CraftItemStack19.asNMSCopy(itemStack)
                     )
                 }
-
-                majorLegacy >= 11400 -> {
+                majorLegacy >= 11300 -> {
                     NMS16DataWatcherItem(
                         NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.g),
                         CraftItemStack16.asNMSCopy(itemStack)
                     )
                 }
-
-                majorLegacy >= 11300 -> {
+                majorLegacy >= 11200 -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.f),
                         CraftItemStack12.asNMSCopy(itemStack)
                     )
                 }
-
                 else -> {
                     NMS9DataWatcherItem(
                         NMS9DataWatcherObject(index, NMS9DataWatcherRegistry.f),
@@ -190,14 +185,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers19.getBlock(blockData))
                     )
                 }
-
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.h),
                         Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers13.getBlock(blockData))
                     )
                 }
-
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.g),
@@ -253,14 +246,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMSBlockPosition(vector.x, vector.y, vector.z))
                     )
                 }
-
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.m),
                         Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMS13BlockPosition(vector.x, vector.y, vector.z))
                     )
                 }
-
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.k),
@@ -282,14 +273,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         NMSVector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
                     )
                 }
-
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.k),
                         NMS13Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
                     )
                 }
-
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.i),
@@ -303,12 +292,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): MinecraftMeta {
         return DefaultMeta(
             if (majorLegacy >= 11900) {
-                val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, fixed = true)
-                val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, fixed = true)
+                val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, isStatic = true)
+                val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, isStatic = true)
                 NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), NMSVillagerData(villagerType, villagerProfession, 1))
             } else {
-                val villagerType = NMS16VillagerType::class.java.getProperty<NMS16VillagerType>(villagerData.type.name, fixed = true)
-                val villagerProfession = NMS16VillagerProfession::class.java.getProperty<NMS16VillagerProfession>(villagerData.profession.name, fixed = true)
+                val villagerType = NMS16VillagerType::class.java.getProperty<NMS16VillagerType>(villagerData.type.name, isStatic = true)
+                val villagerProfession = NMS16VillagerProfession::class.java.getProperty<NMS16VillagerProfession>(villagerData.profession.name, isStatic = true)
                 NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.q), NMS16VillagerData(villagerType, villagerProfession, 1))
             }
         )
@@ -334,7 +323,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
-                NMSCatVariant::class.java.getProperty(type.name, fixed = true)
+                NMSCatVariant::class.java.getProperty(type.name, isStatic = true)
             )
         )
     }
@@ -343,7 +332,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.FROG_VARIANT),
-                NMSFrogVariant::class.java.getProperty(type.name, fixed = true)
+                NMSFrogVariant::class.java.getProperty(type.name, isStatic = true)
             )
         )
     }
@@ -358,6 +347,6 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     fun craftChatMessageFromString(message: String): Any? {
-        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, fixed = true)!![0]
+        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, isStatic = true)!![0]
     }
 }

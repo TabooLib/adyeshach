@@ -588,7 +588,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
         11 -
 
 ink.ptms.adyeshach.common.entity.type.AdyHuman
-    skinCape 1b | skinJacket 2b | skinLeftSleeve 4b | skinRightSleeve 8b | skinLeftPants 16b | skinRightPants 32b | skinHat 64b
+    skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
         17 17
         15 -
         14 -

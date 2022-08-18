@@ -41,7 +41,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     override var manager: Manager? = null
         set(value) {
-            if (field != null) {
+            if (field != null && value != null) {
                 errorBy("error-manager-has-been-initialized")
             }
             field = value
@@ -96,7 +96,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
-            setHeadRotation(position.yaw, position.pitch)
+            setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
             // 关联实体初始化
             submit(delay = 5) { refreshPassenger(viewer) }
             return true
@@ -107,7 +107,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun destroy(viewer: Player, destroy: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
             // 销毁模型
-            if (this is ModelEngine && !hideModelEngine(viewer)) {
+            if (this !is ModelEngine || !hideModelEngine(viewer)) {
                 destroy.run()
             }
             return true
@@ -201,12 +201,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
     }
 
-    override fun setHeadRotation(yaw: Float, pitch: Float) {
+    override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
         val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
         if (event.call()) {
             // 如果数字变更，则更新视角
             val hasUpdate = position.yaw != yaw || position.pitch != pitch
-            if (hasUpdate) {
+            if (hasUpdate || forceUpdate) {
                 position = position.run {
                     this.yaw = event.yaw
                     this.pitch = event.pitch
@@ -228,20 +228,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun onTick() {
         // 确保客户端显示实体正常
         if (viewPlayers.visibleRefreshLocker.hasNext()) {
-            // 复活
-            viewPlayers.getOutsidePlayers().forEach { player ->
-                if (isInVisibleDistance(player)) {
-                    if (visible(player, true)) {
-                        viewPlayers.visible.add(player.name)
-                    }
+            // 复活在可视范围内的实体
+            viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
+                if (visible(player, true)) {
+                    viewPlayers.visible += player.name
                 }
             }
-            // 销毁
-            viewPlayers.getViewPlayers().forEach { player ->
-                if (!isInVisibleDistance(player)) {
-                    if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
-                        viewPlayers.visible.remove(player.name)
-                    }
+            // 销毁不在可视范围内的实体
+            viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
+                if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
+                    viewPlayers.visible -= player.name
                 }
             }
         }

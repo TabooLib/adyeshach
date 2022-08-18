@@ -54,7 +54,7 @@ object AdyeshachSettings {
     @ConfigNode("Settings.delete-file-in-unknown-world")
     var deleteFileInUnknownWorld = emptyList<String>()
 
-    @ConfigNode("view-condition-interval")
+    @ConfigNode("Settings.view-condition-interval")
     var viewConditionInterval = 40
         get() = if (field == 0) 40 else field
 

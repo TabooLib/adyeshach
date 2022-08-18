@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.common.entity
 
 import org.bukkit.entity.Player
 import taboolib.common5.Baffle
+import java.util.function.Function
 
 /**
  * Adyeshach
@@ -43,9 +44,19 @@ interface ViewPlayers {
     fun getViewPlayers(): List<Player>
 
     /**
+     * 获取允许看到且在可视范围内的所有玩家（已经看到的）
+     */
+    fun getViewPlayers(cond: Function<Player, Boolean>): List<Player>
+
+    /**
      * 获取允许看到但不在可视范围内的所有玩家
      */
     fun getOutsidePlayers(): List<Player>
+
+    /**
+     * 获取允许看到但不在可视范围内的所有玩家
+     */
+    fun getOutsidePlayers(cond: Function<Player, Boolean>): List<Player>
 
     /**
      * 是否存在任何可见玩家

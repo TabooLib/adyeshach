@@ -13,8 +13,8 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
-import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 
 /**
@@ -32,14 +32,14 @@ class DefaultMinecraftHelper : MinecraftHelper {
         get() = Adyeshach.api().getEntityTypeHandler()
 
     val nms13ParticleRegistryBlocks: NMS13IRegistry<NMS13Particle<out NMS13ParticleParam>>
-        get() = NMS13IRegistry::class.java.getProperty("PARTICLE_TYPE", fixed = true)!!
+        get() = NMS13IRegistry::class.java.getProperty("PARTICLE_TYPE", isStatic = true)!!
 
     override fun adapt(type: EntityTypes): Any {
         return if (majorLegacy >= 11400) {
             val names = ArrayList<String>()
             names += type.name
             names += typeHandler.getBukkitEntityAliases(type)
-            names.forEach { kotlin.runCatching { return NMS16EntityTypes::class.java.getProperty<Any>(it, fixed = true)!! } }
+            names.forEach { kotlin.runCatching { return NMS16EntityTypes::class.java.getProperty<Any>(it, isStatic = true)!! } }
             errorBy("error-entity-type-not-supported", "$type $names")
         } else {
             typeHandler.getBukkitEntityId(type)
@@ -52,7 +52,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun adapt(paintings: BukkitPaintings): Any {
         return if (MinecraftVersion.major >= 5) {
-            NMS16Paintings::class.java.getProperty<Any>(paintings.index.toString(), fixed = true)!!
+            NMS16Paintings::class.java.getProperty<Any>(paintings.index.toString(), isStatic = true)!!
         } else {
             paintings.legacy!!
         }
@@ -62,7 +62,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     override fun adapt(particles: BukkitParticles): Any {
         return when {
             majorLegacy >= 11400 -> {
-                NMS16Particles::class.java.getProperty<Any>(particles.name, fixed = true) ?: NMS16Particles.FLAME
+                NMS16Particles::class.java.getProperty<Any>(particles.name, isStatic = true) ?: NMS16Particles.FLAME
             }
             majorLegacy >= 11300 -> {
                 val particle = nms13ParticleRegistryBlocks.invokeMethod("get", NMS13MinecraftKey(particles.name.lowercase())) ?: NMS13Particles.y
@@ -99,7 +99,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun getBlockId(materialData: MaterialData): Int {
         return if (MinecraftVersion.major >= 10) {
-            NMSBlock::class.java.invokeMethod("getId", CraftMagicNumbers19.getBlock(materialData), fixed = true)!!
+            NMSBlock::class.java.invokeMethod("getId", CraftMagicNumbers19.getBlock(materialData), isStatic = true)!!
         } else if (MinecraftVersion.major >= 5) {
             NMS16Block.getCombinedId(CraftMagicNumbers16.getBlock(materialData))
         } else {

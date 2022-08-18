@@ -47,14 +47,37 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             spawn(viewer) {
+                // 创建玩家信息
                 addPlayerInfo(viewer)
+                // 创建客户端对应表
                 registerClientEntity(viewer)
+                // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
+                // 修复玩家类型视角和装备无法正常显示的问题
+                submit(delay = 1) {
+                    setHeadRotation(yaw, pitch, forceUpdate = true)
+                    updateEquipment()
+                }
+                // 更新状态
+                submit(delay = 5) {
+                    if (isDie) {
+                        die(viewer = viewer)
+                    }
+                    if (isSleepingLegacy) {
+                        setSleeping(true)
+                    }
+                    if (isHideFromTabList) {
+                        removePlayerInfo(viewer)
+                    }
+                }
             }
         } else {
             destroy(viewer) {
+                // 移除玩家信息
                 removePlayerInfo(viewer)
+                // 销毁实体
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
+                // 移除客户端对应表
                 unregisterClientEntity(viewer)
             }
         }

@@ -1,8 +1,11 @@
 package ink.ptms.adyeshach.impl.entity.type
 
+import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyItem
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.util.Vector
 
 /**
  * Adyeshach
@@ -13,6 +16,22 @@ import org.bukkit.inventory.ItemStack
  */
 abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes), AdyItem {
 
+    override fun visible(viewer: Player, visible: Boolean): Boolean {
+        return if (visible) {
+            spawn(viewer) {
+                // 创建客户端对应表
+                registerClientEntity(viewer)
+                // 修正掉落物信息
+                setMetadata("item", getItem())
+                setVelocity(Vector(0, 0, 0))
+                setNoGravity(true)
+                // 生成实体
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, position.toLocation())
+            }
+        } else {
+            super.visible(viewer, false)
+        }
+    }
     override fun setItem(itemStack: ItemStack) {
         setMetadata("item", itemStack)
         respawn()

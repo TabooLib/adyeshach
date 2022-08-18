@@ -17,7 +17,7 @@ import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.releaseResourceFile
-import taboolib.common.reflect.Reflex.Companion.invokeConstructor
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.AsmClassLoader
 
 /**

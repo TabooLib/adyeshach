@@ -6,9 +6,9 @@ import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.api.MinecraftEntityPlayerHandler
 import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
 import org.bukkit.entity.Player
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
-import taboolib.common.reflect.Reflex.Companion.setProperty
-import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.setProperty
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass
@@ -104,6 +104,6 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
     }
 
     fun craftChatMessageFromString(message: String): Any? {
-        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, fixed = true)!![0]
+        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, isStatic = true)!![0]
     }
 }

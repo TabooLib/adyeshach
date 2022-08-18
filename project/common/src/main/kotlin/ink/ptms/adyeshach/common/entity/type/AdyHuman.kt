@@ -34,6 +34,16 @@ interface AdyHuman : AdyEntityLiving {
 
     fun isSleeping(): Boolean
 
+    fun setSkinEnabled(value: Boolean) {
+        setMetadata("skinCape", value)
+        setMetadata("skinHat", value)
+        setMetadata("skinJacket", value)
+        setMetadata("skinLeftSleeve", value)
+        setMetadata("skinRightSleeve", value)
+        setMetadata("skinLeftPants", value)
+        setMetadata("skinRightPants", value)
+    }
+
     fun setSkinCapeEnabled(value: Boolean) {
         setMetadata("skinCape", value)
     }

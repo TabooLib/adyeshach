@@ -96,8 +96,10 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 修改实体视角
+     *
+     * @param forceUpdate 是否强制更新视角
      */
-    fun setHeadRotation(yaw: Float, pitch: Float)
+    fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
 
     /**
      * 播放动画数据包

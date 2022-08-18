@@ -8,9 +8,9 @@ import ink.ptms.adyeshach.common.util.getEnum
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.common.reflect.Reflex.Companion.invokeMethod
-import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
@@ -24,7 +24,6 @@ import java.util.*
 class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     val isUniversal = MinecraftVersion.isUniversal
-
     val majorLegacy = MinecraftVersion.majorLegacy
 
     val helper: MinecraftHelper
@@ -37,13 +36,13 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()
 
     val nms16EntityTypesRegistryBlocks: NMS16RegistryBlocks<NMS16EntityTypes<*>>
-        get() = NMS16IRegistry::class.java.getProperty("ENTITY_TYPE", fixed = true)!!
+        get() = NMS16IRegistry::class.java.getProperty("ENTITY_TYPE", isStatic = true)!!
 
     val nms13EntityTypesRegistryBlocks: NMS13IRegistry<NMS13EntityTypes<*>>
-        get() = NMS13IRegistry::class.java.getProperty("ENTITY_TYPE", fixed = true)!!
+        get() = NMS13IRegistry::class.java.getProperty("ENTITY_TYPE", isStatic = true)!!
 
     val nms16Motive: NMS16RegistryBlocks<NMS16Paintings>
-        get() = NMS16IRegistry::class.java.getProperty("MOTIVE", fixed = true)!!
+        get() = NMS16IRegistry::class.java.getProperty("MOTIVE", isStatic = true)!!
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         val packet = NMSPacketPlayOutSpawnEntity::class.java.unsafeInstance()
@@ -114,8 +113,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 "a" to entityId,
                 "b" to uuid,
                 "c" to when {
-                    majorLegacy >= 11400 -> nms16EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), fixed = true)
-                    majorLegacy >= 11300 -> nms13EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), fixed = true)
+                    majorLegacy >= 11400 -> nms16EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), isStatic = true)
+                    majorLegacy >= 11300 -> nms13EntityTypesRegistryBlocks.invokeMethod<Any>("a", helper.adapt(entityType), isStatic = true)
                     else -> typeHandler.getBukkitEntityId(entityType)
                 },
                 "d" to location.x,
@@ -169,7 +168,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         val xRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
         val yRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         if (isUniversal) {
-            val block = NMSBlocks::class.java.getProperty<Any>(material.name, fixed = true)
+            val block = NMSBlocks::class.java.getProperty<Any>(material.name, isStatic = true)
             packetHandler.sendPacket(
                 player,
                 packet,
@@ -187,7 +186,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 "data" to NMSBlock.getId(((block ?: NMSBlocks.STONE) as NMSBlock).defaultBlockState())
             )
         } else if (majorLegacy >= 11300) {
-            val block = NMS16Blocks::class.java.getProperty<Any>(material.name, fixed = true)
+            val block = NMS16Blocks::class.java.getProperty<Any>(material.name, isStatic = true)
             packetHandler.sendPacket(
                 player,
                 packet,
