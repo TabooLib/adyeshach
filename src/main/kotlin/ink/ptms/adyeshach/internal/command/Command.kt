@@ -30,10 +30,7 @@ import taboolib.library.xseries.parseToXMaterial
 import taboolib.module.chat.TellrawJson
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.platform.util.asLangText
-import taboolib.platform.util.buildItem
-import taboolib.platform.util.inventoryCenterSlots
-import taboolib.platform.util.sendLang
+import taboolib.platform.util.*
 
 @CommandHeader(name = "adyeshach", aliases = ["npc", "anpc"], permission = "adyeshach.admin")
 internal object Command {
@@ -134,23 +131,27 @@ internal object Command {
                 literal("to") {
                     dynamicLocation({
                         execute<CommandSender> { sender, context, argument ->
-                            commandCopy(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-6), sender as? Player),
+                            commandCopy(
+                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-6), sender as? Player),
                                 sender,
                                 context.argument(-5),
                                 context.argument(-3),
                                 Vector(Coerce.toDouble(context.argument(-2)), Coerce.toDouble(context.argument(-1)), Coerce.toDouble(argument)),
                                 0f,
-                                0f)
+                                0f
+                            )
                         }
                     }, {
                         execute<CommandSender> { sender, context, argument ->
-                            commandCopy(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-8), sender as? Player),
+                            commandCopy(
+                                AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-8), sender as? Player),
                                 sender,
                                 context.argument(-7),
                                 context.argument(-5),
                                 Vector(Coerce.toDouble(context.argument(-4)), Coerce.toDouble(context.argument(-3)), Coerce.toDouble(context.argument(-2))),
                                 Coerce.toFloat(context.argument(-1)),
-                                Coerce.toFloat(argument))
+                                Coerce.toFloat(argument)
+                            )
                         }
                     })
                 }
@@ -175,21 +176,25 @@ internal object Command {
             literal("to", optional = true) {
                 dynamicLocation({
                     execute<CommandSender> { sender, context, argument ->
-                        commandMove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5), sender as? Player),
+                        commandMove(
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5), sender as? Player),
                             sender,
                             context.argument(-3),
                             Vector(Coerce.toDouble(context.argument(-2)), Coerce.toDouble(context.argument(-1)), Coerce.toDouble(argument)),
                             0f,
-                            0f)
+                            0f
+                        )
                     }
                 }, {
                     execute<CommandSender> { sender, context, argument ->
-                        commandMove(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7), sender as? Player),
+                        commandMove(
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7), sender as? Player),
                             sender,
                             context.argument(-5),
                             Vector(Coerce.toDouble(context.argument(-4)), Coerce.toDouble(context.argument(-3)), Coerce.toDouble(context.argument(-2))),
                             Coerce.toFloat(context.argument(-1)),
-                            Coerce.toFloat(argument))
+                            Coerce.toFloat(argument)
+                        )
                     }
                 })
             }
@@ -213,21 +218,25 @@ internal object Command {
             literal("to") {
                 dynamicLocation({
                     execute<CommandSender> { sender, context, argument ->
-                        commandNav(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5), sender as? Player),
+                        commandNav(
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-5), sender as? Player),
                             sender,
                             context.argument(-3),
                             Vector(Coerce.toDouble(context.argument(-2)), Coerce.toDouble(context.argument(-1)), Coerce.toDouble(argument)),
                             0f,
-                            0f)
+                            0f
+                        )
                     }
                 }, {
                     execute<CommandSender> { sender, context, argument ->
-                        commandNav(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7), sender as? Player),
+                        commandNav(
+                            AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-7), sender as? Player),
                             sender,
                             context.argument(-5),
                             Vector(Coerce.toDouble(context.argument(-4)), Coerce.toDouble(context.argument(-3)), Coerce.toDouble(context.argument(-2))),
                             Coerce.toFloat(context.argument(-1)),
-                            Coerce.toFloat(argument))
+                            Coerce.toFloat(argument)
+                        )
                     }
                 })
             }
@@ -242,10 +251,12 @@ internal object Command {
             }
             literal("here") {
                 execute<Player> { sender, context, _ ->
-                    commandLook(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
+                    commandLook(
+                        AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player),
                         sender,
                         sender.world.name,
-                        sender.eyeLocation.toVector())
+                        sender.eyeLocation.toVector()
+                    )
                 }
             }
             literal("to") {
@@ -384,6 +395,19 @@ internal object Command {
             }
             AdyeshachAPI.getEntityManagerPublic().onSave()
             sender.sendLang("command-main-success")
+        }
+    }
+
+    @CommandBody
+    val refresh = subCommand {
+        dynamic(commit = "player") {
+            suggestPlayers()
+            execute<CommandSender> { sender, context, argument ->
+                AdyeshachAPI.getVisibleEntities(Bukkit.getPlayerExact(argument)!!).forEach {
+                    it.respawn()
+                }
+                sender.sendLang("command-main-success")
+            }
         }
     }
 

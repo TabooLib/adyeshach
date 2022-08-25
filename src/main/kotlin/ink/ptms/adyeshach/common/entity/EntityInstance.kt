@@ -778,34 +778,33 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         if (viewPlayers.visibleRefreshLocker.hasNext()) {
             // 复活
             viewPlayers.getOutsidePlayers().forEach { player ->
-                if (isInVisibleDistance(player)) {
-                    if (visible(player, true)) {
-                        viewPlayers.visible.add(player.name)
-                    }
+                if (isInVisibleDistance(player) && visible(player, true)) {
+                    viewPlayers.visible.add(player.name)
                 }
             }
             // 销毁
             viewPlayers.getViewPlayers().forEach { player ->
-                if (!isInVisibleDistance(player)) {
-                    if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
-                        viewPlayers.visible.remove(player.name)
-                    }
+                if (!isInVisibleDistance(player) && visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
+                    viewPlayers.visible.remove(player.name)
                 }
             }
         }
-        val loc = getLocation()
-        // 实体逻辑处理
-        controller.filter { it.shouldExecute() && getWorld().isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) }.forEach {
-            when {
-                it is Controller.Pre -> {
-                    controller.add(it.controller.generator.apply(this))
-                    controller.remove(it)
-                }
-                it.isAsync() -> {
-                    pool.submit { it.onTick() }
-                }
-                else -> {
-                    it.onTick()
+        // 只有存在可见玩家时才会处理实体控制器
+        if (viewPlayers.hasVisiblePlayer()) {
+            val loc = getLocation()
+            // 实体逻辑处理
+            controller.filter { it.shouldExecute() && getWorld().isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) }.forEach {
+                when {
+                    it is Controller.Pre -> {
+                        controller.add(it.controller.generator.apply(this))
+                        controller.remove(it)
+                    }
+                    it.isAsync() -> {
+                        pool.submit { it.onTick() }
+                    }
+                    else -> {
+                        it.onTick()
+                    }
                 }
             }
         }
