@@ -342,7 +342,7 @@ object AdyeshachAPI {
             holographic.cancel()
         }
     }
-k
+
     fun invokeKether(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): CompletableFuture<Any?> {
         val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
         return KetherShell.eval(source, sender = if (player != null) adaptPlayer(player) else console(), namespace = listOf("adyeshach"), vars = map)
