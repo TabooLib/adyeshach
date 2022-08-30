@@ -350,8 +350,9 @@ object AdyeshachAPI {
         return KetherShell.eval(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"), vars = map)
     }
 
-    fun parseFunction(source: String, player: Player): String {
-        return KetherFunction.parse(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"))
+    fun parseFunction(source: String, player: Player, vars: Map<String, Any>): String {
+        val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
+        return KetherFunction.parse(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"), vars = map)
     }
 
     @Awake(LifeCycle.DISABLE)
