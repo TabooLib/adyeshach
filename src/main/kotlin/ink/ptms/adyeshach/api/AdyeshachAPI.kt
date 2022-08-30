@@ -26,9 +26,7 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.adaptPlayer
-import taboolib.common.platform.function.onlinePlayers
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.*
 import taboolib.common.util.nonPrimitive
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
@@ -344,15 +342,15 @@ object AdyeshachAPI {
             holographic.cancel()
         }
     }
-
-    fun invokeKether(source: String, player: Player, vars: Map<String, Any>): CompletableFuture<Any?> {
+k
+    fun invokeKether(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): CompletableFuture<Any?> {
         val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
-        return KetherShell.eval(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"), vars = map)
+        return KetherShell.eval(source, sender = if (player != null) adaptPlayer(player) else console(), namespace = listOf("adyeshach"), vars = map)
     }
 
-    fun parseFunction(source: String, player: Player, vars: Map<String, Any>): String {
+    fun parseFunction(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): String {
         val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
-        return KetherFunction.parse(source, sender = adaptPlayer(player), namespace = listOf("adyeshach"), vars = map)
+        return KetherFunction.parse(source, sender = if (player != null) adaptPlayer(player) else console(), namespace = listOf("adyeshach"), vars = map)
     }
 
     @Awake(LifeCycle.DISABLE)
