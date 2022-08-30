@@ -16,7 +16,7 @@ import taboolib.module.kether.printKetherErrorMessage
 import taboolib.platform.util.sendLang
 
 @CommandHeader(name = "adyeshachscript", aliases = ["ascript"], permission = "adyeshach.command")
-internal object CommandScript {
+object CommandScript {
 
     val workspace by lazy { ScriptHandler.workspace }
 
