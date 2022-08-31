@@ -33,7 +33,7 @@ import taboolib.module.ui.type.Basic
 import taboolib.platform.util.*
 
 @CommandHeader(name = "adyeshach", aliases = ["npc", "anpc"], permission = "adyeshach.admin")
-internal object Command {
+object Command {
 
     @CommandBody
     val main = mainCommand {
@@ -419,11 +419,11 @@ internal object Command {
         }
     }
 
-    internal fun Player.suggestEntityId(): List<String> {
+    fun Player.suggestEntityId(): List<String> {
         return AdyeshachAPI.getEntities { it.getWorld().name == world.name }.map { it.id }
     }
 
-    internal fun commandCreate(argument: String, sender: Player, name: String) {
+    fun commandCreate(argument: String, sender: Player, name: String) {
         val entityType = Enums.getIfPresent(EntityTypes::class.java, argument.uppercase()).orNull()
         if (entityType == null) {
             sender.sendLang("command-main-entity-not-support", argument)
@@ -441,7 +441,7 @@ internal object Command {
         entity.openEditor(sender)
     }
 
-    internal fun commandRemove(entity: EntityInstance?, sender: CommandSender) {
+    fun commandRemove(entity: EntityInstance?, sender: CommandSender) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -450,7 +450,7 @@ internal object Command {
         }
     }
 
-    internal fun commandRename(entity: EntityInstance?, sender: CommandSender, name: String) {
+    fun commandRename(entity: EntityInstance?, sender: CommandSender, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -459,7 +459,7 @@ internal object Command {
         }
     }
 
-    internal fun commandEdit(entity: EntityInstance?, sender: Player) {
+    fun commandEdit(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -467,7 +467,7 @@ internal object Command {
         }
     }
 
-    internal fun commandCopy(entity: EntityInstance?, sender: Player, name: String) {
+    fun commandCopy(entity: EntityInstance?, sender: Player, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -477,7 +477,7 @@ internal object Command {
         }
     }
 
-    internal fun commandCopy(entity: EntityInstance?, sender: CommandSender, name: String, world: String, pos: Vector, yaw: Float, pitch: Float) {
+    fun commandCopy(entity: EntityInstance?, sender: CommandSender, name: String, world: String, pos: Vector, yaw: Float, pitch: Float) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -491,7 +491,7 @@ internal object Command {
         }
     }
 
-    internal fun commandMove(entity: EntityInstance?, sender: Player) {
+    fun commandMove(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -503,7 +503,7 @@ internal object Command {
         }
     }
 
-    internal fun commandMove(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector, yaw: Float, pitch: Float) {
+    fun commandMove(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector, yaw: Float, pitch: Float) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -520,7 +520,7 @@ internal object Command {
         }
     }
 
-    internal fun commandMovehere(entity: EntityInstance?, sender: Player) {
+    fun commandMovehere(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -532,7 +532,7 @@ internal object Command {
         }
     }
 
-    internal fun commandNav(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector, yaw: Float, pitch: Float) {
+    fun commandNav(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector, yaw: Float, pitch: Float) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -546,7 +546,7 @@ internal object Command {
         }
     }
 
-    internal fun commandNavhere(entity: EntityInstance?, sender: Player) {
+    fun commandNavhere(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -555,7 +555,7 @@ internal object Command {
         }
     }
 
-    internal fun commandLook(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector) {
+    fun commandLook(entity: EntityInstance?, sender: CommandSender, world: String, pos: Vector) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -569,7 +569,7 @@ internal object Command {
         }
     }
 
-    internal fun commandTeleport(entity: EntityInstance?, sender: Player) {
+    fun commandTeleport(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -577,7 +577,7 @@ internal object Command {
         }
     }
 
-    internal fun commandPassengerAdd(entity: EntityInstance?, sender: CommandSender, name: String) {
+    fun commandPassengerAdd(entity: EntityInstance?, sender: CommandSender, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -595,7 +595,7 @@ internal object Command {
         }
     }
 
-    internal fun commandPassengerRemove(entity: EntityInstance?, sender: CommandSender, name: String) {
+    fun commandPassengerRemove(entity: EntityInstance?, sender: CommandSender, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -604,7 +604,7 @@ internal object Command {
         }
     }
 
-    internal fun commandPassengerReset(entity: EntityInstance?, sender: CommandSender) {
+    fun commandPassengerReset(entity: EntityInstance?, sender: CommandSender) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -613,7 +613,7 @@ internal object Command {
         }
     }
 
-    internal fun commandControllerAdd(entity: EntityInstance?, sender: CommandSender, name: String) {
+    fun commandControllerAdd(entity: EntityInstance?, sender: CommandSender, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -627,7 +627,7 @@ internal object Command {
         }
     }
 
-    internal fun commandControllerRemove(entity: EntityInstance?, sender: CommandSender, name: String) {
+    fun commandControllerRemove(entity: EntityInstance?, sender: CommandSender, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -641,7 +641,7 @@ internal object Command {
         }
     }
 
-    internal fun commandControllerReset(entity: EntityInstance?, sender: CommandSender) {
+    fun commandControllerReset(entity: EntityInstance?, sender: CommandSender) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -650,7 +650,7 @@ internal object Command {
         }
     }
 
-    internal fun commandControllerEditor(entity: EntityInstance?, sender: Player) {
+    fun commandControllerEditor(entity: EntityInstance?, sender: Player) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -697,7 +697,7 @@ internal object Command {
         }
     }
 
-    internal fun commandTrait(entity: EntityInstance?, sender: Player, name: String) {
+    fun commandTrait(entity: EntityInstance?, sender: Player, name: String) {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
@@ -710,7 +710,7 @@ internal object Command {
         }
     }
 
-    internal fun commandNear(sender: Player) {
+    fun commandNear(sender: Player) {
         sender.sendLang("command-main-near-header")
         mapOf(
             sender.asLangText("command-main-near-1") to AdyeshachAPI.getEntityManagerPublic(),
@@ -739,7 +739,7 @@ internal object Command {
         }
     }
 
-    internal fun CommandBuilder.CommandComponent.dynamicLocation(
+    fun CommandBuilder.CommandComponent.dynamicLocation(
         func1: CommandBuilder.CommandComponentDynamic.() -> Unit,
         func2: (CommandBuilder.CommandComponentDynamic.() -> Unit)? = null,
     ) {

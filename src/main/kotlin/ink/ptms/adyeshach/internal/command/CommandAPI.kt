@@ -38,7 +38,7 @@ import java.io.File
 
 @Suppress("UNCHECKED_CAST")
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.admin")
-internal object CommandAPI {
+object CommandAPI {
 
     @CommandBody
     val main = mainCommand {
@@ -222,7 +222,7 @@ internal object CommandAPI {
         }
     }
 
-    internal fun commandUploadSign(sender: CommandSender, fileName: String, modelName: String) {
+    fun commandUploadSign(sender: CommandSender, fileName: String, modelName: String) {
         val model = Enums.getIfPresent(Model::class.java, modelName.uppercase()).or(Model.DEFAULT)
         val file = File(Adyeshach.plugin.dataFolder, "skin/upload/$fileName")
         if (file.exists() && file.name.endsWith(".png")) {
