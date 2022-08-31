@@ -117,7 +117,7 @@ object CommandScript {
         }
     }
 
-    internal fun commandRun(sender: CommandSender, file: String, viewer: String? = null, args: Array<String> = emptyArray()) {
+    fun commandRun(sender: CommandSender, file: String, viewer: String? = null, args: Array<String> = emptyArray()) {
         val script = workspace.scripts[file]
         if (script != null) {
             val context = ScriptContext.create(script) {
