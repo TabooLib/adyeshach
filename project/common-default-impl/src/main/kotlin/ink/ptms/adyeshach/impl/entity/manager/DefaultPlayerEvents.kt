@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.module.nms.PacketReceiveEvent
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * Adyeshach
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 internal object DefaultPlayerEvents {
 
-    val onlinePlayerMap = CopyOnWriteArrayList<String>()
+    val onlinePlayerSet = CopyOnWriteArraySet<String>()
 
     /**
      * 进入游戏初始化管理器
@@ -27,6 +27,7 @@ internal object DefaultPlayerEvents {
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
         if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.JOIN) {
+            // 延迟初始化
             submit(delay = 20) { Adyeshach.api().setupEntityManager(e.player) }
         }
     }
@@ -46,6 +47,7 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onQuit(e: PlayerQuitEvent) {
+        onlinePlayerSet -= e.player.name
         Adyeshach.api().releaseEntityManager(e.player)
     }
 
@@ -54,8 +56,8 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onReceive(e: PacketReceiveEvent) {
-        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in onlinePlayerMap) {
-            onlinePlayerMap.add(e.player.name)
+        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in onlinePlayerSet) {
+            onlinePlayerSet += e.player.name
             AdyeshachPlayerJoinEvent(e.player).call()
         }
     }

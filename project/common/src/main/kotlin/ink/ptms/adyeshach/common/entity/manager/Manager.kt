@@ -8,7 +8,7 @@ import ink.ptms.adyeshach.common.entity.type.errorBy
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.function.Consumer
-import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * @author sky
@@ -80,12 +80,12 @@ interface Manager {
     /**
      * 根据要求获取单位管理器中的单位
      */
-    fun getEntity(match: Function<EntityInstance, Boolean>): EntityInstance?
+    fun getEntity(match: Predicate<EntityInstance>): EntityInstance?
 
     /**
      * 获取单位管理器中的所有单位，并进行过滤
      */
-    fun getEntities(filter: Function<EntityInstance, Boolean>): List<EntityInstance>
+    fun getEntities(filter: Predicate<EntityInstance>): List<EntityInstance>
 
     /**
      * 通过 id 获取单位
@@ -95,7 +95,7 @@ interface Manager {
     /**
      * 通过 id 获取单位，并进行过滤
      */
-    fun getEntityById(id: String, filter: Function<EntityInstance, Boolean>): List<EntityInstance>
+    fun getEntityById(id: String, filter: Predicate<EntityInstance>): List<EntityInstance>
 
     /**
      * 通过 uuid 获取单位

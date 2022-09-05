@@ -14,7 +14,7 @@ import taboolib.platform.util.onlinePlayers
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
-import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * Adyeshach
@@ -81,20 +81,20 @@ open class DefaultManager : Manager, ManagerService, TickService {
         return activeEntity
     }
 
-    override fun getEntities(filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
-        return activeEntity.filter { filter.apply(it) }
+    override fun getEntities(filter: Predicate<EntityInstance>): List<EntityInstance> {
+        return activeEntity.filter { filter.test(it) }
     }
 
-    override fun getEntity(match: Function<EntityInstance, Boolean>): EntityInstance? {
-        return activeEntity.firstOrNull { match.apply(it) }
+    override fun getEntity(match: Predicate<EntityInstance>): EntityInstance? {
+        return activeEntity.firstOrNull { match.test(it) }
     }
 
     override fun getEntityById(id: String): List<EntityInstance> {
         return activeEntity.filter { it.id == id }
     }
 
-    override fun getEntityById(id: String, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
-        return activeEntity.filter { it.id == id && filter.apply(it) }
+    override fun getEntityById(id: String, filter: Predicate<EntityInstance>): List<EntityInstance> {
+        return activeEntity.filter { it.id == id && filter.test(it) }
     }
 
     override fun getEntityByUniqueId(id: String): EntityInstance? {

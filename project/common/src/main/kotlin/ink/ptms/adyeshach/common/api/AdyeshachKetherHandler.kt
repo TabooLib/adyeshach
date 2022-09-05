@@ -15,10 +15,10 @@ interface AdyeshachKetherHandler {
     /**
      * 执行 Kether 脚本
      */
-    fun invoke(source: String, player: Player, vars: Map<String, Any>): CompletableFuture<Any?>
+    fun invoke(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): CompletableFuture<Any?>
 
     /**
      * 识别并转换字符串中的 Kether 内敛脚本
      */
-    fun parseInline(source: String, player: Player): String
+    fun parseInline(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): String
 }

@@ -11,7 +11,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * Adyeshach
@@ -25,7 +25,7 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     val api: AdyeshachAPI
         get() = Adyeshach.api()
 
-    override fun getEntity(player: Player?, match: Function<EntityInstance, Boolean>): EntityInstance? {
+    override fun getEntity(player: Player?, match: Predicate<EntityInstance>): EntityInstance? {
         api.getPublicEntityManager().getEntity(match)?.let { return it }
         api.getPublicEntityManager(true).getEntity(match)?.let { return it }
         if (player != null) {
@@ -35,7 +35,7 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         return null
     }
 
-    override fun getEntities(player: Player?, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
+    override fun getEntities(player: Player?, filter: Predicate<EntityInstance>): List<EntityInstance> {
         val entity = LinkedList<EntityInstance>()
         entity.addAll(api.getPublicEntityManager().getEntities(filter))
         entity.addAll(api.getPublicEntityManager(true).getEntities(filter))
@@ -46,9 +46,9 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         return entity
     }
 
-    override fun getVisibleEntities(player: Player, filter: Function<EntityInstance, Boolean>): List<EntityInstance> {
+    override fun getVisibleEntities(player: Player, filter: Predicate<EntityInstance>): List<EntityInstance> {
         val distance = AdyeshachSettings.visibleDistance
-        return getEntities(player) { it.position.toLocation().safeDistance(player.location) <= distance && filter.apply(it) }
+        return getEntities(player) { it.position.toLocation().safeDistance(player.location) <= distance && filter.test(it) }
     }
 
     override fun getEntitiesFromId(id: String, player: Player?): List<EntityInstance> {
@@ -71,11 +71,11 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == id }?.entity
     }
 
-    override fun getNearestEntity(player: Player, filter: Function<EntityInstance, Boolean>): EntityInstance? {
+    override fun getNearestEntity(player: Player, filter: Predicate<EntityInstance>): EntityInstance? {
         return getEntities(player, filter).minByOrNull { it.getLocation().safeDistance(player.location) }
     }
 
-    override fun getNearestEntity(location: Location, filter: Function<EntityInstance, Boolean>): EntityInstance? {
+    override fun getNearestEntity(location: Location, filter: Predicate<EntityInstance>): EntityInstance? {
         return getEntities(null, filter).minByOrNull { it.getLocation().safeDistance(location) }
     }
 
