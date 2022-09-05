@@ -7,7 +7,6 @@ import org.bukkit.Location
 import taboolib.common5.Coerce
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
-import taboolib.library.kether.actions.LiteralAction
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,9 +43,9 @@ class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAc
             } else {
                 it.reset()
             }
-            var x: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
-            var y: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
-            var z: ParsedAction<*> = ParsedAction(LiteralAction<Any>(0))
+            var x = literalAction(0)
+            var y = literalAction(0)
+            var z = literalAction(0)
             while (it.hasNext()) {
                 it.mark()
                 when (it.nextToken()) {
