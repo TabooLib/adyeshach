@@ -136,7 +136,7 @@ open class DefaultManager : Manager, ManagerService, TickService {
         prepareTicks += callback
     }
 
-    fun updateActiveEntityList() {
+    private fun updateActiveEntityList() {
         if (pushList.isNotEmpty()) {
             synchronized(pushList) {
                 activeEntity.addAll(pushList)

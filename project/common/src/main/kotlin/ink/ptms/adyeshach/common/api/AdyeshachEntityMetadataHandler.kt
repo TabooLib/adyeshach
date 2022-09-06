@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.common.api
 
-import java.util.function.Consumer
+import ink.ptms.adyeshach.common.entity.type.AdyEntity
 
 /**
  * Adyeshach
@@ -14,10 +14,15 @@ interface AdyeshachEntityMetadataHandler {
     /**
      * 注册元数据模型（布尔值）
      */
-    fun registerEntityMetaMask(type: Class<*>, index: Int, key: String, mask: Byte, def: Boolean = false)
+    fun registerEntityMetaMask(type: Class<out AdyEntity>, index: Int, key: String, mask: Byte, def: Boolean = false)
 
     /**
      * 注册元数据模型（专业类型）
      */
-    fun registerEntityMetaNatural(type: Class<*>, index: Int, key: String, def: Any)
+    fun registerEntityMetaNatural(type: Class<out AdyEntity>, index: Int, key: String, def: Any)
+
+    /**
+     * 获取实体无意义的元数据
+     */
+    fun getEntityUnusedMeta(type: Class<out AdyEntity>): List<String>
 }
