@@ -1,21 +1,21 @@
 package ink.ptms.adyeshach.internal.listener
 
+import com.melluh.servertours.api.event.RoutePlaybackBeginEvent
+import com.melluh.servertours.api.event.RoutePlaybackEndEvent
 import io.netty.util.internal.ConcurrentSet
 import taboolib.common.platform.event.SubscribeEvent
-import tech.mistermel.servertours.api.event.RoutePlayBeginEvent
-import tech.mistermel.servertours.api.event.RoutePlayEndEvent
 
 object ListenerServerTour {
 
     var touringPlayer = ConcurrentSet<String>()
 
     @SubscribeEvent
-    fun e(e: RoutePlayBeginEvent) {
-        touringPlayer.add(e.player.name)
+    fun e(e: RoutePlaybackBeginEvent) {
+        touringPlayer.add(e.bukkitPlayer.name)
     }
 
     @SubscribeEvent
-    fun e(e: RoutePlayEndEvent) {
-        touringPlayer.remove(e.player.name)
+    fun e(e: RoutePlaybackEndEvent) {
+        touringPlayer.remove(e.bukkitPlayer.name)
     }
 }
