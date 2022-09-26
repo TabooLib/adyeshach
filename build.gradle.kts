@@ -42,11 +42,16 @@ taboolib {
 
 repositories {
     mavenCentral()
+
+    maven {
+        name = "melluh-releases"
+        url = uri("https://repo.melluh.com/releases")
+    }
 }
 
 dependencies {
     compileOnly("ink.ptms:Zaphkiel:1.7.0")
-    compileOnly("public:ServerTours:1.6.5")
+    compileOnly("com.melluh.servertours:servertours-api:2.0.0")
     compileOnly("public:ModelEngine:2.5.1")
     compileOnly("public:GermPlugin:4.0.3")
     compileOnly("net.citizensnpcs:Citizens:2.0.18")
@@ -77,8 +82,8 @@ tasks.withType<JavaCompile> {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 publishing {
