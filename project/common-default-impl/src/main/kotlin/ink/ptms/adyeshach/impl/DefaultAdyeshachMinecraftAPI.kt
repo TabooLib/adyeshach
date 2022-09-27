@@ -12,13 +12,14 @@ import taboolib.module.nms.nmsProxy
  */
 class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
-    val nmsHelper = nmsProxy<MinecraftHelper>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftHelper")
-    val nmsEntitySpawner = nmsProxy<MinecraftEntitySpawner>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntitySpawner")
-    val nmsEntityOperator = nmsProxy<MinecraftEntityOperator>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityOperator")
-    val nmsEntityMetadataHandler = nmsProxy<MinecraftEntityMetadataHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityMetadataHandler")
-    val nmsEntityPlayerHandler = nmsProxy<MinecraftEntityPlayerHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntityPlayerHandler")
-    val nmsPacketHandler = nmsProxy<MinecraftPacketHandler>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftPacketHandler")
-    val nmsWorldAccess = nmsProxy<MinecraftWorldAccess>("ink.ptms.adyeshach.impl.nms.DefaultMinecraftWorldAccess")
+    val group = "ink.ptms.adyeshach.impl.nms"
+    val nmsHelper = nmsProxy<MinecraftHelper>("$group.DefaultMinecraftHelper")
+    val nmsEntitySpawner = nmsProxy<MinecraftEntitySpawner>("$group.DefaultMinecraftEntitySpawner")
+    val nmsEntityOperator = nmsProxy<MinecraftEntityOperator>("$group.DefaultMinecraftEntityOperator")
+    val nmsEntityMetadataHandler = nmsProxy<MinecraftEntityMetadataHandler>("$group.DefaultMinecraftEntityMetadataHandler")
+    val nmsEntityPlayerHandler = nmsProxy<MinecraftEntityPlayerHandler>("$group.DefaultMinecraftEntityPlayerHandler")
+    val nmsPacketHandler = nmsProxy<MinecraftPacketHandler>("$group.DefaultMinecraftPacketHandler")
+    val nmsWorldAccess = nmsProxy<MinecraftWorldAccess>("$group.DefaultMinecraftWorldAccess")
 
     override fun getHelper(): MinecraftHelper {
         return nmsHelper

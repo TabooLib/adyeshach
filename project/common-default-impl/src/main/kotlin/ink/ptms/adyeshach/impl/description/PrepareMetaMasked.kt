@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.description
 
 import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.common.entity.type.AdyEntity
 
 /**
  * @author 坏黑
@@ -8,7 +9,7 @@ import ink.ptms.adyeshach.common.api.Adyeshach
  */
 class PrepareMetaMasked(name: String, val mask: Byte, val value: Boolean) : PrepareMeta(name) {
 
-    override fun register(entityClass: Class<*>, index: Int) {
+    override fun register(entityClass: Class<out AdyEntity>, index: Int) {
         Adyeshach.api().getEntityMetadataHandler().registerEntityMetaMask(entityClass, index, name, mask, value)
     }
 

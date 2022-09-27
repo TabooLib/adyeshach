@@ -28,6 +28,10 @@ class GameProfile {
     @Expose
     var textureName = ""
 
+    fun setPingBar(pingBar: PingBar) {
+        ping = pingBar.value
+    }
+
     fun clone(): GameProfile {
         val gameProfile = GameProfile()
         gameProfile.name = name

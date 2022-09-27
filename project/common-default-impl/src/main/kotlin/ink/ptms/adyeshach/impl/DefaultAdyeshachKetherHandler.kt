@@ -13,11 +13,12 @@ import java.util.concurrent.CompletableFuture
  */
 class DefaultAdyeshachKetherHandler : AdyeshachKetherHandler {
 
-    override fun invoke(source: String, player: Player, vars: Map<String, Any>): CompletableFuture<Any?> {
+    override fun invoke(source: String, player: Player?, vars: Map<String, Any>): CompletableFuture<Any?> {
         TODO("Not yet implemented")
     }
 
-    override fun parseInline(source: String, player: Player): String {
+    override fun parseInline(source: String, player: Player?, vars: Map<String, Any>): String {
         TODO("Not yet implemented")
     }
+
 }
