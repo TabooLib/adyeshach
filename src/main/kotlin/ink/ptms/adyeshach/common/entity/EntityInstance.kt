@@ -178,7 +178,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
-            setHeadRotation(position.yaw, position.pitch)
+            setHeadRotation(position.yaw, position.pitch, true)
             // 关联实体初始化
             submit(delay = 5) {
                 refreshPassenger(viewer, error = false)
@@ -365,11 +365,18 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 修改实体视角
      */
     fun setHeadRotation(yaw: Float, pitch: Float) {
+        setHeadRotation(yaw, pitch, false)
+    }
+
+    /**
+     * 修改实体视角
+     */
+    fun setHeadRotation(yaw: Float, pitch: Float, force: Boolean = false) {
         val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
         if (event.call()) {
             // 如果数字变更，则更新视角
             val hasUpdate = position.yaw != yaw || position.pitch != pitch
-            if (hasUpdate) {
+            if (hasUpdate || force) {
                 position = position.run {
                     this.yaw = event.yaw
                     this.pitch = event.pitch

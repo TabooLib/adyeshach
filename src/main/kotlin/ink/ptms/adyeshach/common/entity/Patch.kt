@@ -70,7 +70,7 @@ object Patch {
                 // 修复玩家类型视角和装备无法正常显示的问题
                 is AdyHuman -> {
                     submit(delay = 1) {
-                        e.entity.setHeadRotation(e.entity.yaw, e.entity.pitch)
+                        e.entity.setHeadRotation(e.entity.yaw, e.entity.pitch, true)
                         e.entity.updateEquipment()
                     }
                     submit(delay = 5) {
@@ -88,7 +88,7 @@ object Patch {
                 else -> {
                     // 确保让一些特殊的实体看向正确的位置
                     // 矿车，凋零头
-                    submit(delay = 5) { e.entity.setHeadRotation(e.entity.yaw, e.entity.pitch) }
+                    submit(delay = 5) { e.entity.setHeadRotation(e.entity.yaw, e.entity.pitch, true) }
                 }
             }
         }

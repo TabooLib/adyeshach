@@ -61,8 +61,8 @@ class NMSImpl : NMS() {
                 "xa" to 0,
                 "ya" to 0,
                 "za" to 0,
-                "xRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "yRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "xRot" to (location.yaw * 256.0f / 360.0f).toInt(),
+                "yRot" to (location.pitch * 256.0f / 360.0f).toInt(),
                 "type" to getEntityTypeNMS(entityType),
                 "data" to 0
             )
@@ -74,8 +74,8 @@ class NMSImpl : NMS() {
                 "c" to location.x,
                 "d" to location.y,
                 "e" to location.z,
-                "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
-                "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
+                "f" to (location.yaw * 256.0f / 360.0f).toInt(),
+                "g" to (location.pitch * 256.0f / 360.0f).toInt(),
                 "k" to if (majorLegacy <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
             )
         }

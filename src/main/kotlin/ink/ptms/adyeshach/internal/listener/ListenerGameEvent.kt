@@ -29,6 +29,7 @@ object ListenerGameEvent {
     @Awake(LifeCycle.ENABLE)
     fun init() {
         eventMap.clear()
+        conf.reload()
         conf.getMapList("event").forEach { map ->
             eventMap += EventFile(map["if"].toString(), map["run"]?.toString(), map["run-script"]?.toString())
         }
