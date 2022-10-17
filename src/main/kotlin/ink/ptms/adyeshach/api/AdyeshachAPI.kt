@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.api
 
 import com.google.gson.JsonParser
+import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.Adyeshach
 import ink.ptms.adyeshach.api.event.CustomDatabaseEvent
 import ink.ptms.adyeshach.api.nms.NMS.Companion.shutdownPool
@@ -45,8 +46,13 @@ import java.util.function.Function
 
 object AdyeshachAPI {
 
+    /** 是否支持 BetonQuest */
     internal val betonQuestHooked by lazy { Bukkit.getPluginManager().getPlugin("BetonQuest") != null }
-    internal val modelEngineHooked by lazy { Bukkit.getPluginManager().getPlugin("ModelEngine") != null }
+
+    /** 是否支持 ModelEngine v2 */
+    internal val modelEngineHooked by lazy {
+        Bukkit.getPluginManager().getPlugin("ModelEngine") != null && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
+    }
 
     internal val onlinePlayerMap = CopyOnWriteArrayList<String>()
     internal val clientEntityMap = ConcurrentHashMap<String, MutableMap<Int, ClientEntity>>()
