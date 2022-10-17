@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.common.entity.type.errorBy
 import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
-import org.bukkit.Bukkit
 import org.bukkit.entity.EntityType
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
@@ -58,17 +57,11 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
         // 注册生成回调
         prepareGenerate(object : AdyeshachEntityTypeHandler.GenerateCallback {
 
-            val isModelEngineHooked = Bukkit.getPluginManager().getPlugin("ModelEngine") != null
-
             override fun invoke(entityType: EntityTypes, interfaces: List<String>): List<String> {
                 val array = ArrayList<String>()
                 // 是否加载编辑器模块
                 if (Adyeshach.editor() != null) {
                     array += "ink.ptms.adyeshach.impl.entity.DefaultEditable"
-                }
-                // 是否安装 ModelEngine 扩展
-                if (isModelEngineHooked) {
-                    array += "ink.ptms.adyeshach.impl.entity.DefaultModelEngine"
                 }
                 return array
             }

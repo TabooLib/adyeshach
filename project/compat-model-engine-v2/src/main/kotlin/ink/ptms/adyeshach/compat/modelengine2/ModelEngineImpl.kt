@@ -1,21 +1,24 @@
-package ink.ptms.adyeshach.impl.entity
+package ink.ptms.adyeshach.compat.modelengine2
 
 import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.common.api.AdyeshachEntityTypeHandler
 import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.ModelEngine
 import ink.ptms.adyeshach.common.util.asLang
-import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.console
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
-import java.util.*
+import taboolib.common.util.unsafeLazy
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.DefaultModelEngine
+ * ink.ptms.adyeshach.compat.modelengine2.DefaultModelEngine
  *
  * @author 坏黑
  * @since 2022/6/19 21:58
@@ -23,7 +26,7 @@ import java.util.*
 interface DefaultModelEngine : ModelEngine {
 
     override fun showModelEngine(viewer: Player): Boolean {
-        if (modelEngineHooked) {
+        if (isModelEngineHooked) {
             val modelManager = ModelEngineAPI.api.modelManager
             if (modelEngineUniqueId != null) {
                 modelManager.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
@@ -36,7 +39,7 @@ interface DefaultModelEngine : ModelEngine {
     }
 
     override fun hideModelEngine(viewer: Player): Boolean {
-        if (modelEngineHooked) {
+        if (isModelEngineHooked) {
             val modelManager = ModelEngineAPI.api.modelManager
             if (modelEngineUniqueId != null) {
                 modelManager.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
@@ -47,7 +50,7 @@ interface DefaultModelEngine : ModelEngine {
     }
 
     override fun refreshModelEngine(): Boolean {
-        if (modelEngineHooked) {
+        if (isModelEngineHooked) {
             this as DefaultEntityInstance
             val modelManager = ModelEngineAPI.api.modelManager
             // 删除模型
@@ -83,7 +86,7 @@ interface DefaultModelEngine : ModelEngine {
                     warning(asLang("error-failed-to-add-model", modelEngineName, ex.message.toString()))
                     return false
                 }
-                destroy()
+                despawn()
                 modeledEntity.isInvisible = true
                 val nameTag = modeledEntity.nametagHandler.allTags.firstOrNull()
                 if (nameTag != null) {
@@ -102,7 +105,7 @@ interface DefaultModelEngine : ModelEngine {
     }
 
     override fun updateModelEngineNameTag() {
-        if (modelEngineHooked) {
+        if (isModelEngineHooked) {
             this as EntityInstance
             val modelManager = ModelEngineAPI.api.modelManager
             if (modelEngineUniqueId != null) {
@@ -118,6 +121,24 @@ interface DefaultModelEngine : ModelEngine {
 
     companion object {
 
-        val modelEngineHooked by lazy { Bukkit.getPluginManager().getPlugin("ModelEngine") != null }
+        val isModelEngineHooked by unsafeLazy {
+            Bukkit.getPluginManager().getPlugin("ModelEngine") != null && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
+        }
+
+        @Awake(LifeCycle.INIT)
+        fun init() {
+            // 注册生成回调
+            Adyeshach.api().getEntityTypeHandler().prepareGenerate(object : AdyeshachEntityTypeHandler.GenerateCallback {
+
+                override fun invoke(entityType: EntityTypes, interfaces: List<String>): List<String> {
+                    val array = ArrayList<String>()
+                    // 是否安装 ModelEngine 扩展
+                    if (isModelEngineHooked) {
+                        array += "ink.ptms.adyeshach.compat.modelengine2.DefaultModelEngine"
+                    }
+                    return array
+                }
+            })
+        }
     }
 }

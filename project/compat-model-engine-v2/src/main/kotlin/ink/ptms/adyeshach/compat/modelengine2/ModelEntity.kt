@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity
+package ink.ptms.adyeshach.compat.modelengine2
 
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
@@ -59,7 +59,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun remove() {
-        return entityInstance.delete()
+        return entityInstance.despawn(removeFromManager = true)
     }
 
     override fun isCustomNameVisible(): Boolean {
