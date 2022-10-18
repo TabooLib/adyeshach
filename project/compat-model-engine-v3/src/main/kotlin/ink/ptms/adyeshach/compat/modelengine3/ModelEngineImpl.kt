@@ -12,7 +12,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
-import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.util.unsafeLazy
 
@@ -23,6 +22,7 @@ import taboolib.common.util.unsafeLazy
  * @author 坏黑
  * @since 2022/6/19 21:58
  */
+@Suppress("SpellCheckingInspection")
 interface DefaultModelEngine : ModelEngine {
 
     override fun showModelEngine(viewer: Player): Boolean {
@@ -89,18 +89,18 @@ interface DefaultModelEngine : ModelEngine {
                 despawn()
 
                 // v2展示名称
-                //modeledEntity.isInvisible = true
-                //val nameTag = modeledEntity.nametagHandler.allTags.firstOrNull()
-                //if (nameTag != null) {
-                //    modeledEntity.nametagHandler.setCustomName(nameTag, getCustomName())
-                //    modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
-                //}
+                // modeledEntity.isInvisible = true
+                // val nameTag = modeledEntity.nametagHandler.allTags.firstOrNull()
+                // if (nameTag != null) {
+                //     modeledEntity.nametagHandler.setCustomName(nameTag, getCustomName())
+                //     modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
+                // }
 
                 // v3展示名称
-                val nametag = model.nametagHandler.bones["nametag"]
-                if (nametag != null) {
-                    nametag.customName = getCustomName()
-                    nametag.isCustomNameVisible = isCustomNameVisible()
+                val nameTag = model.nametagHandler.bones["nametag"]
+                if (nameTag != null) {
+                    nameTag.customName = getCustomName()
+                    nameTag.isCustomNameVisible = isCustomNameVisible()
                 }
 
                 modelEngineUniqueId = entityModeled.modelUniqueId
@@ -121,10 +121,10 @@ interface DefaultModelEngine : ModelEngine {
             if (modelEngineUniqueId != null) {
                 val modeledEntity = ModelEngineAPI.getModeledEntity(modelEngineUniqueId) ?: return
                 val model = modeledEntity.models.values.firstOrNull() ?: return
-                val nametag = model.nametagHandler.bones["nametag"]
-                if (nametag != null) {
-                    nametag.customName = getCustomName()
-                    nametag.isCustomNameVisible = isCustomNameVisible()
+                val nameTag = model.nametagHandler.bones["nametag"]
+                if (nameTag != null) {
+                    nameTag.customName = getCustomName()
+                    nameTag.isCustomNameVisible = isCustomNameVisible()
                 }
             }
         }
@@ -149,7 +149,7 @@ interface DefaultModelEngine : ModelEngine {
                     val array = ArrayList<String>()
                     // 是否安装 ModelEngine 扩展
                     if (isModelEngineHooked) {
-                        array += "ink.ptms.adyeshach.compat.modelengine3.DefaultModelEngine"
+                        array += DefaultModelEngine::class.java.name
                     }
                     return array
                 }

@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.common.entity.type.errorBy
 import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
+import ink.ptms.adyeshach.impl.entity.DefaultEditable
 import org.bukkit.entity.EntityType
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
@@ -61,7 +62,7 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
                 val array = ArrayList<String>()
                 // 是否加载编辑器模块
                 if (Adyeshach.editor() != null) {
-                    array += "ink.ptms.adyeshach.impl.entity.DefaultEditable"
+                    array += DefaultEditable::class.java.name
                 }
                 return array
             }

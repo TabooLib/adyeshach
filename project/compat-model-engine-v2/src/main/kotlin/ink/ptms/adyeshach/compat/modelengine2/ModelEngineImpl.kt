@@ -134,7 +134,7 @@ interface DefaultModelEngine : ModelEngine {
                     val array = ArrayList<String>()
                     // 是否安装 ModelEngine 扩展
                     if (isModelEngineHooked) {
-                        array += "ink.ptms.adyeshach.compat.modelengine2.DefaultModelEngine"
+                        array += DefaultModelEngine::class.java.name
                     }
                     return array
                 }
