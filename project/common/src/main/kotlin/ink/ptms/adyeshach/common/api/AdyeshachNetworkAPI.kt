@@ -70,10 +70,13 @@ interface AdyeshachNetworkAPI {
      */
     interface SkinTexture {
 
+        /** 是否为网络皮肤 **/
         fun isNetwork(): Boolean
 
+        /** 皮肤签名 **/
         fun signature(): String
 
+        /** 皮肤数据 **/
         fun value(): String
     }
 

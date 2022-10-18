@@ -14,7 +14,7 @@ interface Editable {
     /**
      * 打开编辑器
      */
-    fun openEditor(player: Player)
+    fun openEditor(player: Player, forceEdit: Boolean = false)
 
     /**
      * 获取实体所有可编辑的元数据模型

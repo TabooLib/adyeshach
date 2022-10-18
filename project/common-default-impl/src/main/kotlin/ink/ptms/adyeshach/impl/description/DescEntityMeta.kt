@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.util.errorBy
 import taboolib.common.platform.function.info
 import taboolib.module.nms.MinecraftVersion
@@ -20,9 +20,10 @@ class DescEntityMeta(input: InputStream) : Description(input) {
     var count = 0
     val major = MinecraftVersion.major
 
+    @Suppress("UNCHECKED_CAST")
     override fun load(part: DescriptionBlock) {
         val namespace = part.next()
-        val adyeshachInterface: Class<*> = kotlin.runCatching { Class.forName(namespace) }.getOrNull() ?: return
+        val adyeshachInterface = kotlin.runCatching { Class.forName(namespace) as Class<AdyEntity> }.getOrNull() ?: return
         var support = true
         val currentMeta = ArrayList<PrepareMeta>()
 

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.entity.type
 
+import ink.ptms.adyeshach.common.bukkit.data.PingBar
 import org.bukkit.entity.Player
 
 /**
@@ -17,6 +18,8 @@ interface AdyHuman : AdyEntityLiving {
     fun getName(): String
 
     fun setPing(ping: Int)
+
+    fun setPingBar(pingBar: PingBar)
 
     fun getPing(): Int
 

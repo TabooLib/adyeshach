@@ -28,7 +28,8 @@ interface DefaultModelEngine : ModelEngine {
     override fun showModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked) {
             if (modelEngineUniqueId != null) {
-                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
+                // TODO
+                // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
                 return true
             } else if (modelEngineName.isNotBlank()) {
                 return refreshModelEngine()
@@ -40,7 +41,8 @@ interface DefaultModelEngine : ModelEngine {
     override fun hideModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked) {
             if (modelEngineUniqueId != null) {
-                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
+                // TODO
+                // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
                 return true
             }
         }
@@ -54,8 +56,9 @@ interface DefaultModelEngine : ModelEngine {
             if (modelEngineUniqueId != null) {
                 val modeledEntity = ModelEngineAPI.getModeledEntity(modelEngineUniqueId)
                 if (modeledEntity != null) {
-                    modeledEntity.clearModels()
-                    forViewers { modeledEntity.removePlayer(it) }
+                    // TODO
+                    // modeledEntity.clearModels()
+                    // forViewers { modeledEntity.removePlayer(it) }
                     ModelEngineAPI.removeModeledEntity(modelEngineUniqueId)
                     modelEngineUniqueId = null
                     // 是否恢复单位
@@ -104,7 +107,8 @@ interface DefaultModelEngine : ModelEngine {
                 // 首次加载模型的时候还不存在任何观察者，因此需要延迟添加
                 // 否则会出现模型消失的问题
                 // 于 2022-05-16 日由阿瑞（1484813603）反馈
-                submit { forViewers { modeledEntity.addPlayer(it) } }
+                // TODO
+                // submit { forViewers { modeledEntity.addPlayer(it) } }
                 return true
             }
         }
@@ -134,6 +138,10 @@ interface DefaultModelEngine : ModelEngine {
 
         @Awake(LifeCycle.INIT)
         fun init() {
+            if (isModelEngineHooked) {
+                warning("ModelEngine 3 is not supported at the moment because the API has changed too much.")
+                return
+            }
             // 注册生成回调
             Adyeshach.api().getEntityTypeHandler().prepareGenerate(object : AdyeshachEntityTypeHandler.GenerateCallback {
 

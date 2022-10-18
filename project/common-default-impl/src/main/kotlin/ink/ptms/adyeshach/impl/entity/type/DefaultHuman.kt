@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.GameProfile
+import ink.ptms.adyeshach.common.bukkit.data.PingBar
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.minecraftVersion
@@ -94,6 +95,11 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setPing(ping: Int) {
         gameProfile.ping = ping
+        respawn()
+    }
+
+    override fun setPingBar(pingBar: PingBar) {
+        gameProfile.setPingBar(pingBar)
         respawn()
     }
 

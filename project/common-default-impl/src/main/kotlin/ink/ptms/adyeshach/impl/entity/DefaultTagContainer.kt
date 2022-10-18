@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.api.event.AdyeshachPersistentTagUpdateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
-import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.common.entity.StandardTags
 import ink.ptms.adyeshach.common.entity.TagContainer
 
 /**
@@ -15,18 +15,38 @@ import ink.ptms.adyeshach.common.entity.TagContainer
 interface DefaultTagContainer : TagContainer {
 
     override fun getTags(): Set<Map.Entry<String, String>> {
-        this as DefaultEntityBase
-        return tag.entries
+        this as DefaultEntityInstance
+        val tags = HashMap<String, String>()
+        // 修正标签
+        val manager = this.manager
+        if (manager == null) {
+            tags[StandardTags.ISOLATED] = "true"
+        } else {
+            if (manager.isPublic()) {
+                tags[StandardTags.IS_PUBLIC] = "true"
+            } else {
+                tags[StandardTags.IS_PRIVATE] = "true"
+            }
+            if (manager.isTemporary()) {
+                tags[StandardTags.IS_TEMPORARY] = "true"
+            }
+        }
+        val isDerived = hasPersistentTag(StandardTags.DERIVED)
+        if (isDerived) {
+            tags[StandardTags.DERIVED] = "true"
+        }
+        tags.putAll(tag)
+        return tags.entries
     }
 
     override fun getTag(key: String): String? {
         this as DefaultEntityBase
-        return tag[key]
+        return getTags().firstOrNull { it.key == key }?.value
     }
 
     override fun hasTag(key: String): Boolean {
         this as DefaultEntityBase
-        return tag.containsKey(key)
+        return getTags().any { it.key == key }
     }
 
     override fun setTag(key: String, value: String) {

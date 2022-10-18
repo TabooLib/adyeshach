@@ -10,6 +10,10 @@ class GameProfile {
 
     @Expose
     var name = "Adyeshach"
+        set(value) {
+            // 长度限制
+            field = (if (value.length > 16) value.substring(0, 16) else value)
+        }
 
     /**
      * A ping that negative (i.e. not known to the server yet) will result in the no connection icon.

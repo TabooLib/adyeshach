@@ -11,11 +11,13 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.AdyMinecart
 import ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+import ink.ptms.adyeshach.common.util.toGroundCenter
 import org.bukkit.event.player.PlayerRespawnEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.submit
-import taboolib.common.platform.function.warning
+import taboolib.module.lang.sendLang
 
 /**
  * Adyeshach
@@ -32,9 +34,7 @@ internal object DefaultEntityFixer {
     @SubscribeEvent
     fun onRespawn(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            Adyeshach.api().getEntityFinder().getVisibleEntities(e.player) { it.isViewer(e.player) }.forEach {
-                it.visible(e.player, true)
-            }
+            Adyeshach.api().getEntityFinder().getVisibleEntities(e.player) { it.isViewer(e.player) }.forEach { it.visible(e.player, true) }
         }
     }
 
@@ -43,9 +43,7 @@ internal object DefaultEntityFixer {
      */
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: AdyeshachEntityTeleportEvent) {
-        e.entity.getPassengers().forEach {
-            it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
-        }
+        e.entity.getPassengers().forEach { it.teleport(e.location.clone().toGroundCenter()) }
     }
 
     /**
@@ -101,7 +99,8 @@ internal object DefaultEntityFixer {
             val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
             if (value.length > length) {
                 e.value = value.substring(0, length)
-                warning("NPC ${e.entity.id} created with name length greater than $length, truncating to ${value.substring(0, length)}")
+                // 发送警告
+                console().sendLang("error-name-length", e.entity.id, e.entity.entityType, value.length, length)
             }
         }
     }

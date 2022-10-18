@@ -16,9 +16,9 @@ import org.bukkit.entity.Player
  */
 interface DefaultEditable : Editable {
 
-    override fun openEditor(player: Player) {
+    override fun openEditor(player: Player, forceEdit: Boolean) {
         this as EntityInstance
-        Adyeshach.editor()?.openEditor(player, this)
+        Adyeshach.editor()?.openEditor(player, this, forceEdit)
     }
 
     override fun getEditableEntityMeta(): List<Meta<*>> {

@@ -295,7 +295,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
 
         @SubscribeEvent
-        private fun e(e: WorldUnloadEvent) {
+        private fun onUnload(e: WorldUnloadEvent) {
             submitAsync { chunkAccess.remove(e.world.name) }
         }
     }

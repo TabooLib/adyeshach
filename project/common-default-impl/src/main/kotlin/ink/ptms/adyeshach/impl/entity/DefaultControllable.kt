@@ -4,15 +4,16 @@ import ink.ptms.adyeshach.api.event.AdyeshachControllerAddEvent
 import ink.ptms.adyeshach.api.event.AdyeshachControllerRemoveEvent
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.Controllable
+import ink.ptms.adyeshach.common.entity.StandardTags
 import ink.ptms.adyeshach.common.entity.TagContainer
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
-import ink.ptms.adyeshach.common.util.path.PathFinderHandler
 import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.util.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.common.util.path.PathFinderHandler
+import ink.ptms.adyeshach.common.util.path.ResultNavigation
 import org.bukkit.Location
 
 /**
@@ -27,11 +28,11 @@ interface DefaultControllable : Controllable {
     override var isFreeze: Boolean
         set(value) {
             this as TagContainer
-            setTag("isFreeze", value.toString())
+            setTag(StandardTags.IS_FREEZE, value.toString())
         }
         get() {
             this as TagContainer
-            return hasTag("isFreeze")
+            return hasTag(StandardTags.IS_FREEZE)
         }
 
     override fun getController(): List<Controller> {
@@ -75,12 +76,12 @@ interface DefaultControllable : Controllable {
 
     override fun isControllerMoving(): Boolean {
         this as DefaultEntityInstance
-        return hasTag("isMoving")
+        return hasTag(StandardTags.IS_MOVING)
     }
 
     override fun isControllerJumping(): Boolean {
         this as DefaultEntityInstance
-        return hasTag("isJumping")
+        return hasTag(StandardTags.IS_JUMPING)
     }
 
     override fun isControllerOnGround(): Boolean {
@@ -127,7 +128,7 @@ interface DefaultControllable : Controllable {
             }
         }
         // 设置尝试移动的标签
-        setTag("tryMoving", "true")
+        setTag(StandardTags.IS_PATHFINDING, "true")
         // 请求寻路
         PathFinderHandler.request(position.toLocation(), location, pathType) {
             // 路径节点为空
@@ -140,7 +141,7 @@ interface DefaultControllable : Controllable {
             move.pathType = pathType
             move.resultNavigation = it
             // 移除标签
-            removeTag("tryMoving")
+            removeTag(StandardTags.IS_PATHFINDING)
         }
     }
 
@@ -151,13 +152,13 @@ interface DefaultControllable : Controllable {
             controller.removeIf { it is GeneralMove }
             controller.add(GeneralMove(this))
             // 移除标签
-            removeTag("isMoving")
-            removeTag("isJumping")
+            removeTag(StandardTags.IS_MOVING)
+            removeTag(StandardTags.IS_JUMPING)
         }
     }
 
     override fun isTryMoving(): Boolean {
         this as DefaultEntityInstance
-        return hasTag("tryMoving")
+        return hasTag(StandardTags.IS_PATHFINDING)
     }
 }

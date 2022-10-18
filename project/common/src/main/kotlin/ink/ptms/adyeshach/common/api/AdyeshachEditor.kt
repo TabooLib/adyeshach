@@ -15,5 +15,5 @@ interface AdyeshachEditor {
     /**
      * 打开编辑器
      */
-    fun openEditor(player: Player, entityInstance: EntityInstance)
+    fun openEditor(player: Player, entityInstance: EntityInstance, forceEdit: Boolean = false)
 }

@@ -13,7 +13,13 @@ import org.bukkit.entity.Player
 @Suppress("SpellCheckingInspection")
 interface InternalEntity {
 
+    /**
+     * 生成回调
+     */
     fun spawn(viewer: Player, spawn: Runnable): Boolean
 
+    /**
+     * 销毁回调
+     */
     fun destroy(viewer: Player, destroy: Runnable): Boolean
 }
