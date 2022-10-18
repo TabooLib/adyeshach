@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import org.bukkit.command.CommandSender
 

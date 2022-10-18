@@ -27,6 +27,11 @@ interface MinecraftWorldAccess {
         fun getBlock(x: Int, y: Int, z: Int): Block
 
         /**
+         * 获取方块的碰撞箱宽度
+         */
+        fun getBlockWidth(x: Int, y: Int, z: Int): Double
+
+        /**
          * 获取方块的碰撞箱高度
          */
         fun getBlockHeight(x: Int, y: Int, z: Int): Double

@@ -19,7 +19,7 @@ import taboolib.module.nms.MinecraftVersion
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.nms.DefaultMinecraftHelper
+ * ink.ptms.adyeshach.impl.nms.DefaultMinecraftUtils
  *
  * @author 坏黑
  * @since 2022/6/28 00:07

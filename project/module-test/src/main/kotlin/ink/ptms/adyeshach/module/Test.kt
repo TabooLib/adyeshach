@@ -4,8 +4,6 @@ import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
-import ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
-import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
@@ -15,7 +13,6 @@ import taboolib.common.platform.command.suggest
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.actionBar
-import taboolib.platform.util.buildItem
 
 @CommandHeader(name = "adytest")
 object Test {
@@ -46,9 +43,6 @@ object Test {
                 if (npc is AdyHuman) {
                     npc.setName("坏黑")
                     npc.setTexture("bukkitObj")
-                }
-                if (npc is AdyThrownEnderPearl) {
-                    npc.setItem(buildItem(Material.DIAMOND_SWORD))
                 }
                 npc.setCustomNameVisible(true)
                 npc.setGlowing(true)

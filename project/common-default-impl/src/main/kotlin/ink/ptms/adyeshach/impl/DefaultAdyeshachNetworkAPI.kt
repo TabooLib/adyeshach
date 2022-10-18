@@ -13,7 +13,10 @@ import ink.ptms.adyeshach.impl.network.NetworkMineskin
  */
 class DefaultAdyeshachNetworkAPI : AdyeshachNetworkAPI {
 
+    /** Ashcon 玩家数据获取工具 **/
     val networkAshcon = NetworkAshcon()
+
+    /** 皮肤上传工具 **/
     val networkSkin = NetworkMineskin()
 
     override fun getAshcon(): AdyeshachNetworkAPI.Ashcon {

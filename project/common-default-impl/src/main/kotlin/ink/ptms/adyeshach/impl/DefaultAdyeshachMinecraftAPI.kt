@@ -12,13 +12,27 @@ import taboolib.module.nms.nmsProxy
  */
 class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
-    val group = "ink.ptms.adyeshach.impl.nms"
+    val group = "${DefaultAdyeshachMinecraftAPI::class.java.`package`.name}.nms"
+
+    /** 杂项 **/
     val nmsHelper = nmsProxy<MinecraftHelper>("$group.DefaultMinecraftHelper")
+
+    /** 实体生成接口 **/
     val nmsEntitySpawner = nmsProxy<MinecraftEntitySpawner>("$group.DefaultMinecraftEntitySpawner")
+
+    /** 实体控制接口 **/
     val nmsEntityOperator = nmsProxy<MinecraftEntityOperator>("$group.DefaultMinecraftEntityOperator")
+
+    /** 元数据控制接口 **/
     val nmsEntityMetadataHandler = nmsProxy<MinecraftEntityMetadataHandler>("$group.DefaultMinecraftEntityMetadataHandler")
+
+    /** 玩家控制接口 **/
     val nmsEntityPlayerHandler = nmsProxy<MinecraftEntityPlayerHandler>("$group.DefaultMinecraftEntityPlayerHandler")
+
+    /** 数据包控制接口 **/
     val nmsPacketHandler = nmsProxy<MinecraftPacketHandler>("$group.DefaultMinecraftPacketHandler")
+
+    /** 世界访问接口 **/
     val nmsWorldAccess = nmsProxy<MinecraftWorldAccess>("$group.DefaultMinecraftWorldAccess")
 
     override fun getHelper(): MinecraftHelper {

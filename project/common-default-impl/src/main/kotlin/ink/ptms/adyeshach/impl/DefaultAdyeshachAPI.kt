@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
-import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
@@ -17,18 +16,40 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class DefaultAdyeshachAPI : AdyeshachAPI {
 
+    /** 单位检索接口 **/
     var entityFinder = DefaultAdyeshachEntityFinder()
+
+    /** 单位序列化接口 **/
     var entitySerializer = DefaultAdyeshachEntitySerializer()
+
+    /** 单位类型管理接口 **/
     var entityTypeHelper = DefaultAdyeshachEntityTypeHandler()
+
+    /** 单位元数据管理接口 **/
     var entityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
+
+    /** 单位控制器管理接口 **/
     var entityControllerHandler = DefaultAdyeshachEntityControllerHandler()
+
+    /** 全系接口 **/
     var hologramHandler = DefaultAdyeshachHologramHandler()
+
+    /** 脚本接口 **/
     var ketherHandler = DefaultAdyeshachKetherHandler()
+
+    /** 服务端逆向操作工具 **/
     var minecraftAPI = DefaultAdyeshachMinecraftAPI()
+
+    /** 网络工具 **/
     var networkAPI = DefaultAdyeshachNetworkAPI()
+
+    /** 语言文件接口 **/
     var language = DefaultAdyeshachLanguage()
 
+    /** 公共单位管理器 **/
     var publicEntityManager = DefaultManager()
+
+    /** 公共单位管理器（临时） **/
     var publicEntityManagerTemp = DefaultManager()
 
     override fun setupEntityManager(player: Player) {
@@ -70,9 +91,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun refreshEntityManager(player: Player) {
         // 对范围内可视且在观察者列表的实体进行刷新
-        entityFinder.getEntities(player) { it.isViewer(player) && it.getLocation().safeDistance(player.location) < it.visibleDistance }.forEach {
-            it.visible(player, true)
-        }
+        entityFinder.getVisibleEntities(player).forEach { it.visible(player, true) }
     }
 
     override fun getPublicEntityManager(temporary: Boolean): DefaultManager {
