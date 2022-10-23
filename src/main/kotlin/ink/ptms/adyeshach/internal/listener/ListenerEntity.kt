@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
