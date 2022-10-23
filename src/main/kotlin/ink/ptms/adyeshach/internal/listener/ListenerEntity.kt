@@ -1,15 +1,17 @@
 package ink.ptms.adyeshach.internal.listener
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
-import ink.ptms.adyeshach.api.event.*
+import ink.ptms.adyeshach.api.event.AdyeshachEntityDamageEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityInteractEvent
+import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.api.nms.NMS
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyItem
-import ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
 import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
@@ -23,7 +25,7 @@ import taboolib.module.nms.PacketReceiveEvent
 object ListenerEntity {
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachNaturalMetaGenerateEvent) {
+    private fun onGenerate(e: AdyeshachNaturalMetaGenerateEvent) {
         val value = e.value
         if (e.meta.key == "customName" && value is String) {
             val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
@@ -35,7 +37,8 @@ object ListenerEntity {
     }
 
     @SubscribeEvent
-    fun e(e: PacketReceiveEvent) {
+    private fun onReceive(e: PacketReceiveEvent) {
+        info("onReceive -> ${e.packet}")
         if (e.packet.name == "PacketPlayInPosition" && e.player.name !in AdyeshachAPI.onlinePlayerMap) {
             AdyeshachAPI.onlinePlayerMap.add(e.player.name)
             AdyeshachPlayerJoinEvent(e.player).call()

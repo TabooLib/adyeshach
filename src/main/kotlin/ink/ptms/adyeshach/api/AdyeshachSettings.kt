@@ -28,7 +28,7 @@ object AdyeshachSettings {
      */
     val spawnTrigger: SpawnTrigger
         get() = try {
-            SpawnTrigger.valueOf(Adyeshach.conf.getString("Settings.spawn-trigger")!!.uppercase())
+            SpawnTrigger.valueOf(Adyeshach.conf.getString("Settings.spawn-event")!!.uppercase())
         } catch (ignored: Exception) {
             SpawnTrigger.KEEP_ALIVE
         }
@@ -60,7 +60,7 @@ object AdyeshachSettings {
     @ConfigNode("Settings.delete-file-in-unknown-world")
     var deleteFileInUnknownWorld = emptyList<String>()
 
-    @ConfigNode("view-condition-interval")
+    @ConfigNode("Settings.view-condition-interval")
     var viewConditionInterval = 40
         get() = if (field == 0) 40 else field
 

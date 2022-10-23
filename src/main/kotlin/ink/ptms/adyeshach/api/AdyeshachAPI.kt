@@ -14,10 +14,10 @@ import ink.ptms.adyeshach.common.entity.manager.database.DatabaseLocal
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseMongodb
 import ink.ptms.adyeshach.common.entity.manager.database.DatabaseNull
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
+import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.common.util.serializer.Converter
 import ink.ptms.adyeshach.common.util.serializer.Serializer
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
-import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -360,7 +360,7 @@ object AdyeshachAPI {
     }
 
     @Awake(LifeCycle.DISABLE)
-    internal fun onDisable() {
+    private fun onDisable() {
         onlinePlayers().forEach { database.push(it.cast()) }
     }
 
@@ -378,21 +378,17 @@ object AdyeshachAPI {
 
     // 当世界被卸载时, 该世界的所有虚拟实体应当被清除
     @SubscribeEvent
-    internal fun onWorldChange(e: WorldUnloadEvent) {
-        getEntities { true }
-            .filter { it.getWorld().uid == e.world.uid }
-            .forEach {
-                it.remove()
-            }
+    private fun onWorldChange(e: WorldUnloadEvent) {
+        getEntities { true }.filter { it.getWorld().uid == e.world.uid }.forEach { it.remove() }
     }
 
     @SubscribeEvent
-    internal fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         clientEntityMap.remove(e.player.name)
         onlinePlayerMap.remove(e.player.name)
         managerPrivate.remove(e.player.name)
         managerPrivateTemporary.remove(e.player.name)
-        submit(async = true) {
+        submitAsync {
             database.push(e.player)
             database.release(e.player)
         }

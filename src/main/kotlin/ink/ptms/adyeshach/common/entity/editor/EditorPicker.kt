@@ -43,13 +43,13 @@ object EditorPicker {
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         cooldown.reset(e.player.name)
         playerSelected.remove(e.player.name)
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private fun e(e: PlayerItemHeldEvent) {
+    private fun onHeld(e: PlayerItemHeldEvent) {
         val select = getSelected(e.player)
         val entity = select.entity ?: return
         val amount = if (e.player.isSneaking) 1.0 else 0.1
@@ -63,7 +63,7 @@ object EditorPicker {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private fun e(e: PlayerSwapHandItemsEvent) {
+    private fun onSwap(e: PlayerSwapHandItemsEvent) {
         val entity = getSelected(e.player).entity ?: return
         e.isCancelled = true
         if (e.player.isSneaking) {

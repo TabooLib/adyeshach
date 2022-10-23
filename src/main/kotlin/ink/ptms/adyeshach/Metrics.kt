@@ -46,7 +46,7 @@ object Metrics {
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityCreateEvent) {
+    private fun onCreate(e: AdyeshachEntityCreateEvent) {
         createdEntities++
     }
 }

@@ -306,12 +306,12 @@ object EditorHandler {
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         armorStandLookup.remove(e.player.name)
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerInteractEvent) {
+    private fun onInteract(e: PlayerInteractEvent) {
         // 管理员且主手交互
         if (e.player.isOp && e.hand == EquipmentSlot.HAND) {
             // 编辑模式

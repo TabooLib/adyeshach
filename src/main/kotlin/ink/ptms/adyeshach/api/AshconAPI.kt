@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import it.unimi.dsi.fastutil.ints.Int2IntMaps.SynchronizedMap
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
@@ -11,8 +10,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.util.Collections
-import java.util.concurrent.ConcurrentHashMap
+import java.util.*
 
 /**
  * @author Arasple
@@ -40,7 +38,7 @@ object AshconAPI {
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerJoinEvent) {
+    private fun onJoin(e: PlayerJoinEvent) {
         if (AdyeshachSettings.ashconAPI) {
             submit(async = true) {
                 try {
@@ -54,7 +52,7 @@ object AshconAPI {
     }
 
     @SubscribeEvent
-    private fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         profileCache.remove(e.player.name)
     }
 }

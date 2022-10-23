@@ -18,26 +18,26 @@ import taboolib.platform.util.sendLang
 object TraitViewCondition : Trait() {
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityRemoveEvent) {
+    private fun onRemove(e: AdyeshachEntityRemoveEvent) {
         data[e.entity.uniqueId] = null
     }
 
     @SubscribeEvent(EventPriority.LOWEST)
-    fun e(e: AdyeshachEntityDamageEvent) {
+    private fun onDamage(e: AdyeshachEntityDamageEvent) {
         if (!checkView(e.entity, e.player)) {
             e.isCancelled = true
         }
     }
 
     @SubscribeEvent(EventPriority.LOWEST)
-    fun e(e: AdyeshachEntityInteractEvent) {
+    private fun onInteract(e: AdyeshachEntityInteractEvent) {
         if (!checkView(e.entity, e.player)) {
             e.isCancelled = true
         }
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityVisibleEvent) {
+    private fun onVisible(e: AdyeshachEntityVisibleEvent) {
         if (e.visible && !checkView(e.entity, e.viewer)) {
             e.isCancelled = true
         }

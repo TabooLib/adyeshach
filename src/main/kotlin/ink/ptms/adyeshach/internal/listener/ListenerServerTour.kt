@@ -12,13 +12,13 @@ object ListenerServerTour {
 
     @Ghost
     @SubscribeEvent
-    fun e(e: RoutePlayBeginEvent) {
+    private fun onBegin(e: RoutePlayBeginEvent) {
         touringPlayer.add(e.player.name)
     }
 
     @Ghost
     @SubscribeEvent
-    fun e(e: RoutePlayEndEvent) {
+    private fun onEnd(e: RoutePlayEndEvent) {
         touringPlayer.remove(e.player.name)
     }
 }

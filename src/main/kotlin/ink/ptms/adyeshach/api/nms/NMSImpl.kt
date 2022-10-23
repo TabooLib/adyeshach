@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.info
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.Reflex.Companion.setProperty
@@ -61,8 +62,8 @@ class NMSImpl : NMS() {
                 "xa" to 0,
                 "ya" to 0,
                 "za" to 0,
-                "xRot" to (location.yaw * 256.0f / 360.0f).toInt(),
-                "yRot" to (location.pitch * 256.0f / 360.0f).toInt(),
+                "xRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "yRot" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "type" to getEntityTypeNMS(entityType),
                 "data" to 0
             )
@@ -74,8 +75,8 @@ class NMSImpl : NMS() {
                 "c" to location.x,
                 "d" to location.y,
                 "e" to location.z,
-                "f" to (location.yaw * 256.0f / 360.0f).toInt(),
-                "g" to (location.pitch * 256.0f / 360.0f).toInt(),
+                "f" to (location.yaw * 256.0f / 360.0f).toInt().toByte(),
+                "g" to (location.pitch * 256.0f / 360.0f).toInt().toByte(),
                 "k" to if (majorLegacy <= 11300) entityType.bukkitId else getEntityTypeNMS(entityType)
             )
         }

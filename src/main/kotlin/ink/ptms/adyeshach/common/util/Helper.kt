@@ -49,7 +49,7 @@ internal object Helper {
     val cooldown = Baffle.of(100, TimeUnit.MILLISECONDS)
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         cooldown.reset(e.player.name)
     }
 }

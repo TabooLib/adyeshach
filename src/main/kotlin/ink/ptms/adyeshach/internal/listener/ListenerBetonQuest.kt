@@ -64,21 +64,21 @@ object ListenerBetonQuest {
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityDamageEvent) {
+    private fun onDamage(e: AdyeshachEntityDamageEvent) {
         if (AdyeshachAPI.betonQuestHooked && e.player.hasPermission("betonquest.conversation")) {
             logic(e.player, e.entity)
         }
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityInteractEvent) {
+    private fun onInteract(e: AdyeshachEntityInteractEvent) {
         if (AdyeshachAPI.betonQuestHooked && e.isMainHand && e.player.hasPermission("betonquest.conversation")) {
             logic(e.player, e.entity)
         }
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         limit.reset(e.player.name)
     }
 }
