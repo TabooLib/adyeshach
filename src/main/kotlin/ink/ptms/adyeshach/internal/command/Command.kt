@@ -48,11 +48,11 @@ object Command {
 
     @CommandBody
     val create = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
-            dynamic(commit = "type") {
+            dynamic(comment = "type") {
                 suggestion<Player> { _, _ ->
                     EntityTypes.values().map { it.name }
                 }
@@ -65,7 +65,7 @@ object Command {
 
     @CommandBody
     val remove = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -80,14 +80,14 @@ object Command {
 
     @CommandBody
     val rename = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
             execute<Player> { sender, _, argument ->
                 commandRename(AdyeshachAPI.getEntityNearly(sender), sender, argument)
             }
-            dynamic(commit = "new id", optional = true) {
+            dynamic(comment = "new id", optional = true) {
                 execute<CommandSender> { sender, context, argument ->
                     commandRename(AdyeshachAPI.getEntityFromUniqueIdOrId(context.argument(-1), sender as? Player), sender, argument)
                 }
@@ -97,7 +97,7 @@ object Command {
 
     @CommandBody
     val edit = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -112,14 +112,14 @@ object Command {
 
     @CommandBody
     val copy = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
             execute<Player> { sender, _, argument ->
                 commandCopy(AdyeshachAPI.getEntityNearly(sender), sender, argument)
             }
-            dynamic(commit = "new id", optional = true) {
+            dynamic(comment = "new id", optional = true) {
                 suggestion<Player>(uncheck = true) { sender, _ ->
                     sender.suggestEntityId()
                 }
@@ -161,7 +161,7 @@ object Command {
 
     @CommandBody
     val move = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -206,7 +206,7 @@ object Command {
 
     @CommandBody
     val navmove = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -245,7 +245,7 @@ object Command {
 
     @CommandBody
     val look = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -276,7 +276,7 @@ object Command {
 
     @CommandBody
     val tp = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -291,12 +291,12 @@ object Command {
 
     @CommandBody
     val passenger = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
             literal("add") {
-                dynamic(commit = "id") {
+                dynamic(comment = "id") {
                     suggestion<Player>(uncheck = true) { sender, _ ->
                         sender.suggestEntityId()
                     }
@@ -306,7 +306,7 @@ object Command {
                 }
             }
             literal("remove") {
-                dynamic(commit = "id") {
+                dynamic(comment = "id") {
                     suggestion<Player>(uncheck = true) { sender, _ ->
                         sender.suggestEntityId()
                     }
@@ -325,7 +325,7 @@ object Command {
 
     @CommandBody
     val controller = subCommand {
-        dynamic(commit = "id", optional = true) {
+        dynamic(comment = "id", optional = true) {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
@@ -333,7 +333,7 @@ object Command {
                 commandControllerEditor(AdyeshachAPI.getEntityFromUniqueIdOrId(argument, sender as? Player), sender)
             }
             literal("add", optional = true) {
-                dynamic(commit = "id") {
+                dynamic(comment = "id") {
                     suggestion<CommandSender> { _, _ ->
                         AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
@@ -343,7 +343,7 @@ object Command {
                 }
             }
             literal("remove", optional = true) {
-                dynamic(commit = "id") {
+                dynamic(comment = "id") {
                     suggestion<CommandSender> { _, _ ->
                         AdyeshachAPI.registeredControllerGenerator.keys.toList()
                     }
@@ -365,11 +365,11 @@ object Command {
 
     @CommandBody
     val trait = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { sender, _ ->
                 sender.suggestEntityId()
             }
-            dynamic(commit = "trait") {
+            dynamic(comment = "trait") {
                 suggestion<Player> { _, _ ->
                     TraitFactory.traits.map { it.getName() }
                 }
@@ -400,7 +400,7 @@ object Command {
 
     @CommandBody
     val refresh = subCommand {
-        dynamic(commit = "player") {
+        dynamic(comment = "player") {
             suggestPlayers()
             execute<CommandSender> { sender, context, argument ->
                 AdyeshachAPI.getVisibleEntities(Bukkit.getPlayerExact(argument)!!).forEach {
@@ -744,23 +744,23 @@ object Command {
         func2: (CommandBuilder.CommandComponentDynamic.() -> Unit)? = null,
     ) {
         // world
-        dynamic(commit = "world") {
+        dynamic(comment = "world") {
             suggestion<CommandSender> { _, _ -> Bukkit.getWorlds().map { it.name } }
             // x
-            dynamic(commit = "x") {
+            dynamic(comment = "x") {
                 restrict<CommandSender> { _, _, argument -> Coerce.asDouble(argument).isPresent }
                 // y
-                dynamic(commit = "y") {
+                dynamic(comment = "y") {
                     restrict<CommandSender> { _, _, argument -> Coerce.asDouble(argument).isPresent }
                     // z
-                    dynamic(commit = "z") {
+                    dynamic(comment = "z") {
                         func1(this)
                         if (func2 != null) {
                             // yaw
-                            dynamic(commit = "yaw", optional = true) {
+                            dynamic(comment = "yaw", optional = true) {
                                 restrict<CommandSender> { _, _, argument -> Coerce.asDouble(argument).isPresent }
                                 // pitch
-                                dynamic(commit = "pitch") {
+                                dynamic(comment = "pitch") {
                                     restrict<CommandSender> { _, _, argument -> Coerce.asDouble(argument).isPresent }
                                     func2(this)
                                 }
