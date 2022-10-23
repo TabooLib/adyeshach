@@ -38,7 +38,6 @@ object ListenerEntity {
 
     @SubscribeEvent
     private fun onReceive(e: PacketReceiveEvent) {
-        info("onReceive -> ${e.packet}")
         if (e.packet.name == "PacketPlayInPosition" && e.player.name !in AdyeshachAPI.onlinePlayerMap) {
             AdyeshachAPI.onlinePlayerMap.add(e.player.name)
             AdyeshachPlayerJoinEvent(e.player).call()
