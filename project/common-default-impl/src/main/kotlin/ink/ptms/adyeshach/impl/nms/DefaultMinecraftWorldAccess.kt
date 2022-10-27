@@ -2,7 +2,8 @@ package ink.ptms.adyeshach.impl.nms
 
 import ink.ptms.adyeshach.common.api.MinecraftWorldAccess
 import ink.ptms.adyeshach.impl.DefaultAdyeshachMinecraftAPI
-import taboolib.module.nms.nmsProxy
+import taboolib.module.nms.nmsProxyClass
+import java.lang.reflect.Constructor
 
 /**
  * Adyeshach
@@ -16,9 +17,12 @@ class DefaultMinecraftWorldAccess : MinecraftWorldAccess {
     val group = "${DefaultAdyeshachMinecraftAPI::class.java.`package`.name}.nms"
 
     /** 方块访问接口 **/
-    val nmsBlockAccess = nmsProxy<MinecraftWorldAccess>("$group.DefaultMinecraftBlockAccess")
+    val nmsBlockAccessClass = nmsProxyClass<MinecraftWorldAccess.BlockAccess>("$group.DefaultMinecraftBlockAccess")
+
+    /** 方块访问接口构造方法 **/
+    val nmsBlockAccessClassConstructor: Constructor<MinecraftWorldAccess.BlockAccess> = nmsBlockAccessClass.getDeclaredConstructor(Int::class.java, Int::class.java)
 
     override fun createBlockAccess(x: Int, z: Int): MinecraftWorldAccess.BlockAccess {
-        TODO("Not yet implemented")
+        return nmsBlockAccessClassConstructor.newInstance(x, z)
     }
 }
