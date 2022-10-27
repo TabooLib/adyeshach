@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.common.entity.manager
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
 import ink.ptms.adyeshach.api.AdyeshachSettings
-import ink.ptms.adyeshach.api.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.common.util.safeDistance
@@ -16,7 +15,6 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
-import taboolib.common5.mirrorNow
 
 /**
  * @author sky
@@ -76,21 +74,21 @@ internal object ManagerEvents {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerJoinEvent) {
+    private fun onJoin(e: PlayerJoinEvent) {
         if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.JOIN) {
             submit(delay = 20) { spawn(e.player) }
         }
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachPlayerJoinEvent) {
+    private fun onJoin(e: AdyeshachPlayerJoinEvent) {
         if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.KEEP_ALIVE) {
             spawn(e.player)
         }
     }
 
     @SubscribeEvent
-    fun e(e: PlayerRespawnEvent) {
+    private fun onRespawn(e: PlayerRespawnEvent) {
         submit(delay = 20) {
             AdyeshachAPI.getEntities(e.player) { it.position.toLocation().safeDistance(e.player.location) < it.visibleDistance }.forEach {
                 if (it.isViewer(e.player)) {
@@ -101,7 +99,7 @@ internal object ManagerEvents {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         AdyeshachAPI.getEntityManagerPublic().getEntities().forEach {
             it.viewPlayers.viewers.remove(e.player.name)
             it.viewPlayers.visible.remove(e.player.name)
@@ -115,10 +113,10 @@ internal object ManagerEvents {
 
     fun spawn(player: Player) {
         if (player.isOnline) {
-            AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
+            AdyeshachAPI.getEntityManagerPublic().getEntities().filter { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers.add(player.name)
             }
-            AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.isPublic() && it.visibleAfterLoaded }.forEach {
+            AdyeshachAPI.getEntityManagerPublicTemporary().getEntities().filter { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers.add(player.name)
             }
             AdyeshachAPI.getEntityManagerPrivate(player).onEnable()

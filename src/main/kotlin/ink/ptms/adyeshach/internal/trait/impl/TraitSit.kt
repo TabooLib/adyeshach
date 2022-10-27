@@ -12,7 +12,7 @@ import taboolib.platform.util.sendLang
 object TraitSit : Trait() {
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityRemoveEvent) {
+    private fun onRemove(e: AdyeshachEntityRemoveEvent) {
         val vehicle = e.entity.getVehicle() ?: return
         if (vehicle.getCustomName() == "trait_sit_npc") {
             vehicle.delete()

@@ -130,17 +130,17 @@ object TraitPatrol : Trait() {
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityRemoveEvent) {
+    private fun onRemove(e: AdyeshachEntityRemoveEvent) {
         e.entity.nodes(emptyList())
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         edit.remove(e.player.name)
     }
 
     @SubscribeEvent
-    fun e(e: PlayerSwapHandItemsEvent) {
+    private fun onSwap(e: PlayerSwapHandItemsEvent) {
         if (edit.containsKey(e.player.name)) {
             e.isCancelled = true
             e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
@@ -156,7 +156,7 @@ object TraitPatrol : Trait() {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerInteractEvent) {
+    private fun onInteract(e: PlayerInteractEvent) {
         if (edit.containsKey(e.player.name) && e.hand == EquipmentSlot.HAND) {
             val entity = edit[e.player.name]!!
             if (e.action == Action.LEFT_CLICK_BLOCK && e.item?.type == Material.BLAZE_ROD) {

@@ -9,7 +9,7 @@ object HolographicCache {
     val holographicMap = ConcurrentHashMap<String, MutableMap<String, Holographic>>()
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         holographicMap.remove(e.player.name)
     }
 }

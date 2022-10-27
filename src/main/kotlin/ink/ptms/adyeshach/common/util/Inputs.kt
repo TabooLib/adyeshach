@@ -29,12 +29,12 @@ object Inputs {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         bookData.remove(e.player.name)
     }
 
     @SubscribeEvent
-    fun e(e: PlayerEditBookEvent) {
+    private fun onEdit(e: PlayerEditBookEvent) {
         if (e.previousBookMeta.displayName == e.player.asLangText("editor-text-input-name")) {
             val listen = bookData.remove(e.player.name) ?: return
             val lines = e.newBookMeta.pages.flatMap {

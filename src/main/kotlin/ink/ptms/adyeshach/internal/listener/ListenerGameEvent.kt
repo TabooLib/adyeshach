@@ -36,17 +36,17 @@ object ListenerGameEvent {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerJoinEvent) {
+    private fun onJoin(e: PlayerJoinEvent) {
         invokeEvent(e.player, "join", emptyMap())
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityDamageEvent) {
+    private fun onDamage(e: AdyeshachEntityDamageEvent) {
         invokeEvent(e.player, "npc damage", mapOf("id" to e.entity.id, "@entities" to listOf(e.entity)))
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityInteractEvent) {
+    private fun onInteract(e: AdyeshachEntityInteractEvent) {
         if (e.isMainHand) {
             invokeEvent(e.player, "npc interact", mapOf("id" to e.entity.id, "@entities" to listOf(e.entity)))
         }

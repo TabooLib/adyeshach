@@ -20,16 +20,14 @@ import taboolib.module.navigation.BoundingBox
 object ListenerModelEngine {
 
     @SubscribeEvent
-    fun e(e: AdyeshachMetaUpdateEvent) {
+    private fun onMetaUpdate(e: AdyeshachMetaUpdateEvent) {
         if ((e.key == "customName" || e.key == "isCustomNameVisible") && e.entity is EntityInstance) {
-            submit(delay = 1) {
-                e.entity.updateModelEngineNameTag()
-            }
+            submit(delay = 1) { e.entity.updateModelEngineNameTag() }
         }
     }
 
     @SubscribeEvent
-    fun e(e: AdyeshachTagUpdateEvent) {
+    private fun onTagUpdate(e: AdyeshachTagUpdateEvent) {
         if (e.key == "isMoving" && e.entity is EntityInstance) {
             if (AdyeshachAPI.modelEngineHooked) {
                 val modelManager = ModelEngineAPI.api.modelManager
@@ -42,7 +40,7 @@ object ListenerModelEngine {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerInteractEvent) {
+    private fun onInteract(e: PlayerInteractEvent) {
         if (AdyeshachAPI.modelEngineHooked && e.action != Action.PHYSICAL) {
             val modelManager = ModelEngineAPI.api.modelManager
             val entities = ArrayList<Pair<EntityInstance, BoundingBox>>()

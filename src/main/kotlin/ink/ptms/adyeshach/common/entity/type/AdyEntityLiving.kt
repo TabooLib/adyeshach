@@ -11,8 +11,8 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**

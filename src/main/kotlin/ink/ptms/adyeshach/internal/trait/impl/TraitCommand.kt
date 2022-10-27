@@ -18,7 +18,7 @@ import taboolib.platform.util.sendLang
 object TraitCommand : Trait() {
 
     @SubscribeEvent
-    fun e(e: AdyeshachEntityRemoveEvent) {
+    private fun onRemove(e: AdyeshachEntityRemoveEvent) {
         data[e.entity.uniqueId] = null
     }
 
@@ -27,7 +27,7 @@ object TraitCommand : Trait() {
      * op:say 123
      */
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityInteractEvent) {
+    private fun onInteract(e: AdyeshachEntityInteractEvent) {
         if (e.isMainHand && e.entity.uniqueId in data) {
             data.getStringList(e.entity.uniqueId).forEach {
                 when {

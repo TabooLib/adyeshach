@@ -71,7 +71,7 @@ object CommandAPI {
 
     @CommandBody
     val migrate = subCommand {
-        dynamic(commit = "plugin") {
+        dynamic(comment = "plugin") {
             suggestion<CommandSender> { _, _ ->
                 Migrate.migrates.filter { it.value.isEnabled() }.map { it.key }.toList()
             }
@@ -91,11 +91,11 @@ object CommandAPI {
 
     @CommandBody
     val uploadskin = subCommand {
-        dynamic(commit = "file") {
+        dynamic(comment = "file") {
             suggestion<CommandSender> { _, _ ->
                 File(Adyeshach.plugin.dataFolder, "skin/upload").listFiles()?.map { it.name }?.toList() ?: emptyList()
             }
-            dynamic(commit = "model", optional = true) {
+            dynamic(comment = "model", optional = true) {
                 suggestion<CommandSender> { _, _ ->
                     listOf("DEFAULT", "SLIM")
                 }
@@ -112,11 +112,11 @@ object CommandAPI {
     @CommandBody
     val edit = subCommand {
         // type
-        dynamic(commit = "type") {
+        dynamic(comment = "type") {
             // id
-            dynamic(commit = "id") {
+            dynamic(comment = "id") {
                 // value
-                dynamic(commit = "value") {
+                dynamic(comment = "value") {
                     execute<Player> { sender, context, argument ->
                         val args = argument.split(" ")
                         val entity = AdyeshachAPI.getEntityFromUniqueId(context.argument(-1), sender) ?: return@execute

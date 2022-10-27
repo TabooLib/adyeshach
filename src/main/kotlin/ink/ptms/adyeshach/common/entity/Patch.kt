@@ -1,7 +1,9 @@
 package ink.ptms.adyeshach.common.entity
 
-import ink.ptms.adyeshach.api.event.*
-import ink.ptms.adyeshach.common.bukkit.data.VectorNull
+import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityTeleportEvent
+import ink.ptms.adyeshach.api.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.api.event.AdyeshachHeadRotationEvent
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.AdyItem
 import ink.ptms.adyeshach.common.entity.type.AdyMinecart
@@ -14,14 +16,14 @@ import taboolib.common.util.Vector
 object Patch {
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityTeleportEvent) {
+    private fun onTeleport(e: AdyeshachEntityTeleportEvent) {
         e.entity.getPassengers().forEach {
             it.teleport(e.location.clone().add(1.5, 0.0, 1.5))
         }
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachHeadRotationEvent) {
+    private fun onRotation(e: AdyeshachHeadRotationEvent) {
         when (e.entity) {
             is AdyWitherSkull -> {
                 e.yaw += 180
@@ -34,7 +36,7 @@ object Patch {
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityCreateEvent) {
+    private fun onCreate(e: AdyeshachEntityCreateEvent) {
         when (e.entity) {
             is AdyMinecart -> {
                 e.location.pitch = 0f
@@ -59,7 +61,7 @@ object Patch {
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityVisibleEvent) {
+    private fun onVisible(e: AdyeshachEntityVisibleEvent) {
         if (e.visible) {
             when (e.entity) {
                 // 修复掉落物品显示错误问题

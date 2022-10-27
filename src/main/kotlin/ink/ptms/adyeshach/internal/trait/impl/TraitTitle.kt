@@ -42,7 +42,7 @@ object TraitTitle : Trait() {
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityTeleportEvent) {
+    private fun onTeleport(e: AdyeshachEntityTeleportEvent) {
         if (entityLookup.containsKey(e.entity.uniqueId)) {
             entityLookup[e.entity.uniqueId]!!.forEach {
                 it.value.teleport(e.location.clone().add(0.0, e.entity.entityType.entitySize.height + 0.25, 0.0))
@@ -51,7 +51,7 @@ object TraitTitle : Trait() {
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun e(e: AdyeshachEntityVisibleEvent) {
+    private fun onVisible(e: AdyeshachEntityVisibleEvent) {
         // 只有在玩家能够看到 NPC 时才会生成全息，所以只通过 Visible 事件创建或回收全息
         if (e.entity.isPublic()) {
             if (e.visible) {
@@ -63,7 +63,7 @@ object TraitTitle : Trait() {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
+    private fun onQuit(e: PlayerQuitEvent) {
         // 玩家退出时必须清空位于 playerLookup 中的容器，并删除全息对象
         playerLookup.remove(e.player.name)?.forEach {
             it.value.delete()

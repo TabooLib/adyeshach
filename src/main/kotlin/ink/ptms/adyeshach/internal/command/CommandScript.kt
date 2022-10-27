@@ -28,17 +28,17 @@ object CommandScript {
     @CommandBody
     val run = subCommand {
         // script
-        dynamic(commit = "file") {
+        dynamic(comment = "file") {
             suggestion<CommandSender> { _, _ ->
                 workspace.scripts.map { it.value.id }
             }
             // viewer
-            dynamic(commit = "viewer", optional = true) {
+            dynamic(comment = "viewer", optional = true) {
                 suggestion<CommandSender> { _, _ ->
                     Bukkit.getOnlinePlayers().map { it.name }
                 }
                 // ver
-                dynamic(commit = "args", optional = true) {
+                dynamic(comment = "args", optional = true) {
                     execute<CommandSender> { sender, context, argument ->
                         commandRun(sender, context.argument(-2), context.argument(-1), argument.split(" ").toTypedArray())
                     }
@@ -55,7 +55,7 @@ object CommandScript {
 
     @CommandBody
     val stop = subCommand {
-        dynamic(commit = "file", optional = true) {
+        dynamic(comment = "file", optional = true) {
             suggestion<CommandSender> { _, _ ->
                 workspace.scripts.map { it.value.id }
             }
@@ -104,7 +104,7 @@ object CommandScript {
 
     @CommandBody
     val invoke = subCommand {
-        dynamic(commit = "script") {
+        dynamic(comment = "script") {
             execute<CommandSender> { sender, _, argument ->
                 try {
                     KetherShell.eval(argument, namespace = listOf("adyeshach"), sender = adaptCommandSender(sender)).thenApply { v ->
