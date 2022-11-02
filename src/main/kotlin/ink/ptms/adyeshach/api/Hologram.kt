@@ -38,7 +38,7 @@ abstract class Hologram<T> {
     }
 
     fun delete() {
-        map.forEach { delete(it.value as T) }
+        map.forEach { delete(it.value) }
     }
 
     protected abstract fun create(location: Location, line: String): T

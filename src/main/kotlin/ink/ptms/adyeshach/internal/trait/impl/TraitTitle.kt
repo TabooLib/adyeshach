@@ -82,6 +82,9 @@ object TraitTitle : Trait() {
     fun create(viewer: Player, entity: EntityInstance) {
         // 是否存在 title 配置
         if (data.contains(entity.uniqueId)) {
+            // 先移除
+            remove(viewer, entity)
+            // 再创建
             val loc = entity.getLocation().add(0.0, entity.entityType.entitySize.height + 0.25, 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
                 KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer))
@@ -95,7 +98,7 @@ object TraitTitle : Trait() {
             playerHologramMap.put(entity.uniqueId, hologram)?.delete()
             // 写入 entityLookup
             val entityHologramMap = entityLookup.computeIfAbsent(entity.uniqueId) { ConcurrentHashMap() }
-            entityHologramMap[viewer.name] = hologram
+            entityHologramMap.put(viewer.name, hologram)?.delete()
         }
     }
 

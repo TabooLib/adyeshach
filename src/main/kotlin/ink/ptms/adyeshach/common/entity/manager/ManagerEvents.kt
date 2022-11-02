@@ -90,8 +90,9 @@ internal object ManagerEvents {
     @SubscribeEvent
     private fun onRespawn(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            AdyeshachAPI.getEntities(e.player) { it.position.toLocation().safeDistance(e.player.location) < it.visibleDistance }.forEach {
+            AdyeshachAPI.getVisibleEntities(e.player).forEach {
                 if (it.isViewer(e.player)) {
+                    it.visible(e.player, false)
                     it.visible(e.player, true)
                 }
             }
