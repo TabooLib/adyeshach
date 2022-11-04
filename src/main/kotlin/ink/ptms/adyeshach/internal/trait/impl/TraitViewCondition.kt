@@ -87,10 +87,20 @@ fun EntityInstance.setViewCondition(condition: List<String>?) {
 }
 
 fun EntityInstance.updateViewCondition() {
-    if (TraitViewCondition.data.contains(uniqueId) && Coerce.toLong(getTag("view-condition-next") ?: 0) < System.currentTimeMillis()) {
+    val nextCheckTime = getTagValue("view-condition-next-check") as? Long ?: 0
+    if (nextCheckTime > System.currentTimeMillis()) {
+        return
+    }
+    val nextUpdateTime = getTagValue("view-condition-next-update") as? Long ?: 0
+    if (nextUpdateTime > System.currentTimeMillis()) {
+        return
+    }
+    // 持有观察条件
+    if (TraitViewCondition.data.contains(uniqueId)) {
+        // 获取条件
         val script = TraitViewCondition.data.getStringList(uniqueId)
         // 设置冷却
-        setTag("view-condition-next", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
+        setTag("view-condition-next-update", System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50))
         // 获取玩家
         viewPlayers.getPlayersInViewDistance().forEach {
             runKether {
@@ -112,5 +122,8 @@ fun EntityInstance.updateViewCondition() {
                 }
             }
         }
+    } else {
+        // 若不持有观察条件则在一段时间后检测
+        setTag("view-condition-next-check", System.currentTimeMillis() + 5000L)
     }
 }

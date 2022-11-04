@@ -16,7 +16,7 @@ abstract class EntityMetaable {
      * 临时标签
      * 不会通过持久化
      */
-    internal val tag = ConcurrentHashMap<String, String>()
+    internal val tag = ConcurrentHashMap<String, Any>()
 
     /**
      * 永久标签
@@ -85,11 +85,15 @@ abstract class EntityMetaable {
         }
     }
 
-    open fun getTags(): Set<Map.Entry<String, String>> {
+    open fun getTags(): Set<Map.Entry<String, Any>> {
         return tag.entries
     }
 
     open fun getTag(key: String): String? {
+        return tag[key]?.toString()
+    }
+
+    open fun getTagValue(key: String): Any? {
         return tag[key]
     }
 
@@ -98,6 +102,10 @@ abstract class EntityMetaable {
     }
 
     open fun setTag(key: String, value: String) {
+        this.setTag(key, value as Any)
+    }
+
+    open fun setTag(key: String, value: Any) {
         val event = AdyeshachTagUpdateEvent(this, key, value)
         if (event.call()) {
             if (event.value != null) {
