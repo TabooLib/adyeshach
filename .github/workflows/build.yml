@@ -24,15 +24,18 @@ jobs:
         run: chmod +x ./gradlew
       # 第一次构建
       - name: build
+        continue-on-error: true
         id: build_1
         run: ./gradlew build
       # 第二次构建
       - name: build (retry 1)
+        continue-on-error: true
         id: build_2
         if: steps.build_1.outcome == 'failure'
         run: ./gradlew build
       # 第三次构建
       - name: build (retry 2)
+        continue-on-error: true
         id: build_3
         if: steps.build_2.outcome == 'failure'
         run: ./gradlew build
