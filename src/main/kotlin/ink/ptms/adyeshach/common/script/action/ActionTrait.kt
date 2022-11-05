@@ -32,6 +32,7 @@ class ActionTrait(val type: Int, val source: List<ParsedAction<*>>) : ScriptActi
                 future.complete(array)
             }
         }
+        process(0)
         return future.thenAccept {
             if (type == 1) {
                 script.getEntities()?.forEach { it?.setTraitTitle(array) }
