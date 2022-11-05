@@ -36,8 +36,8 @@ object AdyeshachSettings {
     /**
      * 调试模式
      */
-    // @ConfigNode("Settings.debug")
-    var debug = true
+    @ConfigNode("Settings.debug")
+    var debug = false
         private set
 
     /**
