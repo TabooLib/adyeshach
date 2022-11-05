@@ -51,7 +51,7 @@ class ActionSelect(val value: ParsedAction<*>, val byId: Boolean) : ScriptAction
             actionNow {
                 val npc = script().getEntities()
                 when {
-                    npc == null || npc.isEmpty() -> null
+                    npc.isNullOrEmpty() -> null
                     npc.size == 1 -> npc.first()?.id
                     else -> npc.mapNotNull { it?.id }
                 }

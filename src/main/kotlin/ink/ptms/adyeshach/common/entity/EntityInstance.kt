@@ -758,7 +758,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     override fun setMetadata(key: String, value: Any): Boolean {
         val result = super.setMetadata(key, value)
         if (result) {
-            getAvailableEntityMeta().first { meta -> meta.key == key }.updateEntityMetadata(this)
+            getAvailableEntityMeta().first { meta -> meta.key.equals(key, true) }.updateEntityMetadata(this)
         }
         return result
     }
