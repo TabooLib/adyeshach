@@ -2,9 +2,9 @@ package ink.ptms.adyeshach.common.entity.path
 
 import ink.ptms.adyeshach.api.AdyeshachSettings
 import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
-import taboolib.common5.mirrorNow
 import taboolib.module.navigation.NodeEntity
 import taboolib.module.navigation.RandomPositionGenerator
 import taboolib.module.navigation.createPathfinder
@@ -29,7 +29,9 @@ object PathFinderHandler {
                 val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
                 val path = pathFinder.findPath(target, distance = 32f)
                 if (AdyeshachSettings.debug) {
-                    path?.nodes?.forEach { it.display(target.world!!) }
+                    path?.nodes?.forEach {
+                        target.world?.spawnParticle(Particle.VILLAGER_HAPPY, it.x + 0.5, it.y + 0.5, it.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
+                    }
                 }
                 call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
             } else {

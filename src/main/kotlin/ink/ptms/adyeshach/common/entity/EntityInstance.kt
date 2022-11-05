@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode")
+
 package ink.ptms.adyeshach.common.entity
 
 import com.google.gson.JsonParser
@@ -39,7 +41,6 @@ import taboolib.common.util.unsafeLazy
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.function.Consumer
-
 
 /**
  * @author sky
@@ -151,9 +152,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             this is AdyHuman -> {
                 getName()
             }
+
             getCustomName().isEmpty() -> {
                 entityType.name.lowercase().toDisplay()
             }
+
             else -> {
                 getCustomName()
             }
@@ -514,6 +517,34 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     }
 
     /**
+     * 使实体根据特定路径移动到某个坐标
+     */
+    fun controllerMoveWithPathList(
+        location: Location,
+        pathList: List<org.bukkit.util.Vector>,
+        pathType: PathType = entityType.getPathType(),
+        speed: Double = moveSpeed,
+    ) {
+        if (hasVehicle()) {
+            return
+        }
+        if (pathType == PathType.FLY) {
+            if (controller.none { it is GeneralMove }) {
+                error("Entity flying movement requires GeneralMove.")
+            }
+        } else {
+            if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
+                error("Entity walking movement requires GeneralMove and GeneralGravity.")
+            }
+        }
+        val move = getController(GeneralMove::class.java)!!
+        move.speed = speed
+        move.target = location
+        move.pathType = pathType
+        move.resultNavigation = ResultNavigation(pathList, 0L, 0L)
+    }
+
+    /**
      * 使实体停止移动
      */
     fun controllerStill() {
@@ -806,9 +837,11 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                         controller.add(it.controller.generator.apply(this))
                         controller.remove(it)
                     }
+
                     it.isAsync() -> {
                         pool.submit { it.onTick() }
                     }
+
                     else -> {
                         it.onTick()
                     }

@@ -23,7 +23,6 @@ import org.bukkit.entity.TropicalFish
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
-import org.bukkit.permissions.Permissible
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import taboolib.common5.Coerce
@@ -196,8 +195,8 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: String?) : Scri
                     }
                 }
                 Symbol.RESET -> {
-                    if (meta.editor?.resetMethod != null) {
-                        (meta.editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(script.sender!!.cast(), it)
+                    if (editor.resetMethod != null) {
+                        (editor as MetaEditor<EntityInstance>).resetMethod!!.invoke(script.sender!!.cast(), it)
                     } else {
                         it.setMetadata(meta.key, meta.def)
                     }

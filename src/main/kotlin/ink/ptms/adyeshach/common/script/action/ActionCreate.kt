@@ -4,11 +4,11 @@ import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.script.ScriptHandler.getManager
 import ink.ptms.adyeshach.common.script.ScriptHandler.loadError
+import ink.ptms.adyeshach.common.script.ScriptHandler.setEntities
 import org.bukkit.Location
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
-import taboolib.platform.util.toBukkitLocation
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -18,19 +18,20 @@ class ActionCreate(val id: ParsedAction<*>, val type: String, val location: Pars
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val manager = frame.script().getManager() ?: error("Manager is not selected")
-        return frame.newFrame(id).run<String>().thenAccept { id ->
+        frame.newFrame(id).run<String>().thenAccept { id ->
             frame.newFrame(location).run<Location>().thenAccept { location ->
                 val typeStr = if (type.startsWith("*")) {
                     type.substring(1)
                 } else {
                     type
                 }
-                manager.create(
-                    Enums.getIfPresent(EntityTypes::class.java, typeStr.uppercase()).orNull() ?: throw loadError("Entity \"$type\" not supported."),
-                    location
-                ).id = id
-            }.join()
+                val type = Enums.getIfPresent(EntityTypes::class.java, typeStr.uppercase()).orNull() ?: throw loadError("Entity \"$type\" not supported.")
+                val npc = manager.create(type, location)
+                npc.id = id
+                frame.script().setEntities(listOf(npc))
+            }
         }
+        return CompletableFuture.completedFuture(null)
     }
 
     companion object {
