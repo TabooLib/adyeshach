@@ -30,6 +30,7 @@ import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.internal.compat.CompatServerTours
 import ink.ptms.adyeshach.internal.trait.impl.updateViewCondition
+import io.netty.util.concurrent.CompleteFuture
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -39,7 +40,9 @@ import taboolib.common.platform.function.warning
 import taboolib.common.util.Vector
 import taboolib.common.util.unsafeLazy
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.function.Consumer
 
 /**
@@ -135,8 +138,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
      * 是否冻结实体，启用后无法移动
      */
     var isFreeze: Boolean
-        set(value) = setTag("isFreeze", value.toString())
-        get() = hasTag("isFreeze")
+        set(value) {
+            if (value) {
+                setTag("isFreeze", "true")
+                setTag("isFreeze_Time", System.currentTimeMillis())
+            } else {
+                removeTag("isFreeze")
+                removeTag("isFreeze_Time")
+            }
+        }
+        get() = getTag("isFreeze") == "true"
 
     /**
      * 是否被删除，执行 delete() 方法后该属性为 true
@@ -329,7 +340,15 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
     /**
      * 修改实体位置
      */
+    @Deprecated("Use teleportFuture instead", ReplaceWith("teleportFuture(location)"))
     fun teleport(location: Location) {
+        teleportFuture(location)
+    }
+
+    /**
+     * 修改实体位置
+     */
+    fun teleportFuture(location: Location): CompletableFuture<*> {
         val event = AdyeshachEntityTeleportEvent(this, location)
         if (event.call()) {
             position = EntityPosition.fromLocation(event.location)
@@ -338,30 +357,50 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
                 destroy()
                 respawn()
             } else {
-                pool.submit { forViewers { NMS.INSTANCE.teleportEntity(it, index, location) } }
+                val futures = arrayListOf<CompletableFuture<*>>()
+                forViewers { futures += NMS.INSTANCE.teleportEntity(it, index, location) }
+                return CompletableFuture.allOf(*futures.toTypedArray())
             }
         }
+        return CompletableFuture.completedFuture(null)
     }
 
     /**
      * 修改实体位置
      */
+    @Deprecated("Use teleportFuture instead", ReplaceWith("teleportFuture(entityPosition)"))
     fun teleport(entityPosition: EntityPosition) {
         teleport(entityPosition.toLocation())
     }
 
     /**
+     * 修改实体位置
+     */
+    fun teleportFuture(entityPosition: EntityPosition): CompletableFuture<*> {
+        return teleportFuture(entityPosition.toLocation())
+    }
+
+    /**
      * 修改实体位置，并继承实体本身的视角
      */
+    @Deprecated("Use teleportFuture instead", ReplaceWith("teleportFuture(x, y, z)"))
     fun teleport(x: Double, y: Double, z: Double) {
+        teleportFuture(x, y, z)
+    }
+
+    /**
+     * 修改实体位置，并继承实体本身的视角
+     */
+    fun teleportFuture(x: Double, y: Double, z: Double): CompletableFuture<*> {
         if (x.isFinite() && y.isFinite() && z.isFinite()) {
-            teleport(position.toLocation().run {
+            return teleportFuture(position.toLocation().run {
                 this.x = x
                 this.y = y
                 this.z = z
                 this
             })
         }
+        return CompletableFuture.completedFuture(null)
     }
 
     /**

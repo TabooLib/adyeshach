@@ -56,15 +56,16 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         } else {
             entity.setTag("isMoving", "true")
         }
+        // 移动
         val positionEntity = entity.position.toLocation()
         val positionNext = resultNavigation!!.pointList[i].run {
-            Location(entity.position.world, x + 0.55, y, z + 0.5)
+            Location(entity.position.world, x + 0.5, y, z + 0.5)
         }
+        // 看向移动位置
         if (counterLook.hasNext()) {
-            entity.controllerLook(positionNext.clone().run {
-                y = positionEntity.y + (entity.entityType.entitySize.height * 0.9)
-                this
-            }, smooth = false, smoothInternal = 45f)
+            val lookPos = positionNext.clone()
+            lookPos.y = positionEntity.y + (entity.entityType.entitySize.height * 0.9)
+            entity.controllerLook(lookPos)
         }
         val next = positionNext.clone().also {
             if (pathType != PathType.FLY) {

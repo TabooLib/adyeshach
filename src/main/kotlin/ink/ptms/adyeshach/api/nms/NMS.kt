@@ -22,9 +22,11 @@ import taboolib.library.reflex.Reflex.Companion.setProperty
 import taboolib.module.nms.nmsProxy
 import taboolib.module.nms.sendPacketBlocking
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 /**
  * @author Arasple
@@ -50,7 +52,7 @@ abstract class NMS {
 
     abstract fun destroyEntity(player: Player, entityId: Int)
 
-    abstract fun teleportEntity(player: Player, entityId: Int, location: Location)
+    abstract fun teleportEntity(player: Player, entityId: Int, location: Location): CompletableFuture<*>
 
     abstract fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double)
 
@@ -118,8 +120,17 @@ abstract class NMS {
 
     abstract fun getTropicalFishDataValue(pattern: TropicalFish.Pattern): Int
 
-    protected fun Player.sendPacketI(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true) {
-        pool().submit { sendPacketBlocking(fields(packet, *fields, remap = remap)) }
+    protected fun Player.sendPacketA(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true): CompletableFuture<*> {
+        val future = CompletableFuture<Any>()
+        pool().submit {
+            sendPacketBlocking(fields(packet, *fields, remap = remap))
+            future.complete(null)
+        }
+        return future
+    }
+
+    protected fun Player.sendPacketB(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true) {
+        sendPacketBlocking(fields(packet, *fields, remap = remap))
     }
 
     protected fun fields(packet: Any, vararg fields: Pair<String, Any?>, remap: Boolean = true): Any {

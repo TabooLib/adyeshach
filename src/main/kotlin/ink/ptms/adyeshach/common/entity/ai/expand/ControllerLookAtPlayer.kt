@@ -35,7 +35,12 @@ class ControllerLookAtPlayer(entity: EntityInstance) : Controller(entity) {
     }
 
     override fun onTick() {
-        entity!!.viewPlayers.getViewPlayers()
+        // 冻结时间小于 0.5 秒不会执行
+        // 避免出现客户端服务端位置不同步：2022/11/8 23:00
+        if (entity!!.hasTag("isFreeze_Time") && System.currentTimeMillis() - (entity.getTagValue("isFreeze_Time") as Long) < 350L) {
+            return
+        }
+        entity.viewPlayers.getViewPlayers()
             .filterNot {
                 it.hasPotionEffect(PotionEffectType.INVISIBILITY) || it.gameMode == GameMode.SPECTATOR || it.isInvulnerable
             }.minByOrNull {

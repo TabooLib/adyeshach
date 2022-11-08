@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.info
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.Reflex.Companion.setProperty
@@ -36,6 +35,8 @@ import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.obcClass
 import java.util.*
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Future
 
 /**
  * @author Arasple
@@ -52,7 +53,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntity::class.java.unsafeInstance(),
                 "id" to entityId,
                 "uuid" to uuid,
@@ -68,7 +69,7 @@ class NMSImpl : NMS() {
                 "data" to 0
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
@@ -87,7 +88,7 @@ class NMSImpl : NMS() {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityLiving::class.java.unsafeInstance(),
                 "id" to entityId,
                 "uuid" to uuid,
@@ -103,7 +104,7 @@ class NMSImpl : NMS() {
                 "yHeadRot" to (location.yaw * 256.0f / 360.0f).toInt().toByte()
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityLiving(),
                 "a" to entityId,
                 "b" to uuid,
@@ -128,7 +129,7 @@ class NMSImpl : NMS() {
 
     override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutNamedEntitySpawn::class.java.unsafeInstance(),
                 "entityId" to entityId,
                 "playerId" to uuid,
@@ -139,7 +140,7 @@ class NMSImpl : NMS() {
                 "xRot" to (location.pitch * 256 / 360).toInt().toByte()
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutNamedEntitySpawn(),
                 "a" to entityId,
                 "b" to uuid,
@@ -156,7 +157,7 @@ class NMSImpl : NMS() {
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (isUniversal) {
             val block = Blocks::class.java.getProperty<Any>(material.name, isStatic =true)
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntity::class.java.unsafeInstance(),
                 "id" to entityId,
                 "uuid" to uuid,
@@ -173,7 +174,7 @@ class NMSImpl : NMS() {
             )
         } else if (majorLegacy >= 11300) {
             val block = Blocks::class.java.getProperty<Any>(material.name, isStatic =true)
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
@@ -186,7 +187,7 @@ class NMSImpl : NMS() {
                 "l" to Block.getCombinedId(((block ?: Blocks.STONE) as Block).blockData)
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntity(),
                 "a" to entityId,
                 "b" to uuid,
@@ -203,7 +204,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityExperienceOrb::class.java.unsafeInstance(),
                 "id" to entityId,
                 "x" to location.x,
@@ -212,7 +213,7 @@ class NMSImpl : NMS() {
                 "value" to amount,
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityExperienceOrb(),
                 "a" to entityId,
                 "b" to location.x,
@@ -225,7 +226,7 @@ class NMSImpl : NMS() {
 
     override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityPainting::class.java.unsafeInstance(),
                 "id" to entityId,
                 "uuid" to uuid,
@@ -234,7 +235,7 @@ class NMSImpl : NMS() {
                 "motive" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else if (majorLegacy > 11300) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutSpawnEntityPainting(),
                 "a" to entityId,
                 "b" to uuid,
@@ -243,7 +244,7 @@ class NMSImpl : NMS() {
                 "e" to IRegistry.MOTIVE.a(getPaintingNMS(painting) as Paintings?)
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting(),
                 "a" to entityId,
                 "b" to uuid,
@@ -266,7 +267,7 @@ class NMSImpl : NMS() {
             infoData.setProperty("b", EnumGamemode.values()[0], remap = false)
             infoData.setProperty("c", profile, remap = false)
             infoData.setProperty("d", craftChatMessageFromString(name), remap = false)
-            player.sendPacketI(
+            player.sendPacketA(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(infoData),
@@ -278,7 +279,7 @@ class NMSImpl : NMS() {
             infoData.setProperty("c", EnumGamemode.values()[0])
             infoData.setProperty("d", profile)
             infoData.setProperty("e", craftChatMessageFromString(name))
-            player.sendPacketI(
+            player.sendPacketA(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(infoData)
@@ -289,7 +290,7 @@ class NMSImpl : NMS() {
             infoData.setProperty("c", EnumGamemode.values()[0])
             infoData.setProperty("d", profile)
             infoData.setProperty("e", craftChatMessageFromString(name))
-            player.sendPacketI(
+            player.sendPacketA(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER,
                 "b" to listOf(infoData)
@@ -303,7 +304,7 @@ class NMSImpl : NMS() {
             val info = PacketPlayOutPlayerInfo::class.java.unsafeInstance()
             infoData.setProperty("a", -1, remap = false)
             infoData.setProperty("c", GameProfile(uuid, ""), remap = false)
-            player.sendPacketI(
+            player.sendPacketA(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
                 "b" to listOf(infoData),
@@ -313,7 +314,7 @@ class NMSImpl : NMS() {
             val info = PacketPlayOutPlayerInfo()
             infoData.setProperty("b", -1)
             infoData.setProperty("d", GameProfile(uuid, ""))
-            player.sendPacketI(
+            player.sendPacketA(
                 info,
                 "a" to PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER,
                 "b" to listOf(infoData)
@@ -322,12 +323,12 @@ class NMSImpl : NMS() {
     }
 
     override fun destroyEntity(player: Player, entityId: Int) {
-        player.sendPacketI(PacketPlayOutEntityDestroy(entityId))
+        player.sendPacketA(PacketPlayOutEntityDestroy(entityId))
     }
 
-    override fun teleportEntity(player: Player, entityId: Int, location: Location) {
-        if (isUniversal) {
-            player.sendPacketI(
+    override fun teleportEntity(player: Player, entityId: Int, location: Location): CompletableFuture<*> {
+        return if (isUniversal) {
+            player.sendPacketA(
                 PacketPlayOutEntityTeleport::class.java.unsafeInstance(),
                 "a" to entityId,
                 "b" to location.x,
@@ -339,7 +340,7 @@ class NMSImpl : NMS() {
                 remap = false,
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntityTeleport(),
                 "a" to entityId,
                 "b" to location.x,
@@ -354,7 +355,7 @@ class NMSImpl : NMS() {
 
     override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double) {
         if (majorLegacy >= 11400) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntity.PacketPlayOutRelEntityMove(
                     entityId,
                     (x * 4096).toInt().toShort(),
@@ -364,34 +365,34 @@ class NMSImpl : NMS() {
                 )
             )
         } else {
-            player.sendPacketI(net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
+            player.sendPacketA(net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), true))
         }
     }
 
     override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
         if (majorLegacy >= 11400) {
-            player.sendPacketI(PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
+            player.sendPacketA(PacketPlayOutEntityVelocity(entityId, Vec3D(vector.x, vector.y, vector.z)))
         } else {
-            player.sendPacketI(net.minecraft.server.v1_13_R2.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
+            player.sendPacketA(net.minecraft.server.v1_13_R2.PacketPlayOutEntityVelocity(entityId, vector.x, vector.y, vector.z))
         }
     }
 
     override fun setHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntityHeadRotation::class.java.unsafeInstance(),
                 "a" to entityId,
                 "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
                 remap = false,
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntityHeadRotation(),
                 "a" to entityId,
                 "b" to MathHelper.d(yaw * 256.0f / 360.0f).toByte()
             )
         }
-        player.sendPacketI(
+        player.sendPacketA(
             PacketPlayOutEntity.PacketPlayOutEntityLook(
                 entityId,
                 MathHelper.d(yaw * 256.0f / 360.0f).toByte(),
@@ -416,7 +417,7 @@ class NMSImpl : NMS() {
                     EquipmentSlot.HEAD -> enumItemSlot = EnumItemSlot.HEAD
                     else -> error("out of case")
                 }
-                player.sendPacketI(
+                player.sendPacketA(
                     PacketPlayOutEntityEquipment(entityId,
                         listOf(com.mojang.datafixers.util.Pair(enumItemSlot, CraftItemStack.asNMSCopy(itemStack)))
                     )
@@ -433,7 +434,7 @@ class NMSImpl : NMS() {
                     EquipmentSlot.HEAD -> enumItemSlot = net.minecraft.server.v1_13_R2.EnumItemSlot.HEAD
                     else -> error("out of case")
                 }
-                player.sendPacketI(
+                player.sendPacketA(
                     net.minecraft.server.v1_13_R2.PacketPlayOutEntityEquipment(
                         entityId,
                         enumItemSlot,
@@ -446,13 +447,13 @@ class NMSImpl : NMS() {
 
     override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutMount::class.java.unsafeInstance(),
                 "vehicle" to entityId,
                 "passengers" to passengers
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutMount(),
                 "a" to entityId,
                 "b" to passengers
@@ -462,14 +463,14 @@ class NMSImpl : NMS() {
 
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
         if (isUniversal) {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntityMetadata::class.java.unsafeInstance(),
                 "a" to entityId,
                 "b" to objects.map { it as DataWatcher.Item<*> }.toList(),
                 remap = false,
             )
         } else {
-            player.sendPacketI(
+            player.sendPacketA(
                 PacketPlayOutEntityMetadata(),
                 "a" to entityId,
                 "b" to objects.map { it as DataWatcher.Item<*> }.toList()
@@ -740,22 +741,22 @@ class NMSImpl : NMS() {
 
     override fun sendAnimation(player: Player, id: Int, type: Int) {
         if (isUniversal) {
-            player.sendPacketI(PacketPlayOutAnimation::class.java.unsafeInstance(), "id" to id, "action" to type)
+            player.sendPacketA(PacketPlayOutAnimation::class.java.unsafeInstance(), "id" to id, "action" to type)
         } else {
-            player.sendPacketI(PacketPlayOutAnimation(), "a" to id, "b" to type)
+            player.sendPacketA(PacketPlayOutAnimation(), "a" to id, "b" to type)
         }
     }
 
     override fun sendAttachEntity(player: Player, attached: Int, holding: Int) {
         if (isUniversal) {
-            player.sendPacketI(PacketPlayOutAttachEntity::class.java.unsafeInstance(), "sourceId" to attached, "destId" to holding)
+            player.sendPacketA(PacketPlayOutAttachEntity::class.java.unsafeInstance(), "sourceId" to attached, "destId" to holding)
         } else {
-            player.sendPacketI(PacketPlayOutAttachEntity(), "a" to attached, "b" to holding)
+            player.sendPacketA(PacketPlayOutAttachEntity(), "a" to attached, "b" to holding)
         }
     }
 
     override fun sendPlayerSleeping(player: Player, id: Int, location: Location) {
-        player.sendPacketI(PacketPlayOutBed(),
+        player.sendPacketA(PacketPlayOutBed(),
             "a" to id,
             "b" to net.minecraft.server.v1_13_R2.BlockPosition(location.blockX, location.blockY, location.blockZ))
     }
