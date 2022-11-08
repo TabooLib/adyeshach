@@ -7,6 +7,8 @@ import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.FallingBlock
 import taboolib.common5.Baffle
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author sky
@@ -44,13 +46,13 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
         }
         if (locEntity.y - by > p) {
             isOnGround = false
-            entity.teleport(locEntity.clone().subtract(0.0, p, 0.0))
+            entity.teleportFuture(locEntity.clone().subtract(0.0, p, 0.0))
             if (entity !is FallingBlock) {
                 p += 0.1
             }
         } else if (!isOnGround) {
             isOnGround = true
-            entity.teleport(locEntity.clone().run {
+            entity.teleportFuture(locEntity.clone().run {
                 this.y = by
                 this
             })

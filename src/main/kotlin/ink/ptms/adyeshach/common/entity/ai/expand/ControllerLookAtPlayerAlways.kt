@@ -2,6 +2,8 @@ package ink.ptms.adyeshach.common.entity.ai.expand
 
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.ai.Controller
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
+import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.util.safeDistance
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -28,6 +30,9 @@ class ControllerLookAtPlayerAlways(entity: EntityInstance) : Controller(entity) 
         if (entity!!.hasTag("isFreeze_Time") && System.currentTimeMillis() - (entity.getTagValue("isFreeze_Time") as Long) < 350L) {
             return
         }
+        if (entity.teleportFutures.size > 0) {
+            return
+        }
         entity.viewPlayers.getViewPlayers()
             .filterNot {
                 it.hasPotionEffect(PotionEffectType.INVISIBILITY) || it.gameMode == GameMode.SPECTATOR || it.isInvulnerable
@@ -39,6 +44,4 @@ class ControllerLookAtPlayerAlways(entity: EntityInstance) : Controller(entity) 
                 }
             }
     }
-
-    fun isOnGround() = kotlin.runCatching { entity!!.isControllerOnGround() }.getOrDefault(true)
 }

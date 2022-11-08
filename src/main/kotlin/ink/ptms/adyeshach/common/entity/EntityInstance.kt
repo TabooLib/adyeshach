@@ -28,6 +28,7 @@ import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.safeDistance
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
+import ink.ptms.adyeshach.common.util.signal
 import ink.ptms.adyeshach.internal.compat.CompatServerTours
 import ink.ptms.adyeshach.internal.trait.impl.updateViewCondition
 import io.netty.util.concurrent.CompleteFuture
@@ -41,6 +42,7 @@ import taboolib.common.util.Vector
 import taboolib.common.util.unsafeLazy
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.function.Consumer
@@ -51,6 +53,8 @@ import java.util.function.Consumer
  */
 @Suppress("UNCHECKED_CAST", "LeakingThis")
 abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes) {
+
+    internal val teleportFutures = CopyOnWriteArrayList<CompletableFuture<*>>()
 
     /**
      * 控制器（AI）
@@ -359,7 +363,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             } else {
                 val futures = arrayListOf<CompletableFuture<*>>()
                 forViewers { futures += NMS.INSTANCE.teleportEntity(it, index, location) }
-                return CompletableFuture.allOf(*futures.toTypedArray())
+                return CompletableFuture.allOf(*futures.toTypedArray()).signal(teleportFutures)
             }
         }
         return CompletableFuture.completedFuture(null)

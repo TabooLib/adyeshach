@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.util.random
 import taboolib.common5.Baffle
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 interface Function2<T1, T2, R> {
@@ -42,6 +43,12 @@ fun Location.safeDistance(loc: Location): Double {
     } else {
         Double.MAX_VALUE
     }
+}
+
+fun CompletableFuture<*>.signal(container: MutableList<CompletableFuture<*>>): CompletableFuture<*> {
+    container += this
+    thenRun { container -= this }
+    return this
 }
 
 internal object Helper {

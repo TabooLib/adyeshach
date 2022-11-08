@@ -6,8 +6,11 @@ import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.path.ResultNavigation
 import ink.ptms.adyeshach.common.util.safeDistance
+import ink.ptms.adyeshach.common.util.signal
 import org.bukkit.Location
 import taboolib.common5.Baffle
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * 实体移动逻辑
@@ -76,7 +79,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
         val heightFrom = NMS.INSTANCE.getBlockHeight(entity.getLocation().block)
         val heightTo = NMS.INSTANCE.getBlockHeight(plan.block)
         if (heightTo == 0.0 || heightTo == heightFrom) {
-            entity.teleport(plan.x, plan.y, plan.z)
+            entity.teleportFuture(plan.x, plan.y, plan.z)
         } else {
             val diff = (plan.blockY + heightTo) - entity.position.y
             if (diff > 0.5) {
@@ -84,7 +87,7 @@ class GeneralMove(entity: EntityInstance) : Controller(entity) {
                 entity.setTag("isJumping", "true")
                 getGravity().isGravity = false
             } else {
-                entity.teleport(plan.x, plan.y + heightTo, plan.z)
+                entity.teleportFuture(plan.x, plan.y + heightTo, plan.z)
             }
         }
         if (entity.position.toLocation().safeDistance(next) < speed) {
