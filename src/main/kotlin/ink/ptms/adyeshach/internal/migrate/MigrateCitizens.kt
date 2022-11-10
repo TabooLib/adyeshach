@@ -117,9 +117,9 @@ class MigrateCitizens : Migrate() {
                 val skin = if (npc.entity is SkinnableEntity) npc.entity as SkinnableEntity else NMS.getSkinnable(npc.entity)
                 if (skin != null && !skin.profile.properties.isEmpty) {
                     val property = skin.profile.properties.entries().first().value
-                    entity.setName(npc.name)
                     entity.setTexture(property.value, property.signature)
                 }
+                entity.setName(npc.name)
             }
             if (entity is AdyEntityLiving && npc.entity is LivingEntity) {
                 (npc.entity as LivingEntity).equipment?.apply {
