@@ -10,35 +10,42 @@ import java.util.concurrent.ConcurrentHashMap
 abstract class Hologram<T> {
 
     protected val map = ConcurrentHashMap<Int, T>()
+    protected var loc: Location? = null
 
     fun create(location: Location, content: List<String>) {
+        loc = location.clone()
         content.forEachIndexed { index, line ->
             map[index] = create(location.clone().add(0.0, (((content.size - 1) - index) * 0.3), 0.0), line)
         }
     }
 
     fun create(player: Player, location: Location, content: List<String>) {
+        loc = location.clone()
         content.forEachIndexed { index, line ->
             map[index] = create(player, location.clone().add(0.0, (((content.size - 1) - index) * 0.3), 0.0), line)
         }
     }
 
     fun teleport(location: Location) {
+        loc = location.clone()
         map.forEach { (index, obj) ->
             teleport(obj, location.clone().add(0.0, (((map.size - 1) - index) * 0.3), 0.0))
         }
     }
 
     fun update(content: List<String>) {
-        content.forEachIndexed { index, line ->
-            if (index < map.size) {
-                update(map[index]!!, line)
-            }
+        // 如果行数变动
+        if (content.size != map.size) {
+            delete()
+            create(loc!!, content)
+        } else {
+            content.forEachIndexed { index, line -> update(map[index]!!, line) }
         }
     }
 
     fun delete() {
         map.forEach { delete(it.value) }
+        map.clear()
     }
 
     protected abstract fun create(location: Location, line: String): T
@@ -51,6 +58,10 @@ abstract class Hologram<T> {
 
     protected abstract fun delete(obj: T)
 
+    protected fun location(): Location {
+        return loc!!
+    }
+
     open class AdyeshachImpl : Hologram<AdyArmorStand>() {
 
         override fun create(location: Location, line: String): AdyArmorStand {
@@ -62,7 +73,7 @@ abstract class Hologram<T> {
         }
 
         override fun update(obj: AdyArmorStand, line: String) {
-            if (!obj.isDeleted) {
+            if (!obj.isDeleted && obj.getCustomName() != line) {
                 obj.setCustomName(line)
                 obj.setCustomNameVisible(line.isNotEmpty())
             }
@@ -70,7 +81,7 @@ abstract class Hologram<T> {
 
         override fun teleport(obj: AdyArmorStand, location: Location) {
             if (!obj.isDeleted) {
-                obj.teleport(location)
+                obj.teleportFuture(location)
             }
         }
 
