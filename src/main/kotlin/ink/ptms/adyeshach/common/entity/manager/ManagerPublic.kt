@@ -65,7 +65,7 @@ class ManagerPublic : Manager() {
             val jsonHash = json.digest("sha-1")
             if (hash[entity.uniqueId] != jsonHash) {
                 hash[entity.uniqueId] = jsonHash
-                newFile(File(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json"), json)
+                newFile(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json").writeText(json)
                 info("Entity \"${entity.uniqueId}\" saved.")
             }
         }
