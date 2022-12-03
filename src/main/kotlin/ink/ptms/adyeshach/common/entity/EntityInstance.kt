@@ -154,6 +154,19 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
         get() = getTag("isFreeze") == "true"
 
     /**
+     * 是否禁用控制器
+     */
+    var isNoAi: Boolean
+        set(value) {
+            if (value) {
+                setTag("isNoAi", "true")
+            } else {
+                removeTag("isNoAi")
+            }
+        }
+        get() = getTag("isNoAi") == "true"
+
+    /**
      * 是否被删除，执行 delete() 方法后该属性为 true
      * 该属性仅做标记无实际意义
      */
@@ -871,7 +884,7 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             }
         }
         // 只有存在可见玩家时才会处理实体控制器
-        if (viewPlayers.hasVisiblePlayer()) {
+        if (viewPlayers.hasVisiblePlayer() && !isNoAi) {
             val loc = getLocation()
             // 实体逻辑处理
             controller.filter { it.shouldExecute() && getWorld().isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) }.forEach {

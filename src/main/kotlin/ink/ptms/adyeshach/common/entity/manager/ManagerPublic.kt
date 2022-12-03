@@ -9,9 +9,12 @@ import ink.ptms.adyeshach.common.entity.ai.ControllerNone
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import taboolib.common.io.digest
 import taboolib.common.io.newFile
+import taboolib.common.platform.function.info
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Consumer
 
@@ -22,6 +25,7 @@ import java.util.function.Consumer
 class ManagerPublic : Manager() {
 
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
+    val hash = ConcurrentHashMap<String, String>()
 
     override fun isPublic(): Boolean {
         return true
@@ -37,6 +41,7 @@ class ManagerPublic : Manager() {
                 } else {
                     entity.manager = this
                     activeEntity.add(entity)
+                    hash[entity.uniqueId] = entity.toJson().digest("sha-1")
                     if (entity.visibleAfterLoaded) {
                         Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
                     }
@@ -50,15 +55,19 @@ class ManagerPublic : Manager() {
     }
 
     override fun onDisable() {
-        activeEntity.forEach {
-            it.destroy()
-        }
+        activeEntity.forEach { it.destroy() }
     }
 
     override fun onSave() {
         activeEntity.forEach { entity ->
             entity.unregisterController(ControllerNone::class.java)
-            newFile(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json").writeText(entity.toJson())
+            val json = entity.toJson()
+            val jsonHash = json.digest("sha-1")
+            if (hash[entity.uniqueId] != jsonHash) {
+                hash[entity.uniqueId] = jsonHash
+                newFile(File(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json"), json)
+                info("Entity \"${entity.uniqueId}\" saved.")
+            }
         }
     }
 
@@ -76,6 +85,7 @@ class ManagerPublic : Manager() {
             file.delete()
         }
         activeEntity.remove(entityInstance)
+        hash.remove(entityInstance.uniqueId)
     }
 
     override fun addEntity(entityInstance: EntityInstance) {
@@ -84,6 +94,7 @@ class ManagerPublic : Manager() {
 
     override fun removeEntity(entityInstance: EntityInstance) {
         activeEntity.remove(entityInstance)
+        hash.remove(entityInstance.uniqueId)
     }
 
     override fun getEntities(): List<EntityInstance> {

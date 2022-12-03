@@ -511,9 +511,12 @@ object Command {
             if (bukkitWorld == null) {
                 sender.sendLang("command-main-world-not-found")
             } else {
+                val isNoAi = entity.isNoAi
+                entity.isNoAi = true
                 entity.teleport(Location(bukkitWorld, pos.x, pos.y, pos.z, yaw, pitch))
                 submit(delay = 5) {
                     entity.setHeadRotation(yaw, pitch)
+                    entity.isNoAi = isNoAi
                 }
                 sender.sendLang("command-main-success")
             }
@@ -524,9 +527,12 @@ object Command {
         if (entity == null) {
             sender.sendLang("command-main-entity-not-found")
         } else {
+            val isNoAi = entity.isNoAi
+            entity.isNoAi = true
             entity.teleport(sender.location)
             submit(delay = 5) {
                 entity.setHeadRotation(sender.location.yaw, sender.location.pitch)
+                entity.isNoAi = isNoAi
             }
             sender.sendLang("command-main-success")
         }
