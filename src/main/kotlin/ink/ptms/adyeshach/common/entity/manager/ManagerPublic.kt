@@ -66,7 +66,6 @@ class ManagerPublic : Manager() {
             if (hash[entity.uniqueId] != jsonHash) {
                 hash[entity.uniqueId] = jsonHash
                 newFile(Adyeshach.plugin.dataFolder, "npc/${entity.uniqueId}.json").writeText(json)
-                info("Entity \"${entity.uniqueId}\" saved.")
             }
         }
     }
