@@ -664,6 +664,18 @@ ink.ptms.adyeshach.common.entity.type.AdyHorseBase
         11 13
         09 -
 
+ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
+     isHandActive 1b | activeHand 2b | isInRiptideSpinAttack 4b
+        @17+
+        17 8
+     health f 1.0
+        17 9
+        14 -
+        10 -
+        09 -
+     potionEffectColor i
+        ~
+
 ink.ptms.adyeshach.common.entity.EntityInstance
     onFire 1b | isCrouched 2b | unUsedRiding 4b | isSprinting 8b | isSwimming 16b | isInvisible 32b | isGlowing 64b | isFlyingElytra 128b
         0
