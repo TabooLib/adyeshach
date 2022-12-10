@@ -31,7 +31,6 @@ import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.common.util.signal
 import ink.ptms.adyeshach.internal.compat.CompatServerTours
 import ink.ptms.adyeshach.internal.trait.impl.updateViewCondition
-import io.netty.util.concurrent.CompleteFuture
 import io.netty.util.internal.ConcurrentSet
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -44,7 +43,6 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executors
-import java.util.concurrent.Future
 import java.util.function.Consumer
 
 /**
@@ -889,15 +887,16 @@ abstract class EntityInstance(entityTypes: EntityTypes) : EntityBase(entityTypes
             // 实体逻辑处理
             controller.filter { it.shouldExecute() && getWorld().isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) }.forEach {
                 when {
+                    // 预备控制器
                     it is Controller.Pre -> {
                         controller.add(it.controller.generator.apply(this))
                         controller.remove(it)
                     }
-
+                    // 异步控制器
                     it.isAsync() -> {
                         pool.submit { it.onTick() }
                     }
-
+                    // 标准控制器
                     else -> {
                         it.onTick()
                     }

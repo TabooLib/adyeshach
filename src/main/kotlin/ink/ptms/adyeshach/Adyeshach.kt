@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach
 
 import ink.ptms.adyeshach.common.entity.editor.UnusedMetas
+import ink.ptms.adyeshach.common.script.ScriptHandler
 import ink.ptms.adyeshach.internal.listener.ListenerGameEvent
 import taboolib.common.LifeCycle
 import taboolib.common.io.newFile
@@ -70,5 +71,6 @@ object Adyeshach : Plugin() {
         conf.reload()
         UnusedMetas.init()
         ListenerGameEvent.init()
+        ScriptHandler.loadCustomController()
     }
 }

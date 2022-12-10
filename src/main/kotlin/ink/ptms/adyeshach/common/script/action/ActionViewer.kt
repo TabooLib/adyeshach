@@ -62,5 +62,15 @@ class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : ScriptAct
             }
             ActionViewer(symbol, if (symbol != Symbol.RESET) it.next(ArgTypes.ACTION) else null)
         }
+
+        @KetherParser(["viewers"], namespace = "adyeshach", shared = true)
+        fun parser2() = scriptParser {
+            actionNow {
+                if (script().getManager() == null || !script().entitySelected()) {
+                    error("Manager or Entity is not selected")
+                }
+                script().getEntities()!!.first { it != null }!!.viewPlayers.getViewPlayers().map { it.name }
+            }
+        }
     }
 }

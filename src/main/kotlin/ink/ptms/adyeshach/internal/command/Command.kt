@@ -665,7 +665,7 @@ object Command {
                 val key = id.toLocaleKey().substring(1)
                 val enable = entity.getController(controller.type) != null
                 return buildItem(Adyeshach.editorConf.getString("Materials.controller.$key")?.parseToXMaterial() ?: XMaterial.PAPER) {
-                    val display = sender.asLangText("editor-controller-$key")
+                    val display = sender.asLangTextOrNull("editor-controller-$key") ?: sender.asLangText("editor-controller-inner", key.substringAfter(':'))
                     name = "&7$display ${sender.asLangText("editor-controller-${if (enable) "enable" else "disable"}")}"
                     lore += sender.asLangText("editor-select")
                     if (enable) {
