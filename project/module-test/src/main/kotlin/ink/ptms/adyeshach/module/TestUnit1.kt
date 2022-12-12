@@ -11,7 +11,6 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Cat
 import org.bukkit.entity.Frog
-import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle

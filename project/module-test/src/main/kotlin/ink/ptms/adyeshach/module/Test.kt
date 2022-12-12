@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
@@ -44,6 +45,10 @@ object Test {
                     npc.setName("坏黑")
                     npc.setTexture("bukkitObj")
                 }
+                if (npc is EntityEquipable) {
+                    npc.setItemInMainHand(XMaterial.DIAMOND_SWORD.parseItem()!!)
+                }
+                npc.setCustomName("坏黑")
                 npc.setCustomNameVisible(true)
                 npc.setGlowing(true)
 

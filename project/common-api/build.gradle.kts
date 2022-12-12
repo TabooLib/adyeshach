@@ -17,3 +17,8 @@ dependencies {
     compileOnly("net.md-5:bungeecord-chat:1.17")
     compileOnly("com.eatthepath:fast-uuid:0.2.0")
 }
+
+configure<JavaPluginConvention> {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

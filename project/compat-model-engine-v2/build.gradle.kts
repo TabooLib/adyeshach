@@ -14,6 +14,11 @@ taboolib {
 dependencies {
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-api"))
-    compileOnly(project(":project:common-default-impl"))
+    compileOnly(project(":project:common-impl"))
     compileOnly("public:ModelEngine:2.5.1")
+}
+
+configure<JavaPluginConvention> {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

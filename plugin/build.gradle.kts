@@ -9,12 +9,15 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:2.8.5")
     implementation(project(":project:common"))
     implementation(project(":project:common-api"))
-    implementation(project(":project:common-default-impl"))
+    implementation(project(":project:common-impl"))
+    implementation(project(":project:common-impl-nms"))
+    implementation(project(":project:common-impl-nms-j17"))
     implementation(project(":project:module-bukkit"))
     implementation(project(":project:module-editor"))
     implementation(project(":project:module-language"))
     implementation(project(":project:module-legacy-api"))
     implementation(project(":project:module-test"))
+    implementation(project(":project:api-data-serializer"))
 }
 
 tasks {

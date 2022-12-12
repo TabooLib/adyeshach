@@ -1,0 +1,390 @@
+package ink.ptms.adyeshach.impl.nms
+
+import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
+import ink.ptms.adyeshach.common.api.*
+import ink.ptms.adyeshach.common.bukkit.BukkitDirection
+import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.util.getEnum
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.setProperty
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
+import taboolib.module.nms.MinecraftVersion
+import java.util.*
+
+/**
+ * Adyeshach
+ * ink.ptms.adyeshach.impl.nms.DefaultMinecraftEntitySpawner
+ *
+ * @author 坏黑
+ * @since 2022/6/28 00:08
+ */
+@Suppress("DuplicatedCode")
+class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
+
+    val isUniversal = MinecraftVersion.isUniversal
+    val major = MinecraftVersion.major
+    val majorLegacy = MinecraftVersion.majorLegacy
+    val minor = MinecraftVersion.minor
+
+    val helper: MinecraftHelper
+        get() = Adyeshach.api().getMinecraftAPI().getHelper()
+
+    val typeHandler: AdyeshachEntityTypeHandler
+        get() = Adyeshach.api().getEntityTypeHandler()
+
+    val packetHandler: MinecraftPacketHandler
+        get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()
+
+    val nms16Motive: NMS16RegistryBlocks<NMS16Paintings>
+        get() = NMS16IRegistry::class.java.getProperty("MOTIVE", isStatic = true)!!
+
+    override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+        // 计算视角
+        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        // 版本判断
+        val packet: Any = when (major) {
+            // 1.9, 1.10, 1.11, 1.12, 1.13
+            1, 2, 3, 4, 5 -> NMS9PacketPlayOutSpawnEntity().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    // 1.13 以下版本使用 Bukkit 的实体 ID
+                    if (major != 5) {
+                        writeByte(typeHandler.getBukkitEntityId(entityType).toByte())
+                    } else {
+                        // 1.13 使用 NMS 的实体 ID, 同时 1.13 版本的 IRegistry.ENTITY_TYPE 无法与 1.14, 1.15, 1.16 版本兼容
+                        // 1.13 -> interface IRegistry<T>
+                        writeByte(NMS13IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS13EntityTypes<*>).toByte())
+                    }
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    writeInt(0)
+                    writeShort(0)
+                    writeShort(0)
+                    writeShort(0)
+                }.toNMS() as NMS9PacketDataSerializer)
+            }
+            // 1.14, 1.15, 1.16
+            6, 7, 8 -> NMS16PacketPlayOutSpawnEntity().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    // 1.14, 1.15, 1.16 -> abstract class IRegistry<T> -> IRegistry 类型发生变化
+                    writeVarInt(NMS16IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS16EntityTypes<*>))
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    writeInt(0)
+                    writeShort(0)
+                    writeShort(0)
+                    writeShort(0)
+                }.toNMS() as NMS16PacketDataSerializer)
+            }
+            // 1.17, 1.18, 1.19
+            9, 10, 11 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
+                writeVarInt(entityId)
+                writeUUID(uuid)
+                when (major) {
+                    // 1.17, 1.18 写法相同
+                    // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
+                    // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
+                    9, 10 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                    // 1.19 写法不同
+                    11 -> {
+                        when (minor) {
+                            // 1.19, 1.19.1, 1.19.2 -> this.type = (EntityTypes)var0.readById(IRegistry.ENTITY_TYPE);
+                            0, 1, 2 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                            // 1.19.3               -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
+                            3 -> writeVarInt(NMSBuiltInRegistries.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                        }
+                    }
+                }
+                writeDouble(location.x)
+                writeDouble(location.y)
+                writeDouble(location.z)
+                writeByte(yRot)
+                writeByte(xRot)
+                writeInt(0)
+                writeShort(0)
+                writeShort(0)
+                writeShort(0)
+            }.toNMS() as NMSPacketDataSerializer)
+            // 不支持
+            else -> error("Unsupported version.")
+        }
+        // 发送数据包
+        packetHandler.sendPacket(player, packet)
+    }
+
+    override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+        // 1.13 以下版本盔甲架子不是 EntityLiving 类型，1.19 以上版本所有实体使用 PacketPlayOutSpawnEntity 数据包生成
+        if ((entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) || majorLegacy >= 11900) {
+            return spawnEntity(player, entityType, entityId, uuid, location)
+        }
+        // 计算视角
+        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        // 版本判断
+        val packet: Any = when (major) {
+            // 1.9, 1.10
+            1, 2 -> NMS9PacketPlayOutSpawnEntityLiving().also {
+                // 不反射写进去会崩客户端，米哈游真有你的。
+                val dw = NMS9DataWatcher(null)
+                it.setProperty("m", dw, remap = false)
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    // 转 -> this.c = (byte)EntityTypes.a(var1);
+                    // 读 -> this.c = var1.readByte() & 255;
+                    // 写 -> var1.writeByte(this.c & 255);
+                    writeByte((typeHandler.getBukkitEntityId(entityType) and 255).toByte())
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    writeInt(0)
+                    writeShort(0)
+                    writeShort(0)
+                    writeShort(0)
+                    dw.a(toNMS() as NMS9PacketDataSerializer)
+                }.toNMS() as NMS9PacketDataSerializer)
+            }
+            // 1.11, 1.12, 1.13
+            3, 4, 5 -> NMS11PacketPlayOutSpawnEntityLiving().also {
+                val dw = NMS11DataWatcher(null)
+                it.setProperty("m", dw, remap = false)
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    // 1.13 以下版本使用 Bukkit 的实体 ID
+                    if (major != 5) {
+                        writeVarInt(typeHandler.getBukkitEntityId(entityType))
+                    } else {
+                        // 1.13 使用 NMS 的实体 ID, 同时 1.13 版本的 IRegistry.ENTITY_TYPE 无法与 1.14, 1.15, 1.16 版本兼容
+                        // 1.13 -> interface IRegistry<T> -> 从 Bukkit 实体 ID 转变为 NMS 实体 ID
+                        writeVarInt(NMS13IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS13EntityTypes<*>))
+                    }
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    writeInt(0)
+                    writeShort(0)
+                    writeShort(0)
+                    writeShort(0)
+                    dw.a(toNMS() as NMS11PacketDataSerializer)
+                }.toNMS() as NMS11PacketDataSerializer)
+            }
+            // 1.14, 1.15, 1.16
+            6, 7, 8 -> NMS16PacketPlayOutSpawnEntityLiving().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    // 1.14, 1.15, 1.16 -> abstract class IRegistry<T> -> IRegistry 类型发生变化
+                    writeVarInt(NMS16IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS16EntityTypes<*>))
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    writeByte(0)
+                    writeShort(0)
+                    writeShort(0)
+                    writeShort(0)
+                    // 1.14, 1.15 仍需要读取 DataWatcher
+                    if (major != 8) {
+                        val dw = NMS14DataWatcher(null)
+                        it.setProperty("m", dw)
+                        dw.a(toNMS() as NMS14PacketDataSerializer)
+                    }
+                }.toNMS() as NMS16PacketDataSerializer)
+            }
+            // 1.17, 1.18
+            // 使用带有 DataSerializer 的构造函数生成数据包
+            9, 10 -> NMSPacketPlayOutSpawnEntityLiving(createDataSerializer {
+                writeVarInt(entityId)
+                writeUUID(uuid)
+                // 1.17, 1.18 写法相同
+                // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
+                // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
+                writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                writeDouble(location.x)
+                writeDouble(location.y)
+                writeDouble(location.z)
+                writeByte(yRot)
+                writeByte(xRot)
+                writeByte(0)
+                writeShort(0)
+                writeShort(0)
+                writeShort(0)
+            }.toNMS() as NMSPacketDataSerializer)
+            // 不支持
+            else -> error("Unsupported version.")
+        }
+        // 发送数据包
+        packetHandler.sendPacket(player, packet)
+    }
+
+    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
+        val packet = NMS16PacketPlayOutSpawnEntityPlayer::class.java.unsafeInstance()
+        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "entityId" to entityId,
+                "playerId" to uuid,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "yRot" to yRot,
+                "xRot" to xRot
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to yRot,
+                "g" to xRot,
+                "h" to if (majorLegacy >= 11500) null else NMS16DataWatcher(null),
+            )
+        }
+    }
+
+    override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
+        val packet = NMS16PacketPlayOutSpawnEntity::class.java.unsafeInstance()
+        val xRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val yRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        if (isUniversal) {
+            val block = NMSBlocks::class.java.getProperty<Any>(material.name, isStatic = true)
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "uuid" to uuid,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "xa" to 0,
+                "ya" to 0,
+                "za" to 0,
+                "xRot" to xRot,
+                "yRot" to yRot,
+                "type" to helper.adapt(EntityTypes.FALLING_BLOCK),
+                "data" to NMSBlock.getId(((block ?: NMSBlocks.STONE) as NMSBlock).defaultBlockState())
+            )
+        } else if (majorLegacy >= 11300) {
+            val block = NMS16Blocks::class.java.getProperty<Any>(material.name, isStatic = true)
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to xRot,
+                "g" to yRot,
+                "k" to helper.adapt(EntityTypes.FALLING_BLOCK),
+                "l" to NMS16Block.getCombinedId(((block ?: NMS16Blocks.STONE) as NMS16Block).blockData)
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to uuid,
+                "c" to location.x,
+                "d" to location.y,
+                "e" to location.z,
+                "f" to xRot,
+                "g" to yRot,
+                "k" to helper.adapt(EntityTypes.FALLING_BLOCK),
+                "l" to material.id + (data.toInt() shl 12)
+            )
+        }
+    }
+
+    override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
+        val packet = NMS16PacketPlayOutSpawnEntityExperienceOrb::class.java.unsafeInstance()
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "x" to location.x,
+                "y" to location.y,
+                "z" to location.z,
+                "value" to amount,
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to location.x,
+                "c" to location.y,
+                "d" to location.z,
+                "e" to amount,
+            )
+        }
+    }
+
+    override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
+        if (MinecraftVersion.majorLegacy >= 11900) {
+            error("spawnEntityPainting() is not supported in this version")
+        }
+        val packet = NMS9PacketPlayOutSpawnEntityPainting::class.java.unsafeInstance()
+        val art = helper.adapt(painting)
+        if (isUniversal) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "id" to entityId,
+                "uuid" to uuid,
+                "pos" to helper.adapt(location),
+                "direction" to NMSEnumDirection::class.java.getEnum(direction.name),
+                "motive" to nms16Motive.invokeMethod<Any>("a", art)
+            )
+        } else if (majorLegacy > 11300) {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to uuid,
+                "c" to helper.adapt(location),
+                "d" to NMS16EnumDirection::class.java.getEnum(direction.name),
+                "e" to nms16Motive.invokeMethod<Any>("a", art)
+            )
+        } else {
+            packetHandler.sendPacket(
+                player,
+                packet,
+                "a" to entityId,
+                "b" to uuid,
+                "c" to helper.adapt(location),
+                "d" to NMS9EnumDirection::class.java.getEnum(direction.name),
+                "e" to art
+            )
+        }
+    }
+}

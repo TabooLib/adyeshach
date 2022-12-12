@@ -12,5 +12,11 @@ taboolib {
 }
 
 dependencies {
+    compileOnly("ink.ptms.core:v11900:11900:universal")
     compileOnly("com.eatthepath:fast-uuid:0.2.0")
+}
+
+configure<JavaPluginConvention> {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

@@ -13,6 +13,7 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url = uri("https://repo.tabooproject.org/repository/releases/") }
     }
     dependencies {
         compileOnly(kotlin("stdlib"))
@@ -20,8 +21,6 @@ subprojects {
         compileOnly("com.google.code.gson:gson:2.8.5")
         compileOnly("com.google.guava:guava:21.0")
         compileOnly("ink.ptms.core:v11604:11604")
-        compileOnly("ink.ptms.core:v11900:11900:mapped")
-        compileOnly("ink.ptms.core:v11900:11900:universal")
     }
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
