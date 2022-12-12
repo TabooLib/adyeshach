@@ -1,19 +1,21 @@
 package ink.ptms.adyeshach.impl.nms
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
 import ink.ptms.adyeshach.common.api.*
 import ink.ptms.adyeshach.common.bukkit.BukkitDirection
 import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.getEnum
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.material.MaterialData
+import taboolib.common.util.unsafeLazy
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
-import taboolib.library.reflex.Reflex.Companion.setProperty
-import taboolib.library.reflex.Reflex.Companion.unsafeInstance
+import taboolib.library.reflex.UnsafeAccess
 import taboolib.module.nms.MinecraftVersion
+import java.lang.invoke.MethodHandle
 import java.util.*
 
 /**
@@ -43,7 +45,25 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     val nms16Motive: NMS16RegistryBlocks<NMS16Paintings>
         get() = NMS16IRegistry::class.java.getProperty("MOTIVE", isStatic = true)!!
 
-    override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+    val motiveCache = Caffeine.newBuilder()
+        .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
+        .build<BukkitPaintings, Int> {
+            NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(it))
+        }
+
+    val dataWatcherSetterM: MethodHandle by unsafeLazy {
+        val field = NMS9PacketPlayOutSpawnEntityLiving::class.java.getDeclaredField("m")
+        field.isAccessible = true
+        UnsafeAccess.lookup.unreflectSetter(field)
+    }
+
+    val dataWatcherSetterH: MethodHandle by unsafeLazy {
+        val field = NMS9PacketPlayOutSpawnEntityLiving::class.java.getDeclaredField("h")
+        field.isAccessible = true
+        UnsafeAccess.lookup.unreflectSetter(field)
+    }
+
+    override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int) {
         // 计算视角
         val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
         val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
@@ -67,7 +87,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yRot)
                     writeByte(xRot)
-                    writeInt(0)
+                    writeInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -85,7 +105,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yRot)
                     writeByte(xRot)
-                    writeInt(0)
+                    writeInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -115,7 +135,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeDouble(location.z)
                 writeByte(yRot)
                 writeByte(xRot)
-                writeInt(0)
+                writeInt(data)
                 writeShort(0)
                 writeShort(0)
                 writeShort(0)
@@ -139,9 +159,6 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         val packet: Any = when (major) {
             // 1.9, 1.10
             1, 2 -> NMS9PacketPlayOutSpawnEntityLiving().also {
-                // 不反射写进去会崩客户端，米哈游真有你的。
-                val dw = NMS9DataWatcher(null)
-                it.setProperty("m", dw, remap = false)
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
                     writeUUID(uuid)
@@ -158,13 +175,12 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
-                    dw.a(toNMS() as NMS9PacketDataSerializer)
+                    // 不反射写进去会崩客户端，米哈游真有你的。
+                    NMS9DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
             // 1.11, 1.12, 1.13
             3, 4, 5 -> NMS11PacketPlayOutSpawnEntityLiving().also {
-                val dw = NMS11DataWatcher(null)
-                it.setProperty("m", dw, remap = false)
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
                     writeUUID(uuid)
@@ -185,7 +201,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
-                    dw.a(toNMS() as NMS11PacketDataSerializer)
+                    NMS11DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS11PacketDataSerializer)
                 }.toNMS() as NMS11PacketDataSerializer)
             }
             // 1.14, 1.15, 1.16
@@ -206,9 +222,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     // 1.14, 1.15 仍需要读取 DataWatcher
                     if (major != 8) {
-                        val dw = NMS14DataWatcher(null)
-                        it.setProperty("m", dw)
-                        dw.a(toNMS() as NMS14PacketDataSerializer)
+                        NMS14DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS14PacketDataSerializer)
                     }
                 }.toNMS() as NMS16PacketDataSerializer)
             }
@@ -239,113 +253,81 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
-        val packet = NMS16PacketPlayOutSpawnEntityPlayer::class.java.unsafeInstance()
+        // 计算视角
         val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
         val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
-        if (isUniversal) {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "entityId" to entityId,
-                "playerId" to uuid,
-                "x" to location.x,
-                "y" to location.y,
-                "z" to location.z,
-                "yRot" to yRot,
-                "xRot" to xRot
-            )
-        } else {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to uuid,
-                "c" to location.x,
-                "d" to location.y,
-                "e" to location.z,
-                "f" to yRot,
-                "g" to xRot,
-                "h" to if (majorLegacy >= 11500) null else NMS16DataWatcher(null),
-            )
+        // 判断版本
+        val packet: Any = when (major) {
+            // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14
+            in 1..6 -> NMS9PacketPlayOutSpawnEntityPlayer().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                    NMS9DataWatcher(null).also { dw -> dataWatcherSetterH.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
+                }.toNMS() as NMS9PacketDataSerializer)
+            }
+            // 1.15, 1.16
+            7, 8 -> NMS16PacketPlayOutSpawnEntityPlayer().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yRot)
+                    writeByte(xRot)
+                }.toNMS() as NMS16PacketDataSerializer)
+            }
+            // 1.17, 1.18, 1.19
+            // 使用带有 DataSerializer 的构造函数生成数据包
+            9, 10, 11 -> NMSPacketPlayOutSpawnEntityPlayer(createDataSerializer {
+                writeVarInt(entityId)
+                writeUUID(uuid)
+                writeDouble(location.x)
+                writeDouble(location.y)
+                writeDouble(location.z)
+                writeByte(yRot)
+                writeByte(xRot)
+            }.toNMS() as NMSPacketDataSerializer)
+            // 不支持
+            else -> error("Unsupported version.")
         }
+        // 发送数据包
+        packetHandler.sendPacket(player, packet)
     }
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
-        val packet = NMS16PacketPlayOutSpawnEntity::class.java.unsafeInstance()
-        val xRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
-        val yRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
-        if (isUniversal) {
-            val block = NMSBlocks::class.java.getProperty<Any>(material.name, isStatic = true)
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "id" to entityId,
-                "uuid" to uuid,
-                "x" to location.x,
-                "y" to location.y,
-                "z" to location.z,
-                "xa" to 0,
-                "ya" to 0,
-                "za" to 0,
-                "xRot" to xRot,
-                "yRot" to yRot,
-                "type" to helper.adapt(EntityTypes.FALLING_BLOCK),
-                "data" to NMSBlock.getId(((block ?: NMSBlocks.STONE) as NMSBlock).defaultBlockState())
-            )
-        } else if (majorLegacy >= 11300) {
-            val block = NMS16Blocks::class.java.getProperty<Any>(material.name, isStatic = true)
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to uuid,
-                "c" to location.x,
-                "d" to location.y,
-                "e" to location.z,
-                "f" to xRot,
-                "g" to yRot,
-                "k" to helper.adapt(EntityTypes.FALLING_BLOCK),
-                "l" to NMS16Block.getCombinedId(((block ?: NMS16Blocks.STONE) as NMS16Block).blockData)
-            )
+        if (majorLegacy >= 11300) {
+            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, helper.getBlockId(MaterialData(material, data)))
         } else {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to uuid,
-                "c" to location.x,
-                "d" to location.y,
-                "e" to location.z,
-                "f" to xRot,
-                "g" to yRot,
-                "k" to helper.adapt(EntityTypes.FALLING_BLOCK),
-                "l" to material.id + (data.toInt() shl 12)
-            )
+            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, material.id + (data.toInt() shl 12))
         }
     }
 
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
-        val packet = NMS16PacketPlayOutSpawnEntityExperienceOrb::class.java.unsafeInstance()
         if (isUniversal) {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "id" to entityId,
-                "x" to location.x,
-                "y" to location.y,
-                "z" to location.z,
-                "value" to amount,
-            )
+            packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityExperienceOrb(createDataSerializer {
+                writeVarInt(entityId)
+                writeDouble(location.x)
+                writeDouble(location.y)
+                writeDouble(location.z)
+                writeShort(amount.toShort())
+            }.toNMS() as NMSPacketDataSerializer))
         } else {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to location.x,
-                "c" to location.y,
-                "d" to location.z,
-                "e" to amount,
-            )
+            packetHandler.sendPacket(player, NMS16PacketPlayOutSpawnEntityExperienceOrb().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeShort(amount.toShort())
+                }.toNMS() as NMS16PacketDataSerializer)
+            })
         }
     }
 
@@ -353,38 +335,50 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         if (MinecraftVersion.majorLegacy >= 11900) {
             error("spawnEntityPainting() is not supported in this version")
         }
-        val packet = NMS9PacketPlayOutSpawnEntityPainting::class.java.unsafeInstance()
-        val art = helper.adapt(painting)
+        // 使用带有 DataSerializer 的构造函数生成数据包
+        // 使用 IRegistry.MOTIVE
         if (isUniversal) {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "id" to entityId,
-                "uuid" to uuid,
-                "pos" to helper.adapt(location),
-                "direction" to NMSEnumDirection::class.java.getEnum(direction.name),
-                "motive" to nms16Motive.invokeMethod<Any>("a", art)
-            )
-        } else if (majorLegacy > 11300) {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to uuid,
-                "c" to helper.adapt(location),
-                "d" to NMS16EnumDirection::class.java.getEnum(direction.name),
-                "e" to nms16Motive.invokeMethod<Any>("a", art)
-            )
-        } else {
-            packetHandler.sendPacket(
-                player,
-                packet,
-                "a" to entityId,
-                "b" to uuid,
-                "c" to helper.adapt(location),
-                "d" to NMS9EnumDirection::class.java.getEnum(direction.name),
-                "e" to art
-            )
+            packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityPainting(createDataSerializer {
+                writeVarInt(entityId)
+                writeUUID(uuid)
+                writeVarInt(motiveCache.get(painting)!!)
+                writeBlockPosition(location.blockX, location.blockY, location.blockZ)
+                writeByte(direction.get2DRotationValue().toByte())
+            }.toNMS() as NMSPacketDataSerializer))
+        }
+        // 使用 IRegistry.MOTIVE
+        else if (majorLegacy > 11300) {
+            packetHandler.sendPacket(player, NMS16PacketPlayOutSpawnEntityPainting().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    writeVarInt(motiveCache.get(painting)!!)
+                    writeBlockPosition(location.blockX, location.blockY, location.blockZ)
+                    writeByte(direction.get2DRotationValue().toByte())
+                }.toNMS() as NMS16PacketDataSerializer)
+            })
+        }
+        // 使用字符串
+        else {
+            packetHandler.sendPacket(player, NMS9PacketPlayOutSpawnEntityPainting().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeUUID(uuid)
+                    writeString(painting.name)
+                    writeBlockPosition(location.blockX, location.blockY, location.blockZ)
+                    writeByte(direction.get2DRotationValue().toByte())
+                }.toNMS() as NMS9PacketDataSerializer)
+            })
+        }
+    }
+
+    fun BukkitDirection.get2DRotationValue(): Int {
+        return when (this) {
+            BukkitDirection.SOUTH -> 0
+            BukkitDirection.WEST -> 1
+            BukkitDirection.NORTH -> 2
+            BukkitDirection.EAST -> 3
+            else -> error("Unsupported direction.")
         }
     }
 }

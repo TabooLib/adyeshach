@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitParticles
 import ink.ptms.adyeshach.common.bukkit.BukkitPose
 import ink.ptms.adyeshach.common.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import ink.ptms.adyeshach.common.util.getEnumOrNull
 import ink.ptms.adyeshach.impl.nms.parser.*
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
@@ -15,10 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
-import taboolib.library.reflex.Reflex.Companion.getProperty
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.obcClass
 import java.util.*
 
 /**
@@ -292,12 +288,60 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): MinecraftMeta {
         return DefaultMeta(
             if (majorLegacy >= 11900) {
-                val villagerType = NMSVillagerType::class.java.getProperty<NMSVillagerType>(villagerData.type.name, isStatic = true)
-                val villagerProfession = NMSVillagerProfession::class.java.getProperty<NMSVillagerProfession>(villagerData.profession.name, isStatic = true)
+                val villagerType = when (villagerData.type) {
+                    VillagerData.Type.DESERT -> NMSVillagerType.DESERT
+                    VillagerData.Type.JUNGLE -> NMSVillagerType.JUNGLE
+                    VillagerData.Type.PLAINS -> NMSVillagerType.PLAINS
+                    VillagerData.Type.SAVANNA -> NMSVillagerType.SAVANNA
+                    VillagerData.Type.SNOW -> NMSVillagerType.SNOW
+                    VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
+                    VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
+                }
+                val villagerProfession = when (villagerData.profession) {
+                    VillagerData.Profession.NONE -> NMSVillagerProfession.NONE
+                    VillagerData.Profession.ARMORER -> NMSVillagerProfession.ARMORER
+                    VillagerData.Profession.BUTCHER -> NMSVillagerProfession.BUTCHER
+                    VillagerData.Profession.CARTOGRAPHER -> NMSVillagerProfession.CARTOGRAPHER
+                    VillagerData.Profession.CLERIC -> NMSVillagerProfession.CLERIC
+                    VillagerData.Profession.FARMER -> NMSVillagerProfession.FARMER
+                    VillagerData.Profession.FISHERMAN -> NMSVillagerProfession.FISHERMAN
+                    VillagerData.Profession.FLETCHER -> NMSVillagerProfession.FLETCHER
+                    VillagerData.Profession.LEATHERWORKER -> NMSVillagerProfession.LEATHERWORKER
+                    VillagerData.Profession.LIBRARIAN -> NMSVillagerProfession.LIBRARIAN
+                    VillagerData.Profession.MASON -> NMSVillagerProfession.MASON
+                    VillagerData.Profession.NITWIT -> NMSVillagerProfession.NITWIT
+                    VillagerData.Profession.SHEPHERD -> NMSVillagerProfession.SHEPHERD
+                    VillagerData.Profession.TOOLSMITH -> NMSVillagerProfession.TOOLSMITH
+                    VillagerData.Profession.WEAPONSMITH -> NMSVillagerProfession.WEAPONSMITH
+                }
                 NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), NMSVillagerData(villagerType, villagerProfession, 1))
             } else {
-                val villagerType = NMS16VillagerType::class.java.getProperty<NMS16VillagerType>(villagerData.type.name, isStatic = true)
-                val villagerProfession = NMS16VillagerProfession::class.java.getProperty<NMS16VillagerProfession>(villagerData.profession.name, isStatic = true)
+                val villagerType = when (villagerData.type) {
+                    VillagerData.Type.DESERT -> NMS16VillagerType.DESERT
+                    VillagerData.Type.JUNGLE -> NMS16VillagerType.JUNGLE
+                    VillagerData.Type.PLAINS -> NMS16VillagerType.PLAINS
+                    VillagerData.Type.SAVANNA -> NMS16VillagerType.SAVANNA
+                    VillagerData.Type.SNOW -> NMS16VillagerType.SNOW
+                    VillagerData.Type.SWAMP -> NMS16VillagerType.SWAMP
+                    VillagerData.Type.TAIGA -> NMS16VillagerType.TAIGA
+                }
+                val villagerProfession = when (villagerData.profession) {
+                    VillagerData.Profession.NONE -> NMS16VillagerProfession.NONE
+                    VillagerData.Profession.ARMORER -> NMS16VillagerProfession.ARMORER
+                    VillagerData.Profession.BUTCHER -> NMS16VillagerProfession.BUTCHER
+                    VillagerData.Profession.CARTOGRAPHER -> NMS16VillagerProfession.CARTOGRAPHER
+                    VillagerData.Profession.CLERIC -> NMS16VillagerProfession.CLERIC
+                    VillagerData.Profession.FARMER -> NMS16VillagerProfession.FARMER
+                    VillagerData.Profession.FISHERMAN -> NMS16VillagerProfession.FISHERMAN
+                    VillagerData.Profession.FLETCHER -> NMS16VillagerProfession.FLETCHER
+                    VillagerData.Profession.LEATHERWORKER -> NMS16VillagerProfession.LEATHERWORKER
+                    VillagerData.Profession.LIBRARIAN -> NMS16VillagerProfession.LIBRARIAN
+                    VillagerData.Profession.MASON -> NMS16VillagerProfession.MASON
+                    VillagerData.Profession.NITWIT -> NMS16VillagerProfession.NITWIT
+                    VillagerData.Profession.SHEPHERD -> NMS16VillagerProfession.SHEPHERD
+                    VillagerData.Profession.TOOLSMITH -> NMS16VillagerProfession.TOOLSMITH
+                    VillagerData.Profession.WEAPONSMITH -> NMS16VillagerProfession.WEAPONSMITH
+                }
                 NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.q), NMS16VillagerData(villagerType, villagerProfession, 1))
             }
         )
@@ -308,12 +352,36 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
             if (majorLegacy >= 11900) {
                 NMSDataWatcherItem(
                     NMSDataWatcherObject(index, NMSDataWatcherRegistry.POSE),
-                    NMSEntityPose::class.java.getEnumOrNull(pose.name) ?: NMSEntityPose.STANDING
+                    when (pose) {
+                        BukkitPose.STANDING -> NMSEntityPose.STANDING
+                        BukkitPose.FALL_FLYING -> NMSEntityPose.FALL_FLYING
+                        BukkitPose.SLEEPING -> NMSEntityPose.SLEEPING
+                        BukkitPose.SWIMMING -> NMSEntityPose.SWIMMING
+                        BukkitPose.SPIN_ATTACK -> NMSEntityPose.SPIN_ATTACK
+                        BukkitPose.CROUCHING -> NMSEntityPose.CROUCHING
+                        BukkitPose.DYING -> NMSEntityPose.DYING
+                        BukkitPose.LONG_JUMPING -> NMSEntityPose.LONG_JUMPING
+                        BukkitPose.CROAKING -> NMSEntityPose.CROAKING
+                        BukkitPose.USING_TONGUE -> NMSEntityPose.USING_TONGUE
+                        BukkitPose.ROARING -> NMSEntityPose.ROARING
+                        BukkitPose.SNIFFING -> NMSEntityPose.SNIFFING
+                        BukkitPose.DIGGING -> NMSEntityPose.DIGGING
+                        BukkitPose.EMERGING -> NMSEntityPose.EMERGING
+                    }
                 )
             } else {
                 NMS16DataWatcherItem(
                     NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.s),
-                    NMS16EntityPose::class.java.getEnumOrNull(pose.name) ?: NMS16EntityPose.STANDING
+                    when (pose) {
+                        BukkitPose.STANDING -> NMS16EntityPose.STANDING
+                        BukkitPose.FALL_FLYING -> NMS16EntityPose.FALL_FLYING
+                        BukkitPose.SLEEPING -> NMS16EntityPose.SLEEPING
+                        BukkitPose.SWIMMING -> NMS16EntityPose.SWIMMING
+                        BukkitPose.SPIN_ATTACK -> NMS16EntityPose.SPIN_ATTACK
+                        BukkitPose.CROUCHING -> NMS16EntityPose.CROUCHING
+                        BukkitPose.DYING -> NMS16EntityPose.DYING
+                        else -> NMS16EntityPose.STANDING
+                    }
                 )
             }
         )
@@ -323,7 +391,19 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
-                NMSCatVariant::class.java.getProperty(type.name, isStatic = true)
+                when (type) {
+                    Cat.Type.TABBY -> NMSCatVariant.TABBY
+                    Cat.Type.BLACK -> NMSCatVariant.BLACK
+                    Cat.Type.RED -> NMSCatVariant.RED
+                    Cat.Type.SIAMESE -> NMSCatVariant.SIAMESE
+                    Cat.Type.BRITISH_SHORTHAIR -> NMSCatVariant.BRITISH_SHORTHAIR
+                    Cat.Type.CALICO -> NMSCatVariant.CALICO
+                    Cat.Type.PERSIAN -> NMSCatVariant.PERSIAN
+                    Cat.Type.RAGDOLL -> NMSCatVariant.RAGDOLL
+                    Cat.Type.WHITE -> NMSCatVariant.WHITE
+                    Cat.Type.JELLIE -> NMSCatVariant.JELLIE
+                    Cat.Type.ALL_BLACK -> NMSCatVariant.ALL_BLACK
+                }
             )
         )
     }
@@ -332,7 +412,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.FROG_VARIANT),
-                NMSFrogVariant::class.java.getProperty(type.name, isStatic = true)
+                when (type) {
+                    Frog.Variant.TEMPERATE -> NMSFrogVariant.TEMPERATE
+                    Frog.Variant.WARM -> NMSFrogVariant.WARM
+                    Frog.Variant.COLD -> NMSFrogVariant.COLD
+                }
             )
         )
     }
@@ -347,6 +431,6 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     fun craftChatMessageFromString(message: String): Any? {
-        return obcClass("util.CraftChatMessage").invokeMethod<Array<*>>("fromString", message, isStatic = true)!![0]
+        return CraftChatMessage19.fromString(message)[0]
     }
 }

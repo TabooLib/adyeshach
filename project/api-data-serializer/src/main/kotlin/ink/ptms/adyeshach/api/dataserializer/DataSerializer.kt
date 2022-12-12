@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.api.dataserializer
 
+import com.google.common.base.Charsets
 import ink.ptms.adyeshach.common.api.MinecraftMeta
 import java.util.*
 
@@ -13,6 +14,8 @@ import java.util.*
 interface DataSerializer {
 
     fun writeByte(byte: Byte): DataSerializer
+
+    fun writeBytes(bytes: ByteArray): DataSerializer
 
     fun writeShort(short: Short): DataSerializer
 
@@ -31,6 +34,17 @@ interface DataSerializer {
     fun writeUUID(uuid: UUID): DataSerializer {
         writeLong(uuid.mostSignificantBits)
         writeLong(uuid.leastSignificantBits)
+        return this
+    }
+
+    fun writeString(string: String): DataSerializer {
+        val arr: ByteArray = string.toByteArray(Charsets.UTF_8)
+        if (arr.size > 32767) {
+            error("String too big (was ${string.length} bytes encoded, max 32767)")
+        } else {
+            writeVarInt(arr.size)
+            writeBytes(arr)
+        }
         return this
     }
 

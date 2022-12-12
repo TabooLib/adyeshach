@@ -13,6 +13,9 @@ typealias NMSPacketPlayOutSpawnEntityPlayer = net.minecraft.network.protocol.gam
 
 typealias NMSPacketPlayOutSpawnEntityExperienceOrb = net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityExperienceOrb
 
+// 从 1.19+ 移除
+typealias NMSPacketPlayOutSpawnEntityPainting = net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityPainting
+
 typealias NMSPacketPlayOutPlayerInfo = net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo
 
 typealias NMSPacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
@@ -99,6 +102,8 @@ typealias CraftMagicNumbers19 = org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicN
 
 typealias CraftTropicalFishPattern19 = org.bukkit.craftbukkit.v1_19_R1.entity.CraftTropicalFish.CraftPattern
 
+typealias CraftChatMessage19 = org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage
+
 // 1.16
 
 typealias NMS16PacketPlayOutSpawnEntity = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity
@@ -108,6 +113,8 @@ typealias NMS16PacketPlayOutSpawnEntityPlayer = net.minecraft.server.v1_16_R3.Pa
 typealias NMS16PacketPlayOutSpawnEntityLiving = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntityLiving
 
 typealias NMS16PacketPlayOutSpawnEntityExperienceOrb = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntityExperienceOrb
+
+typealias NMS16PacketPlayOutSpawnEntityPainting = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntityPainting
 
 typealias NMS16PacketPlayOutPlayerInfo = net.minecraft.server.v1_16_R1.PacketPlayOutPlayerInfo
 
@@ -298,6 +305,8 @@ typealias NMS9PacketPlayOutSpawnEntity = net.minecraft.server.v1_9_R2.PacketPlay
 typealias NMS9PacketPlayOutSpawnEntityLiving = net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityLiving
 
 typealias NMS9PacketPlayOutSpawnEntityPainting = net.minecraft.server.v1_9_R2.PacketPlayOutSpawnEntityPainting
+
+typealias NMS9PacketPlayOutSpawnEntityPlayer = net.minecraft.server.v1_9_R2.PacketPlayOutNamedEntitySpawn
 
 typealias NMS9PacketPlayOutPlayerInfo = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo
 

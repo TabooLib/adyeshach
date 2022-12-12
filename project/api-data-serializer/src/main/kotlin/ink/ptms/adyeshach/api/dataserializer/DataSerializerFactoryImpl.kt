@@ -22,6 +22,10 @@ class DataSerializerFactoryImpl(val buf: ByteBuf) : DataSerializerFactory, DataS
         return buf.writeByte(byte.toInt()).let { this }
     }
 
+    override fun writeBytes(bytes: ByteArray): DataSerializer {
+        return buf.writeBytes(bytes).let { this }
+    }
+
     override fun writeShort(short: Short): DataSerializer {
         return buf.writeShort(short.toInt()).let { this }
     }

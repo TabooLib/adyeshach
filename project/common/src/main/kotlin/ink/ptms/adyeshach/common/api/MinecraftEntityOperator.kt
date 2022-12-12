@@ -32,7 +32,7 @@ interface MinecraftEntityOperator {
      * @param location 传送位置
      * @param onGround 是否在地面上
      */
-    fun teleportEntity(player: Player, entityId: Int, location: Location, onGround: Boolean)
+    fun teleportEntity(player: Player, entityId: Int, location: Location, onGround: Boolean = false)
 
     /**
      * 向客户端发送 PacketPlayOutEntity.PacketPlayOutRelEntityMove 数据包，该方法未被 Adyeshach 利用
