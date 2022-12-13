@@ -111,6 +111,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
+            // FIXME
             setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
             // 关联实体初始化
             submit(delay = 5) { refreshPassenger(viewer) }

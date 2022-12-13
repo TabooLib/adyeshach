@@ -53,6 +53,10 @@ ink.ptms.adyeshach.common.entity.type.AdyArrow
         17 10
         16 -
 
+ink.ptms.adyeshach.common.entity.type.AdyAxolotl
+    color i 2
+        17 17
+
 ink.ptms.adyeshach.common.entity.type.AdyBat
     isHanging 1b
         17 16
@@ -523,6 +527,10 @@ ink.ptms.adyeshach.common.entity.type.AdyWither
         ~
     invulnerableTime i
         ~
+
+ink.ptms.adyeshach.common.entity.type.AdyWarden
+    angerLevel i
+        19 16
 
 ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
     invulnerable z

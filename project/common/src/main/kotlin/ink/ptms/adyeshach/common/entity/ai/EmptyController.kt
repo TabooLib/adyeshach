@@ -14,7 +14,4 @@ class EmptyController(entity: EntityInstance, val name: String) : Controller(ent
     override fun shouldExecute(): Boolean {
         return false
     }
-
-    override fun onTick() {
-    }
 }

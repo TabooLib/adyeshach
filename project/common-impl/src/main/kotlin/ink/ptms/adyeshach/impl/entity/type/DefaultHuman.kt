@@ -65,6 +65,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
                 // 修复玩家类型视角和装备无法正常显示的问题
                 submit(delay = 1) {
+                    // FIXME
                     setHeadRotation(yaw, pitch, forceUpdate = true)
                     updateEquipment()
                 }

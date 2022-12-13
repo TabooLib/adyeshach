@@ -66,8 +66,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int) {
         // 计算视角
-        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
-        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13
@@ -86,8 +86,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
+                    writeByte(pitch)
+                    writeByte(yaw)
+                    writeByte(yaw)
                     writeInt(data)
                     writeShort(0)
                     writeShort(0)
@@ -104,8 +105,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
+                    writeByte(pitch)
+                    writeByte(yaw)
+                    writeByte(yaw)
                     writeInt(data)
                     writeShort(0)
                     writeShort(0)
@@ -135,8 +137,12 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeDouble(location.x)
                 writeDouble(location.y)
                 writeDouble(location.z)
-                writeByte(yRot)
-                writeByte(xRot)
+                // xRot     -> pitch -> 纵向视角
+                writeByte(pitch)
+                // yRot     -> 没效果
+                writeByte(yaw)
+                // yHeadRot -> yaw -> 横向视角
+                writeByte(yaw)
                 writeInt(data)
                 writeShort(0)
                 writeShort(0)
@@ -155,8 +161,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
         // 计算视角
-        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
-        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10
@@ -171,9 +177,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
-                    writeInt(0)
+                    writeByte(yaw)
+                    writeByte(pitch)
+                    writeByte(yaw)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -197,9 +203,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
-                    writeInt(0)
+                    writeByte(yaw)
+                    writeByte(pitch)
+                    writeByte(yaw)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -216,9 +222,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
-                    writeByte(0)
+                    writeByte(yaw)
+                    writeByte(pitch)
+                    writeByte(yaw)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -240,9 +246,12 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeDouble(location.x)
                 writeDouble(location.y)
                 writeDouble(location.z)
-                writeByte(yRot)
-                writeByte(xRot)
-                writeByte(0)
+                // yRot -> yaw
+                writeByte(yaw)
+                // xRot -> pitch
+                writeByte(pitch)
+                // yHeadRot -> yaw
+                writeByte(yaw)
                 writeShort(0)
                 writeShort(0)
                 writeShort(0)
@@ -256,8 +265,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
         // 计算视角
-        val yRot = (location.yaw * 256.0f / 360.0f).toInt().toByte()
-        val xRot = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 判断版本
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14
@@ -268,8 +277,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
+                    writeByte(yaw)
+                    writeByte(pitch)
                     NMS9DataWatcher(null).also { dw -> dataWatcherSetterH.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
@@ -281,8 +290,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
+                    writeByte(yaw)
+                    writeByte(pitch)
                 }.toNMS() as NMS16PacketDataSerializer)
             }
             // 1.17, 1.18, 1.19
@@ -293,8 +302,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeDouble(location.x)
                 writeDouble(location.y)
                 writeDouble(location.z)
-                writeByte(yRot)
-                writeByte(xRot)
+                writeByte(yaw)
+                writeByte(pitch)
             }.toNMS() as NMSPacketDataSerializer)
             // 不支持
             else -> error("Unsupported version.")
@@ -305,7 +314,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (majorLegacy >= 11300) {
-            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, helper.getBlockId(MaterialData(material, data)))
+            val id = helper.getBlockId(MaterialData(material, data))
+            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, id)
         } else {
             spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, material.id + (data.toInt() shl 12))
         }

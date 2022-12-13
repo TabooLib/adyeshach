@@ -2,9 +2,12 @@ package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.common.entity.type.AdyAxolotl
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Axolotl
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.command.CommandBody
@@ -38,12 +41,11 @@ object Test {
             execute<Player> { sender, _, args ->
                 val type = EntityTypes.valueOf(args.uppercase())
                 val item = ItemStack(Material.DIAMOND_SWORD)
-                cost("all 100") {
-                    repeat(100) {
-                        if (::entity.isInitialized) {
-                            entity.despawn(removeFromManager = true)
-                        }
-                        val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location) as AdyEntity
+                cost("all 1") {
+                    if (::entity.isInitialized) {
+                        entity.despawn(removeFromManager = true)
+                    }
+                    val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location) as AdyEntity
 //                        if (npc is AdyHuman) {
 //                            npc.setName("傻逼")
 //                            npc.setTexture("bukkitObj")
@@ -51,17 +53,39 @@ object Test {
 //                        if (npc is EntityEquipable) {
 //                            npc.setItemInMainHand(item)
 //                        }
-//                        npc.setCustomName("坏黑")
-//                        npc.setCustomNameVisible(true)
-//                        npc.setGlowing(true)
-                        entity = npc
+                    if (npc is AdyAxolotl) {
+                        npc.setColor(Axolotl.Variant.BLUE)
                     }
+                    if (npc is AdyFallingBlock) {
+                        npc.setMaterial(Material.DIAMOND_BLOCK)
+                    }
+                    npc.setCustomName("坏黑")
+                    npc.setCustomNameVisible(true)
+                    npc.setGlowing(true)
+                    entity = npc
                 }
 
                 sender.info("OK")
             }
         }
     }
+
+    @CommandBody
+    val tp = subCommand {
+        execute<Player> { sender, _, _ ->
+            entity.teleport(sender.location)
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val look = subCommand {
+        execute<Player> { sender, _, _ ->
+            entity.controllerLook(sender.location)
+            sender.info("OK")
+        }
+    }
+
 
     @CommandBody
     val despawn = subCommand {

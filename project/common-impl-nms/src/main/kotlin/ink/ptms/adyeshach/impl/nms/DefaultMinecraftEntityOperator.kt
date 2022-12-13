@@ -37,8 +37,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun teleportEntity(player: Player, entityId: Int, location: Location, onGround: Boolean) {
         // 计算视角
-        val yRot = (location.yaw * 256 / 360).toInt().toByte()
-        val xRot = (location.pitch * 256 / 360).toInt().toByte()
+        val yaw = (location.yaw * 256 / 360).toInt().toByte()
+        val pitch = (location.pitch * 256 / 360).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16
@@ -48,8 +48,9 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
-                    writeByte(yRot)
-                    writeByte(xRot)
+                    // 在传送包下，yaw 与 pitch的读取顺序颠倒
+                    writeByte(yaw)
+                    writeByte(pitch)
                     writeBoolean(onGround)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
@@ -60,8 +61,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                 writeDouble(location.x)
                 writeDouble(location.y)
                 writeDouble(location.z)
-                writeByte(yRot)
-                writeByte(xRot)
+                writeByte(yaw)
+                writeByte(pitch)
                 writeBoolean(onGround)
             }.toNMS() as NMSPacketDataSerializer)
             // 不支持
@@ -92,21 +93,21 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
         if (isUniversal) {
-            val yRot = NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte()
-            val xRot = NMSMathHelper.floor(pitch * 256.0f / 360.0f).toByte()
-            packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, yRot, xRot, true))
+            val y = NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte()
+            val p = NMSMathHelper.floor(pitch * 256.0f / 360.0f).toByte()
+            packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, y, p, true))
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
-                writeByte(yRot)
+                writeByte(y)
             }.toNMS() as NMSPacketDataSerializer))
         } else {
-            val yRot = NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte()
-            val xRot = NMS16MathHelper.d(pitch * 256.0f / 360.0f).toByte()
-            packetHandler.sendPacket(player, NMS16PacketPlayOutEntityLook(entityId, yRot, xRot, true))
+            val y = NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte()
+            val p = NMS16MathHelper.d(pitch * 256.0f / 360.0f).toByte()
+            packetHandler.sendPacket(player, NMS16PacketPlayOutEntityLook(entityId, y, p, true))
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(yRot)
+                    writeByte(y)
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }

@@ -18,6 +18,8 @@ enum class EntityTypes {
 
     ARROW,
 
+    AXOLOTL,
+
     BAT,
 
     BEE,
@@ -209,6 +211,8 @@ enum class EntityTypes {
     WANDERING_TRADER,
 
     WITCH,
+
+    WARDEN,
 
     WITHER,
 
