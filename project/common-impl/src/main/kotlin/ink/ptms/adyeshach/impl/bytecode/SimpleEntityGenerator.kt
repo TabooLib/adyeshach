@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.bytecode
 
+import ink.ptms.adyeshach.common.entity.EntityBase
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import taboolib.library.asm.ClassWriter
-import taboolib.library.asm.Label
-import taboolib.library.asm.MethodVisitor
 import taboolib.library.asm.Opcodes
 
 /**
@@ -14,29 +14,37 @@ import taboolib.library.asm.Opcodes
  */
 class SimpleEntityGenerator : EntityGenerator, Opcodes {
 
+    val set = "L${EntityTypes::class.java.name.replace('.', '/')};"
+    val seb = "L${EntityBase::class.java.name.replace('.', '/')};"
+
     override fun generate(className: String, baseClass: String, interfaces: List<String>): ByteArray {
         val classWriter = ClassWriter(0)
         val ifs = interfaces.map { it.replace('.', '/') }.toTypedArray()
         classWriter.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER, className.replace('.', '/'), null, baseClass.replace(',', '/'), ifs)
         classWriter.visitSource("$className.java", null)
-        val methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(Link/ptms/adyeshach/common/entity/EntityTypes;)V", null, null)
+
+        // 构造方法
+        var methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "($set)V", null, null)
         methodVisitor.visitCode()
-        val label0 = Label()
-        methodVisitor.visitLabel(label0)
-        methodVisitor.visitLineNumber(15, label0)
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
         methodVisitor.visitVarInsn(Opcodes.ALOAD, 1)
-        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, baseClass.replace(',', '/'), "<init>", "(Link/ptms/adyeshach/common/entity/EntityTypes;)V", false)
-        val label1 = Label()
-        methodVisitor.visitLabel(label1)
-        methodVisitor.visitLineNumber(16, label1)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, baseClass.replace(',', '/'), "<init>", "($set)V", false)
         methodVisitor.visitInsn(Opcodes.RETURN)
-        val label2 = Label()
-        methodVisitor.visitLabel(label2)
-        methodVisitor.visitLocalVariable("this", "L${className.replace('.', '/')};", null, label0, label2, 0)
-        methodVisitor.visitLocalVariable("entityType", "Link/ptms/adyeshach/common/entity/EntityTypes;", null, label0, label2, 1)
         methodVisitor.visitMaxs(2, 2)
         methodVisitor.visitEnd()
+
+        // 继承方法
+        methodVisitor = classWriter.visitMethod(Opcodes.ACC_PUBLIC, "createEmpty", "()$seb", null, null)
+        methodVisitor.visitCode()
+        methodVisitor.visitTypeInsn(Opcodes.NEW, className.replace('.', '/'))
+        methodVisitor.visitInsn(Opcodes.DUP)
+        methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className.replace('.', '/'), "getEntityType", "()$set", false)
+        methodVisitor.visitMethodInsn(Opcodes.INVOKESPECIAL, className.replace('.', '/'), "<init>", "($set)V", false)
+        methodVisitor.visitInsn(Opcodes.ARETURN)
+        methodVisitor.visitMaxs(3, 1)
+        methodVisitor.visitEnd()
+        
         classWriter.visitEnd()
         return classWriter.toByteArray()
     }

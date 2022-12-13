@@ -10,16 +10,15 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/19 16:25
  */
-@Suppress("SpellCheckingInspection")
 interface InternalEntity {
 
     /**
-     * 生成回调
+     * 实体预生成方法
      */
-    fun spawn(viewer: Player, spawn: Runnable): Boolean
+    fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean
 
     /**
-     * 销毁回调
+     * 实体预销毁方法
      */
-    fun destroy(viewer: Player, destroy: Runnable): Boolean
+    fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean
 }

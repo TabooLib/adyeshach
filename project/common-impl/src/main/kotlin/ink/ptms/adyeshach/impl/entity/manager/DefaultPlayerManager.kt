@@ -9,9 +9,4 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/28 15:10
  */
-open class DefaultPlayerManager(val player: Player) : DefaultManager() {
-
-    override fun getPlayers(): List<Player> {
-        return listOf(player)
-    }
-}
+open class DefaultPlayerManager(player: Player) : BasePlayerManager(player)

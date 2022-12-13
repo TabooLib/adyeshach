@@ -16,6 +16,7 @@ import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.chat.colored
 import taboolib.platform.util.onlinePlayers
+import java.util.*
 
 /**
  * Adyeshach
@@ -26,14 +27,22 @@ import taboolib.platform.util.onlinePlayers
  */
 abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(entityTypes), AdyHuman {
 
-    private val playerUUID by lazy { normalizeUniqueId }
+    /** 玩家 UUID */
+    internal val pid: UUID
+        get() = normalizeUniqueId
 
+    /** 是否已经生成 */
+    internal var spawned = false
+
+    /** 玩家信息 */
     @Expose
     internal val gameProfile = GameProfile()
 
+    /** 是否睡眠 */
     @Expose
     internal var isSleepingLegacy = false
 
+    /** 是否从玩家列表中移除 */
     @Expose
     override var isHideFromTabList = true
         set(value) {
@@ -47,13 +56,13 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
-            spawn(viewer) {
+            prepareSpawn(viewer) {
                 // 创建玩家信息
                 addPlayerInfo(viewer)
                 // 创建客户端对应表
                 registerClientEntity(viewer)
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, playerUUID, position.toLocation())
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
                 // 修复玩家类型视角和装备无法正常显示的问题
                 submit(delay = 1) {
                     setHeadRotation(yaw, pitch, forceUpdate = true)
@@ -71,9 +80,10 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                         removePlayerInfo(viewer)
                     }
                 }
+                spawned = true
             }
         } else {
-            destroy(viewer) {
+            prepareDestroy(viewer) {
                 // 移除玩家信息
                 removePlayerInfo(viewer)
                 // 销毁实体
@@ -86,7 +96,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setName(name: String) {
         gameProfile.name = name.colored()
-        respawn()
+        refreshPlayer()
     }
 
     override fun getName(): String {
@@ -95,12 +105,12 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setPing(ping: Int) {
         gameProfile.ping = ping
-        respawn()
+        refreshPlayer(false)
     }
 
     override fun setPingBar(pingBar: PingBar) {
         gameProfile.setPingBar(pingBar)
-        respawn()
+        refreshPlayer(false)
     }
 
     override fun getPing(): Int {
@@ -112,9 +122,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         // 延迟加载皮肤
         submitAsync {
             try {
-                Adyeshach.api().getNetworkAPI().getSkin().getTexture(name)?.also {
-                    setTexture(it.value(), it.signature())
-                }
+                Adyeshach.api().getNetworkAPI().getSkin().getTexture(name)?.also { setTexture(it.value(), it.signature()) }
             } catch (t: Throwable) {
                 t.printStackTrace()
             }
@@ -123,7 +131,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setTexture(texture: String, signature: String) {
         gameProfile.texture = arrayOf(texture, signature)
-        respawn()
+        refreshPlayer()
     }
 
     override fun getTexture(): Array<String> {
@@ -136,7 +144,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun resetTexture() {
         gameProfile.texture = arrayOf("")
-        respawn()
+        refreshPlayer()
     }
 
     override fun setSleeping(value: Boolean) {
@@ -144,8 +152,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             if (minecraftVersion >= 11400) {
                 setPose(BukkitPose.SLEEPING)
             } else {
-                val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-                forViewers { operator.updatePlayerSleeping(it, index, position.toLocation()) }
+                // 1.13.2 以下版本无法使用 setPose 设置睡眠状态
+                forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updatePlayerSleeping(it, index, position.toLocation()) }
             }
         } else {
             if (minecraftVersion >= 11400) {
@@ -169,9 +177,21 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     override fun refreshPlayerInfo(viewer: Player) {
         removePlayerInfo(viewer)
         addPlayerInfo(viewer)
+        // 短暂延迟后删除玩家信息
         submit(delay = 5) {
             if (isHideFromTabList) {
                 removePlayerInfo(viewer)
+            }
+        }
+    }
+
+    protected fun refreshPlayer(respawn: Boolean = true) {
+        if (spawned) {
+            forViewers { refreshPlayerInfo(it) }
+            // 是否刷新实体
+            if (respawn) {
+                despawn()
+                respawn()
             }
         }
     }
@@ -180,11 +200,11 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         val event = AdyeshachGameProfileGenerateEvent(this, viewer, gameProfile.clone())
         event.call()
         val handler = Adyeshach.api().getMinecraftAPI().getEntityPlayerHandler()
-        handler.addPlayerInfo(viewer, playerUUID, event.gameProfile.name, event.gameProfile.ping, event.gameProfile.texture)
+        handler.addPlayerInfo(viewer, pid, event.gameProfile)
     }
 
     protected fun removePlayerInfo(viewer: Player) {
-        Adyeshach.api().getMinecraftAPI().getEntityPlayerHandler().removePlayerInfo(viewer, playerUUID)
+        Adyeshach.api().getMinecraftAPI().getEntityPlayerHandler().removePlayerInfo(viewer, pid)
     }
 
     companion object {

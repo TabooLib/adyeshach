@@ -33,7 +33,7 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
         // 低版本使用独立的 Painting 包生成实体
         val api = Adyeshach.api().getMinecraftAPI()
         return if (visible) {
-            spawn(viewer) {
+            prepareSpawn(viewer) {
                 registerClientEntity(viewer)
                 api.getEntitySpawner().spawnEntityPainting(viewer, index, normalizeUniqueId, position.toLocation(), direction, painting)
             }

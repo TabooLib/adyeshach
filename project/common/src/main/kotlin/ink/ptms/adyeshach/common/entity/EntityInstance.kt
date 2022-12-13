@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import org.bukkit.Location
-import taboolib.common.util.Vector
 
 /**
  * Adyeshach
@@ -92,7 +91,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     /**
      * 发送动量数据包
      */
-    fun setVelocity(vector: Vector)
+    fun setVelocity(vector: org.bukkit.util.Vector)
 
     /**
      * 修改实体视角

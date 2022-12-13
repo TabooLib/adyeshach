@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.common.entity.Meta
 import ink.ptms.adyeshach.common.entity.MetaMasked
 import ink.ptms.adyeshach.common.entity.Metaable
 import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaKeyLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaTypeLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.registeredEntityMeta
 import org.bukkit.entity.Player
@@ -82,6 +83,6 @@ interface DefaultMetaable : Metaable {
     }
 
     fun getByteMaskKey(index: Int): String {
-        return "\$${getAvailableEntityMeta().firstOrNull { it.index == index }!!.key.digest("md5").substring(0, 8)}"
+        return metaKeyLookup.computeIfAbsent(javaClass) { "\$${getAvailableEntityMeta().first { it.index == index }.key.digest("md5").substring(0, 8)}" }
     }
 }

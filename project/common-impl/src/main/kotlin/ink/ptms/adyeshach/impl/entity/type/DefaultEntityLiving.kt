@@ -31,12 +31,11 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
-            spawn(viewer) {
-                val clientId = normalizeUniqueId
+            prepareSpawn(viewer) {
                 // 创建客户端对应表
-                clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this, clientId)
+                clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this)
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, clientId, position.toLocation())
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 更新装备
                 submit(delay = 1) { updateEquipment() }
                 // 更新死亡状态
@@ -47,7 +46,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 }
             }
         } else {
-            destroy(viewer) {
+            prepareDestroy(viewer) {
                 // 销毁实体
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
                 // 移除客户端对应表

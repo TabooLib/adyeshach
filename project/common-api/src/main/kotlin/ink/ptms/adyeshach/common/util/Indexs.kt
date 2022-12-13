@@ -6,7 +6,7 @@ import taboolib.common.util.random
  * @author sky
  * @since 2020-08-04 13:00
  */
-@Suppress("SpellCheckingInspection")
+@Suppress("SpellCheckingInspection", "GrazieInspection")
 object Indexs {
 
     var index = 449599 + random(0, 702)

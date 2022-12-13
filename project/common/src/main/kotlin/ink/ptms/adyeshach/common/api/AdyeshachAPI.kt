@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.common.api
 
 import ink.ptms.adyeshach.common.entity.manager.Manager
+import ink.ptms.adyeshach.common.entity.manager.ManagerType
 import org.bukkit.entity.Player
 
 /**
@@ -30,17 +31,17 @@ interface AdyeshachAPI {
     /**
      * 获取公共单位管理器
      *
-     * @param temporary 是否为临时容器
+     * @param type 容器类型
      */
-    fun getPublicEntityManager(temporary: Boolean = false): Manager
+    fun getPublicEntityManager(type: ManagerType = ManagerType.PERSISTENT): Manager
 
     /**
      * 获取私有单位管理器
      *
      * @param player 玩家
-     * @param temporary 是否为临时容器
+     * @param type 容器类型
      */
-    fun getPrivateEntityManager(player: Player, temporary: Boolean = false): Manager
+    fun getPrivateEntityManager(player: Player, type: ManagerType = ManagerType.PERSISTENT): Manager
 
     /**
      * 获取用于检索实体的工具

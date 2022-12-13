@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.api.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.common.entity.EntityBase
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.EntitySize
 import ink.ptms.adyeshach.common.entity.EntityTypes
@@ -40,11 +41,11 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
             return field
         }
 
-    val entityClass = HashMap<EntityTypes, Class<*>>()
+    val entityClass = HashMap<EntityTypes, EntityBase>()
         get() {
             if (field.isEmpty()) {
                 val time = System.currentTimeMillis()
-                field.putAll(generateEntityClasses())
+                field.putAll(generateEntityBase())
                 info("Proxy classes has been generated (${System.currentTimeMillis() - time}ms)")
             }
             return field
@@ -90,7 +91,7 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
     }
 
     override fun getEntityInstance(entityType: EntityTypes): EntityInstance {
-        return entityClass[entityType]!!.invokeConstructor(entityType) as EntityInstance
+        return entityClass[entityType]!!.createEmpty() as EntityInstance
     }
 
     override fun getEntityFlags(entityType: EntityTypes): List<String> {
@@ -105,15 +106,17 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
         this.callback += callback
     }
 
-    fun generateEntityClasses(): Map<EntityTypes, Class<*>> {
-        val map = HashMap<EntityTypes, Class<*>>()
+    fun generateEntityBase(): Map<EntityTypes, EntityBase> {
+        val map = HashMap<EntityTypes, EntityBase>()
         types.forEach { (k, v) ->
             val name = "adyeshach.Proxy${v.adyeshachInterface.simpleName}"
             val interfaces = if (v.instanceWithInterface) arrayListOf(v.namespace) else arrayListOf()
             // 执行回调函数
             callback.forEach { interfaces += it(k, interfaces) }
             // 生成类
-            map[k] = AsmClassLoader.createNewClass(name, generator.generate(name, v.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
+            val newClass = AsmClassLoader.createNewClass(name, generator.generate(name, v.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
+            // 生成实例
+            map[k] = newClass.invokeConstructor(k) as EntityBase
         }
         return map
     }

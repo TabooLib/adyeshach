@@ -5,8 +5,8 @@ import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyItem
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
-import taboolib.common.util.Vector
 
 /**
  * Adyeshach
@@ -19,7 +19,7 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
-            spawn(viewer) {
+            prepareSpawn(viewer) {
                 // 创建客户端对应表
                 registerClientEntity(viewer)
                 // 修正掉落物信息

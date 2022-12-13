@@ -28,7 +28,7 @@ abstract class DefaultExperienceOrb(entityTypes: EntityTypes) : DefaultEntity(en
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
-            spawn(viewer) {
+            prepareSpawn(viewer) {
                 registerClientEntity(viewer)
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityExperienceOrb(viewer, index, position.toLocation(), amount)
             }

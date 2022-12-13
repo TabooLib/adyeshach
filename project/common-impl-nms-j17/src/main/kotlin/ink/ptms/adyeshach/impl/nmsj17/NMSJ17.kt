@@ -1,8 +1,11 @@
 package ink.ptms.adyeshach.impl.nmsj17
 
 import ink.ptms.adyeshach.common.api.MinecraftMeta
-import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata
-import net.minecraft.network.syncher.DataWatcher
+import ink.ptms.adyeshach.common.bukkit.data.GameProfile
+import ink.ptms.adyeshach.common.bukkit.data.GameProfileAction
+import taboolib.common.util.unsafeLazy
+import taboolib.module.nms.nmsProxy
+import java.util.*
 
 /**
  * Adyeshach
@@ -12,9 +15,25 @@ import net.minecraft.network.syncher.DataWatcher
  * @since 2022/12/13 02:59
  */
 @Suppress("UNCHECKED_CAST")
-object NMSJ17 {
+abstract class NMSJ17 {
 
-    fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
-        return PacketPlayOutEntityMetadata(entityId, packedItems.map { (it.source() as DataWatcher.Item<*>).value() })
+    abstract fun entityTypeGetId(any: Any): Int
+
+    abstract fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any
+
+    abstract fun createClientboundPlayerInfoAddPacket(uuid: UUID, gameProfile: GameProfile): Any
+
+    abstract fun createClientboundPlayerInfoUpdatePacket(uuid: UUID, gameProfile: GameProfile, actions: List<GameProfileAction>): Any
+
+    abstract fun createClientboundPlayerInfoRemovePacket(uuid: UUID): Any
+
+    abstract fun createClientboundPlayerInfoUpdatePacketAction(action: GameProfileAction): Any
+
+    abstract fun createClientboundPlayerInfoUpdatePacketProfile(uuid: UUID, gameProfile: GameProfile): Any
+
+    companion object {
+
+        @JvmStatic
+        val instance by unsafeLazy { nmsProxy<NMSJ17>() }
     }
 }

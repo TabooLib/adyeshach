@@ -135,4 +135,12 @@ class DefaultMinecraftHelper : MinecraftHelper {
     override fun vec3dToVector(vec3d: Any): Vector {
         return Vector((vec3d as NMS16Vec3D).x, vec3d.y, vec3d.z)
     }
+
+    override fun craftChatSerializerToJson(compound: Any): String {
+        return NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+    }
+
+    override fun craftChatMessageFromString(message: String): Any {
+        return CraftChatMessage19.fromString(message)[0]
+    }
 }

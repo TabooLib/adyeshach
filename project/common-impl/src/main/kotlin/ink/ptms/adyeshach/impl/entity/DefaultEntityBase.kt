@@ -19,8 +19,10 @@ import java.util.concurrent.ConcurrentHashMap
  */
 abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) : EntityBase, DefaultMetaable, DefaultTagContainer, DefaultSerializable {
 
+    /** 临时标签 */
     val tag = ConcurrentHashMap<String, String>()
 
+    /** 持久化标签 */
     @Expose
     val persistentTag = ConcurrentHashMap<String, String>()
 
@@ -30,18 +32,38 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
     @Expose
     val metadataMask = ConcurrentHashMap<String, MutableMap<String, Boolean>>()
 
+    /**
+     * 实体鉴别 ID
+     */
     @Expose
-    override var id = UUID.randomUUID().toString().replace("-", "").substring(0, 8)
+    override var id = UUID.randomUUID().toString().substring(0, 8)
 
+    /**
+     * 实体唯一 ID
+     */
     @Expose
-    override val uniqueId = UUID.randomUUID().toString().replace("-", "")
+    final override val uniqueId = UUID.randomUUID().toString()
 
+    /**
+     * 将实体唯一 ID 转换为 UUID 类型
+     * 历史遗留问题
+     */
+    final override val normalizeUniqueId: UUID = if (uniqueId.contains('-')) {
+        FastUUID.parseUUID(uniqueId)
+    } else {
+        val id = uniqueId
+        FastUUID.parseUUID("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
+    }
+
+    /** 实体位置 */
     @Expose
     override var position = EntityPosition.empty()
         get() = field.clone()
 
+    /** 是否为测试类型 */
     override var testing = false
 
+    /** 是否为无效类型 */
     override var invalid = false
 
     override val x: Double
@@ -58,12 +80,6 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
 
     override val pitch: Float
         get() = position.pitch
-
-    override val normalizeUniqueId: UUID
-        get() {
-            val id = uniqueId
-            return FastUUID.parseUUID("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
-        }
 
     override fun getWorld(): World {
         return position.world

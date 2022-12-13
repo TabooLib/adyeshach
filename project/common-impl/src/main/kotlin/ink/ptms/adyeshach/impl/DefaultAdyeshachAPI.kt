@@ -1,6 +1,9 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.*
+import ink.ptms.adyeshach.common.entity.manager.ManagerType
+import ink.ptms.adyeshach.impl.entity.manager.BaseManager
+import ink.ptms.adyeshach.impl.entity.manager.BasePlayerManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
@@ -45,10 +48,13 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     var localNetworkAPI = DefaultAdyeshachNetworkAPI()
 
     /** 语言文件接口 **/
-    var localLanguage = DefaultAdyeshachLanguage()
+    var localLanguage = PlatformFactory.getAPI<AdyeshachLanguage>()
 
     /** 公共单位管理器 **/
     var localPublicEntityManager = DefaultManager()
+
+    /** 公共单位管理器（孤立） **/
+    var localPublicEntityManagerIsolated = DefaultManager()
 
     /** 公共单位管理器（临时） **/
     var localPublicEntityManagerTemporary = DefaultManager()
@@ -61,7 +67,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers += player.name
             }
-            getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
+            getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers += player.name
             }
             // 私有管理器
@@ -75,14 +81,14 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
                 it.removeViewer(player)
             }
-            getPublicEntityManager(true).getEntities { it.visibleAfterLoaded }.forEach {
+            getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
                 it.removeViewer(player)
             }
             // 私有管理器
             var privateManager = getPrivateEntityManager(player)
             privateManager.onDisable()
             privateManager.onSave()
-            privateManager = getPrivateEntityManager(player, true)
+            privateManager = getPrivateEntityManager(player, ManagerType.TEMPORARY)
             privateManager.onDisable()
             // 移除管理器
             playerEntityManagerMap.remove(player.name)
@@ -95,12 +101,19 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         localEntityFinder.getVisibleEntities(player).forEach { it.visible(player, true) }
     }
 
-    override fun getPublicEntityManager(temporary: Boolean): DefaultManager {
-        return if (temporary) localPublicEntityManagerTemporary else localPublicEntityManager
+    override fun getPublicEntityManager(type: ManagerType): BaseManager {
+        return when (type) {
+            ManagerType.PERSISTENT -> localPublicEntityManager
+            ManagerType.TEMPORARY -> localPublicEntityManagerTemporary
+            ManagerType.ISOLATED -> localPublicEntityManagerIsolated
+        }
     }
 
-    override fun getPrivateEntityManager(player: Player, temporary: Boolean): DefaultPlayerManager {
-        val map = if (temporary) playerEntityTemporaryManagerMap else playerEntityManagerMap
+    override fun getPrivateEntityManager(player: Player, type: ManagerType): BaseManager {
+        if (type == ManagerType.ISOLATED) {
+            return BasePlayerManager(player)
+        }
+        val map = if (type == ManagerType.TEMPORARY) playerEntityTemporaryManagerMap else playerEntityManagerMap
         return if (map.containsKey(player.name)) {
             map[player.name]!!
         } else {

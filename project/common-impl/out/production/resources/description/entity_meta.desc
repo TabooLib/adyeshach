@@ -1,0 +1,691 @@
+ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
+    radius f 0.5
+        17 8
+        16 -
+    color i
+        ~
+    ignoreRadius z
+        ~
+    particle !Particle EFFECT
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyArmorStand
+    isSmall 1b | hasArms 4b | noBasePlate 8b | isMarker 16b
+        17 15
+        15 -
+        14 -
+        10 --
+        09 -
+    hasGravity 2b
+        10 !
+        09 10
+    angleHead !EulerAngle
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    angleBody !EulerAngle
+        ~
+    angleLeftArm !EulerAngle -10 0 -10
+        ~
+    angleRightArm !EulerAngle -15 0 10
+        ~
+    angleLeftLeg !EulerAngle -1 0 -1
+        ~
+    angleRightLeg !EulerAngle 1 0 1
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyArrow
+    isCritical 1b
+        17 8
+        16 -
+        10 -
+        09 -
+    noclip 2b
+        17 8
+        14 -
+    piercingLevel b
+        1709
+        16 -
+        1509
+    color i -1
+        17 10
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyBat
+    isHanging 1b
+        17 16
+        16 -
+        10 ---
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyBee
+    unUsed 1b | isFlip 1b | hasStung 4b | hasNectar 8b
+        17 17
+        15 -
+    angerTicks i
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyBlaze
+    fire 1b
+        17 16
+        16 -
+        11 ---
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyBoat
+    sinceLastHit i
+        17 8
+        16 -
+        10 -
+        09 -
+    forwardDirection i 1
+        ~
+    damageTaken f
+        ~
+    type i 0
+        ~
+    leftPaddleTurning z
+        17 12
+        16 -
+        10 ~
+        09 -
+    rightPaddleTurning z
+        17 13
+        16 -
+        11 --
+        09 -
+    splashTimer i
+        17 14
+        16 -
+        13 -
+
+ink.ptms.adyeshach.common.entity.type.AdyCat
+    type i
+        17 19
+        15 -
+    isLying z
+        17 20
+    isRelaxed z
+        ~
+    color i 14
+        17 22
+        15 -
+
+ink.ptms.adyeshach.common.entity.type.AdyCreeper
+    state i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    isCharged z
+        ~
+    isIgnited z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyDolphin
+    findTreasure z
+        17 17
+        15 -
+        14 -
+        13 --
+    hasFish z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
+    beamTarget !Vector
+        17 8
+        14 -
+        10 -
+        09 -
+    showBottom z true
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+    dragonPhase i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyEnderman
+    carriedBlock !Material
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    isScreaming z
+        ~
+    isStaring z
+        17 18
+        15 -
+
+ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
+    item !ItemStack ENDER_EYE
+        17 8
+        14 -
+
+ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
+    fireworkInfo !ItemStack
+        17 8
+        14 -
+        11 -
+        0909
+
+ink.ptms.adyeshach.common.entity.type.AdyFox
+    isSitting 1b | isCrouching 4b | isSleeping 32b
+        17 18
+        15 -
+        14 -
+    isInterested 8b | isPouncing 16b | isFaceplanted 64b | isDefending 128b
+        17 18
+        15 -
+    type i
+        17 17
+        15 -
+        14 -
+
+ink.ptms.adyeshach.common.entity.type.AdyGhast
+    isAttacking z
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyGoat
+    isScreamingGoat z
+        19 17
+    hasLeftHorn z true
+        ~
+    hasRightHorn z true
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyGuardian
+    isRetractingSpikes 2b | isElderly 4b
+        12 !
+        10 12
+        09 -
+    isRetractingSpikes z
+        17 16
+        15 -
+        14 -
+        11 -
+    targetEntity i
+        ~
+        09 12
+
+ink.ptms.adyeshach.common.entity.type.AdyHorse
+    variant i
+        17 19
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyItem
+    item !ItemStack APPLE
+        17 8
+        13 -
+        10 -
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyItemFrame
+    item !ItemStack
+        17 8
+        13 -
+        10 -
+        09 -
+    rotation i
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+    item !ItemStack
+        16 7
+
+ink.ptms.adyeshach.common.entity.type.AdyLlama
+    carpetColor i
+        17 21
+        15 -
+        14 -
+        10 --
+    color i
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyMinecart
+    customBlock i
+        17 11
+        14 -
+        10 -
+        09 -
+    customBlockPosition i 6
+        ~
+    showCustomBlock z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyMinecartFurnace
+    hasFuel z
+        17 14
+        14 -
+        10 -
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyMushroom
+    type t red
+        17 17
+        15 -
+        14 -
+
+ink.ptms.adyeshach.common.entity.type.AdyOcelot
+    isSitting 1b | isAngry 2b | isTamed 4b
+        14 !
+        10 13
+        09 -
+    isTrusting z
+        @14+
+        17 17
+        15 -
+        14 -
+    type i
+        @14-
+        10 15
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyPainting
+    paintingVariant !Painting
+        19 8
+
+ink.ptms.adyeshach.common.entity.type.AdyPanda
+    isSneezing 2b | isEating 4b | isSitting 8b | isOnBack 16b
+        17 22
+        15 -
+        14 -
+
+ink.ptms.adyeshach.common.entity.type.AdyParrot
+    color i
+        17 19
+        15 -
+        14 -
+        12 --
+
+ink.ptms.adyeshach.common.entity.type.AdyPhantom
+    size i
+        17 16
+        15 -
+        14 -
+        13 --
+
+ink.ptms.adyeshach.common.entity.type.AdyPig
+    hasSaddle z
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyPiglin
+    isImmuneToZombification z
+        17 16
+        16 -
+    isBaby z
+        ~
+    isChargingCrossbow z
+        ~
+    isDancing z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyPillager
+    isCharging z
+        17 17
+
+ink.ptms.adyeshach.common.entity.type.AdyPolarBear
+    isStanding z
+        17 17
+        15 -
+        14 -
+        10 --
+
+ink.ptms.adyeshach.common.entity.type.AdyPrimedTNT
+    fuseTime i 80
+        17 8
+        14 -
+        10 -
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyPufferfish
+    puffState i
+        17 17
+        15 -
+        14 -
+        13 --
+
+ink.ptms.adyeshach.common.entity.type.AdyRabbit
+    type i 2
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdySheep
+    dyeColor !SheepColor | isSheared 16b
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyShulker
+    attachFace i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    attachPosition !Vector
+        ~
+    shieldHeight b
+        ~
+    color i 10
+        17 19
+        15 -
+        14 -
+        10 --
+
+ink.ptms.adyeshach.common.entity.type.AdySlime
+    size i 1
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
+    item !ItemStack FIRE_CHARGE
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdySnowGolem
+    hasPumpkinHat 16b true | hasNoPumpkinHat 0b
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdySnowball
+    item !ItemStack SNOWBALL
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdySpider
+    isClimbing 1b
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyStrider
+    isShaking z
+        17 18
+    hasSaddle z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
+    item !ItemStack EGG
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
+    item !ItemStack ENDER_PEARL
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
+    item !ItemStack EXPERIENCE_BOTTLE
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
+    item !ItemStack
+        17 8
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
+    loyaltyLevel i
+        13 10
+    hasEnchantmentGlint z
+        15 11
+
+ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
+    variant i
+        17 17
+        15 -
+        14 -
+        13 --
+
+ ink.ptms.adyeshach.common.entity.type.AdyTurtle
+    hasEgg z
+        15 18
+        14 -
+        13 --
+    layingEgg z
+        ~
+    isGoingHome z
+        ~
+    isTraveling z
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyVex
+    attackMode z
+        17 16
+        15 -
+        14 -
+        13 -
+        11 -
+
+ink.ptms.adyeshach.common.entity.type.AdyVillager
+    headShakeTimer i
+        @14+
+        17 17
+    villagerData !VillagerData
+        @14+
+        17 18
+        15 -
+        14 -
+    profession i
+        @14-
+        13 13
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyWitch
+    isDrinkingPotion z
+        17 17
+        15 -
+        14 -
+        13 ---
+
+ink.ptms.adyeshach.common.entity.type.AdyWither
+    firstHeadTarget i
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    secondHeadTarget i
+        ~
+    thirdHeadTarget i
+        ~
+    invulnerableTime i
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+    invulnerable z
+        17 8
+        14 -
+        10 -
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyWolf
+    isBegging z
+        17 19
+        14 -
+        10 --
+        09 -
+    collarColor i 14
+        ~
+
+ink.ptms.adyeshach.common.entity.type.AdyZombie
+    isBaby z
+        17 16
+        15 -
+        14 -
+        10 --
+        09 -
+    isBecomingDrowned z
+        @17+
+        17 18
+    isDrowning z
+        @17-
+        15 17
+        14 -
+        13 -
+    isConverting z
+        @17-
+        15 18
+        14 -
+        13 -
+        11 -
+        10 -
+        09 -
+    isHandsHeldUp z
+        14 !
+        12 14
+        10 15
+        09 -
+    zombieType i
+        14 !
+        10 13
+        09 12
+
+ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
+    isConverting z
+        @14+
+        17 19
+    villagerData !VillagerData
+        @14+
+        17 20
+        15 -
+        14 -
+    profession i
+        @14-
+        13 17
+        11 -
+
+ink.ptms.adyeshach.common.entity.type.AdyHuman
+    skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+    arrowsInEntity i
+        17 12
+        16 -
+    beeStingersInEntity i
+        ~
+
+#################################
+#                               #
+#           INTERFACE           #
+#                               #
+#################################
+
+ink.ptms.adyeshach.common.entity.type.AdyFish
+    fromBucket z
+        17 16
+        15 -
+        14 -
+        13 --
+
+ink.ptms.adyeshach.common.entity.type.AdyRaider
+    isCelebrating z
+        17 16
+        15 -
+        14 -
+
+ink.ptms.adyeshach.common.entity.type.AdyEntityAgeable
+    isBaby z
+        17 16
+        15 -
+        14 -
+        11 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyMob
+    isLeftHanded 2b
+        17 15
+        15 -
+        14 -
+        10 --
+    isAgressive 4b
+        17 15
+        16 -
+
+ink.ptms.adyeshach.common.entity.type.AdyHorseChested
+    hasChest z
+        17 19
+        15 -
+        14 -
+        11 --
+
+ink.ptms.adyeshach.common.entity.type.AdyEntityTameable
+    isSitting 1b | isAngry 2b | isTamed 4b
+        17 17
+        15 -
+        14 -
+        10 --
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyHorseBase
+    isTamed 2b | isSaddled 4b | hasBred 8b | isEating 16b | isRearing 32b | isMouthOpen 64b
+        @13+
+        17 17
+        15 -
+        14 -
+        13 --
+    isTamed 2b | isSaddled 4b | hasChest 8b | hasBred 16b | isEating 32b | isRearing 64b | isMouthOpen 128b
+        @13-
+        11 13
+        09 -
+
+ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
+     isHandActive 1b | activeHand 2b | isInRiptideSpinAttack 4b
+        @17+
+        17 8
+     health f 1.0
+        17 9
+        14 -
+        10 -
+        09 -
+     potionEffectColor i
+        ~
+
+ink.ptms.adyeshach.common.entity.EntityInstance
+    onFire 1b | isCrouched 2b | unUsedRiding 4b | isSprinting 8b | isSwimming 16b | isInvisible 32b | isGlowing 64b | isFlyingElytra 128b
+        0
+    customName !TextComponent
+        2
+    isCustomNameVisible z
+        3
+    noGravity z
+        10 5
+    pose !BukkitPose
+        14 6
+    ticksFrozenInPowderedSnow i
+        17 7

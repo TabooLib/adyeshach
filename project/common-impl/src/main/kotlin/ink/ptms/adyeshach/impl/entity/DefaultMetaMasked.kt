@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.MetaMasked
 import org.bukkit.entity.Player
+import taboolib.common.util.unsafeLazy
 
 /**
  * Adyeshach
@@ -15,10 +16,13 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/20 01:32
  */
+@Suppress("UNCHECKED_CAST")
 class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, mask: Byte, def: Boolean) : MetaMasked<T>(index, key, mask, def) {
 
+    val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(Byte.MIN_VALUE) as MinecraftMetadataParser<Any> }
+
     override fun getMetadataParser(): MinecraftMetadataParser<Any> {
-        return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(Byte.MIN_VALUE)!!
+        return parser
     }
 
     override fun generateMetadata(player: Player, entityInstance: EntityInstance): MinecraftMeta? {
@@ -34,7 +38,7 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, mask: Byte,
         }
         if (event.call()) {
             event.byteMask.filter { it.value }.forEach { (k, _) -> bits += k.mask }
-            return getMetadataParser().createMeta(index, bits.toByte())
+            return parser.createMeta(index, bits.toByte())
         }
         return null
     }

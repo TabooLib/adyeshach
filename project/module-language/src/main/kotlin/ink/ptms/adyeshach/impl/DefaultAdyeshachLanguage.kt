@@ -2,6 +2,9 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.common.api.AdyeshachLanguage
 import org.bukkit.command.CommandSender
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.platform.util.asLangTextOrNull
 import taboolib.platform.util.sendLang
 
@@ -20,5 +23,13 @@ class DefaultAdyeshachLanguage : AdyeshachLanguage {
 
     override fun getLang(sender: CommandSender, key: String, vararg args: Any): String? {
         return sender.asLangTextOrNull(key, *args)
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachLanguage>(DefaultAdyeshachLanguage())
+        }
     }
 }

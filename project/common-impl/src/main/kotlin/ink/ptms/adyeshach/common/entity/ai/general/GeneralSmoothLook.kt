@@ -27,10 +27,6 @@ class GeneralSmoothLook(entity: EntityInstance) : Controller(entity) {
         TODO("Not yet implemented")
     }
 
-    override fun onTick() {
-        TODO("Not yet implemented")
-    }
-
     fun normalizeYaw(yaw: Float): Float {
         var y = yaw
         y %= 360.0f

@@ -19,23 +19,35 @@ import java.util.function.Function
  */
 class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
 
-    override fun createHologramItem(text: String): AdyeshachHologram.ItemByText {
+    override fun createHologramItem(text: String, space: Double): AdyeshachHologram.ItemByText {
         TODO("Not yet implemented")
     }
 
-    override fun createHologramItem(text: ItemStack): AdyeshachHologram.ItemByItemStack {
+    override fun createHologramItem(text: ItemStack, space: Double): AdyeshachHologram.ItemByItemStack {
         TODO("Not yet implemented")
     }
 
-    override fun <T : AdyEntity> createHologramItem(type: EntityTypes, text: Consumer<T>): AdyeshachHologram.ItemByEntity<T> {
+    override fun <T : AdyEntity> createHologramItem(type: EntityTypes, space: Double, text: Consumer<T>): AdyeshachHologram.ItemByEntity<T> {
         TODO("Not yet implemented")
     }
 
-    override fun createHologram(player: Player, location: Location, content: List<AdyeshachHologram.Item>): AdyeshachHologram {
+    override fun createHologram(location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
         TODO("Not yet implemented")
     }
 
-    override fun createHologramByText(player: Player, location: Location, content: List<String>): AdyeshachHologram {
+    override fun createHologram(player: Player, location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
+        TODO("Not yet implemented")
+    }
+
+    override fun createHologramByText(location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
+        TODO("Not yet implemented")
+    }
+
+    override fun createHologramByText(player: Player, location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
+        TODO("Not yet implemented")
+    }
+
+    override fun createHologramMessage(location: Location, message: List<String>, stay: Long, transfer: Function<String, String>) {
         TODO("Not yet implemented")
     }
 

@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val taboolib_version: String by project
+
 plugins {
     id("org.gradle.java")
     id("org.gradle.maven-publish")
@@ -16,11 +18,23 @@ subprojects {
         maven { url = uri("https://repo.tabooproject.org/repository/releases/") }
     }
     dependencies {
-        compileOnly(kotlin("stdlib"))
+        compileOnly("io.izzel.taboolib:common:$taboolib_version")
+        compileOnly("io.izzel.taboolib:common-5:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-chat:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-configuration:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-lang:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-nms:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-nms-util:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-ui:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-navigation:$taboolib_version")
+        compileOnly("io.izzel.taboolib:platform-bukkit:$taboolib_version")
+        compileOnly("ink.ptms.core:v11604:11604")
         compileOnly("ink.ptms:nms-all:1.0.0")
         compileOnly("com.google.code.gson:gson:2.8.5")
         compileOnly("com.google.guava:guava:21.0")
-        compileOnly("ink.ptms.core:v11604:11604")
+        compileOnly("com.eatthepath:fast-uuid:0.2.0")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:2.8.5")
+        compileOnly(kotlin("stdlib"))
     }
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"

@@ -10,4 +10,9 @@ import java.util.function.Function
  * @author 坏黑
  * @since 2022/6/15 23:38
  */
-class ControllerGenerator(val type: Class<out Controller>, val generator: Function<EntityInstance, Controller>)
+class ControllerGenerator(val type: Class<out Controller>, val func: Function<EntityInstance, Controller>) {
+
+    operator fun invoke(entity: EntityInstance): Controller {
+        return func.apply(entity)
+    }
+}

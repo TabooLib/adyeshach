@@ -20,5 +20,4 @@ class DefaultAdyeshachKetherHandler : AdyeshachKetherHandler {
     override fun parseInline(source: String, player: Player?, vars: Map<String, Any>): String {
         TODO("Not yet implemented")
     }
-
 }

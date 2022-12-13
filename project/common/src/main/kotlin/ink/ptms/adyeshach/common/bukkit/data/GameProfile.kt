@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.common.bukkit.data
 
 import com.google.gson.annotations.Expose
+import com.mojang.authlib.properties.Property
+import java.util.*
 
 /**
  * @author sky
@@ -29,11 +31,30 @@ class GameProfile {
     @Expose
     var texture = arrayOf("")
 
+    /**
+     * 玩家皮肤
+     * 因历史遗留问题，该数组所表示为：[0] = texture，[1] = signature
+     */
     @Expose
     var textureName = ""
 
+    @Expose
+    var spectator = false
+
+    @Expose
+    var listed = true
+
     fun setPingBar(pingBar: PingBar) {
         ping = pingBar.value
+    }
+
+    fun toMojang(uuid: UUID): com.mojang.authlib.GameProfile {
+        val mojangProfile = com.mojang.authlib.GameProfile(uuid, name)
+        // 如果有皮肤则添加皮肤
+        if (texture.size == 2) {
+            mojangProfile.properties.put("textures", Property("textures", texture[0], texture[1]))
+        }
+        return mojangProfile
     }
 
     fun clone(): GameProfile {
@@ -42,6 +63,8 @@ class GameProfile {
         gameProfile.ping = ping
         gameProfile.texture = texture.clone()
         gameProfile.textureName = textureName
+        gameProfile.spectator = spectator
+        gameProfile.listed = listed
         return gameProfile
     }
 }

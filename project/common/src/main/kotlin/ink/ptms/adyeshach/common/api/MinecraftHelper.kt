@@ -68,4 +68,14 @@ interface MinecraftHelper {
      * 将 Vec3d 转换为 Vector 类型
      */
     fun vec3dToVector(vec3d: Any): Vector
+
+    /**
+     * 使用 ChatSerializer 将 IChatBaseComponent 转换为 String 类型
+     */
+    fun craftChatSerializerToJson(compound: Any): String
+
+    /**
+     * 使用 CraftChatMessage 将字符串转换为 IChatBaseComponent 类型
+     */
+    fun craftChatMessageFromString(message: String): Any
 }

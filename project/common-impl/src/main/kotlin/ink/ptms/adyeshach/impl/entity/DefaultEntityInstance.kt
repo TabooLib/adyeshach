@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.common.entity.*
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.ai.PrepareController
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.errorBy
@@ -21,11 +20,12 @@ import org.bukkit.event.world.WorldUnloadEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
-import taboolib.common.util.Vector
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
-import java.util.concurrent.Executors
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -34,32 +34,37 @@ import java.util.concurrent.Executors
  * @author 坏黑
  * @since 2022/6/19 21:26
  */
+@Suppress("LeakingThis")
 abstract class DefaultEntityInstance(entityType: EntityTypes) :
     DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultViewable, InternalEntity, TickService {
 
+    /** 实体序号 */
     override val index: Int = Indexs.nextIndex()
 
-    override var manager: Manager? = null
-        set(value) {
-            if (field != null && value != null) {
-                errorBy("error-manager-has-been-initialized")
-            }
-            field = value
-        }
+    /** 可见玩家 */
+    override val viewPlayers = DefaultViewPlayers(this)
 
+    /** 移动速度 */
     @Expose
     override var moveSpeed = 0.2
 
-    @Expose
-    val controller = CopyOnWriteArraySet<Controller>()
+    /** Ady 的小脑 */
+    var brain = SimpleBrain(this)
 
+    /** 骑乘者 */
     @Expose
     var passengers = CopyOnWriteArraySet<String>()
 
+    /** 控制器 */
+    @Expose
+    var controller = CopyOnWriteArrayList<Controller>()
+
+    /** 可视距离 */
     @Expose
     override var visibleDistance = -1.0
         get() = if (field == -1.0) AdyeshachSettings.visibleDistance else field
 
+    /** 加载后自动显示 */
     @Expose
     override var visibleAfterLoaded = true
         set(value) {
@@ -72,25 +77,35 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             field = value
         }
 
+    /** ModelEngine 唯一序号 */
+    var modelEngineUniqueId: UUID? = null
+
+    /** ModelEngine 支持 */
     @Expose
     var modelEngineName = ""
         set(value) {
             field = value
+            // 重新加载模型
             if (this is ModelEngine) {
                 refreshModelEngine()
             }
         }
 
-    var modelEngineUniqueId: UUID? = null
+    /** 管理器 */
+    override var manager: Manager? = null
+        set(value) {
+            if (field != null && value != null) {
+                errorBy("error-manager-has-been-initialized")
+            }
+            field = value
+        }
 
-    @Suppress("LeakingThis")
-    override val viewPlayers = DefaultViewPlayers(this)
-
-    override fun spawn(viewer: Player, spawn: Runnable): Boolean {
+    override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
             // 若未生成 ModelEngine 模型则发送原版数据包
             // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
             if (this !is ModelEngine || !showModelEngine(viewer)) {
+                // 调用生成方法
                 spawn.run()
             }
             // 更新单位属性
@@ -104,10 +119,11 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         return false
     }
 
-    override fun destroy(viewer: Player, destroy: Runnable): Boolean {
+    override fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
             // 销毁模型
             if (this !is ModelEngine || !hideModelEngine(viewer)) {
+                // 调用销毁方法
                 destroy.run()
             }
             return true
@@ -195,9 +211,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
     }
 
-    override fun setVelocity(vector: Vector) {
+    override fun setVelocity(vector: org.bukkit.util.Vector) {
         forViewers {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(it, index, org.bukkit.util.Vector(vector.x, vector.y, vector.z))
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(it, index, vector)
         }
     }
 
@@ -226,34 +242,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     }
 
     override fun onTick() {
-        // 确保客户端显示实体正常
-        if (viewPlayers.visibleRefreshLocker.hasNext()) {
-            // 复活在可视范围内的实体
-            viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
-                if (visible(player, true)) {
-                    viewPlayers.visible += player.name
-                }
-            }
-            // 销毁不在可视范围内的实体
-            viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-                if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
-                    viewPlayers.visible -= player.name
-                }
-            }
-        }
-        // 只有存在可见玩家时才会处理实体控制器
-        if (viewPlayers.hasVisiblePlayer()) {
-            val loc = getLocation()
-            // 实体逻辑处理
-            controller.filter { getChunkAccess(getWorld()).isChunkLoaded(loc.blockX shr 4, loc.blockZ shr 4) && it.shouldExecute() }.forEach {
-                when {
-                    it is PrepareController -> {
-                        controller.add(it.controller.generator.apply(this))
-                        controller.remove(it)
+        // 所在区块是否加载
+        if (getChunkAccess(getWorld()).isChunkLoaded(floor(x).toInt() shr 4, floor(z).roundToInt() shr 4)) {
+            // 确保客户端显示实体正常
+            if (viewPlayers.visibleRefreshLocker.hasNext()) {
+                // 复活在可视范围内的实体
+                viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
+                    if (visible(player, true)) {
+                        viewPlayers.visible += player.name
                     }
-                    it.isAsync() -> pool.submit { it.onTick() }
-                    else -> it.onTick()
                 }
+                // 销毁不在可视范围内的实体
+                viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
+                    if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
+                        viewPlayers.visible -= player.name
+                    }
+                }
+            }
+            // 只有存在可见玩家时才会处理实体控制器
+            if (viewPlayers.hasVisiblePlayer()) {
+                // 实体逻辑处理
+                brain.tick()
             }
         }
     }
@@ -281,7 +290,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     companion object {
 
-        private val pool = Executors.newFixedThreadPool(16)!!
         private val chunkAccess = ConcurrentHashMap<String, ChunkAccess>()
 
         fun getChunkAccess(world: World): ChunkAccess {

@@ -20,8 +20,4 @@ class GeneralGravity(entity: EntityInstance) : Controller(entity) {
     override fun shouldExecute(): Boolean {
         TODO("Not yet implemented")
     }
-
-    override fun onTick() {
-        TODO("Not yet implemented")
-    }
 }

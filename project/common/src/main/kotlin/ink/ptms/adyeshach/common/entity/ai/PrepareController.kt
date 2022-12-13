@@ -7,12 +7,9 @@ package ink.ptms.adyeshach.common.entity.ai
  * @author 坏黑
  * @since 2022/6/19 23:01
  */
-class PrepareController(val controller: ControllerGenerator): Controller() {
+class PrepareController(val generator: ControllerGenerator): Controller() {
 
     override fun shouldExecute(): Boolean {
         return true
-    }
-
-    override fun onTick() {
     }
 }

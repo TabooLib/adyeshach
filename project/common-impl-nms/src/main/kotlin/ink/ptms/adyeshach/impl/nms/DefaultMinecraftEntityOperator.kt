@@ -151,7 +151,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     override fun updateEntityMetadata(player: Player, entityId: Int, vararg metadata: MinecraftMeta) {
         // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
         if (majorLegacy >= 11903) {
-            packetHandler.sendPacket(player, NMSJ17.createPacketPlayOutEntityMetadata(entityId, metadata.toList()))
+            packetHandler.sendPacket(player, NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metadata.toList()))
         } else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityMetadata(createDataSerializer {
                 writeVarInt(entityId)

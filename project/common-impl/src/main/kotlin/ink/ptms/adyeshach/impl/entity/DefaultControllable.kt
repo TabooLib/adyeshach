@@ -50,8 +50,12 @@ interface DefaultControllable : Controllable {
         this as DefaultEntityInstance
         // 添加事件
         if (AdyeshachControllerAddEvent(this, controller).call()) {
-            unregisterController(controller::class.java)
+            // 移除相同的控制器
+            this.controller.removeIf { it.javaClass == controller.javaClass }
+            // 注册控制器
             this.controller.add(controller)
+            // 排序
+            this.controller.sort()
             return true
         }
         return false
@@ -62,7 +66,6 @@ interface DefaultControllable : Controllable {
         val element = this.controller.firstOrNull { it.javaClass == controller } ?: return true
         // 移除事件
         if (AdyeshachControllerRemoveEvent(this, element).call()) {
-            element.onRemove()
             this.controller.remove(element)
             return true
         }
@@ -147,10 +150,12 @@ interface DefaultControllable : Controllable {
 
     override fun controllerStill() {
         this as DefaultEntityInstance
+        // TODO 重做
         if (controller.any { it is GeneralMove }) {
             // 刷新 GeneralMove 控制器
             controller.removeIf { it is GeneralMove }
             controller.add(GeneralMove(this))
+            controller.sort()
             // 移除标签
             removeTag(StandardTags.IS_MOVING)
             removeTag(StandardTags.IS_JUMPING)

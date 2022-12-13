@@ -20,6 +20,8 @@ typealias NMSPacketPlayOutPlayerInfo = net.minecraft.network.protocol.game.Packe
 
 typealias NMSPacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 
+typealias NMSPacketPlayOutPlayerInfoPlayerInfoData = net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo.PlayerInfoData
+
 typealias NMSPacketPlayOutEntityDestroy = net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy
 
 typealias NMSPacketPlayOutEntityTeleport = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport
@@ -84,6 +86,8 @@ typealias NMSDataWatcherRegistry = net.minecraft.network.syncher.DataWatcherRegi
 
 typealias NMSIChatBaseComponent = net.minecraft.network.chat.IChatBaseComponent
 
+typealias NMSChatSerializer = net.minecraft.network.chat.IChatBaseComponent.ChatSerializer
+
 typealias NMSParticleParam = net.minecraft.core.particles.ParticleParam
 
 typealias NMSCatVariant = net.minecraft.world.entity.animal.CatVariant
@@ -116,13 +120,15 @@ typealias NMS16PacketPlayOutSpawnEntityExperienceOrb = net.minecraft.server.v1_1
 
 typealias NMS16PacketPlayOutSpawnEntityPainting = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntityPainting
 
-typealias NMS16PacketPlayOutPlayerInfo = net.minecraft.server.v1_16_R1.PacketPlayOutPlayerInfo
+typealias NMS16PacketPlayOutPlayerInfo = net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo
 
-typealias NMS16PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server.v1_16_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
+typealias NMS16PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 
-typealias NMS16PacketPlayOutEntityDestroy = net.minecraft.server.v1_16_R1.PacketPlayOutEntityDestroy
+typealias NMS16PacketPlayOutPlayerInfoPlayerInfoData = net.minecraft.server.v1_16_R3.PacketPlayOutPlayerInfo.PlayerInfoData
 
-typealias NMS16PacketPlayOutEntityTeleport = net.minecraft.server.v1_16_R1.PacketPlayOutEntityTeleport
+typealias NMS16PacketPlayOutEntityDestroy = net.minecraft.server.v1_16_R3.PacketPlayOutEntityDestroy
+
+typealias NMS16PacketPlayOutEntityTeleport = net.minecraft.server.v1_16_R3.PacketPlayOutEntityTeleport
 
 typealias NMS16PacketPlayOutRelEntityMove = net.minecraft.server.v1_16_R3.PacketPlayOutEntity.PacketPlayOutRelEntityMove
 

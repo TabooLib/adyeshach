@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.MetaNatural
 import org.bukkit.entity.Player
+import taboolib.common.util.unsafeLazy
 
 /**
  * Adyeshach
@@ -15,10 +16,13 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/20 01:33
  */
+@Suppress("UNCHECKED_CAST")
 class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T) : MetaNatural<T, E>(index, key, def) {
 
+    val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(def) as MinecraftMetadataParser<Any> }
+
     override fun getMetadataParser(): MinecraftMetadataParser<Any> {
-        return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(def)!!
+        return parser
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -28,9 +32,9 @@ class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T)
         }
         entityInstance as DefaultEntityInstance
         var obj = entityInstance.metadata[key] ?: return null
-        obj = getMetadataParser().parse(obj)
+        obj = parser.parse(obj)
         val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this as MetaNatural<Any, out EntityInstance>, obj)
-        return if (event.call()) getMetadataParser().createMeta(index, event.value) else null
+        return if (event.call()) parser.createMeta(index, event.value) else null
     }
 
     override fun updateEntityMetadata(entityInstance: EntityInstance) {

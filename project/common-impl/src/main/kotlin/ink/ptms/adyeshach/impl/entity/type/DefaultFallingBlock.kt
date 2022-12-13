@@ -2,12 +2,10 @@ package ink.ptms.adyeshach.impl.entity.type
 
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.ClientEntity
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -50,7 +48,7 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
-            spawn(viewer) {
+            prepareSpawn(viewer) {
                 registerClientEntity(viewer)
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityFallingBlock(viewer, index, normalizeUniqueId, position.toLocation(), material, data)
             }

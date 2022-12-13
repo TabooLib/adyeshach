@@ -48,5 +48,6 @@ class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
 
         val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
         val metaTypeLookup = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
+        val metaKeyLookup = ConcurrentHashMap<Class<*>, String>()
     }
 }

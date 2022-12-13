@@ -9,4 +9,8 @@ import java.util.*
  * @author sky
  * @since 2021/9/25 1:16 上午
  */
-class ClientEntity(val entity: EntityInstance, val clientId: UUID)
+class ClientEntity(val entity: EntityInstance) {
+
+    val clientId: UUID
+        get() = entity.normalizeUniqueId
+}

@@ -29,6 +29,11 @@ interface AdyeshachHologram {
     fun delete()
 
     /**
+     * 获取所有内容
+     */
+    fun contents(): List<Item>
+
+    /**
      * 全息条目
      */
     interface Item {
@@ -39,7 +44,7 @@ interface AdyeshachHologram {
         var space: Double
     }
 
-    interface ItemByItemStack {
+    interface ItemByItemStack : Item {
 
         /**
          * 显示物品
@@ -47,7 +52,7 @@ interface AdyeshachHologram {
         var itemStack: ItemStack
     }
 
-    interface ItemByText {
+    interface ItemByText : Item {
 
         /**
          * 显示文本
@@ -55,11 +60,11 @@ interface AdyeshachHologram {
         var text: String
     }
 
-    interface ItemByEntity<T : AdyEntity> {
+    interface ItemByEntity<T : AdyEntity> : Item {
 
         /**
          * 显示实体
          */
-        val entity: T
+        fun entity(): T
     }
 }

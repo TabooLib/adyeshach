@@ -1,0 +1,306 @@
+ink.ptms.adyeshach.common.entity.type.AdyArrow
+ink.ptms.adyeshach.common.entity.type.AdyDragonFireball
+ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
+ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
+ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
+ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
+ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
+ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
+ink.ptms.adyeshach.common.entity.type.AdyPainting
+ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
+ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
+ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
+ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
+ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+ink.ptms.adyeshach.common.entity.type.AdyZoglin
+    noclip
+    isInvisible
+
+ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
+ink.ptms.adyeshach.common.entity.type.AdyBee
+ink.ptms.adyeshach.common.entity.type.AdyBlaze
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
+ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
+ink.ptms.adyeshach.common.entity.type.AdyGhast
+ink.ptms.adyeshach.common.entity.type.AdyMagmaCube
+ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkeleton
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+ink.ptms.adyeshach.common.entity.type.AdyZombifiedPiglin
+    unUsed
+    onFire
+
+ink.ptms.adyeshach.common.entity.type.AdyBoat
+    sinceLastHit
+    forwardDirection
+    damageTaken
+
+ink.ptms.adyeshach.common.entity.type.AdyCat
+ink.ptms.adyeshach.common.entity.type.AdyWolf
+    isAngry
+
+ink.ptms.adyeshach.common.entity.type.AdyCaveSpider
+    isClimbing
+
+ink.ptms.adyeshach.common.entity.type.AdyCod
+ink.ptms.adyeshach.common.entity.type.AdySalmon
+ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
+    fromBucket
+    isSprinting
+
+ink.ptms.adyeshach.common.entity.type.AdyDolphin
+    findTreasure
+    hasFish
+
+ink.ptms.adyeshach.common.entity.type.AdyDonkey
+ink.ptms.adyeshach.common.entity.type.AdyHorseBase
+ink.ptms.adyeshach.common.entity.type.AdyLlama
+ink.ptms.adyeshach.common.entity.type.AdyMule
+    isTamed
+    hasBred
+
+ink.ptms.adyeshach.common.entity.type.AdyDrowned
+ink.ptms.adyeshach.common.entity.type.AdyGiant
+ink.ptms.adyeshach.common.entity.type.AdyHusk
+ink.ptms.adyeshach.common.entity.type.AdyZombie
+    isCrouched
+    noGravity
+
+ink.ptms.adyeshach.common.entity.type.AdyHuman
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
+    customName
+    isCustomNameVisible
+    isCrouched % check &majorLegacy > 11400
+
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+    isInRiptideSpinAttack
+    isDie
+
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+    item
+
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
+    isGlowing
+
+ink.ptms.adyeshach.common.entity.type.AdyFox
+    isDefending
+
+ink.ptms.adyeshach.common.entity.type.AdyIllusioner
+    spell
+    isCelebrating
+    isCrouched
+    noGravity
+    isFlyingElytra
+
+ink.ptms.adyeshach.common.entity.type.AdyLlama
+    isSaddled
+    isEating
+    isRearing
+    isMouthOpen
+
+ink.ptms.adyeshach.common.entity.type.AdyOcelot
+    isTrusting
+
+ink.ptms.adyeshach.common.entity.type.AdyParrot
+    isAngry
+    isTamed
+
+ink.ptms.adyeshach.common.entity.type.AdyPiglin
+    isImmuneToZombification
+
+ink.ptms.adyeshach.common.entity.type.AdyPillager
+    isCelebrating
+
+ink.ptms.adyeshach.common.entity.type.AdySnowGolem
+    hasNoPumpkinHat
+
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
+    loyaltyLevel
+
+ink.ptms.adyeshach.common.entity.type.AdyTurtle
+    layingEgg
+    isGoingHome
+    isTraveling
+
+ink.ptms.adyeshach.common.entity.type.AdyWanderingTrader
+    isBaby
+
+ink.ptms.adyeshach.common.entity.type.AdyVex
+    attackMode
+
+ink.ptms.adyeshach.common.entity.type.AdyWitch
+    isCelebrating
+    isDrinkingPotion
+
+ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
+ink.ptms.adyeshach.common.entity.type.AdyZombifiedPiglin
+    isBecomingDrowned
+
+ink.ptms.adyeshach.common.entity.type.AdySilverfish
+    ticksFrozenInPowderedSnow
+
+ink.ptms.adyeshach.common.entity.type.AdyItemFrame
+ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
+    isSprinting
+
+ink.ptms.adyeshach.common.entity.type.AdyItem
+ink.ptms.adyeshach.common.entity.type.AdyItemFrame
+ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
+ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
+ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
+ink.ptms.adyeshach.common.entity.type.AdyArrow
+ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
+ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
+ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
+ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+    pose
+    ticksFrozenInPowderedSnow
+
+ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
+ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
+ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
+ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
+ink.ptms.adyeshach.common.entity.type.AdyMinecart
+ink.ptms.adyeshach.common.entity.type.AdyPainting
+    isSprinting
+    pose
+    ticksFrozenInPowderedSnow
+
+ink.ptms.adyeshach.common.entity.type.AdyArmorStand
+    isSneaking
+    isInRiptideSpinAttack
+
+ink.ptms.adyeshach.common.entity.type.AdyVillager
+ink.ptms.adyeshach.common.entity.type.AdyRaider
+    isCrouched
+    isFlyingElytra
+    noGravity
+
+ink.ptms.adyeshach.common.entity.type.AdyVillager
+ink.ptms.adyeshach.common.entity.type.AdyWitch
+    isLeftHanded
+
+ink.ptms.adyeshach.common.entity.type.AdyVillager
+ink.ptms.adyeshach.common.entity.type.AdyWitch
+    isAgressive
+
+ink.ptms.adyeshach.common.entity.type.AdyEnderman
+    equipment
+
+ink.ptms.adyeshach.common.entity.type.AdyEnderman
+ink.ptms.adyeshach.common.entity.type.AdyEvoker
+ink.ptms.adyeshach.common.entity.type.AdyArmorStand
+    isLeftHanded
+    isAgressive
+    isCrouched
+    isFlyingElytra
+    noGravity
+
+ink.ptms.adyeshach.common.entity.type.AdyArrow
+ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
+ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
+ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
+ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
+ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
+    isLeftHanded
+    isAgressive
+    isCrouched
+    isFlyingElytra
+    equipment
+
+ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
+ink.ptms.adyeshach.common.entity.type.AdyBlaze
+ink.ptms.adyeshach.common.entity.type.AdyBat
+ink.ptms.adyeshach.common.entity.type.AdyBoat
+ink.ptms.adyeshach.common.entity.type.AdyCat
+ink.ptms.adyeshach.common.entity.type.AdyCaveSpider
+ink.ptms.adyeshach.common.entity.type.AdyChicken
+ink.ptms.adyeshach.common.entity.type.AdyCod
+ink.ptms.adyeshach.common.entity.type.AdyCow
+ink.ptms.adyeshach.common.entity.type.AdyCreeper
+ink.ptms.adyeshach.common.entity.type.AdyDolphin
+ink.ptms.adyeshach.common.entity.type.AdyDonkey
+ink.ptms.adyeshach.common.entity.type.AdyDragonFireball
+ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
+ink.ptms.adyeshach.common.entity.type.AdyEndDragon
+ink.ptms.adyeshach.common.entity.type.AdyEndermite
+ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
+ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
+ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
+ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
+ink.ptms.adyeshach.common.entity.type.AdyFireball
+ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
+ink.ptms.adyeshach.common.entity.type.AdyFishingHook
+ink.ptms.adyeshach.common.entity.type.AdyFox
+ink.ptms.adyeshach.common.entity.type.AdyGhast
+ink.ptms.adyeshach.common.entity.type.AdyGuardian
+ink.ptms.adyeshach.common.entity.type.AdyHoglin
+ink.ptms.adyeshach.common.entity.type.AdyHorseBase
+ink.ptms.adyeshach.common.entity.type.AdyIronGolem
+ink.ptms.adyeshach.common.entity.type.AdyItem
+ink.ptms.adyeshach.common.entity.type.AdyItemFrame
+ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
+ink.ptms.adyeshach.common.entity.type.AdyLlama
+ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
+ink.ptms.adyeshach.common.entity.type.AdyMagmaCube
+ink.ptms.adyeshach.common.entity.type.AdyMinecart
+ink.ptms.adyeshach.common.entity.type.AdyMule
+ink.ptms.adyeshach.common.entity.type.AdyMushroom
+ink.ptms.adyeshach.common.entity.type.AdyOcelot
+ink.ptms.adyeshach.common.entity.type.AdyPainting
+ink.ptms.adyeshach.common.entity.type.AdyPanda
+ink.ptms.adyeshach.common.entity.type.AdyParrot
+ink.ptms.adyeshach.common.entity.type.AdyPhantom
+ink.ptms.adyeshach.common.entity.type.AdyPig
+ink.ptms.adyeshach.common.entity.type.AdyPiglin
+ink.ptms.adyeshach.common.entity.type.AdyPiglinBrute
+ink.ptms.adyeshach.common.entity.type.AdyPillager
+ink.ptms.adyeshach.common.entity.type.AdyPolarBear
+ink.ptms.adyeshach.common.entity.type.AdySalmon
+ink.ptms.adyeshach.common.entity.type.AdySheep
+ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
+ink.ptms.adyeshach.common.entity.type.AdySilverfish
+ink.ptms.adyeshach.common.entity.type.AdySkeleton
+ink.ptms.adyeshach.common.entity.type.AdySlime
+ink.ptms.adyeshach.common.entity.type.AdySmallFireball
+ink.ptms.adyeshach.common.entity.type.AdySnowGolem
+ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
+ink.ptms.adyeshach.common.entity.type.AdyTurtle
+ink.ptms.adyeshach.common.entity.type.AdyVex
+ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
+ink.ptms.adyeshach.common.entity.type.AdyWolf
+ink.ptms.adyeshach.common.entity.type.AdyZoglin
+    isLeftHanded
+    isAgressive
+    isCrouched
+    isFlyingElytra
+    noGravity
+    equipment
+
+ink.ptms.adyeshach.common.entity.type.AdyEntityTameable
+    isCrouched
+
+ink.ptms.adyeshach.common.entity.EntityInstance
+    unUsedRiding
+    isHandActive
+    activeHand
+    isSwimming

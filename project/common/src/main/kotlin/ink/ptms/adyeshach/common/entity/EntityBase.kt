@@ -83,4 +83,9 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
      * 实体所在位置（封装自 EntityPosition 类型）
      */
     fun getLocation(): Location
+
+    /**
+     * 创建一个空的实体
+     */
+    fun createEmpty(): EntityBase
 }
