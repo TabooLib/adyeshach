@@ -28,16 +28,18 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
 
     val majorLegacy = MinecraftVersion.majorLegacy
 
-    /** 1.9 ~ 1.19.2 */
+    /** 1.9 ~ 1.16 */
     val classPlayerInfoData: Class<*>? = kotlin.runCatching { nmsClass("PacketPlayOutPlayerInfo\$PlayerInfoData") }.getOrNull()
 
-    /** 1.9 ~ 1.19.2 */
-    val classPlayerInfoDataConstructor: Constructor<*>? = classPlayerInfoData?.getDeclaredConstructor(
-        com.mojang.authlib.GameProfile::class.java,
-        Int::class.javaPrimitiveType,
-        NMS16EnumGameMode::class.java,
-        NMS16IChatBaseComponent::class.java
-    )?.also { it.isAccessible = true }
+    /** 1.9 ~ 1.16 */
+    val classPlayerInfoDataConstructor: Constructor<*>? = kotlin.runCatching {
+        classPlayerInfoData?.getDeclaredConstructor(
+            com.mojang.authlib.GameProfile::class.java,
+            Int::class.javaPrimitiveType,
+            NMS16EnumGameMode::class.java,
+            NMS16IChatBaseComponent::class.java
+        )?.also { it.isAccessible = true }
+    }.getOrNull()
 
     val packetHandler: MinecraftPacketHandler
         get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()

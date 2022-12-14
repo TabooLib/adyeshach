@@ -46,13 +46,15 @@ class DescEntityTypes(input: InputStream) : Description(input) {
             instance = instance.substring(0, instance.length - 1)
             instanceWithInterface = true
         }
+        // 客户端更新间隔
+        val updateInterval = part.next().trim().toInt()
         // 标签
         val flags = if (part.hasNext()){
             part.next().trim().split(" ")
         } else {
             emptyList()
         }
-        types += Entity(namespace, name, id, size, path, aliases, instance, instanceWithInterface, flags)
+        types += Entity(namespace, name, id, size, path, aliases, instance, instanceWithInterface, updateInterval, flags)
     }
 
     override fun loaded() {

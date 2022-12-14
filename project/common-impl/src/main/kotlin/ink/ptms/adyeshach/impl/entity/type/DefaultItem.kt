@@ -29,7 +29,7 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 // 修正向量
                 submit(delay = 1) {
                     setNoGravity(true)
-                    setVelocity(Vector(0, 0, 0))
+                    sendVelocity(Vector(0, 0, 0))
                 }
             }
         } else {

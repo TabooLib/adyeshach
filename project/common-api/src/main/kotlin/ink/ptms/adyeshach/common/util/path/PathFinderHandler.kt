@@ -17,13 +17,18 @@ import taboolib.module.navigation.createPathfinder
 object PathFinderHandler {
 
     fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> (Unit)) {
+        // 世界判断
         if (start.world!!.name != target.world!!.name) {
             errorBy("error-different-worlds")
         }
+        // 请求发起时间
+        val startTime = System.currentTimeMillis()
+        // 是否同步执行代码
         submit(async = !AdyeshachSettings.pathfinderSync) {
-            val startTime = System.currentTimeMillis()
+            // 请求开始时间
+            val scheduleTime = System.currentTimeMillis()
+            // 寻路请求
             if (request == Request.NAVIGATION) {
-                val time = System.currentTimeMillis()
                 val pathFinder = createPathfinder(NodeEntity(start, pathType.height, pathType.width))
                 // 最大 32 格的寻路请求
                 val path = pathFinder.findPath(target, distance = 32f)
@@ -31,9 +36,9 @@ object PathFinderHandler {
                 if (AdyeshachSettings.debug) {
                     path?.nodes?.forEach { it.display(target.world!!) }
                 }
-                call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, time))
+                // 调用回调函数
+                call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, scheduleTime))
             } else {
-                val time = System.currentTimeMillis()
                 var vec: Vector? = null
                 // 重复最多 10 次的游荡请求
                 repeat(10) {
@@ -42,7 +47,7 @@ object PathFinderHandler {
                     }
                 }
                 if (vec != null) {
-                    call(ResultRandomPosition(vec, startTime, time))
+                    call(ResultRandomPosition(vec, startTime, scheduleTime))
                 }
             }
         }

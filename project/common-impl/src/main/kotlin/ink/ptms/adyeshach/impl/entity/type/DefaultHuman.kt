@@ -65,8 +65,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
                 // 修复玩家类型视角和装备无法正常显示的问题
                 submit(delay = 1) {
-                    // FIXME
-                    setHeadRotation(yaw, pitch, forceUpdate = true)
+                    sendHeadRotation(yaw, pitch)
                     updateEquipment()
                 }
                 // 更新状态
@@ -154,13 +153,13 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 setPose(BukkitPose.SLEEPING)
             } else {
                 // 1.13.2 以下版本无法使用 setPose 设置睡眠状态
-                forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updatePlayerSleeping(it, index, position.toLocation()) }
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updatePlayerSleeping(getVisiblePlayers(), index, position.toLocation())
             }
         } else {
             if (minecraftVersion >= 11400) {
                 setPose(BukkitPose.STANDING)
             } else {
-                setAnimation(BukkitAnimation.LEAVE_BED)
+                sendAnimation(BukkitAnimation.LEAVE_BED)
             }
             teleport(position)
         }

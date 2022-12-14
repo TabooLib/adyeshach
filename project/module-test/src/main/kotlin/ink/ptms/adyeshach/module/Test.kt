@@ -1,10 +1,12 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.common.entity.EntityEquipable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyAxolotl
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
+import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Axolotl
@@ -17,11 +19,20 @@ import taboolib.common.platform.command.suggest
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.actionBar
+import taboolib.platform.util.onlinePlayers
 
 @CommandHeader(name = "adytest")
 object Test {
 
     lateinit var entity: AdyEntity
+
+    // @Schedule(period = 1)
+    fun onTick() {
+        if (this::entity.isInitialized) {
+            val op = onlinePlayers.firstOrNull() ?: return
+            entity.teleport(op.location.clone().add(0.0, 3.0, 0.0))
+        }
+    }
 
     @CommandBody
     val test = subCommand {
@@ -45,14 +56,14 @@ object Test {
                     if (::entity.isInitialized) {
                         entity.despawn(removeFromManager = true)
                     }
-                    val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location) as AdyEntity
-//                        if (npc is AdyHuman) {
-//                            npc.setName("傻逼")
-//                            npc.setTexture("bukkitObj")
-//                        }
-//                        if (npc is EntityEquipable) {
-//                            npc.setItemInMainHand(item)
-//                        }
+                    val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location.add(0.0, 3.0, 0.0)) as AdyEntity
+                    if (npc is AdyHuman) {
+                        npc.setName("傻逼")
+                        npc.setTexture("bukkitObj")
+                    }
+                    if (npc is EntityEquipable) {
+                        npc.setItemInMainHand(item)
+                    }
                     if (npc is AdyAxolotl) {
                         npc.setColor(Axolotl.Variant.BLUE)
                     }
@@ -64,7 +75,6 @@ object Test {
                     npc.setGlowing(true)
                     entity = npc
                 }
-
                 sender.info("OK")
             }
         }

@@ -98,6 +98,10 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
         return types[entityType]!!.flags
     }
 
+    override fun getEntityClientUpdateInterval(entityType: EntityTypes): Int {
+        return types[entityType]!!.updateInterval
+    }
+
     override fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes? {
         return types.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }

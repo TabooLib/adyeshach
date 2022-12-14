@@ -4,6 +4,7 @@ ink.ptms.adyeshach.common.entity.type.AdyAllay
     0.35 0.6 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
     AREA_EFFECT_CLOUD
@@ -11,6 +12,7 @@ ink.ptms.adyeshach.common.entity.type.AdyAreaEffectCloud
     0.5 2.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyArmorStand
     ARMOR_STAND
@@ -18,6 +20,7 @@ ink.ptms.adyeshach.common.entity.type.AdyArmorStand
     1.975 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyArrow
     ARROW
@@ -25,6 +28,7 @@ ink.ptms.adyeshach.common.entity.type.AdyArrow
     0.5 0.5 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyAxolotl
     AXOLOTL
@@ -32,6 +36,7 @@ ink.ptms.adyeshach.common.entity.type.AdyAxolotl
     0.3 1.3
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyBat
     BAT
@@ -39,6 +44,7 @@ ink.ptms.adyeshach.common.entity.type.AdyBat
     0.9 0.5 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyBee
     BEE
@@ -46,6 +52,7 @@ ink.ptms.adyeshach.common.entity.type.AdyBee
     0.6 0.7 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyBlaze
     BLAZE
@@ -53,6 +60,7 @@ ink.ptms.adyeshach.common.entity.type.AdyBlaze
     1.8 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyBoat
     BOAT
@@ -60,6 +68,7 @@ ink.ptms.adyeshach.common.entity.type.AdyBoat
     0.5625 1.375
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyCat
     CAT
@@ -67,6 +76,7 @@ ink.ptms.adyeshach.common.entity.type.AdyCat
     0.7 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyCaveSpider
     CAVE_SPIDER
@@ -74,6 +84,7 @@ ink.ptms.adyeshach.common.entity.type.AdyCaveSpider
     0.5 0.7
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyChicken
     CHICKEN
@@ -81,6 +92,7 @@ ink.ptms.adyeshach.common.entity.type.AdyChicken
     0.7 0.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyCod
     COD
@@ -88,6 +100,7 @@ ink.ptms.adyeshach.common.entity.type.AdyCod
     0.3 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyCow
     COW
@@ -95,6 +108,7 @@ ink.ptms.adyeshach.common.entity.type.AdyCow
     1.4 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyCreeper
     CREEPER
@@ -102,6 +116,7 @@ ink.ptms.adyeshach.common.entity.type.AdyCreeper
     1.7 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyDolphin
     DOLPHIN
@@ -109,6 +124,7 @@ ink.ptms.adyeshach.common.entity.type.AdyDolphin
     0.6 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyDonkey
     DONKEY
@@ -116,6 +132,7 @@ ink.ptms.adyeshach.common.entity.type.AdyDonkey
     1.39648 1.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyDragonFireball
     DRAGON_FIREBALL
@@ -123,6 +140,7 @@ ink.ptms.adyeshach.common.entity.type.AdyDragonFireball
     1.0 1.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyDrowned
     DROWNED
@@ -130,6 +148,7 @@ ink.ptms.adyeshach.common.entity.type.AdyDrowned
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyElderGuardian
     ELDER_GUARDIAN
@@ -137,6 +156,7 @@ ink.ptms.adyeshach.common.entity.type.AdyElderGuardian
     1.9975 1.9975
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
     END_CRYSTAL
@@ -144,6 +164,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEndCrystal
     2.0 2.0
     ENDER_CRYSTAL
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyEndDragon
     ENDER_DRAGON
@@ -151,6 +172,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEndDragon
     8.0 16.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyEnderman
     ENDERMAN
@@ -158,6 +180,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEnderman
     3.0 16.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyEndermite
     ENDERMITE
@@ -165,6 +188,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEndermite
     0.3 0.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyEvoker
     EVOKER
@@ -172,6 +196,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEvoker
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
     EVOKER_FANGS
@@ -179,6 +204,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEvokerFangs
     0.8 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
     TESTING INVALID
 
 ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
@@ -187,6 +213,7 @@ ink.ptms.adyeshach.common.entity.type.AdyExperienceOrb
     0.5 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultExperienceOrb
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
     EYE_OF_ENDER
@@ -194,6 +221,7 @@ ink.ptms.adyeshach.common.entity.type.AdyEyeOfEnder
     0.25 0.25 FLYING
     ENDER_SIGNAL
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    4
 
 ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
     FALLING_BLOCK
@@ -201,6 +229,7 @@ ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
     0.98 0.98
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultFallingBlock
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
     FIREWORK_ROCKET
@@ -208,6 +237,7 @@ ink.ptms.adyeshach.common.entity.type.AdyFireworkRocket
     0.25 0.25 FLYING
     FIREWORK
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
     TESTING
 
 ink.ptms.adyeshach.common.entity.type.AdyFox
@@ -216,6 +246,7 @@ ink.ptms.adyeshach.common.entity.type.AdyFox
     0.7 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyGhast
     GHAST
@@ -223,6 +254,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGhast
     4.0 4.0 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyGiant
     GIANT
@@ -230,6 +262,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGiant
     12.0 3.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyGlowItemFrame
     GLOW_ITEM_FRAME
@@ -237,6 +270,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGlowItemFrame
     0.75 0.75
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyGlowSquid
     GLOW_SQUID
@@ -244,6 +278,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGlowSquid
     0.8 0.8
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyGoat
     GOAT
@@ -251,6 +286,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGoat
     0.9 1.3
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyGuardian
     GUARDIAN
@@ -258,6 +294,7 @@ ink.ptms.adyeshach.common.entity.type.AdyGuardian
     0.85 0.85
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyHoglin
     HOGLIN
@@ -265,6 +302,7 @@ ink.ptms.adyeshach.common.entity.type.AdyHoglin
     1.4 1.39648
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyHorse
     HORSE
@@ -272,6 +310,7 @@ ink.ptms.adyeshach.common.entity.type.AdyHorse
     1.6 1.39648
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultHorse
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyHusk
     HUSK
@@ -279,6 +318,7 @@ ink.ptms.adyeshach.common.entity.type.AdyHusk
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyIllusioner
     ILLUSIONER
@@ -286,6 +326,7 @@ ink.ptms.adyeshach.common.entity.type.AdyIllusioner
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyIronGolem
     IRON_GOLEM
@@ -293,6 +334,7 @@ ink.ptms.adyeshach.common.entity.type.AdyIronGolem
     2.7 1.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyItem
     ITEM
@@ -300,6 +342,7 @@ ink.ptms.adyeshach.common.entity.type.AdyItem
     0.25 0.25
     DROPPED_ITEM
     ink.ptms.adyeshach.impl.entity.type.DefaultItem
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyItemFrame
     ITEM_FRAME
@@ -307,6 +350,7 @@ ink.ptms.adyeshach.common.entity.type.AdyItemFrame
     0.75 0.75
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyFireball
     FIREBALL
@@ -314,6 +358,7 @@ ink.ptms.adyeshach.common.entity.type.AdyFireball
     1.0 1.0 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
     LEASH_KNOT
@@ -321,6 +366,7 @@ ink.ptms.adyeshach.common.entity.type.AdyLeashKnot
     0.5 0.375
     LEASH_HITCH
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyLlama
     LLAMA
@@ -328,6 +374,7 @@ ink.ptms.adyeshach.common.entity.type.AdyLlama
     1.87 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
     LLAMA_SPIT
@@ -335,6 +382,7 @@ ink.ptms.adyeshach.common.entity.type.AdyLlamaSpit
     0.25 0.25 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyMagmaCube
     MAGMA_CUBE
@@ -342,6 +390,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMagmaCube
     0.51000005 0.51000005
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecart
     MINECART
@@ -349,6 +398,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecart
     0.7 0.98
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartChest
     MINECART_CHEST
@@ -356,6 +406,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartChest
     0.7 0.98
     CHEST_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartCommandBlock
     MINECART_COMMAND
@@ -363,6 +414,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartCommandBlock
     0.7 0.98
     COMMAND_BLOCK_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartFurnace
     MINECART_FURNACE
@@ -370,6 +422,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartFurnace
     0.7 0.98
     FURNACE_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartHopper
     MINECART_HOPPER
@@ -377,6 +430,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartHopper
     0.7 0.98
     HOPPER_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartSpawner
     MINECART_MOB_SPAWNER
@@ -384,6 +438,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartSpawner
     0.7 0.98
     SPAWNER_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMinecartTNT
     MINECART_TNT
@@ -391,6 +446,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMinecartTNT
     0.7 0.98
     TNT_MINECART
     ink.ptms.adyeshach.impl.entity.type.DefaultMinecart@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMule
     MULE
@@ -398,6 +454,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMule
     1.6 1.39648
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyMushroom
     MUSHROOM
@@ -405,6 +462,7 @@ ink.ptms.adyeshach.common.entity.type.AdyMushroom
     1.4 0.9
     MOOSHROOM | MUSHROOM_COW
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyOcelot
     OCELOT
@@ -412,6 +470,7 @@ ink.ptms.adyeshach.common.entity.type.AdyOcelot
     0.7 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPainting
     PAINTING
@@ -419,6 +478,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPainting
     0.0625 0.0625
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultPainting
+    20
     INVALID
 
 ink.ptms.adyeshach.common.entity.type.AdyPanda
@@ -427,6 +487,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPanda
     1.25 1.3
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyParrot
     PARROT
@@ -434,6 +495,7 @@ ink.ptms.adyeshach.common.entity.type.AdyParrot
     0.9 0.5 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPhantom
     PHANTOM
@@ -441,6 +503,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPhantom
     0.5 0.9 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPig
     PIG
@@ -448,6 +511,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPig
     0.9 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPiglin
     PIGLIN
@@ -455,6 +519,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPiglin
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPiglinBrute
     PIGLIN_BRUTE
@@ -462,6 +527,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPiglinBrute
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPillager
     PILLAGER
@@ -469,6 +535,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPillager
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPolarBear
     POLAR_BEAR
@@ -476,6 +543,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPolarBear
     1.4 1.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyPrimedTNT
     PRIMED_TNT
@@ -483,6 +551,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPrimedTNT
     0.98 0.98
     TNT
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyPufferfish
     PUFFERFISH
@@ -490,6 +559,7 @@ ink.ptms.adyeshach.common.entity.type.AdyPufferfish
     0.7 0.7
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyRabbit
     RABBIT
@@ -497,6 +567,7 @@ ink.ptms.adyeshach.common.entity.type.AdyRabbit
     0.5 0.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyRavager
     RAVAGER
@@ -504,6 +575,7 @@ ink.ptms.adyeshach.common.entity.type.AdyRavager
     2.2 1.95
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySalmon
     SALMON
@@ -511,6 +583,7 @@ ink.ptms.adyeshach.common.entity.type.AdySalmon
     0.4 0.7
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySheep
     SHEEP
@@ -518,6 +591,7 @@ ink.ptms.adyeshach.common.entity.type.AdySheep
     1.3 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
     TESTING
 
 ink.ptms.adyeshach.common.entity.type.AdyShulker
@@ -526,6 +600,7 @@ ink.ptms.adyeshach.common.entity.type.AdyShulker
     2.0 1.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
     TESTING
 
 ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
@@ -534,6 +609,7 @@ ink.ptms.adyeshach.common.entity.type.AdyShulkerBullet
     0.3125 0.3125 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySilverfish
     SILVERFISH
@@ -541,6 +617,7 @@ ink.ptms.adyeshach.common.entity.type.AdySilverfish
     0.3 0.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySkeleton
     SKELETON
@@ -548,6 +625,7 @@ ink.ptms.adyeshach.common.entity.type.AdySkeleton
     1.99 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySkeletonHorse
     SKELETON_HORSE
@@ -555,6 +633,7 @@ ink.ptms.adyeshach.common.entity.type.AdySkeletonHorse
     1.6 1.396484
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySlime
     SLIME
@@ -562,6 +641,7 @@ ink.ptms.adyeshach.common.entity.type.AdySlime
     0.51000005 0.51000005
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySmallFireball
     SMALL_FIREBALL
@@ -569,6 +649,7 @@ ink.ptms.adyeshach.common.entity.type.AdySmallFireball
     0.3125 0.3125 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdySnowGolem
     SNOW_GOLEM
@@ -576,6 +657,7 @@ ink.ptms.adyeshach.common.entity.type.AdySnowGolem
     1.9 0.7
     SNOWMAN
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySnowball
     SNOWBALL
@@ -583,6 +665,7 @@ ink.ptms.adyeshach.common.entity.type.AdySnowball
     0.25 0.25 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdySpectralArrow
     SPECTRAL_ARROW
@@ -590,6 +673,7 @@ ink.ptms.adyeshach.common.entity.type.AdySpectralArrow
     0.5 0.5 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdySpider
     SPIDER
@@ -597,6 +681,7 @@ ink.ptms.adyeshach.common.entity.type.AdySpider
     0.9 1.4
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdySquid
     SQUID
@@ -604,6 +689,7 @@ ink.ptms.adyeshach.common.entity.type.AdySquid
     0.8 0.8
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyStray
     STRAY
@@ -611,6 +697,7 @@ ink.ptms.adyeshach.common.entity.type.AdyStray
     1.99 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyStrider
     STRIDER
@@ -618,6 +705,7 @@ ink.ptms.adyeshach.common.entity.type.AdyStrider
     1.7 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
     THROWN_EGG
@@ -625,6 +713,7 @@ ink.ptms.adyeshach.common.entity.type.AdyThrownEgg
     0.25 0.25 FLYING
     EGG
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
     THROWN_ENDER_PEARL
@@ -632,6 +721,7 @@ ink.ptms.adyeshach.common.entity.type.AdyThrownEnderPearl
     0.25 0.25 FLYING
     ENDER_PEARL
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
     THROWN_EXPERIENCE_BOTTLE
@@ -639,6 +729,7 @@ ink.ptms.adyeshach.common.entity.type.AdyThrownExperienceBottle
     0.25 0.25 FLYING
     THROWN_EXP_BOTTLE | EXPERIENCE_BOTTLE
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
     THROWN_POTION
@@ -646,6 +737,7 @@ ink.ptms.adyeshach.common.entity.type.AdyThrownPotion
     0.25 0.25 FLYING
     POTION | SPLASH_POTION
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
     THROWN_TRIDENT
@@ -653,6 +745,7 @@ ink.ptms.adyeshach.common.entity.type.AdyThrownTrident
     0.5 0.5 FLYING
     TRIDENT
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    20
 
 ink.ptms.adyeshach.common.entity.type.AdyTraderLlama
     TRADER_LLAMA
@@ -660,6 +753,7 @@ ink.ptms.adyeshach.common.entity.type.AdyTraderLlama
     1.87 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
     TROPICAL_FISH
@@ -667,6 +761,7 @@ ink.ptms.adyeshach.common.entity.type.AdyTropicalFish
     0.4 0.5
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultTropicalFish
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyTurtle
     TURTLE
@@ -674,6 +769,7 @@ ink.ptms.adyeshach.common.entity.type.AdyTurtle
     0.4 1.2
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyVex
     VEX
@@ -681,6 +777,7 @@ ink.ptms.adyeshach.common.entity.type.AdyVex
     0.8 0.4 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyVillager
     VILLAGER
@@ -688,6 +785,7 @@ ink.ptms.adyeshach.common.entity.type.AdyVillager
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
     TESTING
 
 ink.ptms.adyeshach.common.entity.type.AdyVindicator
@@ -696,6 +794,7 @@ ink.ptms.adyeshach.common.entity.type.AdyVindicator
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWanderingTrader
     WANDERING_TRADER
@@ -703,6 +802,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWanderingTrader
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWitch
     WITCH
@@ -710,6 +810,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWitch
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWarden
     WARDEN
@@ -717,6 +818,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWarden
     2.9 0.9
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWither
     WITHER
@@ -724,6 +826,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWither
     3.5 0.9 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultWither
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWitherSkeleton
     WITHER_SKELETON
@@ -731,6 +834,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWitherSkeleton
     2.4 0.7
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
     WITHER_SKULL
@@ -738,6 +842,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
     0.3125 0.3125 FLYING
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    10
 
 ink.ptms.adyeshach.common.entity.type.AdyWolf
     WOLF
@@ -745,6 +850,7 @@ ink.ptms.adyeshach.common.entity.type.AdyWolf
     0.85 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyZoglin
     ZOGLIN
@@ -752,6 +858,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZoglin
     1.4 1.39648
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyZombie
     ZOMBIE
@@ -759,6 +866,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombie
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyZombieHorse
     ZOMBIE_HORSE
@@ -766,6 +874,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombieHorse
     1.6 1.39648
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
     ZOMBIE_VILLAGER
@@ -773,6 +882,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombieVillager
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
     TESTING
 
 ink.ptms.adyeshach.common.entity.type.AdyZombiePigman
@@ -781,6 +891,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombiePigman
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyZombifiedPiglin
     ZOMBIFIED_PIGLIN
@@ -788,6 +899,7 @@ ink.ptms.adyeshach.common.entity.type.AdyZombifiedPiglin
     1.95 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyHuman
     PLAYER
@@ -795,6 +907,7 @@ ink.ptms.adyeshach.common.entity.type.AdyHuman
     1.8 0.6
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultHuman
+    2
 
 ink.ptms.adyeshach.common.entity.type.AdyFishingHook
     FISHING_HOOK
@@ -802,4 +915,5 @@ ink.ptms.adyeshach.common.entity.type.AdyFishingHook
     0.25 0.25
     FISHING_BOBBER
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    5
     TESTING INVALID

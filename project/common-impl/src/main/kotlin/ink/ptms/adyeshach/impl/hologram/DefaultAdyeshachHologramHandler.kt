@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl
+package ink.ptms.adyeshach.impl.hologram
 
 import ink.ptms.adyeshach.common.api.AdyeshachHologram
 import ink.ptms.adyeshach.common.api.AdyeshachHologramHandler
@@ -12,7 +12,7 @@ import java.util.function.Function
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.DefaultAdyeshachHologramHandler
+ * ink.ptms.adyeshach.impl.hologram.DefaultAdyeshachHologramHandler
  *
  * @author 坏黑
  * @since 2022/6/28 00:05

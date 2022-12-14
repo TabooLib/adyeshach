@@ -57,6 +57,18 @@ object StandardTags {
     const val IS_JUMPING = "IS_JUMPING"
 
     /**
+     * 是否在地面
+     * 持有该标签的单位正在地面
+     */
+    const val IS_ON_GROUND = "IS_ON_GROUND"
+
+    /**
+     * 位于载具中
+     * 持有该标签的单位正在载具中
+     */
+    const val IS_IN_VEHICLE = "IS_IN_VEHICLE"
+
+    /**
      * 寻路状态
      * 持有该标签的单位正在寻路
      */

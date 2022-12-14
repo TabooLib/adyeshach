@@ -8,6 +8,7 @@ taboolib {
     description {
         name(rootProject.name)
         contributors {
+            name("IzzelAliz")
             name("坏黑")
             name("Arasple")
             name("zhanshi123")

@@ -33,6 +33,14 @@ class EntityPosition(
         return this
     }
 
+    fun isZero(): Boolean {
+        return x == 0.0 && y == 0.0 && z == 0.0
+    }
+
+    fun lengthSquared(): Double {
+        return x * x + y * y + z * z
+    }
+
     fun toLocation(): Location {
         return Location(world, x, y, z, yaw, pitch)
     }
@@ -48,6 +56,28 @@ class EntityPosition(
         yaw = 0f
         pitch = 0f
         return this
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is EntityPosition) return false
+        if (world != other.world) return false
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (z != other.z) return false
+        if (yaw != other.yaw) return false
+        if (pitch != other.pitch) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = world.hashCode()
+        result = 31 * result + x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        result = 31 * result + yaw.hashCode()
+        result = 31 * result + pitch.hashCode()
+        return result
     }
 
     companion object {

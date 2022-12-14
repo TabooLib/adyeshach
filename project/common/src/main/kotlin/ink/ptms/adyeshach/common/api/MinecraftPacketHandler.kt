@@ -14,5 +14,8 @@ interface MinecraftPacketHandler {
     /**
      * 发送数据包
      */
-    fun sendPacket(player: Player, packet: Any, vararg fields: Pair<String, Any?>)
+    fun sendPacket(player: List<Player>, packet: Any)
+    fun sendPacket(player: Player, packet: Any) {
+        sendPacket(listOf(player), packet)
+    }
 }

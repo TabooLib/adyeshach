@@ -28,7 +28,7 @@ abstract class Description(val input: InputStream) {
                 val line = lines[i++]
                 if (line.isBlank()) {
                     if (part.any { it.isNotBlank() }) {
-                        load(DescriptionBlock(part))
+                        load(DescriptionBlock(part, i))
                         part.clear()
                     }
                 } else {
@@ -36,7 +36,7 @@ abstract class Description(val input: InputStream) {
                 }
             }
             if (part.isNotEmpty()) {
-                load(DescriptionBlock(part))
+                load(DescriptionBlock(part, i))
             }
             loaded()
         } catch (ex: Throwable) {

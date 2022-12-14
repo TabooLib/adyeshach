@@ -26,6 +26,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var manager: Manager?
 
     /**
+     * 是否傻子（即禁用 AI），处于孤立管理器中的实体将设置为傻子
+     */
+    var isNitwit: Boolean
+
+    /**
      * 取决于是否被公开的单位管理器管理
      */
     fun isPublic(): Boolean
@@ -84,29 +89,39 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     fun teleport(entityPosition: EntityPosition)
 
     /**
-     * 修改实体位置，并继承实体本身的视角
+     * 修改实体位置
      */
     fun teleport(x: Double, y: Double, z: Double)
 
     /**
-     * 发送动量数据包
+     * 修改实体动量
      */
     fun setVelocity(vector: org.bukkit.util.Vector)
 
     /**
+     * 修改实体动量
+     */
+    fun setVelocity(x: Double, y: Double, z: Double)
+
+    /**
      * 修改实体视角
-     *
-     * @param forceUpdate 是否强制更新视角
+     * @param forceUpdate 历史遗留方法，无效
      */
     fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
 
     /**
      * 播放动画数据包
      */
-    fun setAnimation(animation: BukkitAnimation)
+    fun sendAnimation(animation: BukkitAnimation)
 
     /**
      * 克隆实体
      */
     fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance?
+
+    @Deprecated("请使用 setVelocity(vector), 该方法存在命名误导", ReplaceWith("setVelocity(vector)"))
+    fun sendVelocity(vector: org.bukkit.util.Vector)
+
+    @Deprecated("请使用 setHeadRotation(yaw, pitch, forceUpdate), 该方法存在命名误导", ReplaceWith("setHeadRotation(yaw, pitch, forceUpdate)"))
+    fun sendHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
 }

@@ -73,4 +73,9 @@ interface Viewable {
      * 遍历所有有效观察者
      */
     fun forViewers(viewer: Consumer<Player>)
+
+    /**
+     * 获取所有有效观察者
+     */
+    fun getVisiblePlayers(): List<Player>
 }

@@ -6,7 +6,6 @@ import com.ticxo.modelengine.api.model.base.BaseEntity
 import com.ticxo.modelengine.api.model.base.EntityData
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
 import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
 import org.bukkit.Location
 import org.bukkit.Material
@@ -39,7 +38,9 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getVelocity(): Vector {
-        return entityInstance.getController(GeneralMove::class.java)?.target?.toVector()?.normalize() ?: Vector(0, 0, 0)
+        return Vector(0, 0, 0)
+//        TODO
+//        return entityInstance.getController(GeneralMove::class.java)?.target?.toVector()?.normalize() ?: Vector(0, 0, 0)
     }
 
     override fun isOnGround(): Boolean {
@@ -150,15 +151,21 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getWantedX(): Double {
-        return entityInstance.getController(GeneralMove::class.java)?.target?.x ?: 0.0
+//        TODO
+//        return entityInstance.getController(GeneralMove::class.java)?.target?.x ?: 0.0
+        return 0.0
     }
 
     override fun getWantedY(): Double {
-        return entityInstance.getController(GeneralMove::class.java)?.target?.y ?: 0.0
+//        TODO
+//        return entityInstance.getController(GeneralMove::class.java)?.target?.y ?: 0.0
+        return 0.0
     }
 
     override fun getWantedZ(): Double {
-        return entityInstance.getController(GeneralMove::class.java)?.target?.z ?: 0.0
+//        TODO
+//        return entityInstance.getController(GeneralMove::class.java)?.target?.z ?: 0.0
+        return 0.0
     }
 
     @Deprecated("Deprecated in Java")

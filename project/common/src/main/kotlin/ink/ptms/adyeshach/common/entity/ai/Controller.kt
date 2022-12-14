@@ -17,14 +17,19 @@ abstract class Controller(val entity: EntityInstance? = null): Comparable<Contro
     }
 
     /**
-     * 优先级
+     * 控制器唯一序号
      */
-    open fun priority() = 0
+    abstract fun id(): String
 
     /**
      * 控制器组
      */
     open fun key() = "default"
+
+    /**
+     * 优先级
+     */
+    open fun priority() = 0
 
     /**
      * 是否开始执行

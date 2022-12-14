@@ -20,6 +20,7 @@ data class Entity(
     val aliases: List<String>,
     val instance: String,
     val instanceWithInterface: Boolean,
+    val updateInterval: Int,
     val flags: List<String>
 ) {
 

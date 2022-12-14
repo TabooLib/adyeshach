@@ -7,7 +7,7 @@ package ink.ptms.adyeshach.impl.description
  * @author 坏黑
  * @since 2022/6/21 14:46
  */
-class DescriptionBlock(val source: List<String>) {
+class DescriptionBlock(val source: List<String>, val startLine: Int) {
 
     var readLine = 0
         private set
@@ -17,7 +17,13 @@ class DescriptionBlock(val source: List<String>) {
     }
 
     fun next(): String {
-        return source[readLine++]
+        try {
+            return source[readLine++]
+        } catch (ex: Throwable) {
+            println("Block:")
+            source.forEachIndexed { index, s -> println("  $index. $s") }
+            throw IllegalStateException("Block ended (line: $readLine, startLine: $startLine)", ex)
+        }
     }
 
     fun peek(): String? {

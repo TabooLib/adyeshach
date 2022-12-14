@@ -52,4 +52,8 @@ interface DefaultViewable : Viewable {
     override fun forViewers(viewer: Consumer<Player>) {
         viewPlayers.getViewPlayers().forEach { viewer.accept(it) }
     }
+
+    override fun getVisiblePlayers(): List<Player> {
+        return viewPlayers.getViewPlayers()
+    }
 }

@@ -17,24 +17,21 @@ import java.util.function.Function
 class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
 
     override fun fromYaml(source: String, transfer: Function<String, String>): EntityInstance? {
-        val conf = Configuration.empty(Type.JSON)
-        val section = Configuration.loadFromString(source, Type.YAML)
-        section.getValues(true).forEach { (k, v) ->
-            if (v !is ConfigurationSection) {
-                conf[transfer.apply(k)] = v
-            }
-        }
-        return fromJson(conf.saveToString())
+        val conf = Configuration.loadFromString(source, Type.YAML)
+        conf.changeType(Type.JSON)
+        return fromJson(conf.saveToString(), transfer)
     }
 
     override fun fromJson(source: String, transfer: Function<String, String>): EntityInstance? {
         val conf = Configuration.empty(Type.JSON)
         val section = Configuration.loadFromString(source, Type.JSON)
+        // 对节点进行转换
         section.getValues(true).forEach { (k, v) ->
             if (v !is ConfigurationSection) {
                 conf[transfer.apply(k)] = v
             }
         }
-        TODO("Not yet implemented")
+        // TODO
+        return null
     }
 }

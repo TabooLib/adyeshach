@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.api.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityInstance
 import ink.ptms.adyeshach.common.entity.Rideable
+import ink.ptms.adyeshach.common.entity.StandardTags
 import ink.ptms.adyeshach.common.util.errorBy
 import org.bukkit.entity.Player
 
@@ -49,6 +50,8 @@ interface DefaultRideable : Rideable {
             // 事件
             if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
                 passengers.add(it.uniqueId)
+                // 设置标签
+                it.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
             }
         }
         refreshPassenger()
@@ -66,6 +69,8 @@ interface DefaultRideable : Rideable {
             // 事件
             if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
                 passengers.remove(it.uniqueId)
+                // 移除标签
+                it.removePersistentTag(StandardTags.IS_IN_VEHICLE)
                 // 将实体传送到正确的位置
                 val en = manager?.getEntityByUniqueId(it.uniqueId)
                 en?.teleport(en.getLocation())

@@ -1,8 +1,6 @@
-package ink.ptms.adyeshach.impl
+package ink.ptms.adyeshach.impl.network
 
 import ink.ptms.adyeshach.common.api.AdyeshachNetworkAPI
-import ink.ptms.adyeshach.impl.network.NetworkAshcon
-import ink.ptms.adyeshach.impl.network.NetworkMineskin
 
 /**
  * Adyeshach

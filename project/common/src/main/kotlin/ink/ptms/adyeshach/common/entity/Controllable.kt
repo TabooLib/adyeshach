@@ -31,12 +31,27 @@ interface Controllable {
     /**
      * 获取控制器
      */
+    fun <T : Controller> getController(controller: String): T?
+
+    /**
+     * 获取控制器
+     */
     fun <T : Controller> getController(controller: Class<T>): T?
 
     /**
      * 注册控制器
      */
     fun registerController(controller: Controller): Boolean
+
+    /**
+     * 注销控制器
+     */
+    fun unregisterController(controller: String): Boolean
+
+    /**
+     * 注销控制器
+     */
+    fun unregisterController(controller: Controller): Boolean
 
     /**
      * 注销控制器

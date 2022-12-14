@@ -26,13 +26,15 @@ typealias NMSPacketPlayOutEntityDestroy = net.minecraft.network.protocol.game.Pa
 
 typealias NMSPacketPlayOutEntityTeleport = net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport
 
+typealias NMSPacketPlayOutEntityLook = net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook
+
 typealias NMSPacketPlayOutRelEntityMove = net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutRelEntityMove
+
+typealias NMSPacketPlayOutRelEntityMoveLook = net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook
 
 typealias NMSPacketPlayOutEntityVelocity = net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity
 
 typealias NMSPacketPlayOutEntityHeadRotation = net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation
-
-typealias NMSPacketPlayOutEntityLook = net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook
 
 typealias NMSPacketPlayOutEntityEquipment = net.minecraft.network.protocol.game.PacketPlayOutEntityEquipment
 
@@ -218,7 +220,11 @@ typealias NMS14PacketDataSerializer = net.minecraft.server.v1_14_R1.PacketDataSe
 
 typealias NMS13PacketPlayOutBed = net.minecraft.server.v1_13_R2.PacketPlayOutBed
 
+typealias NMS13PacketPlayOutEntityLook = net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutEntityLook
+
 typealias NMS13PacketPlayOutRelEntityMove = net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMove
+
+typealias NMS13PacketPlayOutRelEntityMoveLook = net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook
 
 typealias NMS13PacketPlayOutEntityVelocity = net.minecraft.server.v1_13_R2.PacketPlayOutEntityVelocity
 

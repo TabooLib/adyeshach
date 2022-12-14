@@ -53,6 +53,11 @@ interface AdyeshachEntityTypeHandler {
     fun getEntityFlags(entityType: EntityTypes): List<String>
 
     /**
+     * 获取实体类型的客户端刷新间隔
+     */
+    fun getEntityClientUpdateInterval(entityType: EntityTypes): Int
+
+    /**
      * 通过与 AdyEntity 类似的接口类获取对应实体类型
      */
     fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes?

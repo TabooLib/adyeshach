@@ -26,7 +26,8 @@ interface DefaultEquipable : EntityEquipable {
 
     override fun updateEquipment() {
         this as DefaultEntityLiving
-        forViewers { updateEquipment(it) }
+        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+        operator.updateEquipment(getVisiblePlayers(), index, EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) })
     }
 
     override fun updateEquipment(player: Player) {

@@ -12,20 +12,20 @@ import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.manager.Manager
 import ink.ptms.adyeshach.common.util.Indexs
 import ink.ptms.adyeshach.common.util.errorBy
-import ink.ptms.adyeshach.common.util.plugin.CompatServerTours
+import ink.ptms.adyeshach.common.util.modify
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.event.world.WorldUnloadEvent
+import org.bukkit.util.Vector
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
+import taboolib.common5.Baffle
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
  * @author 坏黑
  * @since 2022/6/19 21:26
  */
-@Suppress("LeakingThis")
+@Suppress("LeakingThis", "SpellCheckingInspection")
 abstract class DefaultEntityInstance(entityType: EntityTypes) :
     DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultViewable, InternalEntity, TickService {
 
@@ -48,16 +48,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     @Expose
     override var moveSpeed = 0.2
 
-    /** Ady 的小脑 */
-    var brain = SimpleBrain(this)
-
-    /** 骑乘者 */
+    /** 是否傻子 */
     @Expose
-    var passengers = CopyOnWriteArraySet<String>()
-
-    /** 控制器 */
-    @Expose
-    var controller = CopyOnWriteArrayList<Controller>()
+    override var isNitwit = false
 
     /** 可视距离 */
     @Expose
@@ -91,11 +84,39 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             }
         }
 
+    /** 骑乘者 */
+    @Expose
+    var passengers = CopyOnWriteArraySet<String>()
+
+    /** 控制器 */
+    @Expose
+    var controller = CopyOnWriteArrayList<Controller>()
+
+    /** Ady 的小脑 */
+    var brain = SimpleBrain(this)
+
+    /** 客户端位置 */
+    var clientPosition = position
+
+    /** 客户端位置修正 */
+    var clientPositionFixed = 0
+
+    /** 客户端更新间隔 */
+    var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeHandler().getEntityClientUpdateInterval(entityType))
+
+    /** 单位移动量 */
+    var detailMovement = Vector(0.0, 0.0, 0.0)
+
     /** 管理器 */
     override var manager: Manager? = null
         set(value) {
+            // 是否已经存在管理器
             if (field != null && value != null) {
                 errorBy("error-manager-has-been-initialized")
+            }
+            // 如果是孤立管理器则自动设置为傻子
+            if (value !is TickService) {
+                isNitwit = true
             }
             field = value
         }
@@ -111,8 +132,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
-            // FIXME
-            setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
+            sendHeadRotation(position.yaw, position.pitch)
             // 关联实体初始化
             submit(delay = 5) { refreshPassenger(viewer) }
             return true
@@ -179,91 +199,89 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         despawn(removeFromManager = true)
     }
 
-    override fun teleport(location: Location) {
-        val event = AdyeshachEntityTeleportEvent(this, location)
-        if (event.call()) {
-            val newPosition = EntityPosition.fromLocation(event.location)
-            if (newPosition == position) {
-                return
-            }
-            position = newPosition
-            // 切换世界
-            if (position.world.name != location.world?.name) {
-                despawn()
-                respawn()
-            } else {
-                forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(it, index, location) }
-            }
-        }
-    }
-
     override fun teleport(entityPosition: EntityPosition) {
         teleport(entityPosition.toLocation())
     }
 
     override fun teleport(x: Double, y: Double, z: Double) {
-        if (x.isFinite() && y.isFinite() && z.isFinite()) {
-            teleport(position.toLocation().run {
-                this.x = x
-                this.y = y
-                this.z = z
-                this
-            })
-        }
+        teleport(position.toLocation().modify(x, y, z))
     }
 
-    override fun setVelocity(vector: org.bukkit.util.Vector) {
-        forViewers {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(it, index, vector)
-        }
-    }
-
-    override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
-        val event = AdyeshachHeadRotationEvent(this, yaw, pitch)
+    override fun teleport(location: Location) {
+        val event = AdyeshachEntityTeleportEvent(this, location)
         if (event.call()) {
-            // 如果数字变更，则更新视角
-            val hasUpdate = position.yaw != yaw || position.pitch != pitch
-            if (hasUpdate || forceUpdate) {
-                position = position.run {
-                    this.yaw = event.yaw
-                    this.pitch = event.pitch
-                    this
-                }
-                forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(it, index, event.yaw, event.pitch) }
+            val newPosition = EntityPosition.fromLocation(event.location)
+            // 是否发生位置变更
+            if (newPosition == position) {
+                return
+            }
+            // 修复方向
+            newPosition.yaw = DefaultEntityFixer.fixYaw(entityType, newPosition.yaw)
+            // 切换世界
+            if (position.world != newPosition.world) {
+                position = newPosition
+                despawn()
+                respawn()
+            }
+            // 傻子逻辑
+            if (isNitwit) {
+                position = newPosition
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, location)
+            } else {
+                clientPosition = newPosition
             }
         }
     }
 
-    override fun setAnimation(animation: BukkitAnimation) {
+    override fun setVelocity(vector: Vector) {
+        detailMovement = vector
+    }
+
+    override fun setVelocity(x: Double, y: Double, z: Double) {
+        detailMovement = Vector(x, y, z)
+    }
+
+    override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
+        if (forceUpdate) {
+            sendHeadRotation(yaw, pitch)
+        } else {
+            teleport(position.toLocation().modify(yaw, pitch))
+        }
+    }
+
+    @Deprecated("请使用 setVelocity(vector), 该方法存在命名误导", replaceWith = ReplaceWith("setVelocity(vector)"))
+    override fun sendVelocity(vector: Vector) {
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
+    }
+
+    @Deprecated("请使用 setHeadRotation(yaw, pitch, forceUpdate), 该方法存在命名误导", replaceWith = ReplaceWith("setHeadRotation(yaw, pitch, forceUpdate)"))
+    override fun sendHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
+        val y = DefaultEntityFixer.fixYaw(entityType, yaw)
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, y, pitch, false)
+    }
+
+    override fun sendAnimation(animation: BukkitAnimation) {
         if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE) {
             hurt()
         } else {
-            forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(it, index, animation) }
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
         }
     }
 
     override fun onTick() {
-        // 所在区块是否加载
-        if (getChunkAccess(getWorld()).isChunkLoaded(floor(x).toInt() shr 4, floor(z).roundToInt() shr 4)) {
-            // 确保客户端显示实体正常
-            if (viewPlayers.visibleRefreshLocker.hasNext()) {
-                // 复活在可视范围内的实体
-                viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
-                    if (visible(player, true)) {
-                        viewPlayers.visible += player.name
-                    }
+        // 不是傻子
+        if (!isNitwit) {
+            // 更新位置
+            syncPosition()
+            // 所在区块已经加载
+            if (isChunkLoaded()) {
+                // 处理可见玩家
+                handleTracker()
+                // 只有存在可见玩家时再处理实体控制器
+                if (viewPlayers.hasVisiblePlayer()) {
+                    // 实体逻辑处理
+                    brain.tick()
                 }
-                // 销毁不在可视范围内的实体
-                viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-                    if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
-                        viewPlayers.visible -= player.name
-                    }
-                }
-            }
-            // 只有存在可见玩家时才会处理实体控制器
-            if (viewPlayers.hasVisiblePlayer()) {
-                // 实体逻辑处理
-                brain.tick()
             }
         }
     }

@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.api.event.AdyeshachEntityTeleportEvent
-import ink.ptms.adyeshach.api.event.AdyeshachHeadRotationEvent
 import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
 import ink.ptms.adyeshach.common.api.Adyeshach
 import ink.ptms.adyeshach.common.entity.EntityFireball
@@ -10,7 +9,6 @@ import ink.ptms.adyeshach.common.entity.EntityThrowable
 import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyHuman
 import ink.ptms.adyeshach.common.entity.type.AdyMinecart
-import ink.ptms.adyeshach.common.entity.type.AdyWitherSkull
 import ink.ptms.adyeshach.common.util.toGroundCenter
 import org.bukkit.event.player.PlayerRespawnEvent
 import taboolib.common.platform.event.EventPriority
@@ -26,7 +24,24 @@ import taboolib.module.lang.sendLang
  * @author 坏黑
  * @since 2022/8/18 10:49
  */
-internal object DefaultEntityFixer {
+object DefaultEntityFixer {
+
+    /**
+     * 修复一些特殊实体在客户端的异常视角显示
+     */
+    fun fixYaw(entityTypes: EntityTypes, yaw: Float): Float {
+        return when (entityTypes) {
+            EntityTypes.WITHER_SKULL -> yaw + 180
+            EntityTypes.MINECART,
+            EntityTypes.MINECART_CHEST,
+            EntityTypes.MINECART_COMMAND,
+            EntityTypes.MINECART_FURNACE,
+            EntityTypes.MINECART_HOPPER,
+            EntityTypes.MINECART_TNT,
+            EntityTypes.MINECART_MOB_SPAWNER -> yaw + 90
+            else -> yaw
+        }
+    }
 
     /**
      * 玩家复活后刷新附近所有实体
@@ -44,22 +59,6 @@ internal object DefaultEntityFixer {
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: AdyeshachEntityTeleportEvent) {
         e.entity.getPassengers().forEach { it.teleport(e.location.clone().toGroundCenter()) }
-    }
-
-    /**
-     * 修正特殊实体朝向
-     */
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun onRotation(e: AdyeshachHeadRotationEvent) {
-        when (e.entity) {
-            is AdyWitherSkull -> {
-                e.yaw += 180
-            }
-            is AdyMinecart -> {
-                e.yaw -= 90
-                e.pitch = 0f
-            }
-        }
     }
 
     /**

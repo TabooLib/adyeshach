@@ -7,11 +7,7 @@ import ink.ptms.adyeshach.common.entity.Controllable
 import ink.ptms.adyeshach.common.entity.StandardTags
 import ink.ptms.adyeshach.common.entity.TagContainer
 import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralGravity
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralMove
-import ink.ptms.adyeshach.common.entity.ai.general.GeneralSmoothLook
 import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.util.errorBy
 import ink.ptms.adyeshach.common.util.path.PathFinderHandler
 import ink.ptms.adyeshach.common.util.path.ResultNavigation
 import org.bukkit.Location
@@ -23,6 +19,7 @@ import org.bukkit.Location
  * @author 坏黑
  * @since 2022/6/19 21:57
  */
+@Suppress("UNCHECKED_CAST")
 interface DefaultControllable : Controllable {
 
     override var isFreeze: Boolean
@@ -40,7 +37,11 @@ interface DefaultControllable : Controllable {
         return controller.toList()
     }
 
-    @Suppress("UNCHECKED_CAST")
+    override fun <T : Controller> getController(controller: String): T? {
+        this as DefaultEntityInstance
+        return this.controller.firstOrNull { it.id() == controller } as? T
+    }
+
     override fun <T : Controller> getController(controller: Class<T>): T? {
         this as DefaultEntityInstance
         return this.controller.firstOrNull { it.javaClass == controller } as? T
@@ -51,7 +52,7 @@ interface DefaultControllable : Controllable {
         // 添加事件
         if (AdyeshachControllerAddEvent(this, controller).call()) {
             // 移除相同的控制器
-            this.controller.removeIf { it.javaClass == controller.javaClass }
+            this.controller.removeIf { it.id() == controller.id() }
             // 注册控制器
             this.controller.add(controller)
             // 排序
@@ -61,15 +62,19 @@ interface DefaultControllable : Controllable {
         return false
     }
 
+    override fun unregisterController(controller: String): Boolean {
+        this as DefaultEntityInstance
+        return unregister(this.controller.firstOrNull { it.id() == controller } ?: return true)
+    }
+
+    override fun unregisterController(controller: Controller): Boolean {
+        this as DefaultEntityInstance
+        return unregister(this.controller.firstOrNull { it == controller } ?: return true)
+    }
+
     override fun <T : Controller> unregisterController(controller: Class<T>): Boolean {
         this as DefaultEntityInstance
-        val element = this.controller.firstOrNull { it.javaClass == controller } ?: return true
-        // 移除事件
-        if (AdyeshachControllerRemoveEvent(this, element).call()) {
-            this.controller.remove(element)
-            return true
-        }
-        return false
+        return unregister(this.controller.firstOrNull { it.javaClass == controller } ?: return true)
     }
 
     override fun resetController() {
@@ -89,7 +94,7 @@ interface DefaultControllable : Controllable {
 
     override fun isControllerOnGround(): Boolean {
         this as DefaultEntityInstance
-        return getController(GeneralGravity::class.java)?.isOnGround ?: errorBy("error-no-gravity")
+        return hasTag(StandardTags.IS_ON_GROUND)
     }
 
     override fun controllerLook(location: Location, smooth: Boolean, smoothInternal: Float) {
@@ -103,16 +108,17 @@ interface DefaultControllable : Controllable {
 
     override fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean, smoothInternal: Float) {
         this as DefaultEntityInstance
-        if (smooth && controller.any { it is GeneralSmoothLook }) {
-            val look = getController(GeneralSmoothLook::class.java)!!
-            look.yaw = yaw
-            look.pitch = pitch
-            look.isReset = true
-            look.isLooking = true
-            look.interval = smoothInternal
-        } else {
-            setHeadRotation(yaw, pitch)
-        }
+//        TODO 重做
+//        if (smooth && controller.any { it is GeneralSmoothLook }) {
+//            val look = getController(GeneralSmoothLook::class.java)!!
+//            look.yaw = yaw
+//            look.pitch = pitch
+//            look.isReset = true
+//            look.isLooking = true
+//            look.interval = smoothInternal
+//        } else {
+        sendHeadRotation(yaw, pitch)
+//        }
     }
 
     override fun controllerMove(location: Location, pathType: PathType, speed: Double) {
@@ -121,15 +127,15 @@ interface DefaultControllable : Controllable {
         if (hasVehicle()) {
             return
         }
-        if (pathType == PathType.FLY) {
-            if (controller.none { it is GeneralMove }) {
-                errorBy("error-no-move")
-            }
-        } else {
-            if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
-                errorBy("error-no-move-and-gravity")
-            }
-        }
+//        TODO 重做
+//        // 飞行单位需要 Move 控制器
+//        if (pathType == PathType.FLY && controller.none { it is GeneralMove }) {
+//            errorBy("error-no-move")
+//        }
+//        // 移动单位需要 Move、Gravity 控制器
+//        if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
+//            errorBy("error-no-move-and-gravity")
+//        }
         // 设置尝试移动的标签
         setTag(StandardTags.IS_PATHFINDING, "true")
         // 请求寻路
@@ -138,11 +144,11 @@ interface DefaultControllable : Controllable {
             if ((it as ResultNavigation).pointList.isEmpty()) {
                 return@request
             }
-            val move = getController(GeneralMove::class.java)!!
-            move.speed = speed
-            move.target = location
-            move.pathType = pathType
-            move.resultNavigation = it
+//            val move = getController(GeneralMove::class.java)!!
+//            move.speed = speed
+//            move.target = location
+//            move.pathType = pathType
+//            move.resultNavigation = it
             // 移除标签
             removeTag(StandardTags.IS_PATHFINDING)
         }
@@ -150,20 +156,30 @@ interface DefaultControllable : Controllable {
 
     override fun controllerStill() {
         this as DefaultEntityInstance
-        // TODO 重做
-        if (controller.any { it is GeneralMove }) {
-            // 刷新 GeneralMove 控制器
-            controller.removeIf { it is GeneralMove }
-            controller.add(GeneralMove(this))
-            controller.sort()
-            // 移除标签
-            removeTag(StandardTags.IS_MOVING)
-            removeTag(StandardTags.IS_JUMPING)
-        }
+//        // TODO 重做
+//        if (controller.any { it is GeneralMove }) {
+//            // 刷新 GeneralMove 控制器
+//            controller.removeIf { it is GeneralMove }
+//            controller.add(GeneralMove(this))
+//            controller.sort()
+//            // 移除标签
+//            removeTag(StandardTags.IS_MOVING)
+//            removeTag(StandardTags.IS_JUMPING)
+//        }
     }
 
     override fun isTryMoving(): Boolean {
         this as DefaultEntityInstance
         return hasTag(StandardTags.IS_PATHFINDING)
+    }
+
+    private fun unregister(controller: Controller): Boolean {
+        this as DefaultEntityInstance
+        // 移除事件
+        if (AdyeshachControllerRemoveEvent(this, controller).call()) {
+            this.controller.remove(controller)
+            return true
+        }
+        return false
     }
 }

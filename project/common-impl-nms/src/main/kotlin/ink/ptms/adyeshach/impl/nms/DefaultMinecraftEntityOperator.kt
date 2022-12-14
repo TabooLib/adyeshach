@@ -31,11 +31,11 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     val packetHandler: MinecraftPacketHandler
         get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()
 
-    override fun destroyEntity(player: Player, entityId: Int) {
+    override fun destroyEntity(player: List<Player>, entityId: Int) {
         packetHandler.sendPacket(player, NMSPacketPlayOutEntityDestroy(entityId))
     }
 
-    override fun teleportEntity(player: Player, entityId: Int, location: Location, onGround: Boolean) {
+    override fun teleportEntity(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
         // 计算视角
         val yaw = (location.yaw * 256 / 360).toInt().toByte()
         val pitch = (location.pitch * 256 / 360).toInt().toByte()
@@ -72,18 +72,49 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         packetHandler.sendPacket(player, packet)
     }
 
-    override fun relMoveEntity(player: Player, entityId: Int, x: Double, y: Double, z: Double, onGround: Boolean) {
+    override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
+        // 计算视角
+        val y = (yaw * 256 / 360).toInt().toByte()
+        val p = (pitch * 256 / 360).toInt().toByte()
         if (majorLegacy >= 11400) {
-            val rx = (x * 4096).toInt().toShort()
-            val ry = (y * 4096).toInt().toShort()
-            val rz = (z * 4096).toInt().toShort()
-            packetHandler.sendPacket(player, NMSPacketPlayOutRelEntityMove(entityId, rx, ry, rz, onGround))
+            packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, y, p, onGround))
+        } else {
+            packetHandler.sendPacket(player, NMS13PacketPlayOutEntityLook(entityId, y, p, onGround))
+        }
+        updateHeadRotation(player, entityId, yaw)
+    }
+
+    override fun updateRelEntityMove(player: List<Player>, entityId: Int, x: Short, y: Short, z: Short, onGround: Boolean) {
+        if (majorLegacy >= 11400) {
+            packetHandler.sendPacket(player, NMSPacketPlayOutRelEntityMove(entityId, x, y, z, onGround))
         } else {
             packetHandler.sendPacket(player, NMS13PacketPlayOutRelEntityMove(entityId, x.toLong(), y.toLong(), z.toLong(), onGround))
         }
     }
 
-    override fun updateEntityVelocity(player: Player, entityId: Int, vector: Vector) {
+    override fun updateRelEntityMoveLook(
+        player: List<Player>,
+        entityId: Int,
+        x: Short,
+        y: Short,
+        z: Short,
+        yaw: Float,
+        pitch: Float,
+        onGround: Boolean,
+    ) {
+        // 计算视角
+        val yRot = (yaw * 256 / 360).toInt().toByte()
+        val xRot = (pitch * 256 / 360).toInt().toByte()
+        // 版本判断
+        if (majorLegacy >= 11400) {
+            packetHandler.sendPacket(player, NMSPacketPlayOutRelEntityMoveLook(entityId, x, y, z, yRot, xRot, onGround))
+        } else {
+            packetHandler.sendPacket(player, NMS13PacketPlayOutRelEntityMoveLook(entityId, x.toLong(), y.toLong(), z.toLong(), yRot, xRot, onGround))
+        }
+        updateHeadRotation(player, entityId, yaw)
+    }
+
+    override fun updateEntityVelocity(player: List<Player>, entityId: Int, vector: Vector) {
         if (majorLegacy >= 11400) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityVelocity(entityId, NMSVec3D(vector.x, vector.y, vector.z)))
         } else {
@@ -91,33 +122,27 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updateHeadRotation(player: Player, entityId: Int, yaw: Float, pitch: Float) {
+    override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
         if (isUniversal) {
-            val y = NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte()
-            val p = NMSMathHelper.floor(pitch * 256.0f / 360.0f).toByte()
-            packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, y, p, true))
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
-                writeByte(y)
+                writeByte(NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte())
             }.toNMS() as NMSPacketDataSerializer))
         } else {
-            val y = NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte()
-            val p = NMS16MathHelper.d(pitch * 256.0f / 360.0f).toByte()
-            packetHandler.sendPacket(player, NMS16PacketPlayOutEntityLook(entityId, y, p, true))
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(y)
+                    writeByte(NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte())
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }
     }
 
-    override fun updateEquipment(player: Player, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
+    override fun updateEquipment(player: List<Player>, entityId: Int, slot: EquipmentSlot, itemStack: ItemStack) {
         updateEquipment(player, entityId, mapOf(slot to itemStack))
     }
 
-    override fun updateEquipment(player: Player, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>) {
+    override fun updateEquipment(player: List<Player>, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>) {
         when {
             // 从 1.16 开始每个包支持多个物品
             majorLegacy >= 11600 -> {
@@ -133,7 +158,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updatePassengers(player: Player, entityId: Int, vararg passengers: Int) {
+    override fun updatePassengers(player: List<Player>, entityId: Int, vararg passengers: Int) {
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {
                 writeVarInt(entityId)
@@ -149,7 +174,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updateEntityMetadata(player: Player, entityId: Int, vararg metadata: MinecraftMeta) {
+    override fun updateEntityMetadata(player: List<Player>, entityId: Int, vararg metadata: MinecraftMeta) {
         // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
         if (majorLegacy >= 11903) {
             packetHandler.sendPacket(player, NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metadata.toList()))
@@ -168,7 +193,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updateEntityAnimation(player: Player, entityId: Int, animation: BukkitAnimation) {
+    override fun updateEntityAnimation(player: List<Player>, entityId: Int, animation: BukkitAnimation) {
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutAnimation(createDataSerializer {
                 writeVarInt(entityId)
@@ -184,7 +209,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updateEntityAttach(player: Player, attached: Int, holding: Int) {
+    override fun updateEntityAttach(player: List<Player>, attached: Int, holding: Int) {
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutAttachEntity(createDataSerializer {
                 writeVarInt(attached)
@@ -200,7 +225,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updatePlayerSleeping(player: Player, entityId: Int, location: Location) {
+    override fun updatePlayerSleeping(player: List<Player>, entityId: Int, location: Location) {
         packetHandler.sendPacket(player, NMS13PacketPlayOutBed().also {
             it.a(createDataSerializer {
                 writeVarInt(entityId)

@@ -2,8 +2,8 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.common.entity.ai.Controller
 import ink.ptms.adyeshach.common.entity.ai.PrepareController
-import taboolib.common5.Baffle
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Adyeshach
@@ -21,7 +21,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
     /** 预加载控制器 */
     val postponeAdd = arrayListOf<Controller>()
     /** 每 30 秒检查一次 hold 内的无效控制器 */
-    val checker = Baffle.of(30)
+    var checker = System.currentTimeMillis()
 
     fun tick() {
         interrupt.clear()
@@ -46,7 +46,8 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
                 }
             }
             // 不在运行或是能够被打断
-            else if (h == null || (h < controller && h.isInterruptable())) {
+            // 能被打断的前提是优先级低于正在运行的控制器（数字较大）
+            else if (h == null || (h > controller && h.isInterruptable())) {
                 // 是否需要开始运行
                 if (controller.shouldExecute()) {
                     // 开始
@@ -62,11 +63,14 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
             hold[k] = controller.also { it.start() }
         }
         // 本次是否检查无效控制器
-        val check = checker.hasNext()
+        val checkInvalid = checker + TimeUnit.SECONDS.toMillis(30) < System.currentTimeMillis()
+        if (checkInvalid) {
+            checker = System.currentTimeMillis()
+        }
         // 处理继续
         hold.forEach { (k, controller) ->
             // 检查无效控制器
-            if (check && !entity.controller.contains(controller)) {
+            if (checkInvalid && !entity.controller.contains(controller)) {
                 hold.remove(k)
             }
             // 不是被中断的

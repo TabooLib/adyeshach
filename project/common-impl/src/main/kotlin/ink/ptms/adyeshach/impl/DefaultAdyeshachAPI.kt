@@ -6,6 +6,8 @@ import ink.ptms.adyeshach.impl.entity.manager.BaseManager
 import ink.ptms.adyeshach.impl.entity.manager.BasePlayerManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
+import ink.ptms.adyeshach.impl.hologram.DefaultAdyeshachHologramHandler
+import ink.ptms.adyeshach.impl.network.DefaultAdyeshachNetworkAPI
 import org.bukkit.entity.Player
 import taboolib.common.platform.PlatformFactory
 import taboolib.platform.util.setMeta

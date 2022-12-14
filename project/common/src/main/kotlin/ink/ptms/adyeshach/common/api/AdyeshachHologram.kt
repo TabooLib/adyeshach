@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.common.api
 
+import ink.ptms.adyeshach.common.entity.EntityTypes
 import ink.ptms.adyeshach.common.entity.type.AdyEntity
 import org.bukkit.Location
 import org.bukkit.inventory.ItemStack
@@ -61,6 +62,11 @@ interface AdyeshachHologram {
     }
 
     interface ItemByEntity<T : AdyEntity> : Item {
+
+        /**
+         * 实体类型
+         */
+        var type: EntityTypes
 
         /**
          * 显示实体
