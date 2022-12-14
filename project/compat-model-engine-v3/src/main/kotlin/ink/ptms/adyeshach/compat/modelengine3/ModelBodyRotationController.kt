@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.nms.entity.wrapper.BodyRotationController
-import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityInstance
 
 class ModelBodyRotationController(val entityInstance: EntityInstance) : BodyRotationController {
 

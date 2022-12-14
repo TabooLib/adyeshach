@@ -4,9 +4,9 @@ import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
 import com.ticxo.modelengine.api.model.base.BaseEntity
 import com.ticxo.modelengine.api.model.base.EntityData
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.type.AdyEntityLiving
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
@@ -20,7 +20,7 @@ import java.util.*
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.common.entity.EntityModeled
+ * ink.ptms.adyeshach.core.entity.EntityModeled
  *
  * @author sky
  * @since 2021/9/25 1:35 上午

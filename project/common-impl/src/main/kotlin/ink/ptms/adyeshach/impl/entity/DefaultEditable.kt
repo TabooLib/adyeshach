@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.Editable
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.Meta
-import ink.ptms.adyeshach.common.entity.Metaable
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.Editable
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.Meta
+import ink.ptms.adyeshach.core.entity.Metaable
 import org.bukkit.entity.Player
 
 /**

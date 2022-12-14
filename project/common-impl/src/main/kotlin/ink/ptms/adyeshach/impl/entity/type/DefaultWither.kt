@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.entity.type
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyWither
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyWither
 import org.bukkit.entity.Entity
 
 /**

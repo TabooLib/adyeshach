@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.impl.hologram
 
-import ink.ptms.adyeshach.common.api.AdyeshachHologram
-import ink.ptms.adyeshach.common.api.AdyeshachHologramHandler
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.AdyeshachHologram
+import ink.ptms.adyeshach.core.AdyeshachHologramHandler
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

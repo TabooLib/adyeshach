@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.nms.parser
 
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
-import ink.ptms.adyeshach.common.util.serializer.Serializer
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.serializer.Serializer
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 

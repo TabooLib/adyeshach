@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.AdyeshachLanguage
+import ink.ptms.adyeshach.core.AdyeshachLanguage
 import org.bukkit.command.CommandSender
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.ai.PrepareController
+import ink.ptms.adyeshach.core.entity.controller.Controller
+import ink.ptms.adyeshach.core.entity.controller.PrepareController
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -46,8 +46,8 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
                 }
             }
             // 不在运行或是能够被打断
-            // 能被打断的前提是优先级低于正在运行的控制器（数字较大）
-            else if (h == null || (h > controller && h.isInterruptable())) {
+            // 能被打断的前提是优先级高于正在运行的控制器（数字较小）
+            else if (h == null || (controller < h && h.isInterruptable())) {
                 // 是否需要开始运行
                 if (controller.shouldExecute()) {
                     // 开始

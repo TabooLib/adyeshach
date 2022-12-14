@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.module
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.bukkit.BukkitParticles
-import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.bukkit.data.EmptyVector
-import ink.ptms.adyeshach.common.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.BukkitParticles
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
+import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.Material

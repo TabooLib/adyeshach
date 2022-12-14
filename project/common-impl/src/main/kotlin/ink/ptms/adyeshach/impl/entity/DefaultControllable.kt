@@ -1,15 +1,13 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachControllerAddEvent
-import ink.ptms.adyeshach.api.event.AdyeshachControllerRemoveEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.Controllable
-import ink.ptms.adyeshach.common.entity.StandardTags
-import ink.ptms.adyeshach.common.entity.TagContainer
-import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.util.path.PathFinderHandler
-import ink.ptms.adyeshach.common.util.path.ResultNavigation
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.Controllable
+import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.TagContainer
+import ink.ptms.adyeshach.core.entity.controller.Controller
+import ink.ptms.adyeshach.core.entity.path.PathType
+import ink.ptms.adyeshach.core.event.AdyeshachControllerAddEvent
+import ink.ptms.adyeshach.core.event.AdyeshachControllerRemoveEvent
 import org.bukkit.Location
 
 /**
@@ -139,19 +137,19 @@ interface DefaultControllable : Controllable {
         // 设置尝试移动的标签
         setTag(StandardTags.IS_PATHFINDING, "true")
         // 请求寻路
-        PathFinderHandler.request(position.toLocation(), location, pathType) {
-            // 路径节点为空
-            if ((it as ResultNavigation).pointList.isEmpty()) {
-                return@request
-            }
-//            val move = getController(GeneralMove::class.java)!!
-//            move.speed = speed
-//            move.target = location
-//            move.pathType = pathType
-//            move.resultNavigation = it
-            // 移除标签
-            removeTag(StandardTags.IS_PATHFINDING)
-        }
+//        PathFinderHandler.request(position.toLocation(), location, pathType) {
+//            // 路径节点为空
+//            if ((it as ResultNavigation).pointList.isEmpty()) {
+//                return@request
+//            }
+////            val move = getController(GeneralMove::class.java)!!
+////            move.speed = speed
+////            move.target = location
+////            move.pathType = pathType
+////            move.resultNavigation = it
+//            // 移除标签
+//            removeTag(StandardTags.IS_PATHFINDING)
+//        }
     }
 
     override fun controllerStill() {

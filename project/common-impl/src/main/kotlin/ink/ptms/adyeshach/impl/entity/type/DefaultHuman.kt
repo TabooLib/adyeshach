@@ -1,15 +1,15 @@
 package ink.ptms.adyeshach.impl.entity.type
 
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.api.event.AdyeshachGameProfileGenerateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
-import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.bukkit.data.PingBar
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyHuman
-import ink.ptms.adyeshach.common.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.event.AdyeshachGameProfileGenerateEvent
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.data.GameProfile
+import ink.ptms.adyeshach.core.bukkit.data.PingBar
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyHuman
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
@@ -63,6 +63,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 registerClientEntity(viewer)
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
+                // 启用皮肤
+                setSkinEnabled(true)
                 // 修复玩家类型视角和装备无法正常显示的问题
                 submit(delay = 1) {
                     sendHeadRotation(yaw, pitch)

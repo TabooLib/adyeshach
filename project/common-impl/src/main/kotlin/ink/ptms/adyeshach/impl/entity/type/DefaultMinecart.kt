@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.impl.entity.type
 
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.*
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.*
 import org.bukkit.Material
 import org.bukkit.material.MaterialData
 import taboolib.library.xseries.XMaterial

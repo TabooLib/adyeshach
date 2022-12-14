@@ -2,17 +2,21 @@ package ink.ptms.adyeshach.impl.entity
 
 import com.google.gson.JsonParser
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.api.AdyeshachSettings
-import ink.ptms.adyeshach.api.event.*
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
-import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
-import ink.ptms.adyeshach.common.entity.*
-import ink.ptms.adyeshach.common.entity.ai.Controller
-import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.util.Indexs
-import ink.ptms.adyeshach.common.util.errorBy
-import ink.ptms.adyeshach.common.util.modify
+import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.core.event.AdyeshachEntityDestroyEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.core.entity.*
+import ink.ptms.adyeshach.core.entity.controller.Controller
+import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.impl.util.Indexs
+import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.core.util.modify
+import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -97,9 +101,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     /** 客户端位置 */
     var clientPosition = position
+        set(value) {
+            field = value.clone()
+        }
 
     /** 客户端位置修正 */
-    var clientPositionFixed = 0
+    var clientPositionFixed = System.currentTimeMillis()
 
     /** 客户端更新间隔 */
     var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeHandler().getEntityClientUpdateInterval(entityType))
@@ -107,18 +114,18 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     /** 单位移动量 */
     var detailMovement = Vector(0.0, 0.0, 0.0)
 
+    /** 载具位置同步 */
+    var vehicleSync = System.currentTimeMillis()
+
     /** 管理器 */
     override var manager: Manager? = null
         set(value) {
-            // 是否已经存在管理器
-            if (field != null && value != null) {
+            // 是否不存在管理器
+            if (field == null || value == null) {
+                field = value
+            } else {
                 errorBy("error-manager-has-been-initialized")
             }
-            // 如果是孤立管理器则自动设置为傻子
-            if (value !is TickService) {
-                isNitwit = true
-            }
-            field = value
         }
 
     override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
@@ -162,6 +169,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     override fun spawn(location: Location) {
         position = EntityPosition.fromLocation(location)
+        clientPosition = position
         forViewers { visible(it, true) }
         AdyeshachEntitySpawnEvent(this).call()
     }
@@ -208,37 +216,41 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     }
 
     override fun teleport(location: Location) {
-        val event = AdyeshachEntityTeleportEvent(this, location)
-        if (event.call()) {
-            val newPosition = EntityPosition.fromLocation(event.location)
-            // 是否发生位置变更
-            if (newPosition == position) {
-                return
-            }
-            // 修复方向
-            newPosition.yaw = DefaultEntityFixer.fixYaw(entityType, newPosition.yaw)
-            // 切换世界
-            if (position.world != newPosition.world) {
-                position = newPosition
-                despawn()
-                respawn()
-            }
-            // 傻子逻辑
-            if (isNitwit) {
-                position = newPosition
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, location)
-            } else {
-                clientPosition = newPosition
-            }
+        // 处理事件
+        val eventBus = getEventBus()
+        if (eventBus != null && !eventBus.callTeleport(this, location)) {
+            return
+        }
+        val newPosition = EntityPosition.fromLocation(location)
+        // 是否发生位置变更
+        if (newPosition == position) {
+            return
+        }
+        // 切换世界
+        if (position.world != newPosition.world) {
+            position = newPosition
+            despawn()
+            respawn()
+        }
+        // 傻子 || 无管理器 || 孤立管理器
+        if (isNitwit || manager == null || manager !is TickService) {
+            position = newPosition
+            clientPosition = position
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, location)
+        } else {
+            clientPosition = newPosition
         }
     }
 
     override fun setVelocity(vector: Vector) {
-        detailMovement = vector
+        val eventBus = getEventBus()
+        if (eventBus == null || eventBus.callVelocity(this, vector)) {
+            detailMovement = vector
+        }
     }
 
     override fun setVelocity(x: Double, y: Double, z: Double) {
-        detailMovement = Vector(x, y, z)
+        setVelocity(Vector(x, y, z))
     }
 
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
@@ -256,8 +268,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     @Deprecated("请使用 setHeadRotation(yaw, pitch, forceUpdate), 该方法存在命名误导", replaceWith = ReplaceWith("setHeadRotation(yaw, pitch, forceUpdate)"))
     override fun sendHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
-        val y = DefaultEntityFixer.fixYaw(entityType, yaw)
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, y, pitch, false)
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, false)
     }
 
     override fun sendAnimation(animation: BukkitAnimation) {
@@ -269,20 +280,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     }
 
     override fun onTick() {
-        // 不是傻子
-        if (!isNitwit) {
-            // 更新位置
-            syncPosition()
-            // 所在区块已经加载
-            if (isChunkLoaded()) {
-                // 处理可见玩家
-                handleTracker()
-                // 只有存在可见玩家时再处理实体控制器
-                if (viewPlayers.hasVisiblePlayer()) {
-                    // 实体逻辑处理
-                    brain.tick()
-                }
-            }
+        // 处理玩家可见
+        handleTracker()
+        // 更新位置
+        syncPosition()
+        // 不是傻子 && 存在可见玩家 && 所在区块已经加载
+        if (!isNitwit && viewPlayers.hasVisiblePlayer() && isChunkLoaded()) {
+            // 实体逻辑处理
+            brain.tick()
+            // 处理移动
+            handleMove()
         }
     }
 

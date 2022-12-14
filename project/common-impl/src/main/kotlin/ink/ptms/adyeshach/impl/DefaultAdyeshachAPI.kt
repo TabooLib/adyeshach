@@ -1,7 +1,8 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.*
-import ink.ptms.adyeshach.common.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.*
+import ink.ptms.adyeshach.core.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.impl.entity.manager.BaseManager
 import ink.ptms.adyeshach.impl.entity.manager.BasePlayerManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.nms.DefaultAdyeshachAPI
+ * ink.ptms.adyeshach.impl.nms.DefaultAdyeshachAPI
  *
  * @author 坏黑
  * @since 2022/6/18 16:20

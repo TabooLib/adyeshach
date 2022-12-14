@@ -15,6 +15,7 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url = uri("https://repo.spongepowered.org/maven") }
         maven { url = uri("https://repo.tabooproject.org/repository/releases/") }
     }
     dependencies {
@@ -34,6 +35,7 @@ subprojects {
         compileOnly("com.google.guava:guava:21.0")
         compileOnly("com.eatthepath:fast-uuid:0.2.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:2.8.5")
+        compileOnly("org.spongepowered:math:2.0.1")
         compileOnly(kotlin("stdlib"))
     }
     tasks.withType<JavaCompile> {

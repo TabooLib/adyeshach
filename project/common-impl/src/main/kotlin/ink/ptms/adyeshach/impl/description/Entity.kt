@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.entity.EntitySize
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.util.getEnum
-import ink.ptms.adyeshach.common.util.getEnumOrNull
+import ink.ptms.adyeshach.core.entity.EntitySize
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.path.PathType
+import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.core.util.getEnumOrNull
 import org.bukkit.entity.EntityType
 
 /**

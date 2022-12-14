@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.nms.parser
 
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
-import ink.ptms.adyeshach.common.bukkit.data.EmptyVector
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import org.bukkit.util.Vector
 import taboolib.common5.Coerce
 

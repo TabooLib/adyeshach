@@ -2,9 +2,9 @@ package ink.ptms.adyeshach.impl.entity
 
 import com.eatthepath.uuid.FastUUID
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.common.bukkit.data.EntityPosition
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.core.entity.EntityBase
+import ink.ptms.adyeshach.core.entity.EntityTypes
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.entity.DefaultEntityBase
+ * ink.ptms.adyeshach.impl.entity.DefaultEntityBase
  *
  * @author 坏黑
  * @since 2022/6/19 15:59

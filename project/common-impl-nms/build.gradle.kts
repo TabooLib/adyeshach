@@ -5,7 +5,6 @@ dependencies {
     compileOnly("ink.ptms.core:v11800:11800:mapped")
     compileOnly("net.md-5:bungeecord-chat:1.17")
     compileOnly(project(":project:common"))
-    compileOnly(project(":project:common-api"))
     compileOnly(project(":project:common-impl-nms-j17"))
     compileOnly(project(":project:api-data-serializer"))
 }

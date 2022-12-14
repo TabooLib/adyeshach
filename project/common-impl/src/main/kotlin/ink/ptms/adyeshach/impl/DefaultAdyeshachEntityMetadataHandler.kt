@@ -1,9 +1,9 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.AdyeshachEntityMetadataHandler
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.Meta
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.AdyeshachEntityMetadataHandler
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.Meta
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.impl.description.DescEntityMeta
 import ink.ptms.adyeshach.impl.description.DescEntityUnusedMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked

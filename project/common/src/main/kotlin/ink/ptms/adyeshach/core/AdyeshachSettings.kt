@@ -1,0 +1,86 @@
+package ink.ptms.adyeshach.core
+
+import taboolib.common.util.resettableLazy
+import taboolib.module.configuration.Config
+import taboolib.module.configuration.ConfigNode
+import taboolib.module.configuration.Configuration
+
+/**
+ * Adyeshach
+ * ink.ptms.adyeshach.core.AdyeshachSettings
+ *
+ * @author 坏黑
+ * @since 2022/6/16 16:29
+ */
+object AdyeshachSettings {
+
+    @Config
+    lateinit var conf: Configuration
+        private set
+
+    /**
+     * 调试模式
+     */
+    @ConfigNode("Settings.debug")
+    var debug = false
+        private set
+
+    /**
+     * 单位可视距离
+     */
+    @ConfigNode("Settings.visible-distance")
+    var visibleDistance = 64.0
+        private set
+
+    /**
+     * 主线程寻路
+     */
+    @ConfigNode("Settings.pathfinder-sync")
+    var pathfinderSync = true
+        private set
+
+    /**
+     * 在未知世界下删除单位
+     */
+    @ConfigNode("Settings.delete-file-in-unknown-world")
+    var deleteFileInUnknownWorld = emptyList<String>()
+
+    /**
+     * 可视条件检查间隔
+     */
+    @ConfigNode("Settings.view-condition-interval")
+    var viewConditionInterval = 40
+        get() = if (field == 0) 40 else field
+
+    /**
+     * 是否启用 Ashcon API
+     */
+    @ConfigNode("Settings.ashcon-api")
+    var ashconAPI = true
+        private set
+
+    /**
+     * 单位生成时机
+     * JOIN 表示玩家进入游戏时
+     * KEEP_ALIVE 表示当玩家向服务端发送第一个心跳包时
+     */
+    val spawnTrigger by resettableLazy {
+        try {
+            SpawnTrigger.valueOf(conf.getString("Settings.spawn-trigger")!!.uppercase())
+        } catch (ignored: Exception) {
+            SpawnTrigger.KEEP_ALIVE
+        }
+    }
+
+    /**
+     * 是否为自动删除世界
+     */
+    fun isAutoDeleteWorld(world: String): Boolean {
+        return deleteFileInUnknownWorld.any { if (it.endsWith("?")) world.contains(it.substring(0, it.length - 1)) else world == it }
+    }
+}
+
+enum class SpawnTrigger {
+
+    KEEP_ALIVE, JOIN
+}

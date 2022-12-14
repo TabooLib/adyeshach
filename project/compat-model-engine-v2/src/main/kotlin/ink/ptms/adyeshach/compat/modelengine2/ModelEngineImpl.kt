@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.compat.modelengine2
 
 import com.ticxo.modelengine.api.ModelEngineAPI
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.AdyeshachEntityTypeHandler
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.ModelEngine
-import ink.ptms.adyeshach.common.util.asLang
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.ModelEngine
+import ink.ptms.adyeshach.core.util.asLang
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

@@ -1,21 +1,14 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
-import ink.ptms.adyeshach.api.event.AdyeshachEntityTeleportEvent
-import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityFireball
-import ink.ptms.adyeshach.common.entity.EntityThrowable
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyHuman
-import ink.ptms.adyeshach.common.entity.type.AdyMinecart
-import ink.ptms.adyeshach.common.util.toGroundCenter
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityFireball
+import ink.ptms.adyeshach.core.entity.EntityThrowable
+import ink.ptms.adyeshach.core.entity.type.AdyMinecart
+import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.console
 import taboolib.common.platform.function.submit
-import taboolib.module.lang.sendLang
 
 /**
  * Adyeshach
@@ -24,24 +17,7 @@ import taboolib.module.lang.sendLang
  * @author 坏黑
  * @since 2022/8/18 10:49
  */
-object DefaultEntityFixer {
-
-    /**
-     * 修复一些特殊实体在客户端的异常视角显示
-     */
-    fun fixYaw(entityTypes: EntityTypes, yaw: Float): Float {
-        return when (entityTypes) {
-            EntityTypes.WITHER_SKULL -> yaw + 180
-            EntityTypes.MINECART,
-            EntityTypes.MINECART_CHEST,
-            EntityTypes.MINECART_COMMAND,
-            EntityTypes.MINECART_FURNACE,
-            EntityTypes.MINECART_HOPPER,
-            EntityTypes.MINECART_TNT,
-            EntityTypes.MINECART_MOB_SPAWNER -> yaw + 90
-            else -> yaw
-        }
-    }
+internal object DefaultEntityFixer {
 
     /**
      * 玩家复活后刷新附近所有实体
@@ -51,14 +27,6 @@ object DefaultEntityFixer {
         submit(delay = 20) {
             Adyeshach.api().getEntityFinder().getVisibleEntities(e.player) { it.isViewer(e.player) }.forEach { it.visible(e.player, true) }
         }
-    }
-
-    /**
-     * 修正关联实体位置
-     */
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun onTeleport(e: AdyeshachEntityTeleportEvent) {
-        e.entity.getPassengers().forEach { it.teleport(e.location.clone().toGroundCenter()) }
     }
 
     /**
@@ -81,26 +49,23 @@ object DefaultEntityFixer {
             is EntityThrowable -> {
                 entity.setNoGravity(true)
             }
-            // 玩家默认无皮肤
-            is AdyHuman -> {
-                entity.setSkinEnabled(true)
-            }
         }
     }
 
     /**
+     * TODO
      * 修正玩家类型的展示名称
      */
-    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    fun onGenerate(e: AdyeshachNaturalMetaGenerateEvent) {
-        val value = e.value
-        if (e.meta.key == "customName" && value is String) {
-            val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
-            if (value.length > length) {
-                e.value = value.substring(0, length)
-                // 发送警告
-                console().sendLang("error-name-length", e.entity.id, e.entity.entityType, value.length, length)
-            }
-        }
-    }
+//    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//    fun onGenerate(e: AdyeshachNaturalMetaGenerateEvent) {
+//        val value = e.value
+//        if (e.meta.key == "customName" && value is String) {
+//            val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
+//            if (value.length > length) {
+//                e.value = value.substring(0, length)
+//                // 发送警告
+//                console().sendLang("error-name-length", e.entity.id, e.entity.entityType, value.length, length)
+//            }
+//        }
+//    }
 }

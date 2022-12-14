@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityEquipable
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityEquipable
 import ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving
 import org.bukkit.Material
 import org.bukkit.entity.Player

@@ -4,9 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.AdyeshachNetworkAPI
-import ink.ptms.adyeshach.common.util.serializer.Serializer
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
+import ink.ptms.adyeshach.core.serializer.Serializer
 import org.bukkit.command.CommandSender
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder

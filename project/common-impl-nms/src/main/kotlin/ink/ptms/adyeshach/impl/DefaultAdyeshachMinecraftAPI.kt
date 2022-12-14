@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.*
+import ink.ptms.adyeshach.core.*
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory

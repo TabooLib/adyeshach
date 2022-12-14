@@ -1,17 +1,18 @@
 package ink.ptms.adyeshach.module
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityEquipable
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyAxolotl
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
-import ink.ptms.adyeshach.common.entity.type.AdyFallingBlock
-import ink.ptms.adyeshach.common.entity.type.AdyHuman
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityEquipable
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyAxolotl
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.entity.type.AdyFallingBlock
+import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Axolotl
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
@@ -26,7 +27,7 @@ object Test {
 
     lateinit var entity: AdyEntity
 
-    // @Schedule(period = 1)
+    @Schedule(period = 1)
     fun onTick() {
         if (this::entity.isInitialized) {
             val op = onlinePlayers.firstOrNull() ?: return
@@ -95,7 +96,6 @@ object Test {
             sender.info("OK")
         }
     }
-
 
     @CommandBody
     val despawn = subCommand {

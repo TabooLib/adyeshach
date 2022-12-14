@@ -2,11 +2,11 @@ package ink.ptms.adyeshach.impl.nms
 
 import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftEntityOperator
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
-import ink.ptms.adyeshach.common.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftEntityOperator
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftPacketHandler
+import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -36,8 +36,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun teleportEntity(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(location.yaw)
         // 计算视角
-        val yaw = (location.yaw * 256 / 360).toInt().toByte()
+        val yaw = (yf * 256 / 360).toInt().toByte()
         val pitch = (location.pitch * 256 / 360).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
@@ -73,8 +75,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
         // 计算视角
-        val y = (yaw * 256 / 360).toInt().toByte()
+        val y = (yf * 256 / 360).toInt().toByte()
         val p = (pitch * 256 / 360).toInt().toByte()
         if (majorLegacy >= 11400) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, y, p, onGround))
@@ -102,8 +106,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         pitch: Float,
         onGround: Boolean,
     ) {
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
         // 计算视角
-        val yRot = (yaw * 256 / 360).toInt().toByte()
+        val yRot = (yf * 256 / 360).toInt().toByte()
         val xRot = (pitch * 256 / 360).toInt().toByte()
         // 版本判断
         if (majorLegacy >= 11400) {
@@ -123,16 +129,18 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
-                writeByte(NMSMathHelper.floor(yaw * 256.0f / 360.0f).toByte())
+                writeByte(NMSMathHelper.floor(yf * 256.0f / 360.0f).toByte())
             }.toNMS() as NMSPacketDataSerializer))
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(NMS16MathHelper.d(yaw * 256.0f / 360.0f).toByte())
+                    writeByte(NMS16MathHelper.d(yf * 256.0f / 360.0f).toByte())
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }

@@ -3,7 +3,6 @@ dependencies {
     compileOnly("ink.ptms.core:v11903:11903:mapped")
     compileOnly("ink.ptms.core:v11903:11903:universal")
     compileOnly(project(":project:common"))
-    compileOnly(project(":project:common-api"))
 }
 
 configure<JavaPluginConvention> {

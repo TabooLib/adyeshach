@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.nmsj17
 
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.bukkit.data.GameProfileAction
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.bukkit.data.GameProfile
+import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import taboolib.common.util.unsafeLazy
 import taboolib.module.nms.nmsProxy
 import java.util.*

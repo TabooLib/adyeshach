@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.AdyeshachEntityControllerHandler
-import ink.ptms.adyeshach.common.entity.ai.ControllerGenerator
+import ink.ptms.adyeshach.core.AdyeshachEntityControllerHandler
+import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
 import java.util.LinkedHashMap
 
 /**

@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
-import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import org.bukkit.Bukkit

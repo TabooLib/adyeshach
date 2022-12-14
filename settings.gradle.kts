@@ -2,7 +2,6 @@ rootProject.name = "Adyeshach"
 
 include("plugin")
 include("project:common")
-include("project:common-api")
 include("project:common-impl")
 include("project:common-impl-nms")
 include("project:common-impl-nms-j17")

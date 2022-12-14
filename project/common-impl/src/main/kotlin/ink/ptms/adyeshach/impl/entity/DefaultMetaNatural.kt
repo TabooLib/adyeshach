@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachNaturalMetaGenerateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.MetaNatural
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.MetaNatural
+import ink.ptms.adyeshach.core.entity.manager.event.MetaNaturalGenerateEvent
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 
@@ -33,8 +33,12 @@ class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T)
         entityInstance as DefaultEntityInstance
         var obj = entityInstance.metadata[key] ?: return null
         obj = parser.parse(obj)
-        val event = AdyeshachNaturalMetaGenerateEvent(entityInstance, player, this as MetaNatural<Any, out EntityInstance>, obj)
-        return if (event.call()) parser.createMeta(index, event.value) else null
+        val event = MetaNaturalGenerateEvent(entityInstance, player, this as MetaNatural<Any, out EntityInstance>, obj)
+        val eventBus = entityInstance.getEventBus()
+        if (eventBus == null || eventBus.callNaturalMetaGenerate(event)) {
+            return parser.createMeta(index, event.value)
+        }
+        return null
     }
 
     override fun updateEntityMetadata(entityInstance: EntityInstance) {

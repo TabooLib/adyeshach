@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.core.Adyeshach
 import taboolib.common.util.unsafeLazy
 
 /**

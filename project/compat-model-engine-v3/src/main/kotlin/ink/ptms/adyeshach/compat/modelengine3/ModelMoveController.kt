@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController
-import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 

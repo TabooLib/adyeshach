@@ -1,13 +1,14 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
-import ink.ptms.adyeshach.api.event.AdyeshachEntityCreateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.TickService
-import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.manager.ManagerService
-import ink.ptms.adyeshach.common.util.safeDistance
+import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.TickService
+import ink.ptms.adyeshach.core.entity.manager.EventBus
+import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.core.entity.manager.ManagerService
+import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
@@ -112,6 +113,7 @@ open class BaseManager : Manager, ManagerService, TickService {
     override fun onTick() {
     }
 
-    override fun prepareTick(callback: Consumer<EntityInstance>) {
+    override fun getEventBus(): EventBus? {
+        return null
     }
 }

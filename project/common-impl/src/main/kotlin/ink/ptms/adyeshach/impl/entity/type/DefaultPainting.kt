@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.impl.entity.type
 
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.bukkit.BukkitDirection
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyPainting
-import ink.ptms.adyeshach.common.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.BukkitDirection
+import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyPainting
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import org.bukkit.Art
 import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
@@ -44,14 +44,14 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
 
     @Deprecated("1.19 以上不支持")
     override fun setDirection(direction: BukkitDirection) {
-        ink.ptms.adyeshach.common.entity.type.assert(minecraftVersion >= 11900, "setDirection")
+        ink.ptms.adyeshach.core.entity.type.assert(minecraftVersion >= 11900, "setDirection")
         this.direction = direction
         respawn()
     }
 
     @Deprecated("1.19 以上不支持")
     override fun getDirection(): BukkitDirection {
-        ink.ptms.adyeshach.common.entity.type.assert(minecraftVersion >= 11900, "getDirection")
+        ink.ptms.adyeshach.core.entity.type.assert(minecraftVersion >= 11900, "getDirection")
         return direction
     }
 

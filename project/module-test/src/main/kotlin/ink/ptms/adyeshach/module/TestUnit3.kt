@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.module
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityTypes
 import org.bukkit.command.CommandSender
 
 fun testAdapter(sender: CommandSender) {

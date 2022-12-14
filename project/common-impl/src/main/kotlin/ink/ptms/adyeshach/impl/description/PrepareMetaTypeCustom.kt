@@ -1,13 +1,12 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.bukkit.BukkitParticles
-import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.bukkit.data.VillagerData
-import ink.ptms.adyeshach.common.util.getEnumOrNull
+import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.core.bukkit.BukkitParticles
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.util.getEnumOrNull
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Material
-import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector

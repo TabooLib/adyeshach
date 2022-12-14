@@ -2,10 +2,12 @@ package ink.ptms.adyeshach.impl.nms
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
-import ink.ptms.adyeshach.common.api.*
-import ink.ptms.adyeshach.common.bukkit.BukkitDirection
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.core.*
+import ink.ptms.adyeshach.core.bukkit.BukkitDirection
+import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Location
 import org.bukkit.Material
@@ -65,8 +67,10 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int) {
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player)?.entityType.fixYaw(location.yaw)
         // 计算视角
-        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (yf * 256.0f / 360.0f).toInt().toByte()
         val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
@@ -160,8 +164,10 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         if ((entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) || majorLegacy >= 11900) {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
+        // 修复视角
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player)?.entityType.fixYaw(location.yaw)
         // 计算视角
-        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (yf * 256.0f / 360.0f).toInt().toByte()
         val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {

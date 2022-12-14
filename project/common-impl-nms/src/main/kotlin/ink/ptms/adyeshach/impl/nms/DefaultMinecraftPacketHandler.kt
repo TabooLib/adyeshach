@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.nms
 
-import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
+import ink.ptms.adyeshach.core.MinecraftPacketHandler
 import org.bukkit.entity.Player
 import taboolib.module.nms.sendPacket
 

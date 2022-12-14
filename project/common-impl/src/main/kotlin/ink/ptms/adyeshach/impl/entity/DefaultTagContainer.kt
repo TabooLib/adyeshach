@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachPersistentTagUpdateEvent
-import ink.ptms.adyeshach.api.event.AdyeshachTagUpdateEvent
-import ink.ptms.adyeshach.common.entity.StandardTags
-import ink.ptms.adyeshach.common.entity.TagContainer
+import ink.ptms.adyeshach.core.event.AdyeshachPersistentTagUpdateEvent
+import ink.ptms.adyeshach.core.event.AdyeshachTagUpdateEvent
+import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.TagContainer
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.entity.DefaultTagContainer
+ * ink.ptms.adyeshach.impl.entity.DefaultTagContainer
  *
  * @author 坏黑
  * @since 2022/6/19 16:11

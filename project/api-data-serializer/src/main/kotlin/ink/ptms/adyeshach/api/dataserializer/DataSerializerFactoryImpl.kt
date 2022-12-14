@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.api.dataserializer
 
-import ink.ptms.adyeshach.common.api.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMeta
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import net.minecraft.server.v1_9_R2.DataWatcher

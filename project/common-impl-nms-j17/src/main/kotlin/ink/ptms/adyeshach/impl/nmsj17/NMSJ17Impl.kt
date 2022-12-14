@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.nmsj17
 
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.bukkit.data.GameProfileAction
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.bukkit.data.GameProfile
+import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.PacketDataSerializer

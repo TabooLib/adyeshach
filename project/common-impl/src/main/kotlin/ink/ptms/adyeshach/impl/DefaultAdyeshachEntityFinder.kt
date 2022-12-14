@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.AdyeshachAPI
-import ink.ptms.adyeshach.common.api.AdyeshachEntityFinder
-import ink.ptms.adyeshach.common.entity.ClientEntity
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.manager.ManagerType
-import ink.ptms.adyeshach.common.util.safeDistance
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachAPI
+import ink.ptms.adyeshach.core.AdyeshachEntityFinder
+import ink.ptms.adyeshach.core.entity.ClientEntity
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
@@ -17,7 +17,7 @@ import java.util.function.Predicate
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.DefaultAdyeshachEntityFinder
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder
  *
  * @author 坏黑
  * @since 2022/6/19 00:15
@@ -66,6 +66,10 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
 
     override fun getEntityFromUniqueId(id: String, player: Player?): EntityInstance? {
         return getEntity(null) { it.uniqueId == id }
+    }
+
+    override fun getEntityFromClientEntityId(id: Int, player: Player): EntityInstance? {
+        return clientEntityMap[player.name]?.values?.firstOrNull { it.entityId == id }?.entity
     }
 
     override fun getEntityFromClientUniqueId(id: UUID, player: Player): EntityInstance? {

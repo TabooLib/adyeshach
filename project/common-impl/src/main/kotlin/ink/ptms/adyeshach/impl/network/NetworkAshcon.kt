@@ -2,8 +2,8 @@ package ink.ptms.adyeshach.impl.network
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import ink.ptms.adyeshach.api.AdyeshachSettings
-import ink.ptms.adyeshach.common.api.AdyeshachNetworkAPI
+import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle

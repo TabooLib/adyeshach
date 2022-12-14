@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.bytecode
 
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.EntityBase
+import ink.ptms.adyeshach.core.entity.EntityTypes
 import taboolib.library.asm.ClassWriter
 import taboolib.library.asm.Opcodes
 

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.entity.EntitySerializable
-import ink.ptms.adyeshach.common.util.serializer.Serializer
+import ink.ptms.adyeshach.core.entity.EntitySerializable
+import ink.ptms.adyeshach.core.serializer.Serializer
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
@@ -9,7 +9,7 @@ import java.util.function.Function
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.entity.DefaultSerializable
+ * ink.ptms.adyeshach.impl.entity.DefaultSerializable
  *
  * @author 坏黑
  * @since 2022/6/19 16:11

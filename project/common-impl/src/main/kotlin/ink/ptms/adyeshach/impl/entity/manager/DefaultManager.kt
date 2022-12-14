@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.TickService
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.TickService
+import ink.ptms.adyeshach.core.entity.manager.EventBus
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.function.Consumer
 import java.util.function.Predicate
 
 /**
@@ -18,7 +18,7 @@ import java.util.function.Predicate
  */
 open class DefaultManager : BaseManager() {
 
-    val prepareTicks = LinkedList<Consumer<EntityInstance>>()
+    val defaultEventBus = DefaultEventBus()
     val activeEntity = LinkedList<EntityInstance>()
     val pushList = CopyOnWriteArrayList<EntityInstance>()
     val removeList = CopyOnWriteArrayList<EntityInstance>()
@@ -78,15 +78,15 @@ open class DefaultManager : BaseManager() {
         updateActiveEntityList()
         // 处理列表
         activeEntity.forEach {
-            if (it is TickService) {
-                prepareTicks.forEach { p -> p.accept(it) }
+            // 实体受 Tick 服务影响 && 事件处理
+            if (it is TickService && defaultEventBus.callTick(it)) {
                 it.onTick()
             }
         }
     }
 
-    override fun prepareTick(callback: Consumer<EntityInstance>) {
-        prepareTicks += callback
+    override fun getEventBus(): EventBus? {
+        return defaultEventBus
     }
 
     private fun updateActiveEntityList() {

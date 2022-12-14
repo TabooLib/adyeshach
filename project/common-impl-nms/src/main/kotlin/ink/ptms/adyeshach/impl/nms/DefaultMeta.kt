@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.nms
 
-import ink.ptms.adyeshach.common.api.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMeta
 
 /**
  * Adyeshach

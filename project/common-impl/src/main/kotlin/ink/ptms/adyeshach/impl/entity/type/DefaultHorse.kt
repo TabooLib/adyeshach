@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.entity.type
 
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.type.AdyHorse
-import ink.ptms.adyeshach.common.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyHorse
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import org.bukkit.entity.Horse
 
 /**

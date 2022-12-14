@@ -1,0 +1,27 @@
+package ink.ptms.adyeshach.core.bukkit
+
+/**
+ * @author Arasple
+ * @date 2020/8/6 17:49
+ */
+enum class BukkitDirection {
+
+    DOWN,
+
+    UP,
+
+    NORTH,
+
+    SOUTH,
+
+    WEST,
+
+    EAST;
+
+    companion object {
+
+        fun of(index: Int): BukkitDirection {
+            return values()[index]
+        }
+    }
+}

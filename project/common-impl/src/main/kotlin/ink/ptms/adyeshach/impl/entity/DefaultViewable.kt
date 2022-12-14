@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.Viewable
-import ink.ptms.adyeshach.common.util.safeDistance
+import ink.ptms.adyeshach.core.entity.EntityBase
+import ink.ptms.adyeshach.core.entity.Viewable
+import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
 import java.util.function.Consumer

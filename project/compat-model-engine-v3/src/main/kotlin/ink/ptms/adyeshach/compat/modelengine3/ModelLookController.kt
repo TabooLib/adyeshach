@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController
-import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityInstance
 
 class ModelLookController(val entityInstance: EntityInstance) : LookController {
 

@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.api.dataserializer
 
 import com.google.common.base.Charsets
 import com.mojang.authlib.properties.PropertyMap
-import ink.ptms.adyeshach.common.api.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMeta
 import io.netty.handler.codec.EncoderException
 import java.util.*
 

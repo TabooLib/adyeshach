@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.entity.EntitySize
-import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.entity.EntitySize
+import ink.ptms.adyeshach.core.entity.path.PathType
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import taboolib.common.platform.function.info
 import java.io.InputStream
 

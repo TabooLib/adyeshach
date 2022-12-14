@@ -1,14 +1,14 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.AdyeshachEntityTypeHandler
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.EntitySize
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.entity.path.PathType
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
-import ink.ptms.adyeshach.common.entity.type.errorBy
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.entity.EntityBase
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntitySize
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.path.PathType
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.entity.type.errorBy
 import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
@@ -23,7 +23,7 @@ import taboolib.module.nms.AsmClassLoader
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.DefaultAdyeshachEntityTypeHandler
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityTypeHandler
  *
  * @author 坏黑
  * @since 2022/6/19 15:56

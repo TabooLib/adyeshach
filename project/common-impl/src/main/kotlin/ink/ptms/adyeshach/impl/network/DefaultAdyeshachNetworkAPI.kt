@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.network
 
-import ink.ptms.adyeshach.common.api.AdyeshachNetworkAPI
+import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.DefaultAdyeshachNetworkAPI
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachNetworkAPI
  *
  * @author 坏黑
  * @since 2022/6/18 23:44

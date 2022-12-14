@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.common.bukkit.BukkitPose
-import ink.ptms.adyeshach.common.entity.EntityBase
-import ink.ptms.adyeshach.common.entity.GenericEntity
-import ink.ptms.adyeshach.common.entity.Metaable
-import ink.ptms.adyeshach.common.util.toReadable
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.entity.EntityBase
+import ink.ptms.adyeshach.core.entity.GenericEntity
+import ink.ptms.adyeshach.core.entity.Metaable
+import ink.ptms.adyeshach.core.util.toReadable
 
 /**
  * Adyeshach

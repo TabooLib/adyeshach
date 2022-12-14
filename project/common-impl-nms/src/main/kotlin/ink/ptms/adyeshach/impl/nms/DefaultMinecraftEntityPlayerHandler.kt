@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.impl.nms
 
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftEntityPlayerHandler
-import ink.ptms.adyeshach.common.api.MinecraftPacketHandler
-import ink.ptms.adyeshach.common.bukkit.data.GameProfile
-import ink.ptms.adyeshach.common.bukkit.data.GameProfileAction
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftEntityPlayerHandler
+import ink.ptms.adyeshach.core.MinecraftPacketHandler
+import ink.ptms.adyeshach.core.bukkit.data.GameProfile
+import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.world.level.EnumGamemode

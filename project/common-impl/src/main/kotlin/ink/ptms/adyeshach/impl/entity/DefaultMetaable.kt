@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachMetaUpdateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.Meta
-import ink.ptms.adyeshach.common.entity.MetaMasked
-import ink.ptms.adyeshach.common.entity.Metaable
-import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.Meta
+import ink.ptms.adyeshach.core.entity.MetaMasked
+import ink.ptms.adyeshach.core.entity.Metaable
+import ink.ptms.adyeshach.core.entity.manager.event.MetaUpdateEvent
+import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaKeyLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaTypeLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.registeredEntityMeta
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.internal.entity.DefaultMetaable
+ * ink.ptms.adyeshach.impl.entity.DefaultMetaable
  *
  * @author 坏黑
  * @since 2022/6/19 16:11
@@ -47,8 +47,9 @@ interface DefaultMetaable : Metaable {
             errorBy("error-meta-not-allow", key)
         }
         this as DefaultEntityInstance
-        val event = AdyeshachMetaUpdateEvent(this, meta, key, value)
-        if (event.call()) {
+        val eventBus = getEventBus()
+        val event = MetaUpdateEvent(this, meta, key, value)
+        if (eventBus == null || eventBus.callMetaUpdate(event)) {
             if (meta is MetaMasked) {
                 metadataMask.computeIfAbsent(getByteMaskKey(meta.index)) { ConcurrentHashMap() }[key] = event.value as Boolean
             } else {

@@ -1,8 +1,8 @@
 package ink.ptms.adyeshach.impl.hologram
 
-import ink.ptms.adyeshach.common.api.AdyeshachHologram
-import ink.ptms.adyeshach.common.entity.manager.Manager
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.AdyeshachHologram
+import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import org.bukkit.Location
 
 /**

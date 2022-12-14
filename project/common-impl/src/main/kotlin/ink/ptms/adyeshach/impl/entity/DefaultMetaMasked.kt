@@ -1,11 +1,11 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.api.event.AdyeshachMaskedMetaGenerateEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.MinecraftMeta
-import ink.ptms.adyeshach.common.api.MinecraftMetadataParser
-import ink.ptms.adyeshach.common.entity.EntityInstance
-import ink.ptms.adyeshach.common.entity.MetaMasked
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.MetaMasked
+import ink.ptms.adyeshach.core.entity.manager.event.MetaMaskedGenerateEvent
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 
@@ -30,13 +30,14 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, mask: Byte,
             return null
         }
         entityInstance as DefaultEntityInstance
-        val event = AdyeshachMaskedMetaGenerateEvent(entityInstance, player, this, HashMap())
+        val event = MetaMaskedGenerateEvent(entityInstance, player, this, HashMap())
         var bits = 0
         val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return null
         entityInstance.getAvailableEntityMeta().filter { it.index == index && it is MetaMasked<*> }.forEach {
             event.byteMask[it as MetaMasked<*>] = byteMask[it.key] == true
         }
-        if (event.call()) {
+        val eventBus = entityInstance.getEventBus()
+        if (eventBus == null || eventBus.callMaskedMetaGenerate(event)) {
             event.byteMask.filter { it.value }.forEach { (k, _) -> bits += k.mask }
             return parser.createMeta(index, bits.toByte())
         }

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
-import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.util.errorBy
 import taboolib.common.platform.function.info
 import taboolib.module.nms.MinecraftVersion
 import java.io.InputStream

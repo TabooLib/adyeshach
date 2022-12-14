@@ -1,8 +1,9 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
-import ink.ptms.adyeshach.api.AdyeshachSettings
-import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
-import ink.ptms.adyeshach.common.api.Adyeshach
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.core.SpawnTrigger
+import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
@@ -26,7 +27,7 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
-        if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.JOIN) {
+        if (AdyeshachSettings.spawnTrigger == SpawnTrigger.JOIN) {
             // 延迟初始化
             submit(delay = 20) { Adyeshach.api().setupEntityManager(e.player) }
         }
@@ -37,7 +38,7 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onLateJoin(e: AdyeshachPlayerJoinEvent) {
-        if (AdyeshachSettings.spawnTrigger == AdyeshachSettings.SpawnTrigger.KEEP_ALIVE) {
+        if (AdyeshachSettings.spawnTrigger == SpawnTrigger.KEEP_ALIVE) {
             Adyeshach.api().setupEntityManager(e.player)
         }
     }

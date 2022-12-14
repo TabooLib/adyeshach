@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.nms
 
-import ink.ptms.adyeshach.common.api.MinecraftWorldAccess
+import ink.ptms.adyeshach.core.MinecraftWorldAccess
 import org.bukkit.block.Block
 
 /**

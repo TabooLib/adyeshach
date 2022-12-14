@@ -8,7 +8,7 @@ import com.ticxo.modelengine.api.nms.entity.wrapper.LookController
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController
 import com.ticxo.modelengine.api.nms.entity.wrapper.RangeManager
 import com.ticxo.modelengine.api.nms.world.IDamageSource
-import ink.ptms.adyeshach.common.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
@@ -19,7 +19,7 @@ import java.util.*
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.common.entity.EntityModeled
+ * ink.ptms.adyeshach.core.entity.EntityModeled
  *
  * @author sky
  * @since 2021/9/25 1:35 上午

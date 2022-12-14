@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.impl.nms
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.api.AdyeshachEntityTypeHandler
-import ink.ptms.adyeshach.common.api.MinecraftHelper
-import ink.ptms.adyeshach.common.bukkit.BukkitPaintings
-import ink.ptms.adyeshach.common.bukkit.BukkitParticles
-import ink.ptms.adyeshach.common.entity.EntityTypes
-import ink.ptms.adyeshach.common.util.errorBy
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.MinecraftHelper
+import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
+import ink.ptms.adyeshach.core.bukkit.BukkitParticles
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.util.errorBy
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity

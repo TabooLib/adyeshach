@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.description
 
-import ink.ptms.adyeshach.common.api.Adyeshach
-import ink.ptms.adyeshach.common.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 
 /**
  * @author 坏黑

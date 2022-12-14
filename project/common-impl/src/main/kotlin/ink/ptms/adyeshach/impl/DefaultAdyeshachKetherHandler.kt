@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.common.api.AdyeshachKetherHandler
+import ink.ptms.adyeshach.core.AdyeshachKetherHandler
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
