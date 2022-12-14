@@ -13,8 +13,12 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata
 import net.minecraft.network.syncher.DataWatcher
+import net.minecraft.network.syncher.DataWatcherObject
+import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
+import org.bukkit.entity.Cat
 import java.util.*
 
 /**
@@ -45,6 +49,29 @@ class NMSJ17Impl : NMSJ17() {
          */
         val ir = BuiltInRegistries.ENTITY_TYPE as IRegistry<EntityTypes<*>>
         return ir.getId(any as EntityTypes<*>)
+    }
+
+    override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
+        val item = DataWatcher.Item(
+            DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT),
+            CatVariant(when (type) {
+                Cat.Type.TABBY -> CatVariant.TABBY
+                Cat.Type.BLACK -> CatVariant.BLACK
+                Cat.Type.RED -> CatVariant.RED
+                Cat.Type.SIAMESE -> CatVariant.SIAMESE
+                Cat.Type.BRITISH_SHORTHAIR -> CatVariant.BRITISH_SHORTHAIR
+                Cat.Type.CALICO -> CatVariant.CALICO
+                Cat.Type.PERSIAN -> CatVariant.PERSIAN
+                Cat.Type.RAGDOLL -> CatVariant.RAGDOLL
+                Cat.Type.WHITE -> CatVariant.WHITE
+                Cat.Type.JELLIE -> CatVariant.JELLIE
+                Cat.Type.ALL_BLACK -> CatVariant.ALL_BLACK
+            }.location())
+        )
+        return object : MinecraftMeta {
+
+            override fun source() = item
+        }
     }
 
     override fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {

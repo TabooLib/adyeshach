@@ -64,9 +64,13 @@ typealias NMSEnumItemSlot = net.minecraft.world.entity.EnumItemSlot
 
 typealias NMSBlockPosition = net.minecraft.core.BlockPosition
 
+typealias NMSBlockData = net.minecraft.world.level.block.state.BlockBase.BlockData
+
 typealias NMSEntityPose = net.minecraft.world.entity.EntityPose
 
 typealias NMSEntityTypes<T> = net.minecraft.world.entity.EntityTypes<T>
+
+typealias NMSIBlockAccess = net.minecraft.world.level.IBlockAccess
 
 typealias NMSVec3D = net.minecraft.world.phys.Vec3D
 
@@ -98,17 +102,21 @@ typealias NMSFrogVariant = net.minecraft.world.entity.animal.FrogVariant
 
 typealias NMSMathHelper = net.minecraft.util.MathHelper
 
-typealias CraftArt19 = org.bukkit.craftbukkit.v1_19_R1.CraftArt
+typealias NMSMaterial = net.minecraft.world.level.material.Material
 
-typealias CraftEntity19 = org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity
+typealias CraftArt19 = org.bukkit.craftbukkit.v1_19_R2.CraftArt
 
-typealias CraftItemStack19 = org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
+typealias CraftChunk19 = org.bukkit.craftbukkit.v1_19_R2.CraftChunk
 
-typealias CraftMagicNumbers19 = org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers
+typealias CraftEntity19 = org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 
-typealias CraftTropicalFishPattern19 = org.bukkit.craftbukkit.v1_19_R1.entity.CraftTropicalFish.CraftPattern
+typealias CraftItemStack19 = org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack
 
-typealias CraftChatMessage19 = org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage
+typealias CraftMagicNumbers19 = org.bukkit.craftbukkit.v1_19_R2.util.CraftMagicNumbers
+
+typealias CraftTropicalFishPattern19 = org.bukkit.craftbukkit.v1_19_R2.entity.CraftTropicalFish.CraftPattern
+
+typealias CraftChatMessage19 = org.bukkit.craftbukkit.v1_19_R2.util.CraftChatMessage
 
 // 1.16
 
@@ -339,6 +347,10 @@ typealias NMS9DataWatcherObject<T> = net.minecraft.server.v1_9_R2.DataWatcherObj
 typealias NMS9DataWatcherRegistry = net.minecraft.server.v1_9_R2.DataWatcherRegistry
 
 typealias NMS9PacketDataSerializer = net.minecraft.server.v1_9_R2.PacketDataSerializer
+
+typealias NMS9IBlockAccess = net.minecraft.server.v1_9_R2.IBlockAccess
+
+typealias NMS9BlockPosition = net.minecraft.server.v1_9_R2.BlockPosition
 
 typealias CraftItemStack9 = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack
 

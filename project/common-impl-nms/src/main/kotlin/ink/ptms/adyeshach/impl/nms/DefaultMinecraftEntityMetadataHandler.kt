@@ -5,8 +5,8 @@ import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.impl.nms.parser.*
+import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.entity.Cat
@@ -389,24 +389,28 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
-        return DefaultMeta(
-            NMSDataWatcherItem(
-                NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
-                when (type) {
-                    Cat.Type.TABBY -> NMSCatVariant.TABBY
-                    Cat.Type.BLACK -> NMSCatVariant.BLACK
-                    Cat.Type.RED -> NMSCatVariant.RED
-                    Cat.Type.SIAMESE -> NMSCatVariant.SIAMESE
-                    Cat.Type.BRITISH_SHORTHAIR -> NMSCatVariant.BRITISH_SHORTHAIR
-                    Cat.Type.CALICO -> NMSCatVariant.CALICO
-                    Cat.Type.PERSIAN -> NMSCatVariant.PERSIAN
-                    Cat.Type.RAGDOLL -> NMSCatVariant.RAGDOLL
-                    Cat.Type.WHITE -> NMSCatVariant.WHITE
-                    Cat.Type.JELLIE -> NMSCatVariant.JELLIE
-                    Cat.Type.ALL_BLACK -> NMSCatVariant.ALL_BLACK
-                }
+        return if (majorLegacy >= 11903) {
+            NMSJ17.instance.createCatVariantMeta(index, type)
+        } else {
+            DefaultMeta(
+                NMSDataWatcherItem(
+                    NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
+                    when (type) {
+                        Cat.Type.TABBY -> NMSCatVariant.TABBY
+                        Cat.Type.BLACK -> NMSCatVariant.BLACK
+                        Cat.Type.RED -> NMSCatVariant.RED
+                        Cat.Type.SIAMESE -> NMSCatVariant.SIAMESE
+                        Cat.Type.BRITISH_SHORTHAIR -> NMSCatVariant.BRITISH_SHORTHAIR
+                        Cat.Type.CALICO -> NMSCatVariant.CALICO
+                        Cat.Type.PERSIAN -> NMSCatVariant.PERSIAN
+                        Cat.Type.RAGDOLL -> NMSCatVariant.RAGDOLL
+                        Cat.Type.WHITE -> NMSCatVariant.WHITE
+                        Cat.Type.JELLIE -> NMSCatVariant.JELLIE
+                        Cat.Type.ALL_BLACK -> NMSCatVariant.ALL_BLACK
+                    }
+                )
             )
-        )
+        }
     }
 
     override fun createFrogVariantMeta(index: Int, type: Frog.Variant): MinecraftMeta {

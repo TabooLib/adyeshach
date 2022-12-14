@@ -4,6 +4,11 @@ import ink.ptms.adyeshach.core.*
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.releaseResourceFile
+import taboolib.common5.cdouble
+import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.Type
+import taboolib.module.configuration.util.mapValue
 import taboolib.module.nms.nmsProxy
 
 /**
@@ -67,6 +72,9 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
     }
 
     companion object {
+
+        val blockHeight = Configuration.loadFromInputStream(releaseResourceFile("block_height.json", true).readBytes().inputStream(), Type.JSON)
+        val blockHeightMap = blockHeight.mapValue { it.cdouble }
 
         @Awake(LifeCycle.LOAD)
         fun init() {

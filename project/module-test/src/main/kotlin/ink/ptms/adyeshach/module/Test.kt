@@ -106,6 +106,42 @@ object Test {
     }
 
     @CommandBody
+    val highest = subCommand {
+        execute<Player> { sender, _, _ ->
+            val access = Adyeshach.api().getMinecraftAPI().getWorldAccess().createBlockAccess(sender.world, sender.location.chunk.x, sender.location.chunk.z)
+            val x = sender.location.blockX
+            val y = sender.location.blockY
+            val z = sender.location.blockZ
+            sender.sendMessage("highest -> ${access.getHighestBlock(x, y, z)} -> ${access.getBlockHeight(x, y, z)}")
+            cost("getBlockType") {
+                repeat(100000) {
+                    access.getBlockType(x, y, z)
+                }
+            }
+            cost("getHighestBlock") {
+                repeat(100000) {
+                    access.getHighestBlock(x, y, z)
+                }
+            }
+            cost("getBlockHeight") {
+                repeat(100000) {
+                    access.getBlockHeight(x, y, z)
+                }
+            }
+            cost("getHighestBlockAt") {
+                repeat(100000) {
+                    sender.world.getHighestBlockAt(x, z).y
+                }
+            }
+            cost("getBlockAt(x, y, z).boundingBox") {
+                repeat(100000) {
+                    sender.world.getBlockAt(x, y, z).boundingBox
+                }
+            }
+        }
+    }
+
+    @CommandBody
     val loop = subCommand {
         execute<Player> { sender, _, _ ->
             sender.sendMessage("发起循环测试, 手持命令方块可暂停，离线自动中止。")

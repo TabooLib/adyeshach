@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.nmsj17
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
+import org.bukkit.entity.Cat
 import taboolib.common.util.unsafeLazy
 import taboolib.module.nms.nmsProxy
 import java.util.*
@@ -18,6 +19,8 @@ import java.util.*
 abstract class NMSJ17 {
 
     abstract fun entityTypeGetId(any: Any): Int
+
+    abstract fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta
 
     abstract fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any
 
