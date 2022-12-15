@@ -22,6 +22,10 @@ interface MinecraftWorldAccess {
      */
     interface BlockAccess {
 
+        val x: Int
+
+        val z: Int
+
         /**
          * 复制一个接口
          */
@@ -36,6 +40,11 @@ interface MinecraftWorldAccess {
          * 获取方块的碰撞箱高度
          */
         fun getBlockHeight(x: Int, y: Int, z: Int): Double
+
+        /**
+         * 获取方块的类型和碰撞箱高度
+         */
+        fun getBlockTypeAndHeight(x: Int, y: Int, z: Int): Pair<Material, Double>
 
         /**
          * 从给定坐标向下获取距离最近的固体方块

@@ -1,16 +1,21 @@
-package ink.ptms.adyeshach.impl.util
+package ink.ptms.adyeshach.core.entity.path
 
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.util.Vector
 import org.spongepowered.math.GenericMath
 import org.spongepowered.math.imaginary.Quaterniond
 import org.spongepowered.math.vector.Vector3d
 import java.util.*
 import kotlin.math.acos
 
-class InterpolatedLocation(val world: World, frames: Map<Int, Location>) {
+class InterpolatedLocation(val world: World, frames: Map<Int, Location> = HashMap()) {
 
     val frames = TreeMap(frames)
+
+    fun addPoint(tick: Int, point: Vector) {
+        frames[tick] = Location(world, point.x, point.y, point.z)
+    }
 
     fun getLocation(tick: Int): Location {
         val left = frames.floorEntry(tick)

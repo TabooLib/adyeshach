@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.type.errorBy
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.util.Vector
 
 /**
  * @author sky
@@ -18,6 +19,12 @@ data class EntityPosition(
     @Expose var yaw: Float = 0f,
     @Expose var pitch: Float = 0f,
 ) {
+
+    fun blockX() = x.toInt()
+
+    fun blockY() = y.toInt()
+
+    fun blockZ() = z.toInt()
 
     fun add(x: Double, y: Double, z: Double): EntityPosition {
         this.x += x
@@ -41,6 +48,10 @@ data class EntityPosition(
         return x * x + y * y + z * z
     }
 
+    fun toVector(): Vector {
+        return Vector(x, y, z)
+    }
+
     fun toLocation(): Location {
         return Location(world, x, y, z, yaw, pitch)
     }
@@ -56,6 +67,17 @@ data class EntityPosition(
         yaw = 0f
         pitch = 0f
         return this
+    }
+
+    fun checkFinite(onError: Runnable = Runnable {}) {
+        if (x.isInfinite() || y.isInfinite() || z.isInfinite() || yaw.isInfinite() || pitch.isInfinite()) {
+            onError.run()
+            errorBy("Position is infinite")
+        }
+        if (x.isNaN() || y.isNaN() || z.isNaN() || yaw.isNaN() || pitch.isNaN()) {
+            onError.run()
+            errorBy("Position is NaN")
+        }
     }
 
     companion object {

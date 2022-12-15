@@ -11,8 +11,8 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Axolotl
 import org.bukkit.entity.Player
+import org.bukkit.entity.Zombie
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.Schedule
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
@@ -27,7 +27,7 @@ object Test {
 
     lateinit var entity: AdyEntity
 
-    @Schedule(period = 1)
+    // @Schedule(period = 1)
     fun onTick() {
         if (this::entity.isInitialized) {
             val op = onlinePlayers.firstOrNull() ?: return
@@ -47,6 +47,17 @@ object Test {
     }
 
     @CommandBody
+    val spawn2 = subCommand {
+        execute<Player> { sender, _, _ ->
+            val npc = sender.world.spawn(sender.location, Zombie::class.java)
+            npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
+            submit(delay = 60) {
+                npc.remove()
+            }
+        }
+    }
+
+    @CommandBody
     val spawn = subCommand {
         dynamic {
             suggest { EntityTypes.values().map { it.name } }
@@ -57,7 +68,7 @@ object Test {
                     if (::entity.isInitialized) {
                         entity.despawn(removeFromManager = true)
                     }
-                    val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location.add(0.0, 3.0, 0.0)) as AdyEntity
+                    val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location) as AdyEntity
                     if (npc is AdyHuman) {
                         npc.setName("傻逼")
                         npc.setTexture("bukkitObj")
@@ -74,6 +85,7 @@ object Test {
                     npc.setCustomName("坏黑")
                     npc.setCustomNameVisible(true)
                     npc.setGlowing(true)
+                    npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
                     entity = npc
                 }
                 sender.info("OK")

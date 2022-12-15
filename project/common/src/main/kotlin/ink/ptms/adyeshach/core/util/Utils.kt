@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.core.util
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.core.Adyeshach
 import org.bukkit.Location
+import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.console
 
 /**
@@ -60,6 +61,10 @@ fun encodePos(d: Double): Long {
 fun lfloor(value: Double): Long {
     val i = value.toLong()
     return if (value < i.toDouble()) i - 1L else i
+}
+
+fun ifloor(x: Double): Int {
+    return NumberConversions.floor(x)
 }
 
 fun Location.modify(x: Double, y: Double, z: Double): Location {

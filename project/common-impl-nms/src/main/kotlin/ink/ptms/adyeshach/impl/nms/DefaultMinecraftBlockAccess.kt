@@ -13,7 +13,7 @@ import taboolib.module.nms.MinecraftVersion
  * @author 坏黑
  * @since 2022/10/19 09:23
  */
-class DefaultMinecraftBlockAccess(val world: World?, val x: Int, val z: Int) : MinecraftWorldAccess.BlockAccess {
+class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, override val z: Int) : MinecraftWorldAccess.BlockAccess {
 
     constructor() : this(null, 0, 0)
 
@@ -27,6 +27,7 @@ class DefaultMinecraftBlockAccess(val world: World?, val x: Int, val z: Int) : M
             1, 2, 3, 4, 5, 6, 7, 8 -> (nmsChunk as NMS9IBlockAccess).getType(NMS9BlockPosition(x, y, z)).block
             // 1.17, 1.18, 1.19
             9, 10, 11 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
+            // 不支持
             else -> error("Unsupported version: $major")
         }
         // 如果是空气则跳过检索
@@ -49,6 +50,11 @@ class DefaultMinecraftBlockAccess(val world: World?, val x: Int, val z: Int) : M
             cy--
         }
         return cy
+    }
+
+    override fun getBlockTypeAndHeight(x: Int, y: Int, z: Int): Pair<Material, Double> {
+        val type = getBlockType(x, y, z)
+        return type to DefaultAdyeshachMinecraftAPI.blockHeightMap[type.name]!!
     }
 
     override fun createCopy(world: World, x: Int, z: Int): MinecraftWorldAccess.BlockAccess {

@@ -5,10 +5,13 @@ import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -36,7 +39,7 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
      * 实体鉴别 ID
      */
     @Expose
-    override var id = UUID.randomUUID().toString().substring(0, 8)
+    final override var id = UUID.randomUUID().toString().substring(0, 8)
 
     /**
      * 实体唯一 ID
@@ -57,35 +60,35 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
 
     /** 实体位置 */
     @Expose
-    override var position = EntityPosition.empty()
+    final override var position = EntityPosition.empty()
         get() = field.clone()
 
     /** 是否为测试类型 */
-    override var testing = false
+    final override var testing = false
 
     /** 是否为无效类型 */
-    override var invalid = false
+    final override var invalid = false
 
-    override val x: Double
+    final override val x: Double
         get() = position.x
 
-    override val y: Double
+    final override val y: Double
         get() = position.y
 
-    override val z: Double
+    final override val z: Double
         get() = position.z
 
-    override val yaw: Float
+    final override val yaw: Float
         get() = position.yaw
 
-    override val pitch: Float
+    final override val pitch: Float
         get() = position.pitch
 
-    override fun getWorld(): World {
+    final override fun getWorld(): World {
         return position.world
     }
 
-    override fun getLocation(): Location {
+    final override fun getLocation(): Location {
         return position.toLocation()
     }
 }

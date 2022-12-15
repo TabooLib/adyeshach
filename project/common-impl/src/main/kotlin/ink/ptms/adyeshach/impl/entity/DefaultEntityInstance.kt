@@ -2,32 +2,29 @@ package ink.ptms.adyeshach.impl.entity
 
 import com.google.gson.JsonParser
 import com.google.gson.annotations.Expose
-import ink.ptms.adyeshach.core.AdyeshachSettings
-import ink.ptms.adyeshach.core.event.AdyeshachEntityDestroyEvent
-import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
-import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
-import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
-import ink.ptms.adyeshach.impl.util.Indexs
+import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
+import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
+import ink.ptms.adyeshach.core.entity.path.ResultNavigation
+import ink.ptms.adyeshach.core.event.AdyeshachEntityDestroyEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.modify
-import ink.ptms.adyeshach.impl.util.ChunkAccess
+import ink.ptms.adyeshach.impl.util.Indexs
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.entity.Player
-import org.bukkit.event.world.WorldUnloadEvent
 import org.bukkit.util.Vector
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
-import taboolib.common.platform.function.submitAsync
 import taboolib.common5.Baffle
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -112,10 +109,32 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeHandler().getEntityClientUpdateInterval(entityType))
 
     /** 单位移动量 */
-    var detailMovement = Vector(0.0, 0.0, 0.0)
+    var deltaMovement = Vector(0.0, 0.0, 0.0)
+        set(value) {
+            field = value.clone()
+        }
 
     /** 载具位置同步 */
     var vehicleSync = System.currentTimeMillis()
+
+    /** 插值定位 */
+    var moveFrames: InterpolatedLocation? = null
+
+    /** 移动目的 */
+    var moveTarget: Location? = null
+        set(value) {
+            // 不是傻子
+            if (!isNitwit) {
+                // 有目的地
+                if (value != null) {
+                    // 请求路径
+                    PathFinderHandler.request(position.toLocation(), value, Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)) {
+                        moveFrames = (it as ResultNavigation).toInterpolated(getWorld(), moveSpeed)
+                    }
+                }
+                field = value
+            }
+        }
 
     /** 管理器 */
     override var manager: Manager? = null
@@ -232,8 +251,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             despawn()
             respawn()
         }
-        // 傻子 || 无管理器 || 孤立管理器
-        if (isNitwit || manager == null || manager !is TickService) {
+        // 无管理器 || 孤立管理器 || 不允许进行位置同步
+        if (manager == null || manager !is TickService || !allowSyncPosition()) {
             position = newPosition
             clientPosition = position
             Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, location)
@@ -245,7 +264,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun setVelocity(vector: Vector) {
         val eventBus = getEventBus()
         if (eventBus == null || eventBus.callVelocity(this, vector)) {
-            detailMovement = vector
+            deltaMovement = vector.clone()
         }
     }
 
@@ -282,14 +301,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun onTick() {
         // 处理玩家可见
         handleTracker()
-        // 更新位置
-        syncPosition()
-        // 不是傻子 && 存在可见玩家 && 所在区块已经加载
-        if (!isNitwit && viewPlayers.hasVisiblePlayer() && isChunkLoaded()) {
+        // 允许位置同步
+        if (allowSyncPosition()) {
+            // 更新位置
+            syncPosition()
             // 实体逻辑处理
             brain.tick()
-            // 处理移动
-            handleMove()
         }
     }
 
@@ -312,25 +329,5 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             p.clone("${newId}_passenger_$i", location)?.let { entity.addPassenger(it) }
         }
         return entity
-    }
-
-    companion object {
-
-        private val chunkAccess = ConcurrentHashMap<String, ChunkAccess>()
-
-        fun getChunkAccess(world: World): ChunkAccess {
-            return if (chunkAccess.contains(world.name)) {
-                chunkAccess[world.name]!!
-            } else {
-                val access = ChunkAccess(world)
-                chunkAccess[world.name] = access
-                access
-            }
-        }
-
-        @SubscribeEvent
-        private fun onUnload(e: WorldUnloadEvent) {
-            submitAsync { chunkAccess.remove(e.world.name) }
-        }
     }
 }

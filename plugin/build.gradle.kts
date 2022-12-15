@@ -10,6 +10,7 @@ dependencies {
     implementation("io.izzel.taboolib:common-5:$taboolib_version")
     implementation("io.izzel.taboolib:module-chat:$taboolib_version")
     implementation("io.izzel.taboolib:module-configuration:$taboolib_version")
+    implementation("io.izzel.taboolib:module-effect:$taboolib_version")
     implementation("io.izzel.taboolib:module-lang:$taboolib_version")
     implementation("io.izzel.taboolib:module-nms:$taboolib_version")
     implementation("io.izzel.taboolib:module-nms-util:$taboolib_version")

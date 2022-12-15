@@ -37,7 +37,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun teleportEntity(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
         // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(location.yaw)
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.firstOrNull() ?: return)?.entityType.fixYaw(location.yaw)
         // 计算视角
         val yaw = (yf * 256 / 360).toInt().toByte()
         val pitch = (location.pitch * 256 / 360).toInt().toByte()
@@ -76,7 +76,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
         // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.firstOrNull() ?: return)?.entityType.fixYaw(yaw)
         // 计算视角
         val y = (yf * 256 / 360).toInt().toByte()
         val p = (pitch * 256 / 360).toInt().toByte()
@@ -107,7 +107,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         onGround: Boolean,
     ) {
         // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.firstOrNull() ?: return)?.entityType.fixYaw(yaw)
         // 计算视角
         val yRot = (yf * 256 / 360).toInt().toByte()
         val xRot = (pitch * 256 / 360).toInt().toByte()
@@ -130,7 +130,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
         // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.first())?.entityType.fixYaw(yaw)
+        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.firstOrNull() ?: return)?.entityType.fixYaw(yaw)
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
