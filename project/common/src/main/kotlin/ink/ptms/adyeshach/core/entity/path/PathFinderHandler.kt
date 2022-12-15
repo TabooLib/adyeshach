@@ -44,8 +44,25 @@ object PathFinderHandler {
                 if (AdyeshachSettings.debug) {
                     path?.nodes?.forEach { it.display(target.world!!) }
                 }
+                val pointList = path?.nodes?.map { it.asBlockPos() }?.toMutableList() ?: ArrayList()
+                if (pointList.isNotEmpty()) {
+                    // 如果路径的第一个点是起点则移除
+                    val first = pointList.first()
+                    if (first.blockX == start.blockX && first.blockX == start.blockY && first.blockX == start.blockZ) {
+                        pointList.removeFirst()
+                    }
+                    // 如果路径的最后一个点不是目的地
+                    val last = pointList.last()
+                    if (last.blockX != target.blockX || last.blockZ != target.blockZ) {
+                        // 如果高度相同，距离为 1
+                        if (last.blockY == target.blockY && last.distance(Vector(target.blockX, target.blockY, target.blockZ)) == 1.0) {
+                            // 添加目的地
+                            pointList.add(Vector(target.blockX, target.blockY, target.blockZ))
+                        }
+                    }
+                }
                 // 调用回调函数
-                call(ResultNavigation(path?.nodes?.map { it.asBlockPos() } ?: emptyList(), startTime, scheduleTime))
+                call(ResultNavigation(pointList, startTime, scheduleTime))
             } else {
                 var vec: Vector? = null
                 // 重复最多 10 次的游荡请求

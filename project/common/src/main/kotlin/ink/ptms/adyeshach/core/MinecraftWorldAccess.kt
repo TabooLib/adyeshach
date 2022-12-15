@@ -49,6 +49,6 @@ interface MinecraftWorldAccess {
         /**
          * 从给定坐标向下获取距离最近的固体方块
          */
-        fun getHighestBlock(x: Int, y: Int, z: Int): Int
+        fun getHighestBlock(x: Int, y: Int, z: Int): Double
     }
 }

@@ -10,8 +10,6 @@ import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
-import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
-import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.event.AdyeshachEntityDestroyEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
@@ -123,17 +121,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     /** 移动目的 */
     var moveTarget: Location? = null
         set(value) {
-            // 不是傻子
-            if (!isNitwit) {
-                // 有目的地
-                if (value != null) {
-                    // 请求路径
-                    PathFinderHandler.request(position.toLocation(), value, Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)) {
-                        moveFrames = (it as ResultNavigation).toInterpolated(getWorld(), moveSpeed)
-                    }
-                }
-                field = value
-            }
+            field = value
+            // 更新移动路径
+            updateMoveFrames()
         }
 
     /** 管理器 */
@@ -303,10 +293,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         handleTracker()
         // 允许位置同步
         if (allowSyncPosition()) {
+            // 处理移动
+            handleMove()
+            // 处理行为
+            brain.tick()
             // 更新位置
             syncPosition()
-            // 实体逻辑处理
-            brain.tick()
         }
     }
 

@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.module
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityEquipable
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.entity.type.AdyAxolotl
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdyFallingBlock
@@ -85,7 +86,8 @@ object Test {
                     npc.setCustomName("坏黑")
                     npc.setCustomNameVisible(true)
                     npc.setGlowing(true)
-                    npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
+                    npc.moveSpeed = 0.2
+                    // npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
                     entity = npc
                 }
                 sender.info("OK")
@@ -97,6 +99,14 @@ object Test {
     val tp = subCommand {
         execute<Player> { sender, _, _ ->
             entity.teleport(sender.location)
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val move = subCommand {
+        execute<Player> { sender, _, _ ->
+            entity.controllerMove(sender.location, PathType.WALK_2, 0.2)
             sender.info("OK")
         }
     }

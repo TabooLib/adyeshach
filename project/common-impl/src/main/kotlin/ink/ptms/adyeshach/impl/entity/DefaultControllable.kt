@@ -125,6 +125,8 @@ interface DefaultControllable : Controllable {
         if (hasVehicle()) {
             return
         }
+        moveTarget = location
+
 //        TODO 重做
 //        // 飞行单位需要 Move 控制器
 //        if (pathType == PathType.FLY && controller.none { it is GeneralMove }) {

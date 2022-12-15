@@ -1,7 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
+import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.compat.CompatServerTours
@@ -24,6 +27,27 @@ fun DefaultEntityInstance.isChunkLoaded(): Boolean {
     return ChunkAccess.getChunkAccess(getWorld()).isChunkLoaded(floor(x).toInt() shr 4, floor(z).roundToInt() shr 4)
 }
 
+/** 更新移动路径 **/
+fun DefaultEntityInstance.updateMoveFrames() {
+    // 傻子或没有目的地
+    if (isNitwit || moveTarget == null) {
+        return
+    }
+    // 请求路径
+    PathFinderHandler.request(position.toLocation(), moveTarget!!, Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)) {
+        it as ResultNavigation
+        // 如果路径无效
+        if (it.pointList.isEmpty()) {
+            return@request
+        }
+        // 修正路径高度
+        val chunkAccess = ChunkAccess.getChunkAccess(getWorld())
+        it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighest(p.x, p.y, p.z) }
+        // 设置插值定位
+        moveFrames = it.toInterpolated(getWorld(), moveSpeed)
+    }
+}
+
 /**
  * 处理玩家可见
  * 确保客户端显示实体正常
@@ -44,6 +68,38 @@ fun DefaultEntityInstance.handleTracker() {
             }
         }
     }
+}
+
+/** 处理移动 */
+fun DefaultEntityInstance.handleMove() {
+    // 乘坐实体
+    if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
+        deltaMovement = Vector(0.0, 0.0, 0.0)
+        return
+    }
+    // 行走
+    if (moveFrames != null) {
+        val next = moveFrames!!.next()
+        if (next != null) {
+            // 默认会看向移动方向
+            val size = Adyeshach.api().getEntityTypeHandler().getEntitySize(entityType)
+            val temp = clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0)
+            // 设置方向
+            temp.direction = Vector(next.x, temp.y, next.z).subtract(temp.toVector())
+            // 不会看向脚下
+            if (temp.pitch < 90f) {
+                next.yaw = temp.yaw
+                next.pitch = temp.pitch
+            }
+            // 更新位置
+            clientPosition = EntityPosition.fromLocation(next)
+            // getWorld().spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+        } else {
+            moveFrames = null
+        }
+    }
+    // 移动力
+    handleVelocity()
 }
 
 /** 处理移动力 */
@@ -78,12 +134,6 @@ fun DefaultEntityInstance.allowSyncPosition(): Boolean {
 
 /** 同步位置 */
 fun DefaultEntityInstance.syncPosition() {
-    // 乘坐实体
-    if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
-        deltaMovement = Vector(0.0, 0.0, 0.0)
-    } else {
-        handleVelocity()
-    }
     // 检查间隔
     if (clientUpdateInterval.hasNext()) {
         val updateRotation = (clientPosition.yaw - yaw).absoluteValue >= 1 || (clientPosition.pitch - pitch).absoluteValue >= 1

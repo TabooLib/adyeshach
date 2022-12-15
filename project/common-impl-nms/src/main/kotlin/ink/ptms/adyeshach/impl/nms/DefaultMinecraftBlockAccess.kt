@@ -4,6 +4,8 @@ import ink.ptms.adyeshach.core.MinecraftWorldAccess
 import ink.ptms.adyeshach.impl.DefaultAdyeshachMinecraftAPI
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.block.Block
+import org.bukkit.block.data.type.Slab
 import taboolib.module.nms.MinecraftVersion
 
 /**
@@ -38,26 +40,67 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
     }
 
     override fun getBlockHeight(x: Int, y: Int, z: Int): Double {
-        return DefaultAdyeshachMinecraftAPI.blockHeightMap[getBlockType(x, y, z).name] ?: 0.0
+        return getBlockTypeAndHeight(x, y, z).second
     }
 
-    override fun getHighestBlock(x: Int, y: Int, z: Int): Int {
+    override fun getHighestBlock(x: Int, y: Int, z: Int): Double {
         var cy = y
         while (cy > 0) {
-            if (getBlockType(x, cy, z).isSolid) {
-                return cy
+            val typeAndHeight = getBlockTypeAndHeight(x, cy, z)
+            if (typeAndHeight.first.isSolid) {
+                return cy + typeAndHeight.second
             }
             cy--
         }
-        return cy
+        return cy.toDouble()
     }
 
     override fun getBlockTypeAndHeight(x: Int, y: Int, z: Int): Pair<Material, Double> {
-        val type = getBlockType(x, y, z)
-        return type to DefaultAdyeshachMinecraftAPI.blockHeightMap[type.name]!!
+        val blockType = getBlockType(x, y, z)
+        // 获取材质名称
+        val name = blockType.name
+        // 对半砖进行特殊处理
+        return blockType to if (name.endsWith("_SLAB") || name.endsWith("_SLAB2")) {
+            when (major) {
+                // 1.9, 1.10, 1.11, 1.12
+                1, 2, 3, 4 -> getBlockHeightLegacy(obcChunk!!.getBlock(x, y, z))
+                // 1.13, 1.14, 1.15, 1.16, 1.17, 1.18, 1.19
+                5, 6, 7, 8, 9, 10, 11 -> {
+                    val slab = world!!.getBlockAt(x, y, z).blockData as Slab
+                    if (slab.type == Slab.Type.TOP || slab.type == Slab.Type.DOUBLE) 1.0 else 0.5
+                }
+                // 不支持
+                else -> error("Unsupported version: $major")
+            }
+        } else {
+            DefaultAdyeshachMinecraftAPI.blockHeightMap[blockType.name] ?: 0.0
+        }
     }
 
     override fun createCopy(world: World, x: Int, z: Int): MinecraftWorldAccess.BlockAccess {
         return DefaultMinecraftBlockAccess(world, x, z)
+    }
+
+    fun getBlockHeightLegacy(block: Block): Double {
+        return when (major) {
+            // 1.12
+            4 -> {
+                val p = NMS12BlockPosition(block.x, block.y, block.z)
+                val b = (block.world as CraftWorld12).handle.getType(p)
+                b.d((block.world as CraftWorld12).handle, p)?.e ?: 0.0
+            }
+            // 1.11
+            3 -> {
+                val p = NMS11BlockPosition(block.x, block.y, block.z)
+                val b = (block.world as CraftWorld11).handle.getType(p)
+                b.c((block.world as CraftWorld11).handle, p)?.e ?: 0.0
+            }
+            // 1.9, 1.10
+            else -> {
+                val p = NMS9BlockPosition(block.x, block.y, block.z)
+                val b = (block.world as CraftWorld9).handle.getType(p)
+                b.c((block.world as CraftWorld9).handle, p)?.e ?: 0.0
+            }
+        }
     }
 }

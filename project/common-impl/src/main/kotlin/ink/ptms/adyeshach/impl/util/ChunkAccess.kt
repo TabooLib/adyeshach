@@ -50,6 +50,10 @@ class ChunkAccess(val world: World) {
         return getBlockAccessByPos(x, z).getBlockTypeAndHeight(ifloor(x), ifloor(y), ifloor(z))
     }
 
+    fun getBlockHighest(x: Double, y: Double, z: Double): Double {
+        return getBlockAccessByPos(x, z).getHighestBlock(ifloor(x), ifloor(y), ifloor(z))
+    }
+
     companion object {
 
         private val chunkAccess = ConcurrentHashMap<String, ChunkAccess>()

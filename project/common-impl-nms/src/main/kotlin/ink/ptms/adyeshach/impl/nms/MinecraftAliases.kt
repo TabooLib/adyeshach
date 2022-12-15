@@ -296,6 +296,8 @@ typealias CraftItemStack12 = org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItem
 
 typealias CraftMagicNumbers12 = org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers
 
+typealias CraftWorld12 = org.bukkit.craftbukkit.v1_12_R1.CraftWorld
+
 // 1.11
 
 typealias NMS11PacketPlayOutSpawnEntity = net.minecraft.server.v1_11_R1.PacketPlayOutSpawnEntity
@@ -317,6 +319,10 @@ typealias NMS11EnumGameMode = net.minecraft.server.v1_11_R1.EnumGamemode
 typealias NMS11PacketPlayOutPlayerInfo = net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo
 
 typealias NMS11PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server.v1_11_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
+
+typealias NMS11BlockPosition = net.minecraft.server.v1_11_R1.BlockPosition
+
+typealias CraftWorld11 = org.bukkit.craftbukkit.v1_11_R1.CraftWorld
 
 // 1.9
 
@@ -353,5 +359,7 @@ typealias NMS9IBlockAccess = net.minecraft.server.v1_9_R2.IBlockAccess
 typealias NMS9BlockPosition = net.minecraft.server.v1_9_R2.BlockPosition
 
 typealias CraftItemStack9 = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack
+
+typealias CraftWorld9 = org.bukkit.craftbukkit.v1_9_R2.CraftWorld
 
 fun <T> nullable(value: T?): Optional<T> = Optional.fromNullable(value)
