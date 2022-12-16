@@ -1,14 +1,14 @@
 package ink.ptms.adyeshach.impl.hologram
 
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachHologram
 import ink.ptms.adyeshach.core.AdyeshachHologramHandler
-import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.function.Consumer
-import java.util.function.Function
+import taboolib.common.platform.function.submit
+import taboolib.common5.util.printed
 
 /**
  * Adyeshach
@@ -20,38 +20,59 @@ import java.util.function.Function
 class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
 
     override fun createHologramItem(text: String, space: Double): AdyeshachHologram.ItemByText {
-        TODO("Not yet implemented")
+        return HoloEntityText(text, space)
     }
 
-    override fun createHologramItem(text: ItemStack, space: Double): AdyeshachHologram.ItemByItemStack {
-        TODO("Not yet implemented")
-    }
-
-    override fun <T : AdyEntity> createHologramItem(type: EntityTypes, space: Double, text: Consumer<T>): AdyeshachHologram.ItemByEntity<T> {
-        TODO("Not yet implemented")
+    override fun createHologramItem(itemStack: ItemStack, space: Double): AdyeshachHologram.ItemByItemStack {
+        return HoloEntityItemStack(itemStack, space)
     }
 
     override fun createHologram(location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
-        TODO("Not yet implemented")
+        val manager = Adyeshach.api().getPublicEntityManager(if (isolate) ManagerType.ISOLATED else ManagerType.TEMPORARY)
+        return Hologram(manager, location, content)
     }
 
     override fun createHologram(player: Player, location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
-        TODO("Not yet implemented")
+        val manager = Adyeshach.api().getPrivateEntityManager(player, if (isolate) ManagerType.ISOLATED else ManagerType.TEMPORARY)
+        return Hologram(manager, location, content)
     }
 
     override fun createHologramByText(location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
-        TODO("Not yet implemented")
+        return createHologram(location, content.map { createHologramItem(it) }, isolate)
     }
 
     override fun createHologramByText(player: Player, location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
-        TODO("Not yet implemented")
+        return createHologram(player, location, content.map { createHologramItem(it) }, isolate)
     }
 
-    override fun createHologramMessage(location: Location, message: List<String>, stay: Long, transfer: Function<String, String>) {
-        TODO("Not yet implemented")
+    override fun sendHologramMessage(location: Location, message: List<String>, stay: Long) {
+        hologramMessage(null, location, message, stay)
     }
 
-    override fun createHologramMessage(player: Player, location: Location, message: List<String>, stay: Long, transfer: Function<String, String>) {
-        TODO("Not yet implemented")
+    override fun sendHologramMessage(player: Player, location: Location, message: List<String>, stay: Long) {
+        hologramMessage(player, location, message, stay)
+    }
+
+    fun hologramMessage(player: Player?, location: Location, message: List<String>, stay: Long) {
+        if (message.isEmpty() || stay < 1) {
+            return
+        }
+        val hologram = if (player == null) {
+            Adyeshach.api().getHologramHandler().createHologramByText(location, message.map { "" }, true)
+        } else {
+            Adyeshach.api().getHologramHandler().createHologramByText(player, location, message.map { "" }, true)
+        }
+        val hologramItems = hologram.contents().map { it as HoloEntityText }
+        val content = message.map { it.printed("_") }
+        val len = content.maxOf { it.size }
+        for (i in 0 until len) {
+            val frame = content.map { if (i < it.size) it[i] else it.lastOrNull() ?: "" }
+            // 分段更新内容
+            submit(delay = i.toLong()) {
+                hologramItems.forEachIndexed { index, entity -> entity.text = frame[index] }
+            }
+        }
+        // 延迟后移除
+        submit(delay = stay) { hologram.remove() }
     }
 }

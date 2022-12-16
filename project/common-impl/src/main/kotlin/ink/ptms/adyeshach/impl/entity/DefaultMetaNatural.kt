@@ -17,7 +17,7 @@ import taboolib.common.util.unsafeLazy
  * @since 2022/6/20 01:33
  */
 @Suppress("UNCHECKED_CAST")
-class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, def: T) : MetaNatural<T, E>(index, key, def) {
+class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, group: String, def: T) : MetaNatural<T, E>(index, key, group, def) {
 
     val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(def) as MinecraftMetadataParser<Any> }
 

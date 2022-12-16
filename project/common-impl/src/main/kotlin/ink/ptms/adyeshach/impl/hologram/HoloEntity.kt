@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.impl.hologram
 
 import ink.ptms.adyeshach.core.AdyeshachHologram
+import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
+import ink.ptms.adyeshach.core.util.plus
 import org.bukkit.Location
 
 /**
@@ -12,14 +14,43 @@ import org.bukkit.Location
  * @author 坏黑
  * @since 2022/12/14 13:39
  */
-abstract class HoloEntity<T : AdyEntity> : AdyeshachHologram.ItemByEntity<T> {
+@Suppress("UNCHECKED_CAST")
+abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.ItemByEntity<T> {
+
+    var offset = 0.0
+
+    lateinit var entity: T
+    lateinit var origin: Location
+    override var space = space
+        set(value) {
+            field = value
+            teleport(origin)
+        }
+
+    /** 生成回调 */
+    abstract fun prepareSpawn(entity: T)
 
     /** 生成全息 */
-    abstract fun spawn(location: Location, manager: Manager)
+    override fun spawn(offset: Double, location: Location, manager: Manager) {
+        this.offset = offset
+        this.origin = location.clone()
+        this.entity = manager.create(type, origin.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
+        this.entity.setPersistentTag(StandardTags.DERIVED, "true")
+    }
 
     /** 删除全息 */
-    abstract fun delete()
+    override fun remove() {
+        entity.remove()
+    }
 
     /** 传送到某处 */
-    abstract fun teleport(location: Location)
+    override fun teleport(location: Location) {
+        origin = location
+        entity.teleport(origin.clone().plus(y = offset + space))
+    }
+
+    /** 获取实体 */
+    override fun entity(): T {
+        return entity
+    }
 }

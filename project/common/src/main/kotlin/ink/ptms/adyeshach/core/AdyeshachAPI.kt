@@ -33,7 +33,7 @@ interface AdyeshachAPI {
      *
      * @param type 容器类型
      */
-    fun getPublicEntityManager(type: ManagerType = ManagerType.PERSISTENT): Manager
+    fun getPublicEntityManager(type: ManagerType = ManagerType.TEMPORARY): Manager
 
     /**
      * 获取私有单位管理器
@@ -41,7 +41,7 @@ interface AdyeshachAPI {
      * @param player 玩家
      * @param type 容器类型
      */
-    fun getPrivateEntityManager(player: Player, type: ManagerType = ManagerType.PERSISTENT): Manager
+    fun getPrivateEntityManager(player: Player, type: ManagerType = ManagerType.TEMPORARY): Manager
 
     /**
      * 获取用于检索实体的工具

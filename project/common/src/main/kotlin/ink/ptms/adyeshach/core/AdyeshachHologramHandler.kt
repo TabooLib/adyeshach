@@ -1,12 +1,8 @@
 package ink.ptms.adyeshach.core
 
-import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.function.Consumer
-import java.util.function.Function
 
 /**
  * Adyeshach
@@ -25,12 +21,7 @@ interface AdyeshachHologramHandler {
     /**
      * 创建一个新的物品条目
      */
-    fun createHologramItem(text: ItemStack, space: Double = 0.3): AdyeshachHologram.ItemByItemStack
-
-    /**
-     * 创建一个新的实体条目
-     */
-    fun <T : AdyEntity> createHologramItem(type: EntityTypes, space: Double = 0.3, text: Consumer<T>): AdyeshachHologram.ItemByEntity<T>
+    fun createHologramItem(itemStack: ItemStack, space: Double = 0.4): AdyeshachHologram.ItemByItemStack
 
     /**
      * 创建全服玩家可见的混合全息
@@ -58,9 +49,8 @@ interface AdyeshachHologramHandler {
      * @param location 坐标
      * @param message 内容
      * @param stay 停留时间
-     * @param transfer 内容转换回调函数
      */
-    fun createHologramMessage(location: Location, message: List<String>, stay: Long = 40L, transfer: Function<String, String> = Function { it })
+    fun sendHologramMessage(location: Location, message: List<String>, stay: Long = 40L)
 
     /**
      * 创建全息通告（以全息形式发送位于世界中的提示信息）
@@ -69,7 +59,6 @@ interface AdyeshachHologramHandler {
      * @param location 坐标
      * @param message 内容
      * @param stay 停留时间
-     * @param transfer 内容转换回调函数
      */
-    fun createHologramMessage(player: Player, location: Location, message: List<String>, stay: Long = 40L, transfer: Function<String, String> = Function { it })
+    fun sendHologramMessage(player: Player, location: Location, message: List<String>, stay: Long = 40L)
 }

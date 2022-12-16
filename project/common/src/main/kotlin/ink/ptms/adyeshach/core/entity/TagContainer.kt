@@ -28,7 +28,7 @@ interface TagContainer {
     /**
      * 设置标签
      */
-    fun setTag(key: String, value: String)
+    fun setTag(key: String, value: String?)
 
     /**
      * 移除标签
@@ -53,7 +53,7 @@ interface TagContainer {
     /**
      * 设置持久化标签
      */
-    fun setPersistentTag(key: String, value: String)
+    fun setPersistentTag(key: String, value: String?)
 
     /**
      * 移除持久化标签

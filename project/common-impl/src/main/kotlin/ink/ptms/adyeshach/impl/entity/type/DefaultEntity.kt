@@ -29,7 +29,7 @@ abstract class DefaultEntity(entityType: EntityTypes) : DefaultEntityInstance(en
                 // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
                 // 矿车，凋零头
                 submit(delay = 5) {
-                    sendHeadRotation(yaw, pitch)
+                    setHeadRotation(yaw, pitch, forceUpdate = true)
                 }
             }
         } else {

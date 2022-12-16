@@ -5,13 +5,10 @@ import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -84,9 +81,8 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
     final override val pitch: Float
         get() = position.pitch
 
-    final override fun getWorld(): World {
-        return position.world
-    }
+    final override val world: World
+        get() = position.world
 
     final override fun getLocation(): Location {
         return position.toLocation()

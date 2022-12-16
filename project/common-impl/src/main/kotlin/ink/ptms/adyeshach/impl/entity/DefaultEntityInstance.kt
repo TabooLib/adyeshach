@@ -43,13 +43,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     /** 可见玩家 */
     override val viewPlayers = DefaultViewPlayers(this)
 
-    /** 移动速度 */
-    @Expose
-    override var moveSpeed = 0.2
-
     /** 是否傻子 */
     @Expose
     override var isNitwit = false
+
+    /** 移动速度 */
+    @Expose
+    override var moveSpeed = 0.2
 
     /** 可视距离 */
     @Expose
@@ -126,12 +126,17 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             updateMoveFrames()
         }
 
+    /** 实体路径类型 */
+    val pathType = Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)
+
     /** 管理器 */
     override var manager: Manager? = null
         set(value) {
-            // 是否不存在管理器
+            // 没有管理器 || 移除管理器
             if (field == null || value == null) {
                 field = value
+                // 更新标签
+                updateManagerTags()
             } else {
                 errorBy("error-manager-has-been-initialized")
             }
@@ -148,7 +153,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
-            sendHeadRotation(position.yaw, position.pitch)
+            setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
             // 关联实体初始化
             submit(delay = 5) { refreshPassenger(viewer) }
             return true
@@ -201,21 +206,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
     }
 
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn()"))
-    override fun destroy() {
-        despawn()
-    }
-
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(destroyPacket = false, removeFromManager = true)"))
-    override fun remove() {
-        despawn(destroyPacket = false, removeFromManager = true)
-    }
-
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(removeFromManager = true)"))
-    override fun delete() {
-        despawn(removeFromManager = true)
-    }
-
     override fun teleport(entityPosition: EntityPosition) {
         teleport(entityPosition.toLocation())
     }
@@ -263,21 +253,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     }
 
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
+        // 强制更新
         if (forceUpdate) {
-            sendHeadRotation(yaw, pitch)
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
         } else {
             teleport(position.toLocation().modify(yaw, pitch))
         }
-    }
-
-    @Deprecated("请使用 setVelocity(vector), 该方法存在命名误导", replaceWith = ReplaceWith("setVelocity(vector)"))
-    override fun sendVelocity(vector: Vector) {
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
-    }
-
-    @Deprecated("请使用 setHeadRotation(yaw, pitch, forceUpdate), 该方法存在命名误导", replaceWith = ReplaceWith("setHeadRotation(yaw, pitch, forceUpdate)"))
-    override fun sendHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, false)
     }
 
     override fun sendAnimation(animation: BukkitAnimation) {
@@ -321,5 +302,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             p.clone("${newId}_passenger_$i", location)?.let { entity.addPassenger(it) }
         }
         return entity
+    }
+
+    @Deprecated("请使用 setVelocity(vector)", replaceWith = ReplaceWith("setVelocity(vector)"))
+    override fun sendVelocity(vector: Vector) {
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
     }
 }

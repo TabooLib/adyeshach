@@ -25,10 +25,10 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
     /** 杂项 **/
     val nmsHelper = nmsProxy<MinecraftHelper>("$group.DefaultMinecraftHelper")
 
-    /** 实体生成接口 **/
+    /** 单位生成接口 **/
     val nmsEntitySpawner = nmsProxy<MinecraftEntitySpawner>("$group.DefaultMinecraftEntitySpawner")
 
-    /** 实体控制接口 **/
+    /** 单位控制接口 **/
     val nmsEntityOperator = nmsProxy<MinecraftEntityOperator>("$group.DefaultMinecraftEntityOperator")
 
     /** 元数据控制接口 **/

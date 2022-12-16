@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.entity
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.TickService
 import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
@@ -24,27 +25,61 @@ fun DefaultEntityInstance.getEventBus(): DefaultEventBus? {
 
 /** 所在区块是否加载 */
 fun DefaultEntityInstance.isChunkLoaded(): Boolean {
-    return ChunkAccess.getChunkAccess(getWorld()).isChunkLoaded(floor(x).toInt() shr 4, floor(z).roundToInt() shr 4)
+    return ChunkAccess.getChunkAccess(world).isChunkLoaded(floor(x).toInt() shr 4, floor(z).roundToInt() shr 4)
+}
+
+/** 更新管理器标签 */
+fun DefaultEntityInstance.updateManagerTags() {
+    // 孤立单位
+    if (manager == null || manager !is TickService) {
+        tag[StandardTags.ISOLATED] = "true"
+    } else {
+        tag.remove(StandardTags.ISOLATED)
+        // 公共单位
+        if (manager!!.isPublic()) {
+            tag[StandardTags.IS_PUBLIC] = "true"
+            tag.remove(StandardTags.IS_PRIVATE)
+        } else {
+            tag[StandardTags.IS_PRIVATE] = "true"
+            tag.remove(StandardTags.IS_PUBLIC)
+        }
+        // 临时单位
+        if (manager!!.isTemporary()) {
+            tag[StandardTags.IS_TEMPORARY] = "true"
+        } else {
+            tag.remove(StandardTags.IS_TEMPORARY)
+        }
+    }
 }
 
 /** 更新移动路径 **/
 fun DefaultEntityInstance.updateMoveFrames() {
     // 傻子或没有目的地
     if (isNitwit || moveTarget == null) {
+        // 移除移动路径
+        if (moveFrames != null) {
+            moveFrames = null
+            // 移除移动标签
+            tag.remove(StandardTags.IS_MOVING)
+        }
         return
     }
+    // 设置标签
+    setTag(StandardTags.IS_PATHFINDING, "true")
     // 请求路径
-    PathFinderHandler.request(position.toLocation(), moveTarget!!, Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)) {
+    PathFinderHandler.request(position.toLocation(), moveTarget!!, pathType) {
         it as ResultNavigation
+        // 移除标签
+        removeTag(StandardTags.IS_PATHFINDING)
         // 如果路径无效
         if (it.pointList.isEmpty()) {
             return@request
         }
         // 修正路径高度
-        val chunkAccess = ChunkAccess.getChunkAccess(getWorld())
+        val chunkAccess = ChunkAccess.getChunkAccess(world)
         it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighest(p.x, p.y, p.z) }
-        // 设置插值定位
-        moveFrames = it.toInterpolated(getWorld(), moveSpeed)
+        // 设置移动路径
+        moveFrames = it.toInterpolated(world, moveSpeed)
     }
 }
 
@@ -72,8 +107,8 @@ fun DefaultEntityInstance.handleTracker() {
 
 /** 处理移动 */
 fun DefaultEntityInstance.handleMove() {
-    // 乘坐实体
-    if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
+    // 乘坐实体 || 冻结
+    if (persistentTag.contains(StandardTags.IS_IN_VEHICLE) || tag.contains(StandardTags.IS_FROZEN)) {
         deltaMovement = Vector(0.0, 0.0, 0.0)
         return
     }
@@ -81,6 +116,8 @@ fun DefaultEntityInstance.handleMove() {
     if (moveFrames != null) {
         val next = moveFrames!!.next()
         if (next != null) {
+            // 设置移动标签
+            tag[StandardTags.IS_MOVING] = "true"
             // 默认会看向移动方向
             val size = Adyeshach.api().getEntityTypeHandler().getEntitySize(entityType)
             val temp = clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0)
@@ -95,7 +132,7 @@ fun DefaultEntityInstance.handleMove() {
             clientPosition = EntityPosition.fromLocation(next)
             // getWorld().spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
         } else {
-            moveFrames = null
+            moveTarget = null
         }
     }
     // 移动力
@@ -110,7 +147,7 @@ fun DefaultEntityInstance.handleVelocity() {
         val nextPosition = clientPosition.clone().add(deltaMovement.x, deltaMovement.y, deltaMovement.z)
         // 只有在向下移动的时候才会进行碰撞检测
         if (deltaMovement.y < 0) {
-            val chunkAccess = ChunkAccess.getChunkAccess(getWorld())
+            val chunkAccess = ChunkAccess.getChunkAccess(world)
             val blockHeight = chunkAccess.getBlockTypeAndHeight(nextPosition.x, nextPosition.y, nextPosition.z)
             if (blockHeight.first.isSolid) {
                 clientPosition = nextPosition
@@ -142,7 +179,7 @@ fun DefaultEntityInstance.syncPosition() {
         if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
             // 是否需要更新视角
             if (updateRotation) {
-                operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, false)
+                operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
             }
             // 是否需要同步到载具位置
             if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
@@ -166,17 +203,17 @@ fun DefaultEntityInstance.syncPosition() {
                 val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
                 if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
                     clientPositionFixed = System.currentTimeMillis()
-                    operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), false)
+                    operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), !pathType.isFly())
                 } else {
                     val updatePosition = offset.lengthSquared() > 1E-6
                     if (updatePosition) {
                         if (updateRotation) {
-                            operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, false)
+                            operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, !pathType.isFly())
                         } else {
-                            operator.updateRelEntityMove(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), false)
+                            operator.updateRelEntityMove(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), !pathType.isFly())
                         }
                     } else {
-                        operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, false)
+                        operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
                     }
                 }
                 position = clientPosition

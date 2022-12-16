@@ -51,32 +51,16 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     fun respawn()
 
     /**
-     * 删除实体
+     * 销毁实体
      * @param destroyPacket 是否销毁数据包
      * @param removeFromManager 是否从管理器中移除
      */
     fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false)
 
     /**
-     * 销毁实体，从玩家视野中移除该实体
+     * 销毁实体，并从管理器中移除
      */
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn()"))
-    fun destroy()
-
-    /**
-     * 删除实体
-     * + 从管理器中移除，不再接受托管，但不会销毁实体
-     * + 被移除管理器后该单位将失去所有主动行为（包括玩家类型的皮肤刷新）
-     * + 同时该单位将无法被指令控制
-     */
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(destroyPacket = false, removeFromManager = true)"))
-    fun remove()
-
-    /**
-     * 删除实体，并销毁
-     */
-    @Deprecated("请使用 despawn(destroyPacket, removeFromManager), 该方法存在命名误导", ReplaceWith("despawn(removeFromManager = true)"))
-    fun delete()
+    fun remove() = despawn(removeFromManager = true)
 
     /**
      * 修改实体位置
@@ -105,23 +89,28 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 修改实体视角
-     * @param forceUpdate 历史遗留方法，无效
+     * @param yaw 偏航角
+     * @param pitch 俯仰角
+     * @param forceUpdate 强制更新
      */
     fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
 
     /**
      * 播放动画数据包
+     *
+     * @param animation [BukkitAnimation]
      */
     fun sendAnimation(animation: BukkitAnimation)
 
     /**
      * 克隆实体
+     *
+     * @param newId 新的实体序号
+     * @param location 位置
+     * @param manager 单位管理器
      */
     fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance?
 
-    @Deprecated("请使用 setVelocity(vector), 该方法存在命名误导", ReplaceWith("setVelocity(vector)"))
+    @Deprecated("请使用 setVelocity(vector)", ReplaceWith("setVelocity(vector)"))
     fun sendVelocity(vector: org.bukkit.util.Vector)
-
-    @Deprecated("请使用 setHeadRotation(yaw, pitch, forceUpdate), 该方法存在命名误导", ReplaceWith("setHeadRotation(yaw, pitch, forceUpdate)"))
-    fun sendHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
 }

@@ -48,7 +48,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getWorld(): World {
-        return entityInstance.getWorld()
+        return entityInstance.world
     }
 
     override fun getNearbyEntities(v: Double, v1: Double, v2: Double): MutableList<Entity> {

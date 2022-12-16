@@ -4,10 +4,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityEquipable
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.path.PathType
-import ink.ptms.adyeshach.core.entity.type.AdyAxolotl
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
-import ink.ptms.adyeshach.core.entity.type.AdyFallingBlock
-import ink.ptms.adyeshach.core.entity.type.AdyHuman
+import ink.ptms.adyeshach.core.entity.type.*
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Axolotl
@@ -67,7 +64,7 @@ object Test {
                 val item = ItemStack(Material.DIAMOND_SWORD)
                 cost("all 1") {
                     if (::entity.isInitialized) {
-                        entity.despawn(removeFromManager = true)
+                        entity.remove()
                     }
                     val npc = Adyeshach.api().getPublicEntityManager().create(type, sender.location) as AdyEntity
                     if (npc is AdyHuman) {
@@ -82,6 +79,11 @@ object Test {
                     }
                     if (npc is AdyFallingBlock) {
                         npc.setMaterial(Material.DIAMOND_BLOCK)
+                    }
+                    if (npc is AdyItem) {
+                        submit(delay = 20) {
+                            npc.setItem(ItemStack(Material.DIAMOND_BLOCK))
+                        }
                     }
                     npc.setCustomName("坏黑")
                     npc.setCustomNameVisible(true)
@@ -124,6 +126,62 @@ object Test {
         execute<Player> { sender, _, _ ->
             entity.despawn(removeFromManager = true)
             sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val holo1 = subCommand {
+        execute<Player> { sender, _, _ ->
+            val handler = Adyeshach.api().getHologramHandler()
+            handler.sendHologramMessage(sender, sender.eyeLocation, listOf("我是", "我是傻逼", "我是一个超级无敌大傻逼"))
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val holo2 = subCommand {
+        execute<Player> { sender, _, _ ->
+            val handler = Adyeshach.api().getHologramHandler()
+            handler.createHologramByText(sender.eyeLocation, listOf("我是", "我是脑瘫", "我是一个脑瘫"))
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val holo3 = subCommand {
+        execute<Player> { sender, _, _ ->
+            val handler = Adyeshach.api().getHologramHandler()
+            val h1 = handler.createHologramItem("我是")
+            val h2 = handler.createHologramItem(ItemStack(Material.DIAMOND_BLOCK))
+            val h3 = handler.createHologramItem("我是一个脑瘫")
+            handler.createHologram(sender.eyeLocation, listOf(h1, h2, h3))
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val meta = subCommand {
+        dynamic {
+            suggest { EntityTypes.values().map { it.name } }
+            execute<Player> { sender, _, args ->
+                val type = EntityTypes.valueOf(args.uppercase())
+                val adyClass = Adyeshach.api().getEntityTypeHandler().getAdyClassFromEntityType(type)
+
+                fun read(cla: Class<*>, level: Int = 0) {
+                    sender.sendMessage(cla.name)
+                    cla.interfaces.forEach {
+                        read(it, level + 1)
+                    }
+                }
+                read(adyClass)
+            }
+        }
+    }
+
+    @CommandBody
+    val edit = subCommand {
+        execute<Player> { sender, _, args ->
+            Adyeshach.editor()?.openEditor(sender, entity)
         }
     }
 

@@ -32,12 +32,16 @@ class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
         }
     }
 
-    override fun registerEntityMetaMask(type: Class<out AdyEntity>, index: Int, key: String, mask: Byte, def: Boolean) {
-        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaMasked<EntityInstance>(index, key, mask, def)
+    override fun registerEntityMetaMask(type: Class<out AdyEntity>, index: Int, group: String, key: String, mask: Byte, def: Boolean) {
+        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaMasked<EntityInstance>(index, key, group, mask, def)
     }
 
-    override fun registerEntityMetaNatural(type: Class<out AdyEntity>, index: Int, key: String, def: Any) {
-        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaNatural<Any, EntityInstance>(index, key, def)
+    override fun registerEntityMetaNatural(type: Class<out AdyEntity>, index: Int, group: String, key: String, def: Any) {
+        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaNatural<Any, EntityInstance>(index, key, group, def)
+    }
+
+    override fun getEntityMeta(type: Class<out AdyEntity>): List<Meta<*>> {
+        return registeredEntityMeta[type] ?: emptyList()
     }
 
     override fun getEntityUnusedMeta(type: Class<out AdyEntity>): List<String> {

@@ -67,14 +67,21 @@ fun ifloor(x: Double): Int {
     return NumberConversions.floor(x)
 }
 
-fun Location.modify(x: Double, y: Double, z: Double): Location {
+fun Location.plus(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): Location {
+    this.x += x
+    this.y += y
+    this.z += z
+    return this
+}
+
+fun Location.modify(x: Double = this.x, y: Double = this.y, z: Double = this.z): Location {
     this.x = x
     this.y = y
     this.z = z
     return this
 }
 
-fun Location.modify(yaw: Float, pitch: Float): Location {
+fun Location.modify(yaw: Float = this.yaw, pitch: Float = this.pitch): Location {
     this.yaw = yaw
     this.pitch = pitch
     return this

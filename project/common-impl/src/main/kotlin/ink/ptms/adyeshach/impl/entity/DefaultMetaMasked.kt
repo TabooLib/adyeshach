@@ -17,7 +17,7 @@ import taboolib.common.util.unsafeLazy
  * @since 2022/6/20 01:32
  */
 @Suppress("UNCHECKED_CAST")
-class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, mask: Byte, def: Boolean) : MetaMasked<T>(index, key, mask, def) {
+class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: String, mask: Byte, def: Boolean) : MetaMasked<T>(index, key, group, mask, def) {
 
     val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(Byte.MIN_VALUE) as MinecraftMetadataParser<Any> }
 

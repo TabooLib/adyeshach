@@ -27,20 +27,29 @@ object DefaultAdyeshachEditor : AdyeshachEditor {
     }
 
     /**
-     * PLAYER (test) : 公共单位
-     * d3486345e35d326ab5c5787de3814770 [N]
-     *
-     * 观察者 (0), 控制器 (0), 标签 (0), 特性 (0)
-     *
-     * [数据 (R)][数据 (R)][数据 (R)][数据 (R)][数据 (R)][数据 (R)]
-     * [数据 (R)][数据 (R)][数据 (R)]
-     *
-     * [数据 (R)][数据 (R)][数据 (R)][数据 (R)][数据 (R)][数据 (R)]
-     * [数据 (R)][数据 (R)][数据 (R)]
+     * \n  PLAYER (test) > 公有单位
+     * \n  e449fcff-7351-4da1-b741-b0095162f4e9 [000001]
+     * \n
+     * \n  观察者 (0), 控制器 (0), 标签 (0), 关联 (0)
+     * \n
+     * \n  [公共特性] [公共数据] [专有数据]
+     * \n
+     * \n  [移动] [传送] [复制] [测试] [测试] [测试] [测试]
+     * \n
+     * \n
+     * \n
+     * \n
+     * \n
+     * \n  ^^^ 请展开对话框 ^^^
+     * \n
+     * \n
+     * \n
+     * \n
+     * \n
      */
     override fun openEditor(player: Player, entityInstance: EntityInstance, forceEdit: Boolean) {
         // 清屏
-        TellrawJson().sendTo(adaptPlayer(player)) { repeat(32) { newLine() } }
+        TellrawJson().sendTo(adaptPlayer(player)) { repeat(16) { newLine() } }
         // 标题
         player.sendMessage("    &6&l&n${entityInstance.entityType} &r&6(${entityInstance.id}) &e: &7${entityInstance.managerType(player)}".colored())
         // 序号

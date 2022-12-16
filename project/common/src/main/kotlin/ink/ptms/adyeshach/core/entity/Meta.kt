@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2022/6/15 23:07
  */
-abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val def: Any) {
+abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val group: String, val def: Any) {
 
     /**
      * 获取元数据鉴别器

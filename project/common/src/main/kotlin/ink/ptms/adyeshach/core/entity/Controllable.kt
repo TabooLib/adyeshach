@@ -14,12 +14,12 @@ import org.bukkit.Location
 interface Controllable {
 
     /**
-     * 是否冻结实体，启用后无法移动
+     * 是否冻结单位，启用后无法移动，但可以被传送
      */
     var isFreeze: Boolean
 
     /**
-     * 移动速度，用于巡逻特性
+     * 单位移动速度
      */
     var moveSpeed: Double
 
@@ -79,22 +79,22 @@ interface Controllable {
     fun isControllerOnGround(): Boolean
 
     /**
-     * 使实体看向某个坐标
+     * 使单位看向某个坐标
      */
     fun controllerLook(location: Location, smooth: Boolean = false, smoothInternal: Float = 22.5f)
 
     /**
-     * 使实体看向某个视角
+     * 使单位看向某个视角
      */
     fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = false, smoothInternal: Float = 22.5f)
 
     /**
-     * 使实体移动到某个坐标
+     * 使单位移动到某个坐标
      */
     fun controllerMove(location: Location, pathType: PathType, speed: Double)
 
     /**
-     * 使实体停止移动
+     * 使单位停止移动
      */
     fun controllerStill()
 

@@ -6,8 +6,6 @@ import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Location
 import org.bukkit.Material
@@ -143,7 +141,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeDouble(location.z)
                 // xRot     -> pitch -> 纵向视角
                 writeByte(pitch)
-                // yRot     -> 没效果
+                // yRot     -> yaw -> 普通实体没效果
                 writeByte(yaw)
                 // yHeadRot -> yaw -> 横向视角
                 writeByte(yaw)

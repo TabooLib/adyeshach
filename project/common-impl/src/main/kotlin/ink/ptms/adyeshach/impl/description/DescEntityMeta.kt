@@ -25,6 +25,7 @@ class DescEntityMeta(input: InputStream) : Description(input) {
         val namespace = part.next()
         val adyeshachInterface = kotlin.runCatching { Class.forName(namespace) as Class<AdyEntity> }.getOrNull() ?: return
         var support = true
+        var group = ""
         val currentMeta = ArrayList<PrepareMeta>()
 
         var i = 0
@@ -35,7 +36,7 @@ class DescEntityMeta(input: InputStream) : Description(input) {
             if (support) {
                 currentMeta.forEach { meta ->
                     count++
-                    meta.register(adyeshachInterface, index.firstOrNull { major >= toMajor(it.first) }?.second ?: -1)
+                    meta.register(adyeshachInterface, index.firstOrNull { major >= toMajor(it.first) }?.second ?: -1, group)
                 }
             }
             support = true
@@ -49,10 +50,22 @@ class DescEntityMeta(input: InputStream) : Description(input) {
         while (part.hasNext()) {
             val line = part.next()
             when {
+                // 名称行 - 4 空格
+                line.startsWith(" ".repeat(4)) -> {
+                    if (currentMeta.isNotEmpty()) {
+                        apply()
+                    }
+                    currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
+                }
+                // 序列行 —— 8 空格
                 line.startsWith(" ".repeat(8)) -> {
                     val idx = line.trim()
+                    // 组
+                    if (idx.startsWith('&')) {
+                        group = idx.substring(1)
+                    }
                     // 版本限制
-                    if (idx.startsWith('@')) {
+                    else if (idx.startsWith('@')) {
                         val major = toMajor(idx.substring(1, idx.length - 1).toInt())
                         when {
                             idx.endsWith('+') -> support = MinecraftVersion.major >= major
@@ -88,12 +101,6 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                         }
                         i++
                     }
-                }
-                line.startsWith(" ".repeat(4)) -> {
-                    if (currentMeta.isNotEmpty()) {
-                        apply()
-                    }
-                    currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
                 }
             }
         }

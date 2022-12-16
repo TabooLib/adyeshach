@@ -8,7 +8,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyEntity
  */
 abstract class PrepareMeta(val name: String) {
 
-    abstract fun register(entityClass: Class<out AdyEntity>, index: Int)
+    abstract fun register(entityClass: Class<out AdyEntity>, index: Int, group: String)
 
     override fun toString(): String {
         return name

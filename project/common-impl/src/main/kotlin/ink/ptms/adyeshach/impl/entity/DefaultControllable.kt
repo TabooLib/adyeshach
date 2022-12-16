@@ -23,11 +23,11 @@ interface DefaultControllable : Controllable {
     override var isFreeze: Boolean
         set(value) {
             this as TagContainer
-            setTag(StandardTags.IS_FREEZE, value.toString())
+            setTag(StandardTags.IS_FROZEN, if (value) "true" else null)
         }
         get() {
             this as TagContainer
-            return hasTag(StandardTags.IS_FREEZE)
+            return hasTag(StandardTags.IS_FROZEN)
         }
 
     override fun getController(): List<Controller> {
@@ -81,18 +81,21 @@ interface DefaultControllable : Controllable {
     }
 
     override fun isControllerMoving(): Boolean {
-        this as DefaultEntityInstance
-        return hasTag(StandardTags.IS_MOVING)
+//        this as DefaultEntityInstance
+//        return hasTag(StandardTags.IS_MOVING)
+        TODO()
     }
 
     override fun isControllerJumping(): Boolean {
-        this as DefaultEntityInstance
-        return hasTag(StandardTags.IS_JUMPING)
+//        this as DefaultEntityInstance
+//        return hasTag(StandardTags.IS_JUMPING)
+        TODO()
     }
 
     override fun isControllerOnGround(): Boolean {
-        this as DefaultEntityInstance
-        return hasTag(StandardTags.IS_ON_GROUND)
+//        this as DefaultEntityInstance
+//        return hasTag(StandardTags.IS_ON_GROUND)
+        TODO()
     }
 
     override fun controllerLook(location: Location, smooth: Boolean, smoothInternal: Float) {
@@ -115,7 +118,7 @@ interface DefaultControllable : Controllable {
 //            look.isLooking = true
 //            look.interval = smoothInternal
 //        } else {
-        sendHeadRotation(yaw, pitch)
+//        sendHeadRotation(yaw, pitch)
 //        }
     }
 
@@ -137,7 +140,7 @@ interface DefaultControllable : Controllable {
 //            errorBy("error-no-move-and-gravity")
 //        }
         // 设置尝试移动的标签
-        setTag(StandardTags.IS_PATHFINDING, "true")
+//        setTag(StandardTags.IS_PATHFINDING, "true")
         // 请求寻路
 //        PathFinderHandler.request(position.toLocation(), location, pathType) {
 //            // 路径节点为空

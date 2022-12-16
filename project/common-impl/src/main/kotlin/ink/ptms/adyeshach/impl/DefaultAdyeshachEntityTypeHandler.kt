@@ -106,6 +106,11 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
         return types.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun getAdyClassFromEntityType(entityType: EntityTypes): Class<out AdyEntity> {
+        return types.values.first { it.adyeshachType == entityType }.adyeshachInterface as Class<out AdyEntity>
+    }
+
     override fun prepareGenerate(callback: AdyeshachEntityTypeHandler.GenerateCallback) {
         this.callback += callback
     }

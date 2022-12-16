@@ -77,7 +77,7 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     /**
      * 实体所在世界
      */
-    fun getWorld(): World
+    val world: World
 
     /**
      * 实体所在位置（封装自 EntityPosition 类型）

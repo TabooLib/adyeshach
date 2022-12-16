@@ -25,4 +25,7 @@ enum class PathType(val height: Double, val width: Double) {
      * 高度接近三格（以 Enderman 为代表）
      */
     WALK_3(3.0, 1.0);
+
+    /** 是否为飞行单位 */
+    fun isFly() = this == FLY
 }
