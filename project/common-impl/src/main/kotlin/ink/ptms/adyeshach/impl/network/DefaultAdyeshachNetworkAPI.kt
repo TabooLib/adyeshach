@@ -1,6 +1,9 @@
 package ink.ptms.adyeshach.impl.network
 
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 
 /**
  * Adyeshach
@@ -23,5 +26,13 @@ class DefaultAdyeshachNetworkAPI : AdyeshachNetworkAPI {
 
     override fun getSkin(): AdyeshachNetworkAPI.Skin {
         return networkSkin
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachNetworkAPI>(DefaultAdyeshachNetworkAPI())
+        }
     }
 }

@@ -41,7 +41,7 @@ open class BaseManager : Manager, ManagerService, TickService {
     }
 
     override fun create(entityTypes: EntityTypes, location: Location, player: List<Player>, function: Consumer<EntityInstance>): EntityInstance {
-        val typeHandler = Adyeshach.api().getEntityTypeHandler()
+        val typeHandler = Adyeshach.api().getEntityTypeRegistry()
         // 检查实体类型是否支持
         typeHandler.getBukkitEntityType(entityTypes)
         // 创建实体类

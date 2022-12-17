@@ -2,6 +2,9 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.AdyeshachEntitySerializer
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
@@ -33,5 +36,13 @@ class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
         }
         // TODO
         return null
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachEntitySerializer>(DefaultAdyeshachEntitySerializer())
+        }
     }
 }

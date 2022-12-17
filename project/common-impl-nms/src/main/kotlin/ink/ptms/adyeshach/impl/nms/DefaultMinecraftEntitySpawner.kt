@@ -37,8 +37,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     val helper: MinecraftHelper
         get() = Adyeshach.api().getMinecraftAPI().getHelper()
 
-    val typeHandler: AdyeshachEntityTypeHandler
-        get() = Adyeshach.api().getEntityTypeHandler()
+    val typeHandler: AdyeshachEntityTypeRegistry
+        get() = Adyeshach.api().getEntityTypeRegistry()
 
     val packetHandler: MinecraftPacketHandler
         get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()

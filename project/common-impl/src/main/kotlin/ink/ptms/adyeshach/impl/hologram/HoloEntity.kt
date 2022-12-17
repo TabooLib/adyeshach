@@ -35,7 +35,7 @@ abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.Item
         this.offset = offset
         this.origin = location.clone()
         this.entity = manager.create(type, origin.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
-        this.entity.setPersistentTag(StandardTags.DERIVED, "true")
+        this.entity.setPersistentTag(StandardTags.DERIVED, "AdyeshachHologram")
     }
 
     /** 删除全息 */

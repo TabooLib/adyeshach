@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl
+package ink.ptms.adyeshach.module.lang
 
 import ink.ptms.adyeshach.core.AdyeshachLanguage
 import org.bukkit.command.CommandSender
@@ -10,7 +10,7 @@ import taboolib.platform.util.sendLang
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.DefaultAdyeshachLanguage
+ * ink.ptms.adyeshach.module.lang.DefaultAdyeshachLanguage
  *
  * @author 坏黑
  * @since 2022/6/28 13:32

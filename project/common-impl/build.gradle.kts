@@ -5,7 +5,6 @@ dependencies {
     compileOnly("io.netty:netty-all:4.1.77.Final")
     compileOnly("public:ServerTours:1.6.5")
     compileOnly(project(":project:common"))
-    compileOnly(project(":project:module-editor"))
 }
 
 configure<JavaPluginConvention> {

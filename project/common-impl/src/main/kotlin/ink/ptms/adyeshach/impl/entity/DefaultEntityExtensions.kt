@@ -119,7 +119,7 @@ fun DefaultEntityInstance.handleMove() {
             // 设置移动标签
             tag[StandardTags.IS_MOVING] = "true"
             // 默认会看向移动方向
-            val size = Adyeshach.api().getEntityTypeHandler().getEntitySize(entityType)
+            val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
             val temp = clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0)
             // 设置方向
             temp.direction = Vector(next.x, temp.y, next.z).subtract(temp.toVector())

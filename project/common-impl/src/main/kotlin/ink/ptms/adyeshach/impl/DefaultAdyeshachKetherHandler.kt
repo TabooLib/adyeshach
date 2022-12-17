@@ -2,6 +2,9 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.AdyeshachKetherHandler
 import org.bukkit.entity.Player
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -19,5 +22,13 @@ class DefaultAdyeshachKetherHandler : AdyeshachKetherHandler {
 
     override fun parseInline(source: String, player: Player?, vars: Map<String, Any>): String {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachKetherHandler>(DefaultAdyeshachKetherHandler())
+        }
     }
 }

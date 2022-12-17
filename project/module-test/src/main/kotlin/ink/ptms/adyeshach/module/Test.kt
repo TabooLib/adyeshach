@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.module
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityEquipable
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.entity.type.*
 import org.bukkit.Material
@@ -85,11 +86,14 @@ object Test {
                             npc.setItem(ItemStack(Material.DIAMOND_BLOCK))
                         }
                     }
+                    if (npc is AdyArmorStand) {
+                        npc.setTag(StandardTags.DERIVED, "AdyeshachTest")
+                    }
                     npc.setCustomName("坏黑")
                     npc.setCustomNameVisible(true)
                     npc.setGlowing(true)
+                    npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
                     npc.moveSpeed = 0.2
-                    // npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
                     entity = npc
                 }
                 sender.info("OK")
@@ -165,7 +169,7 @@ object Test {
             suggest { EntityTypes.values().map { it.name } }
             execute<Player> { sender, _, args ->
                 val type = EntityTypes.valueOf(args.uppercase())
-                val adyClass = Adyeshach.api().getEntityTypeHandler().getAdyClassFromEntityType(type)
+                val adyClass = Adyeshach.api().getEntityTypeRegistry().getAdyClassFromEntityType(type)
 
                 fun read(cla: Class<*>, level: Int = 0) {
                     sender.sendMessage(cla.name)
@@ -229,7 +233,7 @@ object Test {
             var npc: AdyEntity? = null
             var i = 0
             val entityTypes = EntityTypes.values().filter {
-                Adyeshach.api().getEntityTypeHandler().getEntityFlags(it).contains("INVALID")
+                Adyeshach.api().getEntityTypeRegistry().getEntityFlags(it).contains("INVALID")
             }
             sender.sendMessage("无效的实体类型总计 ${entityTypes.size} 项")
             submit(period = 20) {

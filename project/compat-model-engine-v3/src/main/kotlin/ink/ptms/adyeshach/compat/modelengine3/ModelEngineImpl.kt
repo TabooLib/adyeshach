@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeRegistry
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.ModelEngine
@@ -143,7 +143,7 @@ interface DefaultModelEngine : ModelEngine {
                 return
             }
             // 注册生成回调
-            Adyeshach.api().getEntityTypeHandler().prepareGenerate(object : AdyeshachEntityTypeHandler.GenerateCallback {
+            Adyeshach.api().getEntityTypeRegistry().prepareGenerate(object : AdyeshachEntityTypeRegistry.GenerateCallback {
 
                 override fun invoke(entityType: EntityTypes, interfaces: List<String>): List<String> {
                     val array = ArrayList<String>()

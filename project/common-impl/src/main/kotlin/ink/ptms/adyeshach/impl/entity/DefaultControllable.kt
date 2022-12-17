@@ -100,7 +100,7 @@ interface DefaultControllable : Controllable {
 
     override fun controllerLook(location: Location, smooth: Boolean, smoothInternal: Float) {
         this as DefaultEntityInstance
-        val size = Adyeshach.api().getEntityTypeHandler().getEntitySize(entityType)
+        val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
         position.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
             controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothInternal)

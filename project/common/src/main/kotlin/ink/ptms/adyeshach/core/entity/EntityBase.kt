@@ -42,12 +42,17 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     /**
      * 测试状态
      */
-    var testing: Boolean
+    var isTesting: Boolean
 
     /**
      * 无效状态
      */
-    var invalid: Boolean
+    var isInvalid: Boolean
+
+    /**
+     * 是否被删除
+     */
+    val isRemoved: Boolean
 
     /**
      * 实体详细坐标信息: x

@@ -10,7 +10,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyEntity
 class PrepareMetaNatural(name: String, val value: Any) : PrepareMeta(name) {
 
     override fun register(entityClass: Class<out AdyEntity>, index: Int, group: String) {
-        Adyeshach.api().getEntityMetadataHandler().registerEntityMetaNatural(entityClass, index, group, name, value)
+        Adyeshach.api().getEntityMetadataRegistry().registerEntityMetaNatural(entityClass, index, group, name, value)
     }
 
     override fun toString(): String {

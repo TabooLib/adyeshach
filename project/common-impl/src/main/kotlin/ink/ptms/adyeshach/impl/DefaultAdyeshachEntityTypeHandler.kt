@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeRegistry
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntitySize
@@ -16,6 +16,8 @@ import ink.ptms.adyeshach.impl.entity.DefaultEditable
 import org.bukkit.entity.EntityType
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.releaseResourceFile
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
@@ -28,11 +30,19 @@ import taboolib.module.nms.AsmClassLoader
  * @author 坏黑
  * @since 2022/6/19 15:56
  */
-class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
+class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeRegistry {
 
-    val callback = ArrayList<AdyeshachEntityTypeHandler.GenerateCallback>()
+    /** 实体类生成器 */
+    val generator = SimpleEntityGenerator()
 
-    val types = HashMap<EntityTypes, Entity>()
+    /** 实体类生成回调 */
+    val callback = ArrayList<AdyeshachEntityTypeRegistry.GenerateCallback>()
+
+    /** 实体类型描述文件 */
+    val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc", true).readBytes().inputStream())
+
+    /** 描述文件中的实体数据 */
+    val descriptionEntityMap = HashMap<EntityTypes, Entity>()
         get() {
             if (field.isEmpty()) {
                 description.init()
@@ -41,7 +51,8 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
             return field
         }
 
-    val entityClass = HashMap<EntityTypes, EntityBase>()
+    /** 所有实体对象的原件，用于克隆实体 */
+    val originEntityBaseMap = HashMap<EntityTypes, EntityBase>()
         get() {
             if (field.isEmpty()) {
                 val time = System.currentTimeMillis()
@@ -51,13 +62,10 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
             return field
         }
 
-    val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc", true).readBytes().inputStream())
-    val generator = SimpleEntityGenerator()
-
     init {
-        TabooLibCommon.postpone(LifeCycle.ENABLE) { entityClass }
+        TabooLibCommon.postpone(LifeCycle.ENABLE) { originEntityBaseMap }
         // 注册生成回调
-        prepareGenerate(object : AdyeshachEntityTypeHandler.GenerateCallback {
+        prepareGenerate(object : AdyeshachEntityTypeRegistry.GenerateCallback {
 
             override fun invoke(entityType: EntityTypes, interfaces: List<String>): List<String> {
                 val array = ArrayList<String>()
@@ -71,53 +79,53 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
     }
 
     override fun getBukkitEntityType(entityType: EntityTypes): EntityType {
-        return types[entityType]!!.bukkitType ?: errorBy("error-entity-type-not-supported", entityType.name)
+        return descriptionEntityMap[entityType]!!.bukkitType ?: errorBy("error-entity-type-not-supported", entityType.name)
     }
 
     override fun getBukkitEntityId(entityType: EntityTypes): Int {
-        return types[entityType]!!.id
+        return descriptionEntityMap[entityType]!!.id
     }
 
     override fun getBukkitEntityAliases(entityType: EntityTypes): List<String> {
-        return types[entityType]!!.aliases
+        return descriptionEntityMap[entityType]!!.aliases
     }
 
     override fun getEntitySize(entityType: EntityTypes): EntitySize {
-        return types[entityType]!!.size
+        return descriptionEntityMap[entityType]!!.size
     }
 
     override fun getEntityPathType(entityType: EntityTypes): PathType {
-        return types[entityType]!!.path
+        return descriptionEntityMap[entityType]!!.path
     }
 
     override fun getEntityInstance(entityType: EntityTypes): EntityInstance {
-        return entityClass[entityType]!!.createEmpty() as EntityInstance
+        return originEntityBaseMap[entityType]!!.createEmpty() as EntityInstance
     }
 
     override fun getEntityFlags(entityType: EntityTypes): List<String> {
-        return types[entityType]!!.flags
+        return descriptionEntityMap[entityType]!!.flags
     }
 
     override fun getEntityClientUpdateInterval(entityType: EntityTypes): Int {
-        return types[entityType]!!.updateInterval
+        return descriptionEntityMap[entityType]!!.updateInterval
     }
 
     override fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes? {
-        return types.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
+        return descriptionEntityMap.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun getAdyClassFromEntityType(entityType: EntityTypes): Class<out AdyEntity> {
-        return types.values.first { it.adyeshachType == entityType }.adyeshachInterface as Class<out AdyEntity>
+        return descriptionEntityMap.values.first { it.adyeshachType == entityType }.adyeshachInterface as Class<out AdyEntity>
     }
 
-    override fun prepareGenerate(callback: AdyeshachEntityTypeHandler.GenerateCallback) {
+    override fun prepareGenerate(callback: AdyeshachEntityTypeRegistry.GenerateCallback) {
         this.callback += callback
     }
 
     fun generateEntityBase(): Map<EntityTypes, EntityBase> {
         val map = HashMap<EntityTypes, EntityBase>()
-        types.forEach { (k, v) ->
+        descriptionEntityMap.forEach { (k, v) ->
             val name = "adyeshach.Proxy${v.adyeshachInterface.simpleName}"
             val interfaces = if (v.instanceWithInterface) arrayListOf(v.namespace) else arrayListOf()
             // 执行回调函数
@@ -128,5 +136,13 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeHandler {
             map[k] = newClass.invokeConstructor(k) as EntityBase
         }
         return map
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachEntityTypeRegistry>(DefaultAdyeshachEntityTypeHandler())
+        }
     }
 }

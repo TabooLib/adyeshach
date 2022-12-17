@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.core.AdyeshachEntityMetadataHandler
+import ink.ptms.adyeshach.core.AdyeshachEntityMetadataRegistry
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Meta
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
@@ -10,6 +10,8 @@ import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
 import ink.ptms.adyeshach.impl.entity.DefaultMetaNatural
 import taboolib.common.LifeCycle
 import taboolib.common.TabooLibCommon
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.releaseResourceFile
 import java.util.concurrent.ConcurrentHashMap
 
@@ -20,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author 坏黑
  * @since 2022/6/20 01:30
  */
-class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
+class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataRegistry {
 
     val descriptionMeta = DescEntityMeta(releaseResourceFile("description/entity_meta.desc", true).readBytes().inputStream())
     val descriptionUnusedMeta = DescEntityUnusedMeta(releaseResourceFile("description/entity_meta_unused.desc", true).readBytes().inputStream())
@@ -53,5 +55,10 @@ class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataHandler {
         val registeredEntityMeta = LinkedHashMap<Class<*>, ArrayList<Meta<*>>>()
         val metaTypeLookup = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
         val metaKeyLookup = ConcurrentHashMap<Class<*>, String>()
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachEntityMetadataRegistry>(DefaultAdyeshachEntityMetadataHandler())
+        }
     }
 }

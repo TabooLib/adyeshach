@@ -20,19 +20,112 @@ error-meta-not-found: '实体元数据 "{0}" 未注册'
 error-meta-not-supported: '实体元数据 "{0}" 不支持当前版本'
 error-meta-not-allow: '实体元数据 "{0}" 不允许修改'
 error-meta-index-invalid: '无效的实体元数据索引: {0} ({1})'
-error-name-length: '{0} 使用了过长的名称: {1}, 应该小于 {2} 个字符'
 
 editor-copy: '复制'
-editor-manager-isolated: '孤立'
-editor-manager-public: '公共'
-editor-manager-private: '私有'
-editor-manager-temporary: '临时'
-editor-manager-derived: '衍生'
-editor-manager-object: '单位'
-editor-viewer: '观察者'
-editor-controller: '控制器'
-editor-tags: '标签'
-editor-traits: '特性'
+editor-manager-public: '&6公有单位'
+editor-manager-private: '&6私有单位'
+editor-manager-isolated: ' &7(孤立)'
+editor-manager-temporary: ' &7(临时)'
+editor-viewer: '&f观察者 &7({0})'
+editor-viewer-list-all: '&f允许看到这个单位的玩家:'
+editor-viewer-list-visible: '&f在这个单位可视范围内的玩家:'
+editor-controller: '&f控制器 &7({0})'
+editor-tags: '&f标签 &7({0})'
+editor-link: '&f关联 &7({0})'
+editor-link-vehicle: '&f这个单位的载具:'
+editor-link-passengers: '&f这个单位的乘客:'
+editor-entity-is-derived: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'
+editor-entity-public-traits: '&6[公共特性]'
+editor-entity-public-traits-help: |-
+  &6基于 Adyeshach 的插件机制
+  &7点击展开下级页面
+editor-entity-public-meta: '&6[公共数据]'
+editor-entity-public-meta-help: |-
+  &6所有实体都支持的数据类型, 属于实体自身的属性
+  &7点击展开下级页面
+editor-entity-private-meta: '&e[专有数据]'
+editor-entity-private-meta-help: |-
+  &e同类实体所特有的数据类型, 属于实体自身的属性
+  &7点击展开下级页面
+editor-entity-move: '&c[微调]'
+editor-entity-move-help: |-
+  调整实体的位置和视角
+  &7点击展开下级页面
+editor-entity-tools-0: '&8[&7传过去&8]'
+editor-entity-tools-0-help: '点击传送到这个单位的位置'
+editor-entity-tools-1: '&8[&7传过来&8]'
+editor-entity-tools-1-help: '点击使这个单位传送到你的位置'
+editor-entity-tools-2: '&8[&7走过来&8]'
+editor-entity-tools-2-help: '点击使这个单位走到你的位置'
+editor-entity-tools-3: '&8[&7看我&8]'
+editor-entity-tools-3-help: '点击使这个单位看向你'
+editor-entity-tools-4: '&8[&7学我&8]'
+editor-entity-tools-4-help: '点击使这个单位学习你的视角'
+editor-entity-tools-5: '&8[&7克隆&8]'
+editor-entity-tools-5-help: '点击克隆这个单位'
+editor-entity-tools-6: '&8[&7隐藏&8]'
+editor-entity-tools-6-help: '点击隐藏这个单位'
+editor-open-chat-screen: '&c^^^ 请展开对话框 ^^^'
+
+command-create-success-0: ' &5&l‹ ›&r &7已创建新的单位。'
+command-create-success-1:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &7已创建新的单位, 你可以直接 [&6[点击编辑]&6]&7。'
+    args:
+      - command: '/adyeshach edit {0}'
+        hover: '点击编辑'
+command-find-empty: ' &5&l‹ ›&r &7没有找到符合要求的单位。'
+command-find-near: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下:'
+command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表发生变更)'
+command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
+command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表发生变更)'
+command-find-more-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r ]&c] [&6[ &6&l››&r ]&6] &8| &f{0} &7(&r{1}&7) &8> &a{3}'
+    args:
+      - command: '/adyeshach remove {2} c'
+        hover: '点击删除'
+      - command: '/adyeshach tp {2}'
+        hover: '点击传送'
+command-find-more-remove-update:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - &m\[ &l|||&r&8&m ] \[ &l››&r&8&m ] | {0} ({1})&8 | [&6[ &l‹‹&r ]&6]'
+    args:
+      - command: '/adyeshach undo {2}'
+        hover: '点击恢复'
+command-find-more-remove-all:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} a" &7删除全部或直接 [&c[删除全部]&c]&7。'
+    args:
+      - command: '/adyeshach remove {0} a'
+        hover: '点击删除全部'
+command-remove-success:
+  - ==: JSON
+    text:
+      - ' &5&l‹ ›&r &7已将 &f"{0}" &7移送至回收站。'
+      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复]&6]&7。'
+    args:
+      - command: '/adyeshach undo {1}'
+        hover: '点击恢复'
+command-remove-success-all:
+  - ==: JSON
+    text:
+      - ' &5&l‹ ›&r &7已将所有 &f"{0}" &7移送至回收站。'
+      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复]&6]&7。'
+    args:
+      - command: '/adyeshach undo {1}'
+        hover: '点击恢复'
+
+command-script-error:
+  - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
+  - ' &5&l‹ ›&r &7{0}'
+command-script-not-found: ' &5&l‹ ›&r &7脚本不存在.'
+command-script-not-running: ' &5&l‹ ›&r &7脚本未在运行.'
+command-script-list-all:
+  - ' &5&l‹ ›&r &7所有脚本: &f{0}'
+  - ' &5&l‹ ›&r &7运行脚本: &f{1}'
+command-script-reload-all:
+  - ' &5&l‹ ›&r &7重载完成.'
 
 group-base0: '基础 0'
 group-base1: '基础 1'

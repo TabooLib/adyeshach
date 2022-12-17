@@ -76,7 +76,7 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getType(): EntityType {
-        return Adyeshach.api().getEntityTypeHandler().getBukkitEntityType(entityInstance.entityType)
+        return Adyeshach.api().getEntityTypeRegistry().getBukkitEntityType(entityInstance.entityType)
     }
 
     override fun isInvulnerable(): Boolean {

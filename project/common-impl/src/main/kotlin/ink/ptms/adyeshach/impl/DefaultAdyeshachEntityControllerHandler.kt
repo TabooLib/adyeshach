@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.impl
 
-import ink.ptms.adyeshach.core.AdyeshachEntityControllerHandler
+import ink.ptms.adyeshach.core.AdyeshachEntityControllerRegistry
 import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
-import java.util.LinkedHashMap
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 
 /**
  * Adyeshach
@@ -11,7 +13,7 @@ import java.util.LinkedHashMap
  * @author 坏黑
  * @since 2022/6/20 01:36
  */
-class DefaultAdyeshachEntityControllerHandler : AdyeshachEntityControllerHandler {
+class DefaultAdyeshachEntityControllerHandler : AdyeshachEntityControllerRegistry {
 
     override fun registerControllerGenerator(name: String, event: ControllerGenerator) {
         registeredControllerGenerator[name] = event
@@ -28,5 +30,10 @@ class DefaultAdyeshachEntityControllerHandler : AdyeshachEntityControllerHandler
     companion object {
 
         val registeredControllerGenerator = LinkedHashMap<String, ControllerGenerator>()
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachEntityControllerRegistry>(DefaultAdyeshachEntityControllerHandler())
+        }
     }
 }

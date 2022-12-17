@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
  * @author 坏黑
  * @since 2022/6/16 17:32
  */
-interface AdyeshachEntityControllerHandler {
+interface AdyeshachEntityControllerRegistry {
 
     /**
      * 注册 Controller 生成器

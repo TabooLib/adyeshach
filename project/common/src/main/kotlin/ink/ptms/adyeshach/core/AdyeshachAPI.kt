@@ -56,17 +56,17 @@ interface AdyeshachAPI {
     /**
      * 获取用于处理单位类型的接口
      */
-    fun getEntityTypeHandler(): AdyeshachEntityTypeHandler
+    fun getEntityTypeRegistry(): AdyeshachEntityTypeRegistry
 
     /**
      * 获取用于处理单位元数据的接口
      */
-    fun getEntityMetadataHandler(): AdyeshachEntityMetadataHandler
+    fun getEntityMetadataRegistry(): AdyeshachEntityMetadataRegistry
 
     /**
      * 获取用于处理单位控制器的接口
      */
-    fun getEntityControllerHandler(): AdyeshachEntityControllerHandler
+    fun getEntityControllerRegistry(): AdyeshachEntityControllerRegistry
 
     /**
      * 获取 Hologram 控制接口

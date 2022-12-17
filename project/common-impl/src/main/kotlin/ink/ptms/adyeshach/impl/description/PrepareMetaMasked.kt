@@ -10,7 +10,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyEntity
 class PrepareMetaMasked(name: String, val mask: Byte, val value: Boolean) : PrepareMeta(name) {
 
     override fun register(entityClass: Class<out AdyEntity>, index: Int, group: String) {
-        Adyeshach.api().getEntityMetadataHandler().registerEntityMetaMask(entityClass, index, group, name, mask, value)
+        Adyeshach.api().getEntityMetadataRegistry().registerEntityMetaMask(entityClass, index, group, name, mask, value)
     }
 
     override fun toString(): String {

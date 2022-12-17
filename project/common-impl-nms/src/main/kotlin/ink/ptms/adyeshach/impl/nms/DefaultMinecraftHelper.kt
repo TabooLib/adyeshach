@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.nms
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.AdyeshachEntityTypeHandler
+import ink.ptms.adyeshach.core.AdyeshachEntityTypeRegistry
 import ink.ptms.adyeshach.core.MinecraftHelper
 import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
@@ -29,8 +29,8 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     val majorLegacy = MinecraftVersion.majorLegacy
 
-    val typeHandler: AdyeshachEntityTypeHandler
-        get() = Adyeshach.api().getEntityTypeHandler()
+    val typeHandler: AdyeshachEntityTypeRegistry
+        get() = Adyeshach.api().getEntityTypeRegistry()
 
     val nms13ParticleRegistryBlocks: NMS13IRegistry<NMS13Particle<out NMS13ParticleParam>>
         get() = NMS13IRegistry::class.java.getProperty("PARTICLE_TYPE", isStatic = true)!!

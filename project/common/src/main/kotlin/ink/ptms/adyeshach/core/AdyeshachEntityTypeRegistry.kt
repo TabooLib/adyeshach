@@ -14,7 +14,7 @@ import org.bukkit.entity.EntityType
  * @author 坏黑
  * @since 2022/6/16 18:31
  */
-interface AdyeshachEntityTypeHandler {
+interface AdyeshachEntityTypeRegistry {
 
     /**
      * 获取 Bukkit 对应的实体类型

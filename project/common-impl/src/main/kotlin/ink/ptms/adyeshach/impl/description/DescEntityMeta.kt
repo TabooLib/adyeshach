@@ -50,13 +50,6 @@ class DescEntityMeta(input: InputStream) : Description(input) {
         while (part.hasNext()) {
             val line = part.next()
             when {
-                // 名称行 - 4 空格
-                line.startsWith(" ".repeat(4)) -> {
-                    if (currentMeta.isNotEmpty()) {
-                        apply()
-                    }
-                    currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
-                }
                 // 序列行 —— 8 空格
                 line.startsWith(" ".repeat(8)) -> {
                     val idx = line.trim()
@@ -101,6 +94,14 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                         }
                         i++
                     }
+                }
+                // 名称行 - 4 空格
+                // 这一段必须放在后面，因为 8 个空格的序列行也是以 4 个空格开头
+                line.startsWith(" ".repeat(4)) -> {
+                    if (currentMeta.isNotEmpty()) {
+                        apply()
+                    }
+                    currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
                 }
             }
         }

@@ -7,6 +7,9 @@ import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.submit
 import taboolib.common5.util.printed
 
@@ -74,5 +77,13 @@ class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
         }
         // 延迟后移除
         submit(delay = stay) { hologram.remove() }
+    }
+
+    companion object {
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachHologramHandler>(DefaultAdyeshachHologramHandler())
+        }
     }
 }

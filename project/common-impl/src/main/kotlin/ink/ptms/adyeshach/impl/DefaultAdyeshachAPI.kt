@@ -2,13 +2,10 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
-import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.impl.entity.manager.BaseManager
 import ink.ptms.adyeshach.impl.entity.manager.BasePlayerManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
-import ink.ptms.adyeshach.impl.hologram.DefaultAdyeshachHologramHandler
-import ink.ptms.adyeshach.impl.network.DefaultAdyeshachNetworkAPI
 import org.bukkit.entity.Player
 import taboolib.common.platform.PlatformFactory
 import taboolib.platform.util.setMeta
@@ -24,31 +21,31 @@ import java.util.concurrent.ConcurrentHashMap
 class DefaultAdyeshachAPI : AdyeshachAPI {
 
     /** 单位检索接口 **/
-    var localEntityFinder = DefaultAdyeshachEntityFinder()
+    var localEntityFinder = PlatformFactory.getAPI<AdyeshachEntityFinder>()
 
     /** 单位序列化接口 **/
-    var localEntitySerializer = DefaultAdyeshachEntitySerializer()
+    var localEntitySerializer = PlatformFactory.getAPI<AdyeshachEntitySerializer>()
 
     /** 单位类型管理接口 **/
-    var localEntityTypeHelper = DefaultAdyeshachEntityTypeHandler()
+    var localEntityTypeHelper = PlatformFactory.getAPI<AdyeshachEntityTypeRegistry>()
 
     /** 单位元数据管理接口 **/
-    var localEntityMetadataHandler = DefaultAdyeshachEntityMetadataHandler()
+    var localEntityMetadataHandler = PlatformFactory.getAPI<AdyeshachEntityMetadataRegistry>()
 
     /** 单位控制器管理接口 **/
-    var localEntityControllerHandler = DefaultAdyeshachEntityControllerHandler()
+    var localEntityControllerHandler = PlatformFactory.getAPI<AdyeshachEntityControllerRegistry>()
 
     /** 全系接口 **/
-    var localHologramHandler = DefaultAdyeshachHologramHandler()
+    var localHologramHandler = PlatformFactory.getAPI<AdyeshachHologramHandler>()
 
     /** 脚本接口 **/
-    var localKetherHandler = DefaultAdyeshachKetherHandler()
+    var localKetherHandler = PlatformFactory.getAPI<AdyeshachKetherHandler>()
 
     /** 服务端逆向操作工具 **/
     var localMinecraftAPI = PlatformFactory.getAPI<AdyeshachMinecraftAPI>()
 
     /** 网络工具 **/
-    var localNetworkAPI = DefaultAdyeshachNetworkAPI()
+    var localNetworkAPI = PlatformFactory.getAPI<AdyeshachNetworkAPI>()
 
     /** 语言文件接口 **/
     var localLanguage = PlatformFactory.getAPI<AdyeshachLanguage>()
@@ -67,7 +64,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 设置标签避免重复执行
             player.setMeta("adyeshach_setup", true)
             // 公共管理器
-            getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
+            getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach {
                 it.viewPlayers.viewers += player.name
             }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
@@ -81,7 +78,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     override fun releaseEntityManager(player: Player) {
         if (player.hasMetadata("adyeshach_setup")) {
             // 公共管理器
-            getPublicEntityManager().getEntities { it.visibleAfterLoaded }.forEach {
+            getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach {
                 it.removeViewer(player)
             }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
@@ -134,15 +131,15 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         return localEntitySerializer
     }
 
-    override fun getEntityTypeHandler(): AdyeshachEntityTypeHandler {
+    override fun getEntityTypeRegistry(): AdyeshachEntityTypeRegistry {
         return localEntityTypeHelper
     }
 
-    override fun getEntityMetadataHandler(): AdyeshachEntityMetadataHandler {
+    override fun getEntityMetadataRegistry(): AdyeshachEntityMetadataRegistry {
         return localEntityMetadataHandler
     }
 
-    override fun getEntityControllerHandler(): AdyeshachEntityControllerHandler {
+    override fun getEntityControllerRegistry(): AdyeshachEntityControllerRegistry {
         return localEntityControllerHandler
     }
 

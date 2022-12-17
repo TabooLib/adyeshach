@@ -61,10 +61,10 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
         get() = field.clone()
 
     /** 是否为测试类型 */
-    final override var testing = false
+    final override var isTesting = false
 
     /** 是否为无效类型 */
-    final override var invalid = false
+    final override var isInvalid = false
 
     final override val x: Double
         get() = position.x

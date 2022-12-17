@@ -18,15 +18,15 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
 
     override fun serialize(a: Controller, p1: Type, p2: JsonSerializationContext): JsonElement {
         val controller = if (a is PrepareController) {
-            Adyeshach.api().getEntityControllerHandler().getControllerGenerator().entries.firstOrNull { it.value.type == a.generator.type }
+            Adyeshach.api().getEntityControllerRegistry().getControllerGenerator().entries.firstOrNull { it.value.type == a.generator.type }
         } else {
-            Adyeshach.api().getEntityControllerHandler().getControllerGenerator().entries.firstOrNull { it.value.type == a::class.java }
+            Adyeshach.api().getEntityControllerRegistry().getControllerGenerator().entries.firstOrNull { it.value.type == a::class.java }
         }
         return JsonPrimitive(controller?.key ?: a.javaClass.name)
     }
 
     override fun deserialize(a: JsonElement, p1: Type?, p2: JsonDeserializationContext): Controller {
-        val controller = Adyeshach.api().getEntityControllerHandler().getControllerGenerator().entries.firstOrNull { it.key == a.asString }
+        val controller = Adyeshach.api().getEntityControllerRegistry().getControllerGenerator().entries.firstOrNull { it.key == a.asString }
         return PrepareController(controller?.value ?: ControllerGenerator(EmptyController::class.java) { EmptyController(it, a.asString) })
     }
 }

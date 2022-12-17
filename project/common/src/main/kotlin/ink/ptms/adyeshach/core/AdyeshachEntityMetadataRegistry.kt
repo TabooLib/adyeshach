@@ -10,7 +10,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyEntity
  * @author 坏黑
  * @since 2022/6/16 16:40
  */
-interface AdyeshachEntityMetadataHandler {
+interface AdyeshachEntityMetadataRegistry {
 
     /**
      * 注册元数据模型（布尔值）

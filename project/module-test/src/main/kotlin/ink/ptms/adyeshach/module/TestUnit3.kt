@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import org.bukkit.command.CommandSender
 
 fun testAdapter(sender: CommandSender) {
-    val typeHandler = Adyeshach.api().getEntityTypeHandler()
+    val typeHandler = Adyeshach.api().getEntityTypeRegistry()
     val helper = Adyeshach.api().getMinecraftAPI().getHelper()
     sender.info("Testing adapt(EntityTypes)")
     EntityTypes.values().forEach { entity ->

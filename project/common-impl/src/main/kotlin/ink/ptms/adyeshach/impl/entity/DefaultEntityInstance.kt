@@ -43,6 +43,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     /** 可见玩家 */
     override val viewPlayers = DefaultViewPlayers(this)
 
+    /** 是否移除 */
+    override var isRemoved = false
+
     /** 是否傻子 */
     @Expose
     override var isNitwit = false
@@ -104,7 +107,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     var clientPositionFixed = System.currentTimeMillis()
 
     /** 客户端更新间隔 */
-    var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeHandler().getEntityClientUpdateInterval(entityType))
+    var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
 
     /** 单位移动量 */
     var deltaMovement = Vector(0.0, 0.0, 0.0)
@@ -127,7 +130,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
 
     /** 实体路径类型 */
-    val pathType = Adyeshach.api().getEntityTypeHandler().getEntityPathType(entityType)
+    val pathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
     /** 管理器 */
     override var manager: Manager? = null
@@ -199,6 +202,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
         if (removeFromManager) {
             if (manager != null) {
+                isRemoved = true
                 manager!!.delete(this)
                 manager = null
                 AdyeshachEntityRemoveEvent(this).call()

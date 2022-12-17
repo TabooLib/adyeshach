@@ -87,10 +87,19 @@ interface Manager {
      */
     fun getEntities(filter: Predicate<EntityInstance>): List<EntityInstance>
 
+    /**
+     * 获取单位管理器中 ID 相同的单位
+     */
     fun getEntityById(id: String): List<EntityInstance>
 
+    /**
+     * 获取单位管理器中 ID 相同的单位，并进行过滤
+     */
     fun getEntityById(id: String, filter: Predicate<EntityInstance>): List<EntityInstance>
 
+    /**
+     * 获取单位管理器中 UUID 相同的单位
+     */
     fun getEntityByUniqueId(id: String): EntityInstance?
 
     /**
@@ -103,7 +112,7 @@ interface Manager {
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
+    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location) as T
 }
 
@@ -111,7 +120,7 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location): T {
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
+    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, callback) as T
 }
 
@@ -119,7 +128,7 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location, callback: 
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, player: List<Player>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
+    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, player) as T
 }
 
@@ -127,6 +136,6 @@ inline fun <reified T : AdyEntity> Manager.create(location: Location, player: Li
  * [Manager#create] 衍生方法
  */
 inline fun <reified T : AdyEntity> Manager.create(location: Location, player: List<Player>, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeHandler().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
+    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(T::class.java) ?: errorBy("error-entity-type-not-found", T::class.java.name)
     return create(type, location, player, callback) as T
 }

@@ -10,6 +10,9 @@ import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -28,10 +31,10 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         get() = Adyeshach.api()
 
     override fun getEntity(player: Player?, match: Predicate<EntityInstance>): EntityInstance? {
-        api.getPublicEntityManager().getEntity(match)?.let { return it }
+        api.getPublicEntityManager(ManagerType.PERSISTENT).getEntity(match)?.let { return it }
         api.getPublicEntityManager(ManagerType.TEMPORARY).getEntity(match)?.let { return it }
         if (player != null) {
-            api.getPrivateEntityManager(player).getEntity(match)?.let { return it }
+            api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntity(match)?.let { return it }
             api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntity(match)?.let { return it }
         }
         return null
@@ -39,10 +42,10 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
 
     override fun getEntities(player: Player?, filter: Predicate<EntityInstance>): List<EntityInstance> {
         val entity = LinkedList<EntityInstance>()
-        entity.addAll(api.getPublicEntityManager().getEntities(filter))
+        entity.addAll(api.getPublicEntityManager(ManagerType.PERSISTENT).getEntities(filter))
         entity.addAll(api.getPublicEntityManager(ManagerType.TEMPORARY).getEntities(filter))
         if (player != null) {
-            entity.addAll(api.getPrivateEntityManager(player).getEntities(filter))
+            entity.addAll(api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntities(filter))
             entity.addAll(api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntities(filter))
         }
         return entity
@@ -53,19 +56,19 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getEntitiesFromId(id: String, player: Player?): List<EntityInstance> {
-        return getEntities(null) { it.id == id }
+        return getEntities(player) { it.id == id }
     }
 
     override fun getEntitiesFromIdOrUniqueId(id: String, player: Player?): List<EntityInstance> {
-        return getEntities(null) { it.id == id || it.uniqueId == id }
+        return getEntities(player) { it.id == id || it.uniqueId == id }
     }
 
     override fun getEntityFromEntityId(id: Int, player: Player?): EntityInstance? {
-        return getEntity(null) { it.index == id }
+        return getEntity(player) { it.index == id }
     }
 
     override fun getEntityFromUniqueId(id: String, player: Player?): EntityInstance? {
-        return getEntity(null) { it.uniqueId == id }
+        return getEntity(player) { it.uniqueId == id }
     }
 
     override fun getEntityFromClientEntityId(id: Int, player: Player): EntityInstance? {
@@ -107,6 +110,11 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         @SubscribeEvent
         fun onQuit(e: PlayerQuitEvent) {
             clientEntityMap.remove(e.player.name)
+        }
+
+        @Awake(LifeCycle.LOAD)
+        fun init() {
+            PlatformFactory.registerAPI<AdyeshachEntityFinder>(DefaultAdyeshachEntityFinder())
         }
     }
 }
