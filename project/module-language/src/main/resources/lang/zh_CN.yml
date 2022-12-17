@@ -95,7 +95,7 @@ command-find-more-remove-update:
         hover: '点击恢复'
 command-find-more-remove-all:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} a" &7删除全部或直接 [&c[删除全部]&c]&7。'
+    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部]&c]&7。'
     args:
       - command: '/adyeshach remove {0} a'
         hover: '点击删除全部'
