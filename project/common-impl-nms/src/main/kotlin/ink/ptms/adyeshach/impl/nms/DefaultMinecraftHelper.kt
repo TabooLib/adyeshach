@@ -137,7 +137,11 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun craftChatSerializerToJson(compound: Any): String {
-        return NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+        return if (MinecraftVersion.isUniversal) {
+            NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+        } else {
+            NMS16ChatSerializer.a(compound as NMS16IChatBaseComponent)
+        }
     }
 
     override fun craftChatMessageFromString(message: String): Any {

@@ -52,14 +52,20 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(it))
         }
 
-    val dataWatcherSetterM: MethodHandle by unsafeLazy {
+    val livingDataWatcherSetterM: MethodHandle by unsafeLazy {
         val field = NMS9PacketPlayOutSpawnEntityLiving::class.java.getDeclaredField("m")
         field.isAccessible = true
         UnsafeAccess.lookup.unreflectSetter(field)
     }
 
-    val dataWatcherSetterH: MethodHandle by unsafeLazy {
+    val livingDataWatcherSetterH: MethodHandle by unsafeLazy {
         val field = NMS9PacketPlayOutSpawnEntityLiving::class.java.getDeclaredField("h")
+        field.isAccessible = true
+        UnsafeAccess.lookup.unreflectSetter(field)
+    }
+
+    val namedDataWatcherSetterH: MethodHandle by unsafeLazy {
+        val field = NMS9PacketPlayOutSpawnEntityPlayer::class.java.getDeclaredField("h")
         field.isAccessible = true
         UnsafeAccess.lookup.unreflectSetter(field)
     }
@@ -188,7 +194,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     writeShort(0)
                     // 不反射写进去会崩客户端，米哈游真有你的。
-                    NMS9DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
+                    NMS9DataWatcher(null).also { dw -> livingDataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
             // 1.11, 1.12, 1.13
@@ -213,7 +219,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
-                    NMS11DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS11PacketDataSerializer)
+                    NMS11DataWatcher(null).also { dw -> livingDataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS11PacketDataSerializer)
                 }.toNMS() as NMS11PacketDataSerializer)
             }
             // 1.14, 1.15, 1.16
@@ -234,7 +240,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     // 1.14, 1.15 仍需要读取 DataWatcher
                     if (major != 8) {
-                        NMS14DataWatcher(null).also { dw -> dataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS14PacketDataSerializer)
+                        NMS14DataWatcher(null).also { dw -> livingDataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS14PacketDataSerializer)
                     }
                 }.toNMS() as NMS16PacketDataSerializer)
             }
@@ -283,7 +289,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yaw)
                     writeByte(pitch)
-                    NMS9DataWatcher(null).also { dw -> dataWatcherSetterH.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
+                    NMS9DataWatcher(null).also { dw -> namedDataWatcherSetterH.bindTo(it).invokeWithArguments(dw) }.a(toNMS() as NMS9PacketDataSerializer)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
             // 1.15, 1.16

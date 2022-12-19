@@ -16,7 +16,10 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven { url = uri("https://repo.spongepowered.org/maven") }
-        maven { url = uri("https://repo.tabooproject.org/repository/releases/") }
+        maven {
+            url = uri("http://ptms.ink:8081/repository/releases/")
+            isAllowInsecureProtocol = true
+        }
     }
     dependencies {
         compileOnly("io.izzel.taboolib:common:$taboolib_version")

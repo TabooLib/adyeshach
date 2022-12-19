@@ -43,6 +43,7 @@ object Command {
                     execute<Player> { sender, ctx, _ ->
                         // 快捷操作
                         when (ctx.argument(0)) {
+                            // 生成在目标位置
                             "t", "target" -> {
                                 val targetBlock = sender.getTargetBlock(hashSetOf(Material.AIR), 32)
                                 val loc = if (targetBlock.type.isAir) {
@@ -60,7 +61,7 @@ object Command {
                                 npc.id = ctx.argument(-1)
                                 sender.sendLang("command-create-success-1", npc.uniqueId)
                             }
-
+                            // 打开编辑面板
                             "e", "edit" -> {
                                 val npc = manager.create(EntityTypes.valueOf(ctx.argument(-2).uppercase()), sender.location)
                                 npc.id = ctx.argument(-1)
@@ -107,7 +108,7 @@ object Command {
             execute<CommandSender> { sender, ctx, _ ->
                 multi(sender, ctx.argument(0), "remove") {
                     it.remove()
-                    sender.sendLang("command-remove-success", it.id)
+                    sender.sendLang("command-remove-success", it.id, it.uniqueId)
                 }
             }
         }
@@ -134,7 +135,7 @@ object Command {
             }
             // 定向编辑
             execute<Player> { sender, ctx, _ ->
-                multi(sender, ctx.argument(0), "edit") {
+                multi(sender, ctx.argument(0), "edit", all = false) {
                     EditPanel(sender, it).open()
                 }
             }

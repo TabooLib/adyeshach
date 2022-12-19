@@ -208,6 +208,8 @@ typealias NMS16VillagerData = net.minecraft.server.v1_16_R3.VillagerData
 
 typealias NMS16MathHelper = net.minecraft.server.v1_16_R3.MathHelper
 
+typealias NMS16ChatSerializer = net.minecraft.server.v1_16_R3.IChatBaseComponent.ChatSerializer
+
 typealias CraftWorld16 = org.bukkit.craftbukkit.v1_16_R3.CraftWorld
 
 typealias CraftEntity16 = org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity

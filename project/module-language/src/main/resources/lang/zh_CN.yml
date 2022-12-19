@@ -63,14 +63,14 @@ editor-entity-tools-4: '&8[&7学我&8]'
 editor-entity-tools-4-help: '点击使这个单位学习你的视角'
 editor-entity-tools-5: '&8[&7克隆&8]'
 editor-entity-tools-5-help: '点击克隆这个单位'
-editor-entity-tools-6: '&8[&7隐藏&8]'
-editor-entity-tools-6-help: '点击隐藏这个单位'
+editor-entity-tools-6: '&8[&7移除&8]'
+editor-entity-tools-6-help: '点击移除这个单位'
 editor-open-chat-screen: '&c^^^ 请展开对话框 ^^^'
 
 command-create-success-0: ' &5&l‹ ›&r &7已创建新的单位。'
 command-create-success-1:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7已创建新的单位, 你可以直接 [&6[点击编辑]&6]&7。'
+    text: ' &5&l‹ ›&r &7已创建新的单位, 你可以直接 [&6[点击编辑&6\]]&7。'
     args:
       - command: '/adyeshach edit {0}'
         hover: '点击编辑'
@@ -81,7 +81,7 @@ command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
 command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表发生变更)'
 command-find-more-remove:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r ]&c] [&6[ &6&l››&r ]&6] &8| &f{0} &7(&r{1}&7) &8> &a{3}'
+    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r &c\]] [&6[ &6&l››&r &6\]] &8| &f{0} &7(&r{1}&7) &8> &a{3}'
     args:
       - command: '/adyeshach remove {2} c'
         hover: '点击删除'
@@ -95,7 +95,7 @@ command-find-more-remove-update:
         hover: '点击恢复'
 command-find-more-remove-all:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部]&c]&7。'
+    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部&c\]]&7。'
     args:
       - command: '/adyeshach remove {0} a'
         hover: '点击删除全部'
@@ -103,7 +103,7 @@ command-remove-success:
   - ==: JSON
     text:
       - ' &5&l‹ ›&r &7已将 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复]&6]&7。'
+      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
@@ -111,7 +111,7 @@ command-remove-success-all:
   - ==: JSON
     text:
       - ' &5&l‹ ›&r &7已将所有 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复]&6]&7。'
+      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'

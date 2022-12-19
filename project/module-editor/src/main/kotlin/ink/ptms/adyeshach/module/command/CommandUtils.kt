@@ -34,7 +34,7 @@ fun multi(sender: Player, action: String) {
 /**
  * 定向复选操作
  */
-fun multi(sender: CommandSender, id: String, action: String, singleAction: (EntityInstance) -> Unit = {}) {
+fun multi(sender: CommandSender, id: String, action: String, all: Boolean = true, singleAction: (EntityInstance) -> Unit = {}) {
     val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, if (sender is Player) sender else null)
     when {
         // 空列表
@@ -44,7 +44,10 @@ fun multi(sender: CommandSender, id: String, action: String, singleAction: (Enti
         // 多实体
         npcList.size > 1 -> {
             EntityGroup.groupList[sender.name] = EntityGroup(sender, action, npcList).print(isNearby = false, id)
-            sender.sendLang("command-find-more-$action-all", id)
+            // 统一操作
+            if (all) {
+                sender.sendLang("command-find-more-$action-all", id)
+            }
         }
         // 单实体
         else -> {
