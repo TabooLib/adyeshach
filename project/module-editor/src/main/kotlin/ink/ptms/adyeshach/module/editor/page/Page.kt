@@ -21,7 +21,10 @@ abstract class Page(val editor: EditPanel) {
 
     val json = TellrawJson().newLine()
 
-    open fun open() {
+    var index = 0
+
+    open fun open(index: Int = 0) {
+        this.index = index
         // 清屏
         player.clearScreen()
         // 标题

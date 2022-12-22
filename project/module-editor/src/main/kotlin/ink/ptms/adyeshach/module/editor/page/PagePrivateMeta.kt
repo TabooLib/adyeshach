@@ -11,7 +11,7 @@ import ink.ptms.adyeshach.module.editor.EditPanel
  */
 class PagePrivateMeta(editor: EditPanel) : Page(editor) {
 
-    override fun open() {
-        super.open()
+    override fun open(index: Int) {
+        super.open(index)
     }
 }

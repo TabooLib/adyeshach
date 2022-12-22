@@ -19,8 +19,8 @@ class PageMain(editor: EditPanel) : Page(editor) {
 
     val derivedId = entity.getTag(StandardTags.DERIVED)
 
-    override fun open() {
-        super.open()
+    override fun open(index: Int) {
+        super.open(index)
         // ID
         appendId().newLine().newLine()
         // 衍生单位

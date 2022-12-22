@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.module.command
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.module.command.mlc.MultiController
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBuilder
@@ -22,19 +23,19 @@ fun CommandBuilder.CommandComponentDynamic.suggestEntityList() {
 /**
  * 就近复选操作
  */
-fun multi(sender: Player, action: String) {
+fun multiControl(sender: Player, action: String) {
     val npcList = Command.finder.getEntities(sender) { it.getLocation().safeDistance(sender.location) < 16 }
     if (npcList.isEmpty()) {
         sender.sendLang("command-find-empty")
     } else {
-        EntityGroup.groupList[sender.name] = EntityGroup(sender, action, npcList).print(isNearby = true)
+        MultiController.controllerMap[sender.name] = MultiController(sender, action, npcList).print(isNearby = true)
     }
 }
 
 /**
  * 定向复选操作
  */
-fun multi(sender: CommandSender, id: String, action: String, all: Boolean = true, singleAction: (EntityInstance) -> Unit = {}) {
+fun multiControl(sender: CommandSender, id: String, action: String, all: Boolean = true, singleAction: (EntityInstance) -> Unit = {}) {
     val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, if (sender is Player) sender else null)
     when {
         // 空列表
@@ -43,7 +44,7 @@ fun multi(sender: CommandSender, id: String, action: String, all: Boolean = true
         }
         // 多实体
         npcList.size > 1 -> {
-            EntityGroup.groupList[sender.name] = EntityGroup(sender, action, npcList).print(isNearby = false, id)
+            MultiController.controllerMap[sender.name] = MultiController(sender, action, npcList).print(isNearby = false, id)
             // 统一操作
             if (all) {
                 sender.sendLang("command-find-more-$action-all", id)

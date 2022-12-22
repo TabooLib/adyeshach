@@ -76,9 +76,9 @@ command-create-success-1:
         hover: '点击编辑'
 command-find-empty: ' &5&l‹ ›&r &7没有找到符合要求的单位。'
 command-find-near: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下:'
-command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表发生变更)'
+command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表变更)'
 command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
-command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表发生变更)'
+command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表变更)'
 command-find-more-remove:
   - ==: JSON
     text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r &c\]] [&6[ &6&l››&r &6\]] &8| &f{0} &7(&r{1}&7) &8> &a{3}'
