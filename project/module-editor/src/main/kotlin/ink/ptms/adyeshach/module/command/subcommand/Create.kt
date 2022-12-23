@@ -10,6 +10,12 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggest
 import taboolib.platform.util.sendLang
 
+/**
+ * npc create (type) (id) (action)?
+ *
+ * npc create ZOMBIE 1
+ * npc create ZOMBIE 1 edit
+ */
 val createSubCommand = subCommand {
     dynamic("type") {
         suggest { EntityTypes.values().map { it.name } }

@@ -2,10 +2,7 @@ package ink.ptms.adyeshach.module.command
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
-import ink.ptms.adyeshach.module.command.subcommand.createSubCommand
-import ink.ptms.adyeshach.module.command.subcommand.editSubCommand
-import ink.ptms.adyeshach.module.command.subcommand.removeSubCommand
-import ink.ptms.adyeshach.module.command.subcommand.renameSubCommand
+import ink.ptms.adyeshach.module.command.subcommand.*
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
@@ -41,6 +38,12 @@ object Command {
 
     @CommandBody
     val rename = renameSubCommand
+
+    @CommandBody
+    val tp = tpSubCommand
+
+    @CommandBody
+    val move = moveSubCommand
 
     @CommandBody
     val edit = editSubCommand

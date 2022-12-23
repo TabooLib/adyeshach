@@ -122,7 +122,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     var moveFrames: InterpolatedLocation? = null
 
     /** 移动目的 */
-    var moveTarget: Location? = null
+    override var moveTarget: Location? = null
         set(value) {
             field = value
             // 更新移动路径
@@ -254,6 +254,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     override fun setVelocity(x: Double, y: Double, z: Double) {
         setVelocity(Vector(x, y, z))
+    }
+
+    override fun setHeadRotation(location: Location, forceUpdate: Boolean) {
+        val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
+        position.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
+            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
+            setHeadRotation(entityLocation.yaw, entityLocation.pitch, forceUpdate)
+        }
     }
 
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {

@@ -31,6 +31,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var isNitwit: Boolean
 
     /**
+     * 移动目标
+     */
+    var moveTarget: Location?
+
+    /**
      * 取决于是否被公开的单位管理器管理
      */
     fun isPublic(): Boolean
@@ -89,6 +94,13 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 修改实体视角
+     * @param location 位置
+     * @param forceUpdate 强制更新
+     */
+    fun setHeadRotation(location: Location, forceUpdate: Boolean = false)
+
+    /**
+     * 修改实体视角
      * @param yaw 偏航角
      * @param pitch 俯仰角
      * @param forceUpdate 强制更新
@@ -111,6 +123,9 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      */
     fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance?
 
+    /**
+     * 发送客户端移动量数据包
+     */
     @Deprecated("请使用 setVelocity(vector)", ReplaceWith("setVelocity(vector)"))
     fun sendVelocity(vector: org.bukkit.util.Vector)
 }

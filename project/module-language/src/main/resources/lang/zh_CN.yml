@@ -79,20 +79,68 @@ command-find-near: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如�
 command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表变更)'
 command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
 command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表变更)'
+
+# 以下为 EntityTracker 的控制输出，因变量体系复杂故采用别名形式，而非下标形式。
+
 command-find-more-remove:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r &c\]] [&6[ &6&l››&r &6\]] &8| &f{0} &7(&r{1}&7) &8> &a{3}'
+    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r &c\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
-      - command: '/adyeshach remove {2} c'
+      - command: '/adyeshach remove {uuid} c'
         hover: '点击删除'
-      - command: '/adyeshach tp {2}'
+      - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-remove-update:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - &m\[ &l|||&r&8&m ] \[ &l››&r&8&m ] | {0} ({1})&8 | [&6[ &l‹‹&r ]&6]'
+    text: ' &5&l‹ ›&r &8 - &m\[ &l|||&r&8&m ] \[ &l››&r&8&m ] | {type} ({name})&8 | [&6[ &l‹‹&r ]&6]'
     args:
-      - command: '/adyeshach undo {2}'
+      - command: '/adyeshach undo {uuid}'
         hover: '点击恢复'
+command-find-more-rename:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach rename {uuid} '
+        hover: '点击更名为...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-rename-update:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance} &8&l››&r [&6{new_id}]'
+    args:
+      - suggest: '/adyeshach rename {uuid} '
+        hover: '点击更名'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+      - command: '/adyeshach rename {uuid} {old_id}'
+        hover: '点击恢复'
+command-find-teleport-rename:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach tp {uuid} '
+        hover: '点击传送到...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-move-rename:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach move {uuid} '
+        hover: '点击移动到...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-look-rename:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach look {uuid} '
+        hover: '点击看向...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+
+# END
+
 command-find-more-remove-all:
   - ==: JSON
     text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部&c\]]&7。'
@@ -115,6 +163,19 @@ command-remove-success-all:
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
+command-rename-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7更名为 &f"{1}" &7。'
+command-rename-success-all: ' &5&l‹ ›&r &7已将所有 &f"{0}" &7更名为 &f"{1}" &7。'
+command-teleport-to-entity: ' &5&l‹ ›&r &7已将你传送至 &f"{0}" &7。'
+command-teleport-to-here: ' &5&l‹ ›&r &7已将 &f"{0}" &7传送至你所在的位置。'
+command-teleport-to-location: ' &5&l‹ ›&r &7已将 &f"{0}" &7传送至 &f"{1} {2},{3},{4} {5},{6}" &7。'
+command-move-to-here: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往你所在的位置。'
+command-move-to-location: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往 &f"{1},{2},{3}" &7。'
+command-move-has-vehicle: ' &5&l‹ ›&r &7无法派遣 &f"{0}"&7, 因为此时此刻它正骑在 &f"{1}" &7上。'
+command-look-to-here: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向你所在的位置。'
+command-look-to-with: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2}" &7。'
+command-look-to-location: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2},{3}" &7。'
+command-world-different: ' &5&l‹ ›&r &7你与 &f"{0}" &7不在同一世界。'
+command-world-not-found: ' &5&l‹ ›&r &7世界 &f"{0}" &7不存在。'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
