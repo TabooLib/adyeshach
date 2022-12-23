@@ -25,8 +25,10 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
 
     override fun getBlockType(x: Int, y: Int, z: Int): Material {
         val block: Any = when (major) {
-            // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16
-            1, 2, 3, 4, 5, 6, 7, 8 -> (nmsChunk as NMS9IBlockAccess).getType(NMS9BlockPosition(x, y, z)).block
+            // 1.9, 1.10, 1.11, 1.12, 1.13
+            1, 2, 3, 4, 5 -> (nmsChunk as NMS9IBlockAccess).getType(NMS9BlockPosition(x, y, z)).block
+            // 1.14, 1.15, 1.16
+            6, 7, 8 -> (nmsChunk as NMS16IBlockAccess).getType(NMS16BlockPosition(x, y, z)).block
             // 1.17, 1.18, 1.19
             9, 10, 11 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
             // 不支持

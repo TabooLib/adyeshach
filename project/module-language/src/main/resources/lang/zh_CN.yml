@@ -130,12 +130,20 @@ command-find-move-rename:
         hover: '点击移动到...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
-command-find-look-rename:
+command-find-more-look:
   - ==: JSON
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach look {uuid} '
         hover: '点击看向...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-edit:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach edit {uuid}'
+        hover: '点击编辑'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 
@@ -171,8 +179,8 @@ command-teleport-to-location: ' &5&l‹ ›&r &7已将 &f"{0}" &7传送至 &f"{1
 command-move-to-here: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往你所在的位置。'
 command-move-to-location: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往 &f"{1},{2},{3}" &7。'
 command-move-has-vehicle: ' &5&l‹ ›&r &7无法派遣 &f"{0}"&7, 因为此时此刻它正骑在 &f"{1}" &7上。'
+command-look-with: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2}" &7。'
 command-look-to-here: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向你所在的位置。'
-command-look-to-with: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2}" &7。'
 command-look-to-location: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2},{3}" &7。'
 command-world-different: ' &5&l‹ ›&r &7你与 &f"{0}" &7不在同一世界。'
 command-world-not-found: ' &5&l‹ ›&r &7世界 &f"{0}" &7不存在。'

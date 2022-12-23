@@ -31,8 +31,8 @@ val lookSubCommand = subCommand {
                         sender.sendLang("command-world-different", ctx.argument(-1))
                         return@multiControl
                     }
-                    it.setHeadRotation(sender.eyeLocation)
-                    sender.sendLang("command-look-to-here", ctx.argument(-1))
+                    it.setHeadRotation(sender.eyeLocation, forceUpdate = true)
+                    sender.sendLang("command-look-to-here", it.id)
                 }
             }
         }
@@ -49,8 +49,8 @@ val lookSubCommand = subCommand {
                         multiControl<EntitySource.Empty>(sender, id, STANDARD_LOOK_TRACKER) {
                             val y = if (yaw.startsWith("~")) it.yaw + yaw.substring(1).cfloat else yaw.cfloat
                             val p = if (pitch.startsWith("~")) it.pitch + pitch.substring(1).cfloat else pitch.cfloat
-                            it.setHeadRotation(y, p)
-                            sender.sendLang("command-look-with", id, format(y), format(p))
+                            it.setHeadRotation(y, p, forceUpdate = true)
+                            sender.sendLang("command-look-with", it.id, format(y), format(p))
                         }
                     }
                 }
@@ -76,8 +76,8 @@ val lookSubCommand = subCommand {
                                     if (y.startsWith("~")) it.y + y.substring(1).cdouble else y.cdouble,
                                     if (z.startsWith("~")) it.z + z.substring(1).cdouble else z.cdouble,
                                 )
-                                it.setHeadRotation(loc)
-                                sender.sendLang("command-look-to-location", id, format(loc.x), format(loc.y), format(loc.z))
+                                it.setHeadRotation(loc, forceUpdate = true)
+                                sender.sendLang("command-look-to-location", it.id, format(loc.x), format(loc.y), format(loc.z))
                             }
                         }
                     }

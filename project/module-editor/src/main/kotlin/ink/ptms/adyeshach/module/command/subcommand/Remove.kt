@@ -36,7 +36,7 @@ val removeSubCommand = subCommand {
                     // 删除全部
                     "a", "all" -> sender.sendLang("command-remove-success-all", ctx.argument(-1), npcList.first().uniqueId)
                     // 删除单个
-                    "c" -> sender.sendLang("command-remove-success", ctx.argument(-1), npcList.first().uniqueId)
+                    "c" -> sender.sendLang("command-remove-success", npcList.first().id, npcList.first().uniqueId)
                 }
             }
         }

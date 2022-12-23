@@ -46,5 +46,8 @@ object Command {
     val move = moveSubCommand
 
     @CommandBody
+    val look = lookSubCommand
+
+    @CommandBody
     val edit = editSubCommand
 }

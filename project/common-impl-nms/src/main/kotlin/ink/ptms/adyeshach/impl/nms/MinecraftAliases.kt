@@ -200,6 +200,8 @@ typealias NMS16DataWatcherRegistry = net.minecraft.server.v1_16_R3.DataWatcherRe
 
 typealias NMS16IChatBaseComponent = net.minecraft.server.v1_16_R3.IChatBaseComponent
 
+typealias NMS16IBlockAccess = net.minecraft.server.v1_16_R3.IBlockAccess
+
 typealias NMS16Vec3D = net.minecraft.server.v1_16_R3.Vec3D
 
 typealias NMS16ParticleParam = net.minecraft.server.v1_16_R3.ParticleParam
