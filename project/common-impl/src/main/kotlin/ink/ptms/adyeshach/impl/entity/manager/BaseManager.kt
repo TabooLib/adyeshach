@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.entity.manager
 
-import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntityTypes
@@ -8,6 +7,7 @@ import ink.ptms.adyeshach.core.entity.TickService
 import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.manager.ManagerService
+import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player

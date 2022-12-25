@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Rideable
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import org.bukkit.entity.Player
 
