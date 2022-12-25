@@ -17,11 +17,14 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.util.Indexs
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
+import taboolib.common5.cbool
+import taboolib.common5.cdouble
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
@@ -144,6 +147,33 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
                 errorBy("error-manager-has-been-initialized")
             }
         }
+
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setMetadata(key, value).ifTrue { return true }
+        return when (key) {
+            "nitwit" -> {
+                isNitwit = value.cbool
+                true
+            }
+            "movespeed", "move_speed" -> {
+                moveSpeed = value.cdouble
+                true
+            }
+            "visibledistance", "visible_distance" -> {
+                visibleDistance = value.cdouble
+                true
+            }
+            "visibleafterloaded", "visible_after_loaded" -> {
+                visibleAfterLoaded = value.cbool
+                true
+            }
+            "modelenginename", "modelengine_name", "modelengine" -> {
+                modelEngineName = value
+                true
+            }
+            else -> false
+        }
+    }
 
     override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {

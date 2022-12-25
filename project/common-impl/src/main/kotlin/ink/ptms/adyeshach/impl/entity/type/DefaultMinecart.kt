@@ -4,9 +4,11 @@ import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.*
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Material
 import org.bukkit.material.MaterialData
 import taboolib.library.xseries.XMaterial
+import taboolib.library.xseries.parseToXMaterial
 
 /**
  * Adyeshach
@@ -40,5 +42,18 @@ abstract class DefaultMinecart(entityTypes: EntityTypes) : DefaultEntity(entityT
 
     override fun getCustomBlock(): MaterialData {
         return MaterialData(customBlock, customBlockData)
+    }
+
+    @Suppress("SpellCheckingInspection")
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "customblock", "custom_block" -> {
+                val mat = value.parseToXMaterial()
+                setCustomBlock(MaterialData(mat.parseMaterial() ?: Material.STONE, mat.data))
+                true
+            }
+            else -> false
+        }
     }
 }

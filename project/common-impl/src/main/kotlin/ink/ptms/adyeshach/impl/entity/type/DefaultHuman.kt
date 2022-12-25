@@ -10,10 +10,14 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.core.event.AdyeshachGameProfileGenerateEvent
+import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
+import taboolib.common5.cbool
+import taboolib.common5.cint
 import taboolib.module.chat.colored
 import taboolib.platform.util.onlinePlayers
 import java.util.*
@@ -93,6 +97,38 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 // 移除客户端对应表
                 unregisterClientEntity(viewer)
             }
+        }
+    }
+
+    @Suppress("SpellCheckingInspection")
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "hidefromtablist", "hide_from_tab_list" -> {
+                isHideFromTabList = value.cbool
+                true
+            }
+            "name" -> {
+                setName(value)
+                true
+            }
+            "ping" -> {
+                setPing(value.cint)
+                true
+            }
+            "ping_bar" -> {
+                setPingBar(PingBar::class.java.getEnum(value))
+                true
+            }
+            "texture" -> {
+                setTexture(value)
+                true
+            }
+            "sleeping" -> {
+                setSleeping(value.cbool)
+                true
+            }
+            else -> false
         }
     }
 

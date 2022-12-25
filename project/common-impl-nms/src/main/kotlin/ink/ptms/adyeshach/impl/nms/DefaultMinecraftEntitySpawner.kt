@@ -97,7 +97,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeByte(pitch)
                     writeByte(yaw)
                     writeByte(yaw)
-                    writeInt(data)
+                    writeVarInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -116,7 +116,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeByte(pitch)
                     writeByte(yaw)
                     writeByte(yaw)
-                    writeInt(data)
+                    writeVarInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -151,7 +151,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeByte(yaw)
                 // yHeadRot -> yaw -> 横向视角
                 writeByte(yaw)
-                writeInt(data)
+                writeVarInt(data)
                 writeShort(0)
                 writeShort(0)
                 writeShort(0)
@@ -324,8 +324,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (majorLegacy >= 11300) {
-            val id = helper.getBlockId(MaterialData(material, data))
-            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, id)
+            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, helper.getBlockId(MaterialData(material, data)))
         } else {
             spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, material.id + (data.toInt() shl 12))
         }

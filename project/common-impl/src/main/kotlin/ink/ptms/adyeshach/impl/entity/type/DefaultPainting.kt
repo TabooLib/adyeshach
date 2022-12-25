@@ -7,6 +7,8 @@ import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyPainting
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Art
 import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
@@ -69,6 +71,22 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
             BukkitPaintings.valueOf(getMetadata<Art>("paintingVariant").name)
         } else {
             painting
+        }
+    }
+
+    @Suppress("SpellCheckingInspection")
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "painting" -> {
+                setPainting(BukkitPaintings::class.java.getEnum(value))
+                true
+            }
+            "direction" -> {
+                setDirection(BukkitDirection::class.java.getEnum(value))
+                true
+            }
+            else -> false
         }
     }
 }

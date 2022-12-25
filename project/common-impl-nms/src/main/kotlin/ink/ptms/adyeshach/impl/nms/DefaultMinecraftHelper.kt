@@ -15,7 +15,6 @@ import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import taboolib.library.reflex.Reflex.Companion.getProperty
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 
 /**
@@ -87,7 +86,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
                     NMS16Particles::class.java.getProperty<Any>(particles.name, isStatic = true) ?: NMS16Particles.FLAME
                 }
                 majorLegacy >= 11300 -> {
-                    val particle = nms13ParticleRegistryBlocks.invokeMethod("get", NMS13MinecraftKey(particles.name.lowercase())) ?: NMS13Particles.y
+                    val particle = nms13ParticleRegistryBlocks.get(NMS13MinecraftKey(particles.name.lowercase()))
                     if (particle is NMS13Particle<*>) {
                         particle.f()
                     } else {
@@ -114,7 +113,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     override fun getEntityDataWatcher(entity: Entity): Any {
         // 1.19 dataWatcher -> entityData
         return if (majorLegacy >= 11900) {
-            (entity as CraftEntity19).handle.getProperty<Any>("entityData")!!
+            (entity as CraftEntity19).handle.entityData
         } else {
             (entity as CraftEntity16).handle.dataWatcher
         }
@@ -123,7 +122,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     override fun getBlockId(materialData: MaterialData): Int {
         return blockIdCache.get(materialData) {
             if (MinecraftVersion.major >= 10) {
-                NMSBlock::class.java.invokeMethod("getId", CraftMagicNumbers19.getBlock(materialData), isStatic = true)!!
+                NMSBlock.getId(CraftMagicNumbers19.getBlock(materialData))
             } else if (MinecraftVersion.major >= 5) {
                 NMS16Block.getCombinedId(CraftMagicNumbers16.getBlock(materialData))
             } else {

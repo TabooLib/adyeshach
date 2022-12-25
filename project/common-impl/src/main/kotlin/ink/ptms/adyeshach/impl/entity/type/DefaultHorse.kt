@@ -3,6 +3,8 @@ package ink.ptms.adyeshach.impl.entity.type
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyHorse
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Horse
 
 /**
@@ -39,6 +41,21 @@ abstract class DefaultHorse(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             Horse.Style.values()[(getVariant() ushr 8) % hs]
         } else {
             Horse.Style.values()[((getVariant() and '\uff00'.code) shr 8) % hs]
+        }
+    }
+
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "color" -> {
+                setColor(Horse.Color::class.java.getEnum(value))
+                true
+            }
+            "style" -> {
+                setStyle(Horse.Style::class.java.getEnum(value))
+                true
+            }
+            else -> false
         }
     }
 

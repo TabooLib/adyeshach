@@ -3,6 +3,8 @@ package ink.ptms.adyeshach.impl.entity.type
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyTropicalFish
+import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.DyeColor
 import org.bukkit.entity.TropicalFish
 
@@ -14,6 +16,22 @@ import org.bukkit.entity.TropicalFish
  * @since 2022/6/29 19:06
  */
 abstract class DefaultTropicalFish(entityTypes: EntityTypes) : DefaultEntityLiving(entityTypes), AdyTropicalFish {
+
+    @Suppress("SpellCheckingInspection")
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "bodycolor", "body_color" -> {
+                setBodyColor(DyeColor::class.java.getEnum(value))
+                true
+            }
+            "pattern" -> {
+                setPattern(TropicalFish.Pattern::class.java.getEnum(value))
+                true
+            }
+            else -> false
+        }
+    }
 
     override fun getPatternColor(): DyeColor {
         return getPatternColor(getVariant())

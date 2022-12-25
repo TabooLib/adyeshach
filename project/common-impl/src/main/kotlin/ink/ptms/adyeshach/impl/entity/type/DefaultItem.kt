@@ -3,6 +3,8 @@ package ink.ptms.adyeshach.impl.entity.type
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyItem
+import ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving.Companion.toItem
+import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
@@ -36,6 +38,7 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
             super.visible(viewer, false)
         }
     }
+
     override fun setItem(itemStack: ItemStack) {
         setMetadata("item", itemStack)
         respawn()
@@ -43,5 +46,16 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
 
     override fun getItem(): ItemStack {
         return getMetadata("item")
+    }
+
+    override fun setCustomMeta(key: String, value: String): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "item" -> {
+                setItem(value.toItem())
+                true
+            }
+            else -> false
+        }
     }
 }

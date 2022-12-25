@@ -3,11 +3,9 @@ package ink.ptms.adyeshach.impl.entity
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityFireball
 import ink.ptms.adyeshach.core.entity.EntityThrowable
-import ink.ptms.adyeshach.core.entity.type.AdyItem
 import ink.ptms.adyeshach.core.entity.type.AdyMinecart
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import org.bukkit.event.player.PlayerRespawnEvent
-import org.bukkit.util.Vector
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
@@ -50,12 +48,6 @@ internal object DefaultEntityFixer {
             // 投掷物默认客户端运算重力
             is EntityThrowable -> {
                 entity.setNoGravity(true)
-            }
-            // 掉落物默认客户端运算重力
-            // 需设置运动力为 0
-            is AdyItem -> {
-                entity.setNoGravity(true)
-                entity.sendVelocity(Vector(0, 0, 0))
             }
         }
     }
