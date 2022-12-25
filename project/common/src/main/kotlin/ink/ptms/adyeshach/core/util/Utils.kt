@@ -2,9 +2,17 @@ package ink.ptms.adyeshach.core.util
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.console
+import taboolib.common5.Demand
+import taboolib.common5.cint
+import taboolib.library.xseries.parseToMaterial
+import taboolib.platform.util.modifyMeta
 
 /**
  * 获取语言文件文本
@@ -85,4 +93,23 @@ fun Location.modify(yaw: Float = this.yaw, pitch: Float = this.pitch): Location 
     this.yaw = yaw
     this.pitch = pitch
     return this
+}
+
+fun String.toItem(): ItemStack {
+    val namespace = if (contains(":")) substringBefore(":") else "minecraft"
+    val source = substringAfter(":")
+    val itemStack = ItemStack(Material.STONE)
+    if (namespace == "minecraft") {
+        val demand = Demand(source)
+        itemStack.type = demand.namespace.parseToMaterial()
+        itemStack.amount = demand.get("amount")?.cint ?: 1
+        itemStack.modifyMeta<ItemMeta> {
+            demand.get("name")?.let { setDisplayName(it) }
+            demand.get("lore")?.let { lore = it.split("\\n") }
+            demand.get("model")?.let { setCustomModelData(it.cint) }
+        }
+    }
+    val event = AdyeshachItemHookEvent(namespace, source, itemStack)
+    event.call()
+    return event.itemStack
 }

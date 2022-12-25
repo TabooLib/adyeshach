@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.serializer.Serializer
+import ink.ptms.adyeshach.core.util.toItem
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -18,7 +19,11 @@ class ItemStackParser : MinecraftMetadataParser<ItemStack>() {
     override fun parse(value: Any): ItemStack {
         return when (value) {
             is ItemStack -> value
-            is String -> Serializer.toItemStack(value)
+            is String -> try {
+                Serializer.toItemStack(value)
+            } catch (ex: Throwable) {
+                value.toItem()
+            }
             else -> ItemStack(Material.BEDROCK)
         }
     }

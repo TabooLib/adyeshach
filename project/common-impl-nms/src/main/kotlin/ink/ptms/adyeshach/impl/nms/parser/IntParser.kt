@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import taboolib.common5.cint
 
 /**
  * Adyeshach
@@ -13,7 +14,7 @@ import ink.ptms.adyeshach.core.MinecraftMetadataParser
 class IntParser : MinecraftMetadataParser<Int>() {
 
     override fun parse(value: Any): Int {
-        return value.toInt()
+        return value.cint
     }
 
     override fun createMeta(index: Int, value: Int): MinecraftMeta {

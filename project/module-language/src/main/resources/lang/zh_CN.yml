@@ -184,6 +184,7 @@ command-look-to-here: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向你所在的位�
 command-look-to-location: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2},{3}" &7。'
 command-world-different: ' &5&l‹ ›&r &7你与 &f"{0}" &7不在同一世界。'
 command-world-not-found: ' &5&l‹ ›&r &7世界 &f"{0}" &7不存在。'
+command-meta-not-found: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不存在。'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'

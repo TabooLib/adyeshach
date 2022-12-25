@@ -5,22 +5,16 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
-import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
+import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
-import taboolib.common5.Demand
 import taboolib.common5.cbool
-import taboolib.common5.cint
-import taboolib.library.xseries.parseToMaterial
-import taboolib.platform.util.modifyMeta
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -125,28 +119,6 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 true
             }
             else -> false
-        }
-    }
-
-    companion object {
-
-        fun String.toItem(): ItemStack {
-            val namespace = if (contains(":")) substringBefore(":") else "minecraft"
-            val source = substringAfter(":")
-            val itemStack = ItemStack(Material.STONE)
-            if (namespace == "minecraft") {
-                val demand = Demand(source)
-                itemStack.type = demand.namespace.parseToMaterial()
-                itemStack.amount = demand.get("amount")?.cint ?: 1
-                itemStack.modifyMeta<ItemMeta> {
-                    demand.get("name")?.let { setDisplayName(it) }
-                    demand.get("lore")?.let { lore = it.split("\\n") }
-                    demand.get("model")?.let { setCustomModelData(it.cint) }
-                }
-            }
-            val event = AdyeshachItemHookEvent(namespace, source, itemStack)
-            event.call()
-            return event.itemStack
         }
     }
 }

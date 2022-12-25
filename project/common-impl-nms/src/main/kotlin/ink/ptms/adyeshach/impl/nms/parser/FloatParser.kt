@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
-import taboolib.common5.Coerce
+import taboolib.common5.cfloat
 
 /**
  * Adyeshach
@@ -14,7 +14,7 @@ import taboolib.common5.Coerce
 class FloatParser : MinecraftMetadataParser<Float>() {
 
     override fun parse(value: Any): Float {
-        return Coerce.toFloat(value)
+        return value.cfloat
     }
 
     override fun createMeta(index: Int, value: Float): MinecraftMeta {

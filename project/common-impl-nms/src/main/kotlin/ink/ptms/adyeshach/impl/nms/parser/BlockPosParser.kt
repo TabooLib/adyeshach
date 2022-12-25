@@ -4,7 +4,8 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import org.bukkit.util.Vector
-import taboolib.common5.Coerce
+import taboolib.common5.cbool
+import taboolib.common5.cint
 
 /**
  * Adyeshach
@@ -16,14 +17,26 @@ import taboolib.common5.Coerce
 class BlockPosParser : MinecraftMetadataParser<Vector>() {
 
     override fun parse(value: Any): Vector {
-        return if (value is Map<*, *>) {
-            if (Coerce.toBoolean(value["empty"])) {
-                EmptyVector()
-            } else {
-                Vector(value["x"]!!.toInt(), value["y"]!!.toInt(), value["z"]!!.toInt())
+        return when (value) {
+            // 从配置中识别
+            is Map<*, *> -> {
+                if (value["empty"].cbool) {
+                    EmptyVector()
+                } else {
+                    Vector(value["x"]!!.cint, value["y"]!!.cint, value["z"]!!.cint)
+                }
             }
-        } else {
-            value as Vector
+            // 从字符串中识别
+            is String -> {
+                val split = value.split(",")
+                if (split.size != 3) {
+                    throw IllegalArgumentException("Invalid Vector: $value")
+                } else {
+                    Vector(split[0].cint, split[1].cint, split[2].cint)
+                }
+            }
+            // 其他
+            else -> value as Vector
         }
     }
 

@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import org.bukkit.Material
 import org.bukkit.material.MaterialData
 import taboolib.library.xseries.parseToMaterial
+import taboolib.library.xseries.parseToXMaterial
 
 /**
  * Adyeshach
@@ -16,10 +17,18 @@ import taboolib.library.xseries.parseToMaterial
 class BlockStateParser : MinecraftMetadataParser<MaterialData>() {
 
     override fun parse(value: Any): MaterialData {
-        return if (value is Map<*, *>) {
-            MaterialData(value["type"].toString().replace("LEGACY_", "").parseToMaterial(), value["data"]!!.toByte())
-        } else {
-            value as MaterialData
+        return when (value) {
+            // 从配置中识别
+            is Map<*, *> -> {
+                MaterialData(value["type"].toString().replace("LEGACY_", "").parseToMaterial(), value["data"]!!.toByte())
+            }
+            // 从字符串中识别
+            is String -> {
+                val mat = value.parseToXMaterial()
+                MaterialData(mat.parseMaterial(), mat.data)
+            }
+            // 其他
+            else -> value as MaterialData
         }
     }
 

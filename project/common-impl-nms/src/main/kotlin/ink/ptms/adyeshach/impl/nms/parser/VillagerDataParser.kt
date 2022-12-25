@@ -15,13 +15,27 @@ import ink.ptms.adyeshach.core.util.getEnumOrNull
 class VillagerDataParser : MinecraftMetadataParser<VillagerData>() {
 
     override fun parse(value: Any): VillagerData {
-        return if (value is Map<*, *>) {
-            VillagerData(
-                VillagerData.Type::class.java.getEnumOrNull(value["type"]!!) ?: VillagerData.Type.PLAINS,
-                VillagerData.Profession::class.java.getEnumOrNull(value["profession"]!!) ?: VillagerData.Profession.NONE,
-            )
-        } else {
-            value as VillagerData
+        return when (value) {
+            // 从配置文件中识别
+            is Map<*, *> -> {
+                VillagerData(
+                    VillagerData.Type::class.java.getEnumOrNull(value["type"]!!) ?: VillagerData.Type.PLAINS,
+                    VillagerData.Profession::class.java.getEnumOrNull(value["profession"]!!) ?: VillagerData.Profession.NONE,
+                )
+            }
+            // 从字符串中识别
+            is String -> {
+                val split = value.split(":")
+                if (split.size != 2) {
+                    throw IllegalArgumentException("Invalid VillagerData: $value")
+                }
+                VillagerData(
+                    VillagerData.Type::class.java.getEnumOrNull(split[0]) ?: VillagerData.Type.PLAINS,
+                    VillagerData.Profession::class.java.getEnumOrNull(split[1]) ?: VillagerData.Profession.NONE,
+                )
+            }
+            // 其他
+            else -> value as VillagerData
         }
     }
 

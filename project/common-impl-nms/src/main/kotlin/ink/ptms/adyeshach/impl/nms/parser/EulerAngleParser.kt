@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import org.bukkit.util.EulerAngle
+import taboolib.common5.cdouble
 
 /**
  * Adyeshach
@@ -14,7 +15,23 @@ import org.bukkit.util.EulerAngle
 class EulerAngleParser : MinecraftMetadataParser<EulerAngle>() {
 
     override fun parse(value: Any): EulerAngle {
-        return if (value is Map<*, *>) EulerAngle(value["x"]!!.toDouble(), value["y"]!!.toDouble(), value["z"]!!.toDouble()) else value as EulerAngle
+        return when (value) {
+            // 从配置中识别
+            is Map<*, *> -> {
+                EulerAngle(value["x"]!!.cdouble, value["y"]!!.cdouble, value["z"]!!.cdouble)
+            }
+            // 从字符串中识别
+            is String -> {
+                val split = value.split(",")
+                if (split.size != 3) {
+                    throw IllegalArgumentException("Invalid EulerAngle: $value")
+                } else {
+                    EulerAngle(split[0].cdouble, split[1].cdouble, split[2].cdouble)
+                }
+            }
+            // 其他
+            else -> value as EulerAngle
+        }
     }
 
     override fun createMeta(index: Int, value: EulerAngle): MinecraftMeta {

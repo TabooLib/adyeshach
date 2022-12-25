@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.impl.entity.type
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyItem
-import ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving.Companion.toItem
+import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

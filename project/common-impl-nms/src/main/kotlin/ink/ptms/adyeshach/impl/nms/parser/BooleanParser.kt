@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
-import taboolib.common5.Coerce
+import taboolib.common5.cbool
 
 /**
  * Adyeshach
@@ -14,7 +14,7 @@ import taboolib.common5.Coerce
 class BooleanParser : MinecraftMetadataParser<Boolean>() {
 
     override fun parse(value: Any): Boolean {
-        return Coerce.toBoolean(value)
+        return value.cbool
     }
 
     override fun createMeta(index: Int, value: Boolean): MinecraftMeta {
