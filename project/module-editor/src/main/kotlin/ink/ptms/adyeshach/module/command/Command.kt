@@ -1,11 +1,15 @@
 package ink.ptms.adyeshach.module.command
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.module.command.subcommand.*
+import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common.util.ResettableLazy
 import taboolib.common.util.unsafeLazy
 import taboolib.expansion.createHelper
 
@@ -31,6 +35,9 @@ object Command {
     val script = CommandScript
 
     @CommandBody
+    val api = CommandAPI
+
+    @CommandBody
     val create = createSubCommand
 
     @CommandBody
@@ -50,4 +57,13 @@ object Command {
 
     @CommandBody
     val edit = editSubCommand
+
+    @CommandBody
+    val reload = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            AdyeshachSettings.conf.reload()
+            ResettableLazy.reset()
+            sender.sendMessage("§c[Adyeshach] §7Reloaded.")
+        }
+    }
 }

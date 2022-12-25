@@ -66,14 +66,14 @@ class PageMain(editor: EditPanel) : Page(editor) {
                     1 -> "tp ${entity.uniqueId} here"
                     2 -> "move ${entity.uniqueId} here"
                     3 -> "look ${entity.uniqueId} here"
-                    4 -> "look ${entity.uniqueId} with ${player.location.yaw} ${player.location.pitch}"
+                    4 -> "look ${entity.uniqueId} like"
                     5 -> "clone ${entity.uniqueId}"
                     6 -> "remove ${entity.uniqueId}"
                     else -> error("Unknown command $i")
                 }
                 json.appendLang("entity-tools-$i")
                     .hoverText(player.lang("entity-tools-$i-help"))
-                    .runCommand("/adyeshach $command")
+                    .runCommand("/adyeshach api se adyeshach $command")
                 json.append(" ")
             }
 

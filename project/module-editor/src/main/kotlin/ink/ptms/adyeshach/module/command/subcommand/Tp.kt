@@ -30,7 +30,9 @@ val tpSubCommand = subCommand {
         execute<Player> { sender, ctx, _ ->
             multiControl<EntitySource.Empty>(sender, ctx.argument(0), STANDARD_TP_TRACKER) {
                 sender.teleport(it.getLocation())
-                sender.sendLang("command-teleport-to-entity", it.id)
+                if (!sender.isIgnoreNotice()) {
+                    sender.sendLang("command-teleport-to-entity", it.id)
+                }
             }
         }
         // 传送到当前位置
@@ -38,7 +40,9 @@ val tpSubCommand = subCommand {
             execute<Player> { sender, ctx, _ ->
                 multiControl<EntitySource.Empty>(sender, ctx.argument(-1), STANDARD_TP_TRACKER) {
                     it.teleport(sender.location)
-                    sender.sendLang("command-teleport-to-here", it.id)
+                    if (!sender.isIgnoreNotice()) {
+                        sender.sendLang("command-teleport-to-here", it.id)
+                    }
                 }
             }
         }
@@ -101,6 +105,17 @@ private fun teleport(sender: CommandSender, id: String, world: String, x: String
             return@multiControl
         }
         it.teleport(loc)
-        sender.sendLang("command-teleport-to-location", it.id, loc.world.name, format(loc.x), format(loc.y), format(loc.z), format(loc.yaw), format(loc.pitch))
+        if (!sender.isIgnoreNotice()) {
+            sender.sendLang(
+                "command-teleport-to-location",
+                it.id,
+                loc.world.name,
+                format(loc.x),
+                format(loc.y),
+                format(loc.z),
+                format(loc.yaw),
+                format(loc.pitch)
+            )
+        }
     }
 }

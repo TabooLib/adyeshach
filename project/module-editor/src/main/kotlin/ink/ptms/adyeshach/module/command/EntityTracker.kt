@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
  */
 open class EntityTracker(val sender: CommandSender, val action: String, val entitySource: EntitySource) {
 
-    var id = ""
+    var id: String? = null
     var isNearby = false
 
     fun printNearby(): EntityTracker {
@@ -32,14 +32,14 @@ open class EntityTracker(val sender: CommandSender, val action: String, val enti
     }
 
     fun print(): EntityTracker {
-        return print(isNearby, id, true)
+        return print(isNearby, null, true)
     }
 
-    fun print(isNearby: Boolean, id: String = "", update: Boolean = false): EntityTracker {
+    fun print(isNearby: Boolean, id: String? = null, update: Boolean = false): EntityTracker {
         this.isNearby = isNearby
         this.id = id
         sender.clearScreen()
-        sender.sendLang("${if (isNearby) "command-find-near" else "command-find-more"}${if (update) "-update" else ""}", id)
+        sender.sendLang("${if (isNearby) "command-find-near" else "command-find-more"}${if (update) "-update" else ""}", id.toString())
         // 打印列表
         entitySource.elements.forEach {
             // 粒子效果
@@ -70,7 +70,7 @@ open class EntityTracker(val sender: CommandSender, val action: String, val enti
 
         fun check(sender: CommandSender, id: String, checkEntity: EntityInstance? = null) {
             val printer = trackerMap.getIfPresent(sender.name) ?: return
-            if (printer.id == id && (checkEntity == null || checkEntity in printer.entitySource.elements)) {
+            if ((printer.id == null || printer.id == id) && (checkEntity == null || checkEntity in printer.entitySource.elements)) {
                 printer.print()
             }
         }

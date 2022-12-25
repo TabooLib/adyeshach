@@ -66,7 +66,7 @@ object AdyeshachSettings {
      */
     val spawnTrigger by resettableLazy {
         try {
-            SpawnTrigger.valueOf(conf.getString("Settings.spawn-trigger")!!.uppercase())
+            SpawnTrigger.valueOf(conf.getString("Settings.spawn-event")!!.uppercase())
         } catch (ignored: Exception) {
             SpawnTrigger.KEEP_ALIVE
         }

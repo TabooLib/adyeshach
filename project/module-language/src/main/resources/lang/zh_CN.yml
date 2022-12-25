@@ -109,7 +109,7 @@ command-find-more-rename-update:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance} &8&l››&r [&6{new_id}]'
     args:
       - suggest: '/adyeshach rename {uuid} '
-        hover: '点击更名'
+        hover: '点击更名为...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
       - command: '/adyeshach rename {uuid} {old_id}'
@@ -142,7 +142,7 @@ command-find-more-edit:
   - ==: JSON
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
-      - suggest: '/adyeshach edit {uuid}'
+      - command: '/adyeshach edit {uuid}'
         hover: '点击编辑'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'

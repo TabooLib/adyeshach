@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
 import org.bukkit.entity.Player
 import taboolib.common.platform.PlatformFactory
+import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
 import java.util.concurrent.ConcurrentHashMap
 
@@ -60,7 +61,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     var localPublicEntityManagerTemporary = DefaultManager()
 
     override fun setupEntityManager(player: Player) {
-        if (player.isOnline && !player.hasMetadata("adyeshach_setup")) {
+        if (!player.hasMetadata("adyeshach_setup")) {
             // 设置标签避免重复执行
             player.setMeta("adyeshach_setup", true)
             // 公共管理器
@@ -77,6 +78,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun releaseEntityManager(player: Player) {
         if (player.hasMetadata("adyeshach_setup")) {
+            player.removeMeta("adyeshach_setup")
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach {
                 it.removeViewer(player)
@@ -85,7 +87,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
                 it.removeViewer(player)
             }
             // 私有管理器
-            var privateManager = getPrivateEntityManager(player)
+            var privateManager = getPrivateEntityManager(player, ManagerType.PERSISTENT)
             privateManager.onDisable()
             privateManager.onSave()
             privateManager = getPrivateEntityManager(player, ManagerType.TEMPORARY)

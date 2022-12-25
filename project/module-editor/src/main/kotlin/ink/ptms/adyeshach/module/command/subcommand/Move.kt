@@ -35,7 +35,9 @@ val moveSubCommand = subCommand {
                         return@multiControl
                     }
                     it.moveTarget = sender.location
-                    sender.sendLang("command-move-to-here", it.id)
+                    if (!sender.isIgnoreNotice()) {
+                        sender.sendLang("command-move-to-here", it.id)
+                    }
                 }
             }
         }
@@ -64,7 +66,9 @@ val moveSubCommand = subCommand {
                                     if (z.startsWith("~")) it.z + z.substring(1).cdouble else z.cdouble,
                                 )
                                 it.moveTarget = loc
-                                sender.sendLang("command-move-to-location", it.id, format(loc.x), format(loc.y), format(loc.z))
+                                if (!sender.isIgnoreNotice()) {
+                                    sender.sendLang("command-move-to-location", it.id, format(loc.x), format(loc.y), format(loc.z))
+                                }
                             }
                         }
                     }
