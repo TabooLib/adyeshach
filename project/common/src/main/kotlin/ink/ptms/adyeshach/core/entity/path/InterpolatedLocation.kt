@@ -10,7 +10,7 @@ import taboolib.common.platform.function.warning
 import java.util.*
 import kotlin.math.acos
 
-class InterpolatedLocation(val world: World, frames: Map<Int, Location> = HashMap()) {
+class InterpolatedLocation(val world: World, val target: Location, frames: Map<Int, Location> = HashMap()) {
 
     val frames = TreeMap(frames)
     var index = 0

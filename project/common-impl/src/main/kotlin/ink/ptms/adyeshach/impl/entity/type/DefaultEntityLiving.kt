@@ -30,7 +30,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
     val equipment = ConcurrentHashMap<EquipmentSlot, ItemStack>()
 
     @Expose
-    var isDie = false
+    override var isDie = false
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {

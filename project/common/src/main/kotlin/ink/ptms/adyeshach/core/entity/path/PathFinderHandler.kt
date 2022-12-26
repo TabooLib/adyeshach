@@ -46,13 +46,6 @@ object PathFinderHandler {
                 }
                 val pointList = path?.nodes?.map { it.asBlockPos() }?.toMutableList() ?: ArrayList()
                 if (pointList.isNotEmpty()) {
-                    // 如果路径的第一个点是起点则移除
-                    val first = pointList.first()
-                    if (first.blockX == start.blockX && first.blockZ == start.blockZ) {
-                        pointList.removeFirst()
-                    }
-                }
-                if (pointList.isNotEmpty()) {
                     // 如果路径的最后一个点不是目的地
                     val last = pointList.last()
                     if (last.blockX != target.blockX || last.blockZ != target.blockZ) {

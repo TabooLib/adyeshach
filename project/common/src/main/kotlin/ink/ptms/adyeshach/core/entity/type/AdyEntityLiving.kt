@@ -50,6 +50,11 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
         }
 
     /**
+     * 是否处于死亡状态
+     */
+    val isDie: Boolean
+
+    /**
      * 切换数据包实体的死亡状态，该功能是通过利用客户端渲染漏洞实现，无法保证稳定性
      */
     fun die(die: Boolean = true)

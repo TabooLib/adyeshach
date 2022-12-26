@@ -13,9 +13,34 @@ import org.bukkit.entity.Player
  */
 interface Action {
 
+    /** 序号 */
     fun id(): String
 
-    fun isResettable(): Boolean
+    /** 展示文本 */
+    fun display(player: Player): String
 
-    fun onClick(player: Player, entity: EntityInstance, page: Page, index: Int)
+    /** 描述文本 */
+    fun description(player: Player): String? {
+        return null
+    }
+
+    /** 是否支持重置 */
+    fun isResettable(): Boolean {
+        return false
+    }
+
+    /** 构建命令 */
+    fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String? {
+        return null
+    }
+
+    /** 自定义命令 */
+    fun isCustomCommand(): Boolean {
+        return false
+    }
+
+    /** 是否刷新页面 */
+    fun isRefreshPage(): Boolean {
+        return true
+    }
 }

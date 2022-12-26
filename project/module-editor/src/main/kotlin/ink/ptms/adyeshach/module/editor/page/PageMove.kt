@@ -1,6 +1,13 @@
 package ink.ptms.adyeshach.module.editor.page
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.module.editor.EditPanel
+import ink.ptms.adyeshach.module.editor.action.Action
+import ink.ptms.adyeshach.module.editor.action.ActionGroup
+import ink.ptms.adyeshach.module.editor.action.SimpleAction
+import ink.ptms.adyeshach.module.editor.action.SimpleGroup
+import org.bukkit.entity.Player
+import taboolib.common5.format
 
 /**
  * Adyeshach
@@ -9,9 +16,57 @@ import ink.ptms.adyeshach.module.editor.EditPanel
  * @author 坏黑
  * @since 2022/12/19 18:30
  */
-class PageMove(editor: EditPanel) : Page(editor) {
+class PageMove(editor: EditPanel) : MultiplePage(editor) {
 
-    override fun open(index: Int) {
-        super.open(index)
+    override fun subpage() = "move"
+
+    override fun groups(): List<ActionGroup> {
+        return listOf(
+            SimpleGroup(
+                "move-position", 8, listOf(
+                    SimpleAction.Literal("&7X: &a${entity.x.format()}"),
+                    SimpleAction.Literal("&7Y: &a${entity.y.format()}"),
+                    SimpleAction.Literal("&7Z: &a${entity.z.format()}"),
+                    SimpleAction.Literal("&7YAW: &a${entity.yaw.format()}"),
+                    SimpleAction.Literal("&7PITCH: &a${entity.pitch.format()}"),
+                )
+            ),
+            SimpleGroup("move-xyz", 8, listOf(Type.X.actions(), Type.Y.actions(), Type.Z.actions()).flatten()),
+            SimpleGroup("move-yp", 8, listOf(Type.YAW.actions(), Type.PITCH.actions()).flatten()),
+        )
+    }
+
+    fun Double.format(): String {
+        return String.format("%.2f", this)
+    }
+
+    fun Float.format(): String {
+        return String.format("%.2f", this)
+    }
+
+    enum class Type {
+
+        X, Y, Z, YAW, PITCH;
+
+        fun actions(): List<Action> {
+            return listOf(1.00, 0.5, 0.1, 0.01, -1.00, -0.50, -0.10, -0.01).map { Move(it, this) }
+        }
+    }
+
+    class Move(val value: Double, val type: Type) : SimpleAction.Literal(if (value > 0) "&a+${value.format()}" else "&c${value.format()}", null) {
+
+        override fun isCustomCommand(): Boolean {
+            return true
+        }
+
+        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String? {
+            return when (type) {
+                Type.X -> "adyeshach tp 1 to ~ ~$value ~ ~"
+                Type.Y -> "adyeshach tp 1 to ~ ~ ~$value ~"
+                Type.Z -> "adyeshach tp 1 to ~ ~ ~ ~$value"
+                Type.YAW -> "adyeshach tp 1 to ~ ~ ~ ~ ~$value"
+                Type.PITCH -> "adyeshach tp 1 to ~ ~ ~ ~ ~ ~$value"
+            }
+        }
     }
 }

@@ -18,7 +18,6 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
-import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
@@ -153,7 +152,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         }
 
     override fun setCustomMeta(key: String, value: String): Boolean {
-        super.setMetadata(key, value).ifTrue { return true }
         return when (key) {
             "nitwit" -> {
                 isNitwit = value.cbool
@@ -296,7 +294,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     override fun setHeadRotation(location: Location, forceUpdate: Boolean) {
         val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
-        position.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
+        clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
             setHeadRotation(entityLocation.yaw, entityLocation.pitch, forceUpdate)
         }
@@ -307,7 +305,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         if (forceUpdate) {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
         } else {
-            teleport(position.toLocation().modify(yaw, pitch))
+            teleport(clientPosition.toLocation().modify(yaw, pitch))
         }
     }
 

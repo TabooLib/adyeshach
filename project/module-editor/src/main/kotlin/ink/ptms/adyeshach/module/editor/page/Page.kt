@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.module.editor.RIGHT_ARROW
 import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.lang
 import taboolib.module.chat.TellrawJson
+import taboolib.platform.util.setMeta
 
 /**
  * Adyeshach
@@ -19,12 +20,16 @@ abstract class Page(val editor: EditPanel) {
     val player = editor.player
     val entity = editor.entity
 
-    val json = TellrawJson().newLine()
-
+    var json = TellrawJson().newLine()
     var index = 0
 
+    open fun subpage(): String? = null
+
     open fun open(index: Int = 0) {
+        this.json = TellrawJson().newLine()
         this.index = index
+        player.setMeta("adyeshach_last_open", this)
+        player.setMeta("adyeshach_last_open_index", index)
         // 清屏
         player.clearScreen()
         // 标题
@@ -56,6 +61,11 @@ abstract class Page(val editor: EditPanel) {
         json.append(" §8§l${RIGHT_ARROW}§r ")
         // ID
         json.append("§f${entity.id}")
+        // 下级页面标题
+        if (subpage() != null) {
+            json.append(" §8§l${RIGHT_ARROW}§r ")
+            json.appendLang("editor-page-${subpage()}")
+        }
         return json
     }
 

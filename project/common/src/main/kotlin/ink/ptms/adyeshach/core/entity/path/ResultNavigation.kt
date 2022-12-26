@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.core.entity.path
 
+import ink.ptms.adyeshach.core.AdyeshachSettings
+import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.util.Vector
 
@@ -9,12 +11,6 @@ import org.bukkit.util.Vector
  */
 class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, scheduleTime: Long) : Result(beginTime, scheduleTime) {
 
-//    fun display(world: World) {
-//        for (point in pointList) {
-//            world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
-//        }
-//    }
-
     /**
      * 将寻路结果转换为插值坐标
      *
@@ -22,8 +18,8 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, sche
      * @param moveSpeed 移动速度
      * @return 插值坐标
      */
-    fun toInterpolated(world: World, moveSpeed: Double): InterpolatedLocation {
-        val interpolatedLocation = InterpolatedLocation(world)
+    fun toInterpolated(world: World, moveSpeed: Double, moveTarget: Location): InterpolatedLocation {
+        val interpolatedLocation = InterpolatedLocation(world, moveTarget)
         var prevPoint: Vector? = null
         var tick = 0
         for (point in pointList) {
@@ -34,11 +30,16 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, sche
             interpolatedLocation.addPoint(tick, point.clone().add(Vector(0.5, 0.0, 0.5)))
             prevPoint = point
         }
-//        display(world)
-//        (0..interpolatedLocation.end).forEach {
-//            val next = interpolatedLocation.get(it)
-//            world.spawnParticle(org.bukkit.Particle.FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
-//        }
+        // 调试模式下将显示路径节点
+        if (AdyeshachSettings.debug) {
+            for (point in pointList) {
+                world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
+            }
+            (0..interpolatedLocation.end).forEach {
+                val next = interpolatedLocation.get(it)
+                world.spawnParticle(org.bukkit.Particle.FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+            }
+        }
         return interpolatedLocation
     }
 }

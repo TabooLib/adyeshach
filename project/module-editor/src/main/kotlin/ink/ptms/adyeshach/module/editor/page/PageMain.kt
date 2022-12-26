@@ -25,7 +25,13 @@ class PageMain(editor: EditPanel) : Page(editor) {
         appendId().newLine().newLine()
         // 衍生单位
         if (derivedId != null) {
-            json.append("  ").appendLang("entity-is-derived", derivedId)
+            // 对 derivedId 长度超过 20 的进行截断
+            val id = if (derivedId.length > 20) {
+                derivedId.substring(0, 20) + "..."
+            } else {
+                derivedId
+            }
+            json.append("  ").appendLang("entity-is-derived", id, derivedId)
             // 发送半屏消息
             player.sendNativeHalfMessage(json)
         } else {
@@ -43,19 +49,19 @@ class PageMain(editor: EditPanel) : Page(editor) {
             json.append("  ")
             json.appendLang("entity-public-traits")
                 .hoverText(player.lang("entity-public-traits-help"))
-                .runCommand("/adyeshach edit ${entity.uniqueId} g traits")
+                .runCommand("/adyeshach edit ${entity.uniqueId} traits")
             json.append(" §8| ")
             json.appendLang("entity-public-meta")
                 .hoverText(player.lang("entity-public-meta-help"))
-                .runCommand("/adyeshach edit ${entity.uniqueId} g public_meta")
+                .runCommand("/adyeshach edit ${entity.uniqueId} public-meta")
             json.append(" ")
             json.appendLang("entity-private-meta")
                 .hoverText(player.lang("entity-private-meta-help"))
-                .runCommand("/adyeshach edit ${entity.uniqueId} g private_meta")
+                .runCommand("/adyeshach edit ${entity.uniqueId} private-meta")
             json.append(" §8| ")
             json.appendLang("entity-move")
                 .hoverText(player.lang("entity-move-help"))
-                .runCommand("/adyeshach edit ${entity.uniqueId} g move")
+                .runCommand("/adyeshach edit ${entity.uniqueId} move")
                 .newLine().newLine()
 
             // 操作

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.command
 
+import ink.ptms.adyeshach.module.editor.ChatEditor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
@@ -30,6 +31,22 @@ object CommandAPI {
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
                 }
+                sender.removeMeta("adyeshach_ignore_notice")
+            }
+        }
+    }
+
+    @CommandBody
+    val ee = subCommand {
+        dynamic("command") {
+            execute<Player> { sender, _, args ->
+                sender.setMeta("adyeshach_ignore_notice", true)
+                try {
+                    adaptPlayer(sender).performCommand(args)
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                }
+                ChatEditor.refresh(sender)
                 sender.removeMeta("adyeshach_ignore_notice")
             }
         }

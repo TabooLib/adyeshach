@@ -17,13 +17,15 @@ const val STANDARD_EDIT_TRACKER = "edit"
 /**
  * npc edit (action)?
  *
- * npc edit e:hand->RESET
+ * npc edit e:d76d8d3c-a7ac-4432-b77d-8542fa23e257:traits:0:nitwit->m
+ * npc edit e:d76d8d3c-a7ac-4432-b77d-8542fa23e257:traits:0:nitwit->r
+ * npc edit m:hand->RESET
  */
 val editSubCommand = subCommand {
     dynamic("id") {
         suggestEntityList()
         dynamic("action") {
-            suggestUncheck { listOf("m", "main", "t", "traits", "pm", "public-meta", "pr", "private-meta", "move", "e") }
+            suggestUncheck { listOf("main", "traits", "public-meta", "private-meta", "move") }
             execute<Player> { sender, ctx, args ->
                 val npcList = Command.finder.getEntitiesFromIdOrUniqueId(ctx.argument(-1), sender)
                 if (npcList.isEmpty()) {
@@ -33,12 +35,14 @@ val editSubCommand = subCommand {
                 val editPanel = EditPanel(sender, npcList.first())
                 val page = args.substringAfter(":").cint
                 when (args.substringBefore(":")) {
-                    "m", "main" -> editPanel.open(EditPanelType.MAIN, page)
-                    "t", "traits" -> editPanel.open(EditPanelType.TRAITS, page)
-                    "pm", "public-meta" -> editPanel.open(EditPanelType.PUBLIC_META, page)
-                    "pr", "private-meta" -> editPanel.open(EditPanelType.PRIVATE_META, page)
+                    "main" -> editPanel.open(EditPanelType.MAIN, page)
+                    "traits" -> editPanel.open(EditPanelType.TRAITS, page)
+                    "public-meta" -> editPanel.open(EditPanelType.PUBLIC_META, page)
+                    "private-meta" -> editPanel.open(EditPanelType.PRIVATE_META, page)
                     "move" -> editPanel.open(EditPanelType.MOVE, page)
                     "e" -> {
+                    }
+                    "m" -> {
                         val key = args.substringAfter(":").substringBefore("->")
                         val value = args.substringAfter("->")
                         npcList.forEach { entity ->

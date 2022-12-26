@@ -42,5 +42,7 @@ fun Player.sendNativeFullMessage(message: TellrawJson, maxLine: Int = 20) {
  * 获取语言文件
  */
 fun Player.lang(id: String, vararg args: Any): String {
-    return Adyeshach.api().getLanguage().getLang(this, "editor-$id", *args) ?: id
+    return Adyeshach.api().getLanguage().getLang(this, "editor-$id", *args)
+        ?: Adyeshach.api().getLanguage().getLang(this, id, *args)
+        ?: "§c{$id}"
 }

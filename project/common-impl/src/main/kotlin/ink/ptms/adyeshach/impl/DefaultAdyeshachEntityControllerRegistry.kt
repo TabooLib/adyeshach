@@ -2,6 +2,8 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.AdyeshachEntityControllerRegistry
 import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
+import ink.ptms.adyeshach.impl.entity.controller.ControllerLookAtPlayer
+import ink.ptms.adyeshach.impl.entity.controller.ControllerRandomLookaround
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
@@ -30,6 +32,15 @@ class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegist
     companion object {
 
         val registeredControllerGenerator = LinkedHashMap<String, ControllerGenerator>()
+
+        init {
+            registeredControllerGenerator["LOOK_AT_PLAYER"] = ControllerGenerator(ControllerLookAtPlayer::class.java) {
+                ControllerLookAtPlayer(it, 8f)
+            }
+            registeredControllerGenerator["RANDOM_LOOKAROUND"] = ControllerGenerator(ControllerRandomLookaround::class.java) {
+                ControllerRandomLookaround(it)
+            }
+        }
 
         @Awake(LifeCycle.LOAD)
         fun init() {

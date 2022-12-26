@@ -12,4 +12,8 @@ interface ActionGroup {
     fun id(): String
 
     fun actionPerLine(): Int
+
+    fun length(): Int
+
+    fun actions(): List<Action>
 }

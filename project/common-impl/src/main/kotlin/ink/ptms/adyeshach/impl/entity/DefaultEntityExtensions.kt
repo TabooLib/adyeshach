@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.TickService
@@ -79,7 +80,7 @@ fun DefaultEntityInstance.updateMoveFrames() {
         val chunkAccess = ChunkAccess.getChunkAccess(world)
         it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighest(p.x, p.y, p.z) }
         // 设置移动路径
-        moveFrames = it.toInterpolated(world, moveSpeed)
+        moveFrames = it.toInterpolated(world, moveSpeed, moveTarget!!)
     }
 }
 
@@ -130,7 +131,10 @@ fun DefaultEntityInstance.handleMove() {
             }
             // 更新位置
             clientPosition = EntityPosition.fromLocation(next)
-            // getWorld().spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+            // 调试模式下显示路径
+            if (AdyeshachSettings.debug) {
+                world.spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+            }
         } else {
             moveTarget = null
         }

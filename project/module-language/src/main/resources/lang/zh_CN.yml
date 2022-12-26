@@ -21,52 +21,6 @@ error-meta-not-supported: '实体元数据 "{0}" 不支持当前版本'
 error-meta-not-allow: '实体元数据 "{0}" 不允许修改'
 error-meta-index-invalid: '无效的实体元数据索引: {0} ({1})'
 
-editor-copy: '复制'
-editor-manager-public: '&6公有单位'
-editor-manager-private: '&6私有单位'
-editor-manager-isolated: ' &7(孤立)'
-editor-manager-temporary: ' &7(临时)'
-editor-viewer: '&f观察者 &7({0})'
-editor-viewer-list-all: '&f允许看到这个单位的玩家:'
-editor-viewer-list-visible: '&f在这个单位可视范围内的玩家:'
-editor-controller: '&f控制器 &7({0})'
-editor-tags: '&f标签 &7({0})'
-editor-link: '&f关联 &7({0})'
-editor-link-vehicle: '&f这个单位的载具:'
-editor-link-passengers: '&f这个单位的乘客:'
-editor-entity-is-derived: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'
-editor-entity-public-traits: '&6[公共特性]'
-editor-entity-public-traits-help: |-
-  &6基于 Adyeshach 的插件机制
-  &7点击展开下级页面
-editor-entity-public-meta: '&6[公共数据]'
-editor-entity-public-meta-help: |-
-  &6所有实体都支持的数据类型, 属于实体自身的属性
-  &7点击展开下级页面
-editor-entity-private-meta: '&e[专有数据]'
-editor-entity-private-meta-help: |-
-  &e同类实体所特有的数据类型, 属于实体自身的属性
-  &7点击展开下级页面
-editor-entity-move: '&c[微调]'
-editor-entity-move-help: |-
-  调整实体的位置和视角
-  &7点击展开下级页面
-editor-entity-tools-0: '&8[&7传过去&8]'
-editor-entity-tools-0-help: '点击传送到这个单位的位置'
-editor-entity-tools-1: '&8[&7传过来&8]'
-editor-entity-tools-1-help: '点击使这个单位传送到你的位置'
-editor-entity-tools-2: '&8[&7走过来&8]'
-editor-entity-tools-2-help: '点击使这个单位走到你的位置'
-editor-entity-tools-3: '&8[&7看我&8]'
-editor-entity-tools-3-help: '点击使这个单位看向你'
-editor-entity-tools-4: '&8[&7学我&8]'
-editor-entity-tools-4-help: '点击使这个单位学习你的视角'
-editor-entity-tools-5: '&8[&7克隆&8]'
-editor-entity-tools-5-help: '点击克隆这个单位'
-editor-entity-tools-6: '&8[&7移除&8]'
-editor-entity-tools-6-help: '点击移除这个单位'
-editor-open-chat-screen: '&c^^^ 请展开对话框 ^^^'
-
 command-create-success-0: ' &5&l‹ ›&r &7已创建新的单位。'
 command-create-success-1:
   - ==: JSON
@@ -197,6 +151,87 @@ command-script-list-all:
 command-script-reload-all:
   - ' &5&l‹ ›&r &7重载完成.'
 
+editor-copy: '复制'
+editor-manager-public: '&6公有单位'
+editor-manager-private: '&6私有单位'
+editor-manager-isolated: ' &7(孤立)'
+editor-manager-temporary: ' &7(临时)'
+editor-page-public-traits: '&6公共特性'
+editor-page-public-meta: '&6公共数据'
+editor-page-private-meta: '&e专有数据'
+editor-page-move: '&c微调'
+editor-viewer: '&f观察者 &7({0})'
+editor-viewer-list-all: '&f允许看到这个单位的玩家:'
+editor-viewer-list-visible: '&f在这个单位可视范围内的玩家:'
+editor-controller: '&f控制器 &7({0})'
+editor-tags: '&f标签 &7({0})'
+editor-link: '&f关联 &7({0})'
+editor-link-vehicle: '&f这个单位的载具:'
+editor-link-passengers: '&f这个单位的乘客:'
+editor-entity-is-derived:
+  - ==: JSON
+    text: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'
+    args:
+      - hover: '{1}'
+editor-entity-public-traits: '&6[公共特性]'
+editor-entity-public-traits-help: |-
+  &6基于 Adyeshach 的插件机制
+  &7点击展开下级页面
+editor-entity-public-meta: '&6[公共数据]'
+editor-entity-public-meta-help: |-
+  &6所有实体都支持的数据类型, 属于实体自身的属性
+  &7点击展开下级页面
+editor-entity-private-meta: '&e[专有数据]'
+editor-entity-private-meta-help: |-
+  &e同类实体所特有的数据类型, 属于实体自身的属性
+  &7点击展开下级页面
+editor-entity-move: '&c[微调]'
+editor-entity-move-help: |-
+  调整实体的位置和视角
+  &7点击展开下级页面
+editor-entity-tools-0: '&8[&7传过去&8]'
+editor-entity-tools-0-help: '点击传送到这个单位的位置'
+editor-entity-tools-1: '&8[&7传过来&8]'
+editor-entity-tools-1-help: '点击使这个单位传送到你的位置'
+editor-entity-tools-2: '&8[&7走过来&8]'
+editor-entity-tools-2-help: '点击使这个单位走到你的位置'
+editor-entity-tools-3: '&8[&7看我&8]'
+editor-entity-tools-3-help: '点击使这个单位看向你'
+editor-entity-tools-4: '&8[&7学我&8]'
+editor-entity-tools-4-help: '点击使这个单位学习你的视角'
+editor-entity-tools-5: '&8[&7克隆&8]'
+editor-entity-tools-5-help: '点击克隆这个单位'
+editor-entity-tools-6: '&8[&7移除&8]'
+editor-entity-tools-6-help: '点击移除这个单位'
+editor-open-chat-screen: '&c^^^ 请展开对话框 ^^^'
+editor-reset: '&c重置'
+editor-back: '&8[&7返回&8]'
+editor-back-help: '点击返回上一级页面'
+editor-next: '下一页'
+editor-previous: '上一页'
+
+editor-meta-nitwit: '傻子'
+editor-meta-nitwit-description: |-
+  启用后具体表现形式为：&c控制器失效、移动失效
+editor-meta-move-speed: '移动速度'
+editor-meta-visible-distance: '可视距离'
+editor-meta-visible-after-loaded: '加载后可见'
+editor-meta-visible-after-loaded-description: |-
+  &c这个选项默认开启
+  如果关闭，这个单位在数据加载后不会立刻显现，直到玩家重新进入可视范围
+editor-meta-model-engine: '模型引擎'
+editor-meta-model-engine-description: |-
+  绑定 ModelEngine 插件的模型
+editor-meta-die: '死亡状态'
+editor-meta-die-description: |-
+  &c利用客户端渲染漏洞实现的特殊状态，无法保证稳定性
+editor-meta-equipment: '装备'
+
+group-move-position: '当前位置'
+group-move-xyz: 'X & Y & Z'
+group-move-yp: 'YAW & PITCH'
+group-traits0: '基础特性 0'
+group-traits1: '基础特性 1'
 group-base0: '基础 0'
 group-base1: '基础 1'
 group-base2: '基础 2'

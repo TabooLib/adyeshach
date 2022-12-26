@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.module.editor.page
 
 import ink.ptms.adyeshach.module.editor.EditPanel
+import ink.ptms.adyeshach.module.editor.action.ActionGroup
 
 /**
  * Adyeshach
@@ -9,9 +10,11 @@ import ink.ptms.adyeshach.module.editor.EditPanel
  * @author 坏黑
  * @since 2022/12/19 18:30
  */
-class PagePrivateMeta(editor: EditPanel) : Page(editor) {
+class PagePrivateMeta(editor: EditPanel) : MultiplePage(editor) {
 
-    override fun open(index: Int) {
-        super.open(index)
+    override fun subpage() = "private-meta"
+
+    override fun groups(): List<ActionGroup> {
+        return emptyList()
     }
 }
