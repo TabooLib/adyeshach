@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 /** 获取事件总线 */
 fun DefaultEntityInstance.getEventBus(): DefaultEventBus? {
-    return (manager as? DefaultManager)?.defaultEventBus
+    return (manager as? DefaultManager)?.eventBus
 }
 
 /** 所在区块是否加载 */
