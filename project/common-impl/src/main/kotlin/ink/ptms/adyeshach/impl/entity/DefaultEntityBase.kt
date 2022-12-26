@@ -2,9 +2,11 @@ package ink.ptms.adyeshach.impl.entity
 
 import com.eatthepath.uuid.FastUUID
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.util.plus
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
@@ -104,5 +106,9 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
      */
     final override fun getLocation(): Location {
         return position.toLocation()
+    }
+
+    override fun getEyeLocation(): Location {
+        return position.toLocation().plus(y = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType).height)
     }
 }

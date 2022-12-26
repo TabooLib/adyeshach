@@ -6,6 +6,8 @@ import ink.ptms.adyeshach.core.entity.TagContainer
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.event.AdyeshachControllerAddEvent
 import ink.ptms.adyeshach.core.event.AdyeshachControllerRemoveEvent
+import org.bukkit.entity.Entity
+import java.util.*
 
 /**
  * Adyeshach
@@ -75,6 +77,31 @@ interface DefaultControllable : Controllable {
     override fun resetController() {
         this as DefaultEntityInstance
         this.controller.forEach { unregisterController(it.javaClass) }
+    }
+
+    override fun controllerLookAt(entity: Entity) {
+        this as DefaultEntityInstance
+        this.bionicSight.setLookAt(entity)
+    }
+
+    override fun controllerLookAt(entity: Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
+        this as DefaultEntityInstance
+        this.bionicSight.setLookAt(entity, yMaxRotSpeed, xMaxRotAngle)
+    }
+
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double) {
+        this as DefaultEntityInstance
+        this.bionicSight.setLookAt(wantedX, wantedY, wantedZ)
+    }
+
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
+        this as DefaultEntityInstance
+        this.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
+    }
+
+    override fun random(): Random {
+        this as DefaultEntityInstance
+        return this.brain.random
     }
 
     private fun unregister(controller: Controller): Boolean {

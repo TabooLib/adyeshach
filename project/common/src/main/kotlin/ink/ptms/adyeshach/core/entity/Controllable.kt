@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.entity.controller.Controller
+import org.bukkit.entity.Entity
+import java.util.*
 
 /**
  * Adyeshach
@@ -60,4 +62,14 @@ interface Controllable {
      * 重置控制器
      */
     fun resetController()
+
+    fun controllerLookAt(entity: Entity)
+
+    fun controllerLookAt(entity: Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float)
+
+    fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double)
+
+    fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float)
+
+    fun random(): Random
 }

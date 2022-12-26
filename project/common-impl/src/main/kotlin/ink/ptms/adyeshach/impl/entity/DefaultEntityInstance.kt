@@ -16,6 +16,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.modify
+import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Location
@@ -99,6 +100,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     /** Ady 的小脑 */
     var brain = SimpleBrain(this)
+
+    /** 仿生视线 */
+    var bionicSight = BionicSight(this)
 
     /** 客户端位置 */
     var clientPosition = position
@@ -324,6 +328,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             handleMove()
             // 处理行为
             brain.tick()
+            bionicSight.tick()
             // 更新位置
             syncPosition()
         }

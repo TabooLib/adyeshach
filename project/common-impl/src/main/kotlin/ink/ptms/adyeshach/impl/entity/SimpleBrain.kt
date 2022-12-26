@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.controller.PrepareController
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -22,6 +23,8 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
     val postponeAdd = arrayListOf<Controller>()
     /** 每 30 秒检查一次 hold 内的无效控制器 */
     var checker = System.currentTimeMillis()
+    /** 随机生成器 */
+    val random = Random()
 
     fun tick() {
         interrupt.clear()

@@ -90,6 +90,11 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     fun getLocation(): Location
 
     /**
+     * 实体眼部所在位置
+     */
+    fun getEyeLocation(): Location
+
+    /**
      * 创建一个空的实体
      */
     fun createEmpty(): EntityBase

@@ -1,11 +1,12 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.entity.EntityEquipable
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.StandardTags
-import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.entity.type.*
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
+import ink.ptms.adyeshach.impl.entity.controller.ControllerLookAtPlayer
+import ink.ptms.adyeshach.impl.entity.controller.ControllerRandomLookaround
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Axolotl
@@ -24,7 +25,7 @@ import taboolib.platform.util.onlinePlayers
 @CommandHeader(name = "adytest")
 object Test {
 
-    lateinit var entity: AdyEntity
+    lateinit var entity: DefaultEntityInstance
 
     // @Schedule(period = 1)
     fun onTick() {
@@ -72,9 +73,9 @@ object Test {
                         npc.setName("傻逼")
                         npc.setTexture("bukkitObj")
                     }
-                    if (npc is EntityEquipable) {
-                        npc.setItemInMainHand(item)
-                    }
+//                    if (npc is EntityEquipable) {
+//                        npc.setItemInMainHand(item)
+//                    }
                     if (npc is AdyAxolotl) {
                         npc.setColor(Axolotl.Variant.BLUE)
                     }
@@ -89,12 +90,12 @@ object Test {
                     if (npc is AdyArmorStand) {
                         npc.setTag(StandardTags.DERIVED, "AdyeshachTest")
                     }
-                    npc.setCustomName("坏黑")
-                    npc.setCustomNameVisible(true)
-                    npc.setGlowing(true)
-                    npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
-                    npc.moveSpeed = 0.2
-                    entity = npc
+//                    npc.setCustomName("坏黑")
+//                    npc.setCustomNameVisible(true)
+//                    npc.setGlowing(true)
+//                    npc.setVelocity(sender.eyeLocation.direction.multiply(sender.itemInHand.amount.toDouble().coerceAtLeast(0.5)))
+                    npc.moveSpeed = 0.05
+                    entity = npc as DefaultEntityInstance
                 }
                 sender.info("OK")
             }
@@ -112,7 +113,7 @@ object Test {
     @CommandBody
     val move = subCommand {
         execute<Player> { sender, _, _ ->
-            entity.controllerMove(sender.location, PathType.WALK_2, 0.2)
+//            entity.controllerMove(sender.location, PathType.WALK_2, 0.2)
             sender.info("OK")
         }
     }
@@ -120,7 +121,16 @@ object Test {
     @CommandBody
     val look = subCommand {
         execute<Player> { sender, _, _ ->
-            entity.controllerLook(sender.location)
+            entity.bionicSight.setLookAt(sender)
+            sender.info("OK")
+        }
+    }
+
+    @CommandBody
+    val lookai = subCommand {
+        execute<Player> { sender, _, _ ->
+            entity.registerController(ControllerLookAtPlayer(entity, 8f))
+            entity.registerController(ControllerRandomLookaround(entity))
             sender.info("OK")
         }
     }

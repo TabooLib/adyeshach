@@ -67,4 +67,8 @@ abstract class Controller(val entity: EntityInstance? = null): Comparable<Contro
      * 是否能被其他控制器中断
      */
     open fun isInterruptable() = true
+
+    fun adjustedTickDelay(tick: Int): Int {
+        return -Math.floorDiv(-tick, 2);
+    }
 }

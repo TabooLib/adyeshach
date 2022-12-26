@@ -171,52 +171,54 @@ fun DefaultEntityInstance.allowSyncPosition(): Boolean {
 
 /** 同步位置 */
 fun DefaultEntityInstance.syncPosition() {
-    // 检查间隔
-    if (clientUpdateInterval.hasNext()) {
-        val updateRotation = (clientPosition.yaw - yaw).absoluteValue >= 1 || (clientPosition.pitch - pitch).absoluteValue >= 1
-        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-        // 乘坐实体
-        if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
-            // 是否需要更新视角
-            if (updateRotation) {
-                operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
+    val updateRotation = (clientPosition.yaw - yaw).absoluteValue >= 1 || (clientPosition.pitch - pitch).absoluteValue >= 1
+    val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+    // 乘坐实体
+    if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
+        // 是否需要更新视角
+        if (updateRotation) {
+            operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
+        }
+        // 是否需要同步到载具位置
+        if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
+            vehicleSync = System.currentTimeMillis()
+            // 获取载具
+            val vehicle = getVehicle()
+            if (vehicle != null) {
+                position = vehicle.position
             }
-            // 是否需要同步到载具位置
-            if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
-                vehicleSync = System.currentTimeMillis()
-                // 获取载具
-                val vehicle = getVehicle()
-                if (vehicle != null) {
-                    position = vehicle.position
-                }
-            }
-        } else {
-            // 是否需要更新位置
-            if (clientPosition != position) {
-                // 计算差值
-                val offset = clientPosition.clone().subtract(x, y, z)
-                val x = encodePos(offset.x)
-                val y = encodePos(offset.y)
-                val z = encodePos(offset.z)
-                val yaw = clientPosition.yaw
-                val pitch = clientPosition.pitch
-                val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
-                if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
-                    clientPositionFixed = System.currentTimeMillis()
-                    operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), !pathType.isFly())
-                } else {
-                    val updatePosition = offset.lengthSquared() > 1E-6
-                    if (updatePosition) {
+        }
+    } else {
+        // 是否需要更新位置
+        if (clientPosition != position) {
+            // 计算差值
+            val offset = clientPosition.clone().subtract(x, y, z)
+            val x = encodePos(offset.x)
+            val y = encodePos(offset.y)
+            val z = encodePos(offset.z)
+            val yaw = clientPosition.yaw
+            val pitch = clientPosition.pitch
+            val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
+            if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
+                clientPositionFixed = System.currentTimeMillis()
+                operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), !pathType.isFly())
+                position = clientPosition
+            } else {
+                val updatePosition = offset.lengthSquared() > 1E-6
+                if (updatePosition) {
+                    // 更新间隔
+                    if (clientUpdateInterval.hasNext()) {
                         if (updateRotation) {
                             operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, !pathType.isFly())
                         } else {
                             operator.updateRelEntityMove(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), !pathType.isFly())
                         }
-                    } else {
-                        operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
+                        position = clientPosition
                     }
+                } else {
+                    operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
+                    position = clientPosition
                 }
-                position = clientPosition
             }
         }
     }
