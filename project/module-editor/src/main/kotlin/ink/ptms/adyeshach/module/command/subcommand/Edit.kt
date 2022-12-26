@@ -83,7 +83,7 @@ val editSubCommand = subCommand {
                         // 获取有效的实体元数据
                         val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
                         if (metaFirst != null) {
-                            if (value == "@RESET") {
+                            if (value.equals("@RESET", true)) {
                                 entity.setMetadata(metaFirst.key, metaFirst.def)
                             } else {
                                 entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
