@@ -1,14 +1,11 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.Controllable
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.TagContainer
 import ink.ptms.adyeshach.core.entity.controller.Controller
-import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.event.AdyeshachControllerAddEvent
 import ink.ptms.adyeshach.core.event.AdyeshachControllerRemoveEvent
-import org.bukkit.Location
 
 /**
  * Adyeshach
@@ -78,102 +75,6 @@ interface DefaultControllable : Controllable {
     override fun resetController() {
         this as DefaultEntityInstance
         this.controller.forEach { unregisterController(it.javaClass) }
-    }
-
-    override fun isControllerMoving(): Boolean {
-//        this as DefaultEntityInstance
-//        return hasTag(StandardTags.IS_MOVING)
-        TODO()
-    }
-
-    override fun isControllerJumping(): Boolean {
-//        this as DefaultEntityInstance
-//        return hasTag(StandardTags.IS_JUMPING)
-        TODO()
-    }
-
-    override fun isControllerOnGround(): Boolean {
-//        this as DefaultEntityInstance
-//        return hasTag(StandardTags.IS_ON_GROUND)
-        TODO()
-    }
-
-    override fun controllerLook(location: Location, smooth: Boolean, smoothInternal: Float) {
-        this as DefaultEntityInstance
-        val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
-        position.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
-            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-            controllerLook(entityLocation.yaw, entityLocation.pitch, smooth, smoothInternal)
-        }
-    }
-
-    override fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean, smoothInternal: Float) {
-        this as DefaultEntityInstance
-//        TODO 重做
-//        if (smooth && controller.any { it is GeneralSmoothLook }) {
-//            val look = getController(GeneralSmoothLook::class.java)!!
-//            look.yaw = yaw
-//            look.pitch = pitch
-//            look.isReset = true
-//            look.isLooking = true
-//            look.interval = smoothInternal
-//        } else {
-//        sendHeadRotation(yaw, pitch)
-//        }
-    }
-
-    override fun controllerMove(location: Location, pathType: PathType, speed: Double) {
-        this as DefaultEntityInstance
-        // 在骑乘状态下无法寻路
-        if (hasVehicle()) {
-            return
-        }
-        moveTarget = location
-
-//        TODO 重做
-//        // 飞行单位需要 Move 控制器
-//        if (pathType == PathType.FLY && controller.none { it is GeneralMove }) {
-//            errorBy("error-no-move")
-//        }
-//        // 移动单位需要 Move、Gravity 控制器
-//        if (controller.none { it is GeneralMove } || controller.none { it is GeneralGravity }) {
-//            errorBy("error-no-move-and-gravity")
-//        }
-        // 设置尝试移动的标签
-//        setTag(StandardTags.IS_PATHFINDING, "true")
-        // 请求寻路
-//        PathFinderHandler.request(position.toLocation(), location, pathType) {
-//            // 路径节点为空
-//            if ((it as ResultNavigation).pointList.isEmpty()) {
-//                return@request
-//            }
-////            val move = getController(GeneralMove::class.java)!!
-////            move.speed = speed
-////            move.target = location
-////            move.pathType = pathType
-////            move.resultNavigation = it
-//            // 移除标签
-//            removeTag(StandardTags.IS_PATHFINDING)
-//        }
-    }
-
-    override fun controllerStill() {
-        this as DefaultEntityInstance
-//        // TODO 重做
-//        if (controller.any { it is GeneralMove }) {
-//            // 刷新 GeneralMove 控制器
-//            controller.removeIf { it is GeneralMove }
-//            controller.add(GeneralMove(this))
-//            controller.sort()
-//            // 移除标签
-//            removeTag(StandardTags.IS_MOVING)
-//            removeTag(StandardTags.IS_JUMPING)
-//        }
-    }
-
-    override fun isTryMoving(): Boolean {
-        this as DefaultEntityInstance
-        return hasTag(StandardTags.IS_PATHFINDING)
     }
 
     private fun unregister(controller: Controller): Boolean {

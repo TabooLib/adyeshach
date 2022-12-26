@@ -1,20 +1,13 @@
 package ink.ptms.adyeshach.impl.network
 
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
-import ink.ptms.adyeshach.core.AdyeshachSettings
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
-import taboolib.common.LifeCycle
-import taboolib.common.TabooLibCommon
-import taboolib.common.platform.function.registerBukkitListener
 import taboolib.common.platform.function.submitAsync
-import java.io.FileNotFoundException
-import java.io.IOException
+import taboolib.common.platform.function.warning
+import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.Type
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author Arasple
@@ -22,42 +15,19 @@ import java.util.*
  */
 class NetworkAshcon : AdyeshachNetworkAPI.Ashcon {
 
-    val ashconURL = arrayOf("https://api.ashcon.app/mojang/v2/user/")
+    val ashconURL = "https://api.ashcon.app/mojang/v2/user/"
 
-    val profiles: MutableMap<String, JsonObject?> = Collections.synchronizedMap(HashMap())
-
-    init {
-        TabooLibCommon.postpone(LifeCycle.ENABLE) {
-            // 是否启用 AshconAPI
-            if (AdyeshachSettings.ashconAPI) {
-                // 注册监听器
-                registerBukkitListener(PlayerJoinEvent::class.java) {
-                    submitAsync {
-                        try {
-                            profiles[it.player.name] = JsonParser().parse(readFromURL("${ashconURL[0]}${it.player.name}")).asJsonObject
-                        } catch (ignore: FileNotFoundException) {
-                        } catch (ignore: NullPointerException) {
-                        } catch (ignore: IOException) {
-                        }
-                    }
-                }
-                registerBukkitListener(PlayerQuitEvent::class.java) {
-                    profiles.remove(it.player.name)
-                }
+    override fun getTexture(name: String): CompletableFuture<AdyeshachNetworkAPI.SkinTexture> {
+        val future = CompletableFuture<AdyeshachNetworkAPI.SkinTexture>()
+        submitAsync {
+            val section = Configuration.loadFromString(readFromURL("$ashconURL$name"), Type.JSON)
+            if (section.contains("uuid")) {
+                future.complete(NetworkMineskin.Texture(section.getString("textures.raw.value")!!, section.getString("textures.raw.signature")!!))
+            } else {
+                warning("Unable to request valid data for $name from AshconAPI: ${section.getString("reason")}")
             }
         }
-    }
-
-    override fun getTextureValue(name: String): String? {
-        return getProfile(name)?.getAsJsonObject("textures")?.getAsJsonObject("raw")?.get("value")?.asString
-    }
-
-    override fun getTextureSignature(name: String): String? {
-        return getProfile(name)?.getAsJsonObject("textures")?.getAsJsonObject("raw")?.get("signature")?.asString
-    }
-
-    override fun getProfile(name: String): JsonObject? {
-        return profiles.getOrDefault(name, null)
+        return future
     }
 
     fun readFromURL(url: String): String {

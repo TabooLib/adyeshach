@@ -53,13 +53,6 @@ object AdyeshachSettings {
         get() = if (field == 0) 40 else field
 
     /**
-     * 是否启用 Ashcon API
-     */
-    @ConfigNode("Settings.ashcon-api")
-    var ashconAPI = true
-        private set
-
-    /**
      * 单位生成时机
      * JOIN 表示玩家进入游戏时
      * KEEP_ALIVE 表示当玩家向服务端发送第一个心跳包时

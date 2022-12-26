@@ -286,6 +286,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         setVelocity(Vector(x, y, z))
     }
 
+    override fun getVelocity(): Vector {
+        return deltaMovement.clone()
+    }
+
     override fun setHeadRotation(location: Location, forceUpdate: Boolean) {
         val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
         position.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->

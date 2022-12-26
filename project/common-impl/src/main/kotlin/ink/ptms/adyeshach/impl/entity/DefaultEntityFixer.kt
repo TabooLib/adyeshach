@@ -51,21 +51,4 @@ internal object DefaultEntityFixer {
             }
         }
     }
-
-    /**
-     * TODO
-     * 修正玩家类型的展示名称
-     */
-//    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//    fun onGenerate(e: AdyeshachNaturalMetaGenerateEvent) {
-//        val value = e.value
-//        if (e.meta.key == "customName" && value is String) {
-//            val length = if (e.entity.entityType == EntityTypes.PLAYER) 46 else 64
-//            if (value.length > length) {
-//                e.value = value.substring(0, length)
-//                // 发送警告
-//                console().sendLang("error-name-length", e.entity.id, e.entity.entityType, value.length, length)
-//            }
-//        }
-//    }
 }

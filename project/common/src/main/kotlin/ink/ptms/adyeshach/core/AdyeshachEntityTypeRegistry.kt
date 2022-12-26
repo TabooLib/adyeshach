@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.core
 
+import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntitySize
 import ink.ptms.adyeshach.core.entity.EntityTypes
@@ -46,6 +47,11 @@ interface AdyeshachEntityTypeRegistry {
      * 创建实体实例
      */
     fun getEntityInstance(entityType: EntityTypes): EntityInstance
+
+    /**
+     * 获取实体类
+     */
+    fun getEntityClass(entityType: EntityTypes): Class<EntityBase>
 
     /**
      * 获取实体类型标签（例如：TESTING，INVALID）

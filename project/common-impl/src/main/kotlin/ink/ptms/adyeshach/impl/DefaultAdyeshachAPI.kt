@@ -65,14 +65,10 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 设置标签避免重复执行
             player.setMeta("adyeshach_setup", true)
             // 公共管理器
-            getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach {
-                it.viewPlayers.viewers += player.name
-            }
-            getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
-                it.viewPlayers.viewers += player.name
-            }
+            getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
+            getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
             // 私有管理器
-            getPrivateEntityManager(player).onEnable()
+            getPrivateEntityManager(player, ManagerType.PERSISTENT).onEnable()
         }
     }
 
@@ -80,12 +76,8 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         if (player.hasMetadata("adyeshach_setup")) {
             player.removeMeta("adyeshach_setup")
             // 公共管理器
-            getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach {
-                it.removeViewer(player)
-            }
-            getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach {
-                it.removeViewer(player)
-            }
+            getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.removeViewer(player) }
+            getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
             // 私有管理器
             var privateManager = getPrivateEntityManager(player, ManagerType.PERSISTENT)
             privateManager.onDisable()
@@ -167,7 +159,9 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     companion object {
 
+        /** 玩家单位管理器 **/
         val playerEntityManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
+        /** 玩家单位管理器（临时） **/
         val playerEntityTemporaryManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
     }
 }

@@ -15,11 +15,8 @@ Settings:
   debug: false
   # Must be less than "view-distance" in server.properties
   visible-distance: 64
-  # BOOK: Compatible Version
-  # CHAT: Recommended Version (Affected by Iridescent plugin, it will be invalid)
-  editor-mode: CHAT
   # JOIN: When player joined the server
-  # KEEP_ALIVE: When player sent first position packet
+  # KEEP_ALIVE: When player sent a first position packet
   spawn-event: KEEP_ALIVE
   # Calculate on the main thread (Very low latency, Otherwise >2000ms)
   pathfinder-sync: true
@@ -28,5 +25,5 @@ Settings:
     - 'dungeon_world_1'
     - 'dungeon_world_2'
     - 'custom?'
+  # Refresh cycle for view conditions
   view-condition-interval: 40
-  ashcon-api: true

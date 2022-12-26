@@ -93,6 +93,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     fun setVelocity(x: Double, y: Double, z: Double)
 
     /**
+     * 获取实体动量
+     */
+    fun getVelocity(): org.bukkit.util.Vector
+
+    /**
      * 修改实体视角
      * @param location 位置
      * @param forceUpdate 强制更新

@@ -15,10 +15,10 @@ interface AdyeshachEntitySerializer {
     /**
      * 从 Yaml 中读取单位
      */
-    fun fromYaml(source: String, transfer: Function<String, String> = Function { it }): EntityInstance?
+    fun fromYaml(source: String, transfer: Function<String, String> = Function { it }): EntityInstance
 
     /**
      * 从 Json 中读取单位
      */
-    fun fromJson(source: String, transfer: Function<String, String> = Function { it }): EntityInstance?
+    fun fromJson(source: String, transfer: Function<String, String> = Function { it }): EntityInstance
 }

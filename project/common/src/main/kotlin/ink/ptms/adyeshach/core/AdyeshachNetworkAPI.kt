@@ -1,8 +1,9 @@
 package ink.ptms.adyeshach.core
 
-import com.google.gson.JsonObject
 import org.bukkit.command.CommandSender
+import taboolib.library.configuration.ConfigurationSection
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 /**
  * Adyeshach
@@ -30,19 +31,9 @@ interface AdyeshachNetworkAPI {
     interface Ashcon {
 
         /**
-         * 获取玩家皮肤信息
+         * 获取皮肤
          */
-        fun getTextureValue(name: String): String?
-
-        /**
-         * 获取玩家皮肤信息
-         */
-        fun getTextureSignature(name: String): String?
-
-        /**
-         * 获取玩家信息
-         */
-        fun getProfile(name: String): JsonObject?
+        fun getTexture(name: String): CompletableFuture<SkinTexture>
     }
 
     /**
@@ -57,12 +48,12 @@ interface AdyeshachNetworkAPI {
          * @param model 皮肤模型类型
          * @param sender 汇报接收者
          */
-        fun uploadTexture(file: File, model: SkinModel, sender: CommandSender): JsonObject?
+        fun uploadTexture(file: File, model: SkinModel, sender: CommandSender): ConfigurationSection?
 
         /**
          * 获取皮肤
          */
-        fun getTexture(name: String): SkinTexture?
+        fun getTexture(name: String): CompletableFuture<SkinTexture>
     }
 
     /**

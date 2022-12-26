@@ -157,14 +157,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setTexture(name: String) {
         gameProfile.textureName = name
-        // 延迟加载皮肤
-        submitAsync {
-            try {
-                Adyeshach.api().getNetworkAPI().getSkin().getTexture(name)?.also { setTexture(it.value(), it.signature()) }
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
+        // 加载皮肤
+        Adyeshach.api().getNetworkAPI().getSkin().getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
     }
 
     override fun setTexture(texture: String, signature: String) {

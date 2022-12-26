@@ -38,13 +38,11 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
     }
 
     override fun getVelocity(): Vector {
-        return Vector(0, 0, 0)
-//        TODO
-//        return entityInstance.getController(GeneralMove::class.java)?.target?.toVector()?.normalize() ?: Vector(0, 0, 0)
+        return entityInstance.getVelocity()
     }
 
     override fun isOnGround(): Boolean {
-        return entityInstance.isControllerOnGround()
+        return true
     }
 
     override fun getWorld(): World {

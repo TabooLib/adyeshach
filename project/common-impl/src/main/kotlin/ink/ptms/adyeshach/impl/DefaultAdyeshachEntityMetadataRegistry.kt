@@ -17,12 +17,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry
  *
  * @author 坏黑
  * @since 2022/6/20 01:30
  */
-class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataRegistry {
+class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
 
     val descriptionMeta = DescEntityMeta(releaseResourceFile("description/entity_meta.desc", true).readBytes().inputStream())
     val descriptionUnusedMeta = DescEntityUnusedMeta(releaseResourceFile("description/entity_meta_unused.desc", true).readBytes().inputStream())
@@ -58,7 +58,7 @@ class DefaultAdyeshachEntityMetadataHandler : AdyeshachEntityMetadataRegistry {
 
         @Awake(LifeCycle.LOAD)
         fun init() {
-            PlatformFactory.registerAPI<AdyeshachEntityMetadataRegistry>(DefaultAdyeshachEntityMetadataHandler())
+            PlatformFactory.registerAPI<AdyeshachEntityMetadataRegistry>(DefaultAdyeshachEntityMetadataRegistry())
         }
     }
 }

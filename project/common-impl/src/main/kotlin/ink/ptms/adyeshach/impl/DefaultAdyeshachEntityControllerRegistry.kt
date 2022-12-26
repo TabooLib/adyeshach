@@ -8,12 +8,12 @@ import taboolib.common.platform.PlatformFactory
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityControllerHandler
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityControllerRegistry
  *
  * @author 坏黑
  * @since 2022/6/20 01:36
  */
-class DefaultAdyeshachEntityControllerHandler : AdyeshachEntityControllerRegistry {
+class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegistry {
 
     override fun registerControllerGenerator(name: String, event: ControllerGenerator) {
         registeredControllerGenerator[name] = event
@@ -33,7 +33,7 @@ class DefaultAdyeshachEntityControllerHandler : AdyeshachEntityControllerRegistr
 
         @Awake(LifeCycle.LOAD)
         fun init() {
-            PlatformFactory.registerAPI<AdyeshachEntityControllerRegistry>(DefaultAdyeshachEntityControllerHandler())
+            PlatformFactory.registerAPI<AdyeshachEntityControllerRegistry>(DefaultAdyeshachEntityControllerRegistry())
         }
     }
 }

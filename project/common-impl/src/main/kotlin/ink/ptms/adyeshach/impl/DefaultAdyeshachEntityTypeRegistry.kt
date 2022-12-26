@@ -25,12 +25,12 @@ import taboolib.module.nms.AsmClassLoader
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityTypeHandler
+ * ink.ptms.adyeshach.impl.DefaultAdyeshachEntityTypeRegistry
  *
  * @author 坏黑
  * @since 2022/6/19 15:56
  */
-class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeRegistry {
+class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
 
     /** 实体类生成器 */
     val generator = SimpleEntityGenerator()
@@ -102,6 +102,10 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeRegistry {
         return originEntityBaseMap[entityType]!!.createEmpty() as EntityInstance
     }
 
+    override fun getEntityClass(entityType: EntityTypes): Class<EntityBase> {
+        return originEntityBaseMap[entityType]!!.javaClass
+    }
+
     override fun getEntityFlags(entityType: EntityTypes): List<String> {
         return descriptionEntityMap[entityType]!!.flags
     }
@@ -142,7 +146,7 @@ class DefaultAdyeshachEntityTypeHandler : AdyeshachEntityTypeRegistry {
 
         @Awake(LifeCycle.LOAD)
         fun init() {
-            PlatformFactory.registerAPI<AdyeshachEntityTypeRegistry>(DefaultAdyeshachEntityTypeHandler())
+            PlatformFactory.registerAPI<AdyeshachEntityTypeRegistry>(DefaultAdyeshachEntityTypeRegistry())
         }
     }
 }

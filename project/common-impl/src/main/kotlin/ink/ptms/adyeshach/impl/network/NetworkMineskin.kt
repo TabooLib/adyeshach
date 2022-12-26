@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.impl.network
 
 import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
@@ -10,13 +8,17 @@ import ink.ptms.adyeshach.core.serializer.Serializer
 import org.bukkit.command.CommandSender
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
+import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.Type
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.util.stream.Collectors
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author sky, libraryaddict
@@ -28,47 +30,41 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
     val crlf: String
         get() = "\r\n"
 
-    override fun getTexture(name: String): AdyeshachNetworkAPI.SkinTexture? {
+    override fun getTexture(name: String): CompletableFuture<AdyeshachNetworkAPI.SkinTexture> {
+        val future = CompletableFuture<AdyeshachNetworkAPI.SkinTexture>()
         val file = File(getDataFolder(), "skin/$name")
         if (file.exists() && file.length() > 1) {
-            val json = JsonParser().parse(file.readText(StandardCharsets.UTF_8)).asJsonObject
-            if (json.entrySet().size == 0) {
+            val json = Configuration.loadFromFile(file, Type.JSON)
+            if (json.getKeys(false).isEmpty()) {
                 warning("Unable to read valid data for $name from $file, please delete it.")
-                return null
+                return future
             }
-            return when {
-                json.has("network") -> Texture(json.get("value").asString, json.get("signature").asString)
+            future.complete(when {
+                // ashcon 缓存
+                json.contains("network") -> Texture(json.getString("value")!!, json.getString("signature")!!)
+                // mineskin 上传
                 else -> {
                     try {
                         // legacy version
-                        val texture = json.getAsJsonObject("members").getAsJsonObject("data").getAsJsonObject("members").getAsJsonObject("texture")
-                            .getAsJsonObject("members")
-                        Texture(texture.getAsJsonObject("value").get("value").asString, texture.getAsJsonObject("signature").get("value").asString)
+                        val texture = json.getConfigurationSection("members.data.members.texture.members")!!
+                        Texture(texture.getString("value.value")!!, texture.getString("signature.value")!!)
                     } catch (ignored: NullPointerException) {
                         // new version 2021/9/19
-                        val texture = json.getAsJsonObject("data").getAsJsonObject("texture")
-                        Texture(texture["value"].asString, texture["signature"].asString)
+                        val texture = json.getConfigurationSection("data.texture")!!
+                        Texture(texture.getString("value")!!, texture.getString("signature")!!)
                     }
                 }
-            }
+            })
         } else {
-            val ashcon = Adyeshach.api().getNetworkAPI().getAshcon()
-            val json = ashcon.getProfile(name)
-            if (json == null || json.size() == 0) {
-                warning("Unable to request valid data for $name from AshconAPI")
-                return null
-            }
-            return if (json.has("uuid")) {
-                val texture = Texture(ashcon.getTextureValue(name)!!, ashcon.getTextureSignature(name)!!)
-                newFile(file).writeText(Serializer.gson.toJson(texture))
-                texture
-            } else {
-                null
+            Adyeshach.api().getNetworkAPI().getAshcon().getTexture(name).thenAccept {
+                future.complete(it)
+                submitAsync { newFile(file).writeText(Serializer.gson.toJson(it)) }
             }
         }
+        return future
     }
 
-    override fun uploadTexture(file: File, model: AdyeshachNetworkAPI.SkinModel, sender: CommandSender): JsonObject? {
+    override fun uploadTexture(file: File, model: AdyeshachNetworkAPI.SkinModel, sender: CommandSender): ConfigurationSection? {
         try {
             val url = URL("https://api.mineskin.org/generate/upload?&model=${model.namespace}")
             val boundary = java.lang.Long.toHexString(System.currentTimeMillis())
@@ -99,37 +95,30 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                         writer.append("--").append(boundary).append("--").append(crlf).flush()
                         when (connection.responseCode) {
                             500 -> {
-                                val error = Gson().fromJson(
-                                    BufferedReader(InputStreamReader(connection.errorStream, StandardCharsets.UTF_8)).readText(), Error::class.java
-                                )
+                                val reader = BufferedReader(InputStreamReader(connection.errorStream, StandardCharsets.UTF_8))
+                                val error = Gson().fromJson(reader.readText(), Error::class.java)
                                 when (error.code) {
                                     403 -> {
                                         sender.sendMessage("§c[Adyeshach] §7mineskin.org denied access to that url")
                                     }
-
                                     404 -> {
                                         sender.sendMessage("§c[Adyeshach] §7mineskin.org unable to find an image at that url")
                                     }
-
                                     408, 504, 599 -> {
                                         sender.sendMessage("§c[Adyeshach] §7Took too long to connect to mineskin.org!")
                                     }
-
                                     else -> {
                                         sender.sendMessage("§c[Adyeshach] §7mineskin.org took too long to connect! Is your image valid?")
                                     }
                                 }
                             }
-
                             400 -> {
                                 sender.sendMessage("§c[Adyeshach] §7Invalid file provided! Please ensure it is a valid .png skin!")
                             }
-
                             else -> {
                                 connection.inputStream.use { input ->
-                                    return JsonParser().parse(
-                                        BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"))
-                                    ).asJsonObject
+                                    val reader = BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8))
+                                    return Configuration.loadFromString(reader.readLines().joinToString("\n"), Type.JSON)
                                 }
                             }
                         }

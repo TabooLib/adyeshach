@@ -8,9 +8,9 @@ import ink.ptms.adyeshach.core.entity.MetaMasked
 import ink.ptms.adyeshach.core.entity.Metaable
 import ink.ptms.adyeshach.core.entity.manager.event.MetaUpdateEvent
 import ink.ptms.adyeshach.core.util.errorBy
-import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaKeyLookup
-import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.metaTypeLookup
-import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataHandler.Companion.registeredEntityMeta
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.metaKeyLookup
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.metaTypeLookup
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.registeredEntityMeta
 import org.bukkit.entity.Player
 import taboolib.common.io.digest
 import java.util.concurrent.ConcurrentHashMap

@@ -1,8 +1,6 @@
 package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.entity.controller.Controller
-import ink.ptms.adyeshach.core.entity.path.PathType
-import org.bukkit.Location
 
 /**
  * Adyeshach
@@ -62,44 +60,4 @@ interface Controllable {
      * 重置控制器
      */
     fun resetController()
-
-    /**
-     * 单位是否在移动状态
-     */
-    fun isControllerMoving(): Boolean
-
-    /**
-     * 单位是否在跳跃状态
-     */
-    fun isControllerJumping(): Boolean
-
-    /**
-     * 单位是否在地表（依赖 Gravity 控制器）
-     */
-    fun isControllerOnGround(): Boolean
-
-    /**
-     * 使单位看向某个坐标
-     */
-    fun controllerLook(location: Location, smooth: Boolean = false, smoothInternal: Float = 22.5f)
-
-    /**
-     * 使单位看向某个视角
-     */
-    fun controllerLook(yaw: Float, pitch: Float, smooth: Boolean = false, smoothInternal: Float = 22.5f)
-
-    /**
-     * 使单位移动到某个坐标
-     */
-    fun controllerMove(location: Location, pathType: PathType, speed: Double)
-
-    /**
-     * 使单位停止移动
-     */
-    fun controllerStill()
-
-    /**
-     * 单位是否在尝试移动（等待寻路的过程）
-     */
-    fun isTryMoving(): Boolean
 }
