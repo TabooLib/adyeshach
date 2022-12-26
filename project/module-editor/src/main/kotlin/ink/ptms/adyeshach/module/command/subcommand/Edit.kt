@@ -1,11 +1,14 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
+import ink.ptms.adyeshach.core.util.getEnumOrNull
 import ink.ptms.adyeshach.module.command.Command
 import ink.ptms.adyeshach.module.command.EntitySource
 import ink.ptms.adyeshach.module.command.multiControl
 import ink.ptms.adyeshach.module.command.suggestEntityList
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.EditPanelType
+import ink.ptms.adyeshach.module.editor.EditType
+import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
@@ -17,8 +20,8 @@ const val STANDARD_EDIT_TRACKER = "edit"
 /**
  * npc edit (action)?
  *
- * npc edit e:d76d8d3c-a7ac-4432-b77d-8542fa23e257:traits:0:nitwit->m
- * npc edit e:d76d8d3c-a7ac-4432-b77d-8542fa23e257:traits:0:nitwit->r
+ * npc edit e:nitwit->m
+ * npc edit e:nitwit->r
  * npc edit m:hand->RESET
  */
 val editSubCommand = subCommand {
@@ -32,30 +35,63 @@ val editSubCommand = subCommand {
                     sender.sendLang("command-find-empty")
                     return@execute
                 }
-                val editPanel = EditPanel(sender, npcList.first())
+                val entity = npcList.first()
+                val editPanel = EditPanel(sender, entity)
+                // 页码
                 val page = args.substringAfter(":").cint
+                // 类型
                 when (args.substringBefore(":")) {
                     "main" -> editPanel.open(EditPanelType.MAIN, page)
                     "traits" -> editPanel.open(EditPanelType.TRAITS, page)
                     "public-meta" -> editPanel.open(EditPanelType.PUBLIC_META, page)
                     "private-meta" -> editPanel.open(EditPanelType.PRIVATE_META, page)
                     "move" -> editPanel.open(EditPanelType.MOVE, page)
+                    // 可视化修改
                     "e" -> {
-                    }
-                    "m" -> {
+                        // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
-                        val value = args.substringAfter("->")
-                        npcList.forEach { entity ->
-                            val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
-                            if (metaFirst != null) {
-                                if (value == "@RESET") {
-                                    entity.setMetadata(metaFirst.key, metaFirst.def)
-                                } else {
-                                    entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
+                        // 获取编辑器类型
+                        val editType = EditType::class.java.getEnumOrNull(args.substringAfter("->")) ?: EditType.AUTO
+                        // 自动识别
+                        if (editType == EditType.AUTO) {
+                            // 优先获取自定义编辑器
+                            var editor = MetaEditor.getCustomMetaEditor(entity, key)
+                            if (editor == null) {
+                                // 再获取默认编辑器
+                                val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
+                                if (metaFirst != null) {
+                                    editor = MetaEditor.getMetaEditor(metaFirst)
                                 }
-                            } else if (!entity.setCustomMeta(key, value)) {
-                                sender.sendLang("command-meta-not-found", key)
                             }
+                            // 打开编辑器
+                            if (editor != null) {
+                                editor.open(entity, sender)
+                            } else {
+                                sender.sendLang("command-meta-not-support-editor", key)
+                            }
+                        } else {
+                            // 固定类型
+                            MetaEditor.getMetaEditor(editType, key).open(entity, sender)
+                        }
+                    }
+                    // 快速修改
+                    "m" -> {
+                        // 获取节点
+                        val key = args.substringAfter(":").substringBefore("->")
+                        // 获取值
+                        val value = args.substringAfter("->")
+                        // 获取有效的实体元数据
+                        val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
+                        if (metaFirst != null) {
+                            if (value == "@RESET") {
+                                entity.setMetadata(metaFirst.key, metaFirst.def)
+                            } else {
+                                entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
+                            }
+                        }
+                        // 设置自定义元数据
+                        else if (!entity.setCustomMeta(key, value)) {
+                            sender.sendLang("command-meta-not-found", key)
                         }
                     }
                 }

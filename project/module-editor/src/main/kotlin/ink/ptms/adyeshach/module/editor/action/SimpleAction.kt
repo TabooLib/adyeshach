@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.module.editor.action
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.page.Page
 import org.bukkit.entity.Player
@@ -35,14 +36,20 @@ abstract class SimpleAction(val id: String) : Action {
         }
     }
 
-    class Meta(val node: String, val editor: String, val hasDescription: Boolean = false, private val isResettable: Boolean = true) : SimpleAction(node) {
+    class Meta(
+        val node: String,
+        val editor: EditType,
+        val value: Any? = null,
+        val hasDescription: Boolean = false,
+        private val isResettable: Boolean = true
+    ) : SimpleAction(node) {
 
         override fun display(player: Player): String {
-            return player.lang("meta-$node")
+            return "&7${player.lang("meta-$node")}".colored()
         }
 
         override fun description(player: Player): String? {
-            return if (hasDescription) player.lang("meta-$node-description") else null
+            return if (hasDescription) player.lang("meta-$node-description") else value?.let { "&7$it".colored() }
         }
 
         override fun isResettable(): Boolean {
@@ -62,11 +69,16 @@ abstract class SimpleAction(val id: String) : Action {
         }
     }
 
-    class MetaBool(val node: String, val value: Boolean, val hasDescription: Boolean = false, private val isResettable: Boolean = true) : SimpleAction(node) {
+    class MetaBool(
+        val node: String,
+        val value: Boolean,
+        val hasDescription: Boolean = false,
+        private val isResettable: Boolean = true
+    ) : SimpleAction(node) {
 
         override fun display(player: Player): String {
             val text = player.lang("meta-$node")
-            return if (value) "&a&n$text".colored() else "&7$text".colored()
+            return if (value) "&a&n$text".colored() else "&6$text".colored()
         }
 
         override fun description(player: Player): String? {

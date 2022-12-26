@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.module.editor
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
-import ink.ptms.adyeshach.module.editor.page.PageMain
-import ink.ptms.adyeshach.module.editor.page.PageMove
-import ink.ptms.adyeshach.module.editor.page.PagePrivateMeta
-import ink.ptms.adyeshach.module.editor.page.PageTraits
+import ink.ptms.adyeshach.module.editor.page.*
 import org.bukkit.entity.Player
 
 /**
@@ -20,7 +17,7 @@ class EditPanel(val player: Player, val entity: EntityInstance) {
         when (type) {
             EditPanelType.MAIN -> PageMain(this).open(page)
             EditPanelType.TRAITS -> PageTraits(this).open(page)
-            EditPanelType.PUBLIC_META -> PagePrivateMeta(this).open(page)
+            EditPanelType.PUBLIC_META -> PagePublicMeta(this).open(page)
             EditPanelType.PRIVATE_META -> PagePrivateMeta(this).open(page)
             EditPanelType.MOVE -> PageMove(this).open(page)
         }

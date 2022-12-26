@@ -130,11 +130,21 @@ class PageMain(editor: EditPanel) : Page(editor) {
         val list = arrayListOf<String>()
         if (entity.viewPlayers.viewers.isNotEmpty()) {
             list += player.lang("viewer-list-all")
-            list += entity.viewPlayers.viewers.map { "&f - &7$it" }
+            // 只显示前 8 位
+            list += entity.viewPlayers.viewers.take(8).map { "&f - &7${it}" }
+            // 如果超过 8 位则显示剩余数量
+            if (entity.viewPlayers.viewers.size > 8) {
+                list += "&f - &8... ${entity.viewPlayers.viewers.size - 8}"
+            }
         }
         if (entity.viewPlayers.visible.isNotEmpty()) {
             list += player.lang("viewer-list-visible")
-            list += entity.viewPlayers.visible.map { "&f - &7$it" }
+            // 只显示前 8 位
+            list += entity.viewPlayers.visible.take(8).map { "&f - &7${it}" }
+            // 如果超过 8 位则显示剩余数量
+            if (entity.viewPlayers.visible.size > 8) {
+                list += "&f - &8... ${entity.viewPlayers.visible.size - 8}"
+            }
         }
         return list.colored().joinToString("\n")
     }
