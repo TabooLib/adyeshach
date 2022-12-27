@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.core
 
 import ink.ptms.adyeshach.core.entity.Meta
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
 
 /**
  * Adyeshach
@@ -15,20 +14,20 @@ interface AdyeshachEntityMetadataRegistry {
     /**
      * 注册元数据模型（布尔值）
      */
-    fun registerEntityMetaMask(type: Class<out AdyEntity>, index: Int, group: String, key: String, mask: Byte, def: Boolean = false)
+    fun registerEntityMetaMask(type: Class<*>, index: Int, group: String, key: String, mask: Byte, def: Boolean = false)
 
     /**
      * 注册元数据模型（专业类型）
      */
-    fun registerEntityMetaNatural(type: Class<out AdyEntity>, index: Int, group: String, key: String, def: Any)
+    fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any)
 
     /**
      * 获取实体的元数据
      */
-    fun getEntityMeta(type: Class<out AdyEntity>): List<Meta<*>>
+    fun getEntityMeta(type: Class<*>): List<Meta<*>>
 
     /**
      * 获取实体无意义的元数据
      */
-    fun getEntityUnusedMeta(type: Class<out AdyEntity>): List<String>
+    fun getEntityUnusedMeta(type: Class<*>): List<String>
 }

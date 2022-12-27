@@ -66,12 +66,12 @@ interface AdyeshachEntityTypeRegistry {
     /**
      * 通过与 AdyEntity 类似的接口类获取对应实体类型
      */
-    fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes?
+    fun getEntityTypeFromAdyClass(clazz: Class<*>): EntityTypes?
 
     /**
      * 通过实体类型获取与 AdyEntity 类似的接口类
      */
-    fun getAdyClassFromEntityType(entityType: EntityTypes): Class<out AdyEntity>
+    fun getAdyClassFromEntityType(entityType: EntityTypes): Class<*>
 
     /**
      * 注册代理类生成前的回调函数

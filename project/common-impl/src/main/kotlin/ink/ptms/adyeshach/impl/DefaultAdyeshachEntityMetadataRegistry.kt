@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.AdyeshachEntityMetadataRegistry
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Meta
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.impl.description.DescEntityMeta
 import ink.ptms.adyeshach.impl.description.DescEntityUnusedMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
@@ -34,19 +33,19 @@ class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
         }
     }
 
-    override fun registerEntityMetaMask(type: Class<out AdyEntity>, index: Int, group: String, key: String, mask: Byte, def: Boolean) {
+    override fun registerEntityMetaMask(type: Class<*>, index: Int, group: String, key: String, mask: Byte, def: Boolean) {
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaMasked<EntityInstance>(index, key, group, mask, def)
     }
 
-    override fun registerEntityMetaNatural(type: Class<out AdyEntity>, index: Int, group: String, key: String, def: Any) {
+    override fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any) {
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaNatural<Any, EntityInstance>(index, key, group, def)
     }
 
-    override fun getEntityMeta(type: Class<out AdyEntity>): List<Meta<*>> {
+    override fun getEntityMeta(type: Class<*>): List<Meta<*>> {
         return registeredEntityMeta[type] ?: emptyList()
     }
 
-    override fun getEntityUnusedMeta(type: Class<out AdyEntity>): List<String> {
+    override fun getEntityUnusedMeta(type: Class<*>): List<String> {
         return descriptionUnusedMeta.metaMap[type] ?: emptyList()
     }
 

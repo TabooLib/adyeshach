@@ -114,7 +114,7 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
         return descriptionEntityMap[entityType]!!.updateInterval
     }
 
-    override fun getEntityTypeFromAdyClass(clazz: Class<out AdyEntity>): EntityTypes? {
+    override fun getEntityTypeFromAdyClass(clazz: Class<*>): EntityTypes? {
         return descriptionEntityMap.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }
 
