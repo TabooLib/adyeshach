@@ -48,7 +48,7 @@ val lookSubCommand = subCommand {
                     }
                     it.setHeadRotation(sender.location.yaw, sender.location.pitch, forceUpdate = true)
                     if (!sender.isIgnoreNotice()) {
-                        sender.sendLang("command-look-to-with", it.id, format(sender.location.yaw), format(sender.location.pitch))
+                        sender.sendLang("command-look-with", it.id, format(sender.location.yaw), format(sender.location.pitch))
                     }
                 }
             }

@@ -61,7 +61,7 @@ abstract class SimpleAction(val id: String) : Action {
         }
 
         override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
-            return "adyeshach edit ${entity.uniqueId} e:${id()}->$editor" // 使用 EDIT 并选用特定编辑器
+            return "adyeshach edit ${entity.uniqueId} e:${id()}->$editor ${value ?: ""}" // 使用 EDIT 并选用特定编辑器
         }
 
         override fun isRefreshPage(): Boolean {

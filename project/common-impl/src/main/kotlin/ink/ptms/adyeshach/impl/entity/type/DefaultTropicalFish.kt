@@ -25,6 +25,10 @@ abstract class DefaultTropicalFish(entityTypes: EntityTypes) : DefaultEntityLivi
                 setBodyColor(DyeColor::class.java.getEnum(value))
                 true
             }
+            "patterncolor", "pattern_color" -> {
+                setPatternColor(DyeColor::class.java.getEnum(value))
+                true
+            }
             "pattern" -> {
                 setPattern(TropicalFish.Pattern::class.java.getEnum(value))
                 true

@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
@@ -15,6 +16,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
@@ -153,6 +155,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
 
     override fun setCustomMeta(key: String, value: String): Boolean {
         return when (key) {
+            "pose" -> {
+                setPose(BukkitPose::class.java.getEnum(value))
+                true
+            }
             "nitwit" -> {
                 isNitwit = value.cbool
                 true

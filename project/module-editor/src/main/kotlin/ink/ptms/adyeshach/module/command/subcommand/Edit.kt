@@ -50,8 +50,10 @@ val editSubCommand = subCommand {
                     "e" -> {
                         // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
+                        // 默认值
+                        val def = args.substringAfter("->").substringAfter(' ')
                         // 获取编辑器类型
-                        val editType = EditType::class.java.getEnumOrNull(args.substringAfter("->")) ?: EditType.AUTO
+                        val editType = EditType::class.java.getEnumOrNull(args.substringAfter("->").substringBefore(' ')) ?: EditType.AUTO
                         // 自动识别
                         if (editType == EditType.AUTO) {
                             // 优先获取自定义编辑器
@@ -65,13 +67,13 @@ val editSubCommand = subCommand {
                             }
                             // 打开编辑器
                             if (editor != null) {
-                                editor.open(entity, sender)
+                                editor.open(entity, sender, def)
                             } else {
                                 sender.sendLang("command-meta-not-support-editor", key)
                             }
                         } else {
                             // 固定类型
-                            MetaEditor.getMetaEditor(editType, key).open(entity, sender)
+                            MetaEditor.getMetaEditor(editType, key).open(entity, sender, def)
                         }
                     }
                     // 快速修改
@@ -90,7 +92,7 @@ val editSubCommand = subCommand {
                             }
                         }
                         // 设置自定义元数据
-                        else if (!entity.setCustomMeta(key, value)) {
+                        else if (!entity.setCustomMeta(key.lowercase(), value)) {
                             sender.sendLang("command-meta-not-found", key)
                         }
                     }

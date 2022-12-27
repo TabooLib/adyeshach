@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.module
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.type.*
@@ -89,6 +90,9 @@ object Test {
                     }
                     if (npc is AdyArmorStand) {
                         npc.setTag(StandardTags.DERIVED, "AdyeshachTest")
+                    }
+                    if (npc is AdyVillager) {
+                        npc.setVillagerData(VillagerData(VillagerData.Type.JUNGLE, VillagerData.Profession.FARMER))
                     }
 //                    npc.setCustomName("坏黑")
 //                    npc.setCustomNameVisible(true)
