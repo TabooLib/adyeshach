@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.module.editor.meta.impl
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.type.AdyFallingBlock
+import ink.ptms.adyeshach.core.entity.type.AdyMinecart
 import ink.ptms.adyeshach.module.editor.ChatEditor
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
@@ -20,6 +22,14 @@ import taboolib.module.ui.type.Basic
  * @since 2022/12/27 04:04
  */
 open class MetaItem(val key: String) : MetaEditor {
+    
+    open fun getMetaItem(entity: EntityInstance): ItemStack {
+        return entity.getMetadata(key)
+    }
+    
+    open fun setMetaItem(entity: EntityInstance, itemStack: ItemStack) {
+        entity.setMetadata(key, itemStack)
+    }
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
         player.openMenu<Basic>(player.lang("input-item")) {
@@ -27,11 +37,11 @@ open class MetaItem(val key: String) : MetaEditor {
             rows(1)
             map("####@####")
             set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
-            set('@', entity.getMetadata<ItemStack>(key))
+            set('@', getMetaItem(entity))
             onClick('#')
             onClose {
                 // 修改元数据
-                entity.setMetadata(key, it.inventory.getItem(4) ?: ItemStack(Material.AIR))
+                setMetaItem(entity, it.inventory.getItem(4) ?: ItemStack(Material.AIR))
                 // 刷新页面
                 ChatEditor.refresh(player)
             }
@@ -40,22 +50,38 @@ open class MetaItem(val key: String) : MetaEditor {
 
     class Mat(key: String) : MetaItem(key) {
 
-        override fun open(entity: EntityInstance, player: Player, def: String) {
-            player.openMenu<Basic>(player.lang("input-item")) {
-                handLocked(false)
-                rows(1)
-                map("####@####")
-                set('#', XMaterial.BLACK_STAINED_GLASS_PANE) { name = "§f" }
-                set('@', entity.getMetadata<MaterialData>(key).toItemStack(1))
-                onClick('#')
-                onClose {
-                    // 修改元数据
-                    val itemStack = it.inventory.getItem(4) ?: ItemStack(Material.AIR)
-                    entity.setMetadata(key, itemStack.data ?: MaterialData(itemStack.type, itemStack.durability.toByte()))
-                    // 刷新页面
-                    ChatEditor.refresh(player)
-                }
-            }
+        override fun getMetaItem(entity: EntityInstance): ItemStack {
+            return entity.getMetadata<MaterialData>(key).toItemStack(1)
+        }
+
+        override fun setMetaItem(entity: EntityInstance, itemStack: ItemStack) {
+            entity.setMetadata(key, itemStack.data ?: MaterialData(itemStack.type, itemStack.durability.toByte()))
+        }
+    }
+
+    class Minecart : MetaItem("null") {
+
+        override fun getMetaItem(entity: EntityInstance): ItemStack {
+            entity as AdyMinecart
+            return entity.getCustomBlock().toItemStack(1)
+        }
+
+        override fun setMetaItem(entity: EntityInstance, itemStack: ItemStack) {
+            entity as AdyMinecart
+            entity.setCustomBlock(itemStack.data ?: MaterialData(itemStack.type, itemStack.durability.toByte()))
+        }
+    }
+
+    class FallingBlock : MetaItem("null") {
+
+        override fun getMetaItem(entity: EntityInstance): ItemStack {
+            entity as AdyFallingBlock
+            return MaterialData(entity.getMaterial(), entity.getData()).toItemStack(1)
+        }
+
+        override fun setMetaItem(entity: EntityInstance, itemStack: ItemStack) {
+            entity as AdyFallingBlock
+            entity.setMaterial(itemStack.type, itemStack.durability.toByte())
         }
     }
 }

@@ -46,3 +46,14 @@ fun Player.lang(id: String, vararg args: Any): String {
         ?: Adyeshach.api().getLanguage().getLang(this, id, *args)
         ?: "§c{$id}"
 }
+
+fun String.toLocaleKey(): String {
+    val builder = StringBuilder()
+    toString().toCharArray().forEachIndexed { _, c ->
+        when {
+            c.isUpperCase() -> builder.append("-${c.lowercaseChar()}")
+            else -> builder.append(c)
+        }
+    }
+    return builder.toString()
+}

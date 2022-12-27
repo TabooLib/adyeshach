@@ -34,7 +34,7 @@ class MetaVillager : MetaEditor {
             }) {
                 openType(entity, player)
             }
-            set(Slots.LINE_2_MIDDLE - 1, buildItem(Material.BOOKSHELF) {
+            set(Slots.LINE_2_MIDDLE + 1, buildItem(Material.BOOKSHELF) {
                 name = player.lang("input-villager-profession")
                 lore += player.lang("input-villager-description", entity.getVillagerData().profession)
             }) {
@@ -80,7 +80,7 @@ class MetaVillager : MetaEditor {
             }
             onClick { _, element ->
                 entity.setVillagerData(entity.getVillagerData().copy(profession = element))
-                openType(entity, player)
+                openProfession(entity, player)
             }
         }
     }

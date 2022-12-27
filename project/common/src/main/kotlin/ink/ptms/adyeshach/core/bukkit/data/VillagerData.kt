@@ -8,6 +8,10 @@ import org.bukkit.Material
  */
 data class VillagerData(val type: Type, val profession: Profession) {
 
+    override fun toString(): String {
+        return "$type $profession"
+    }
+
     enum class Type(val material: Material) {
 
         DESERT(Material.SAND),

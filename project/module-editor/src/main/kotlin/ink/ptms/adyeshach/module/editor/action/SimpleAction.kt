@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.page.Page
+import ink.ptms.adyeshach.module.editor.toLocaleKey
 import org.bukkit.entity.Player
 import taboolib.module.chat.colored
 import java.util.*
@@ -45,11 +46,11 @@ abstract class SimpleAction(val id: String) : Action {
     ) : SimpleAction(node) {
 
         override fun display(player: Player): String {
-            return "&7${player.lang("meta-$node")}".colored()
+            return "&7${player.lang("meta-${node.toLocaleKey()}")}".colored()
         }
 
         override fun description(player: Player): String? {
-            return if (hasDescription) player.lang("meta-$node-description") else value?.let { "&7$it".colored() }
+            return if (hasDescription) player.lang("meta-${node.toLocaleKey()}-description") else value?.let { "&7$it".colored() }
         }
 
         override fun isResettable(): Boolean {
@@ -77,12 +78,12 @@ abstract class SimpleAction(val id: String) : Action {
     ) : SimpleAction(node) {
 
         override fun display(player: Player): String {
-            val text = player.lang("meta-$node")
+            val text = player.lang("meta-${node.toLocaleKey()}")
             return if (value) "&a&n$text".colored() else "&6$text".colored()
         }
 
         override fun description(player: Player): String? {
-            return if (hasDescription) player.lang("meta-$node-description") else null
+            return if (hasDescription) player.lang("meta-${node.toLocaleKey()}-description") else null
         }
 
         override fun isResettable(): Boolean {

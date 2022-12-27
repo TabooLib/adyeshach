@@ -9,7 +9,7 @@ import kotlin.math.ceil
  * @author 坏黑
  * @since 2022/12/27 00:53
  */
-class SimpleGroup(val id: String, val actionPerLine: Int, val actions: List<Action>) : ActionGroup {
+open class SimpleGroup(val id: String, val actionPerLine: Int, val actions: List<Action>) : ActionGroup {
 
     override fun id(): String {
         return id
@@ -30,4 +30,6 @@ class SimpleGroup(val id: String, val actionPerLine: Int, val actions: List<Acti
     override fun actions(): List<Action> {
         return actions
     }
+
+    class Extras(id: String, actions: List<Action>) : SimpleGroup(id, 999, actions)
 }

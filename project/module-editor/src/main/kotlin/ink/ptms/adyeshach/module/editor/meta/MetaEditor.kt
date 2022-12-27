@@ -33,6 +33,7 @@ interface MetaEditor {
             return when (type) {
                 EditType.SIGN -> MetaPrimitive(key)
                 EditType.EQUIPMENT -> MetaEquipment()
+                EditType.FALLING_BLOCK -> MetaItem.FallingBlock()
                 else -> error("Unsupported type: $type")
             }
         }
@@ -107,6 +108,8 @@ interface MetaEditor {
                 entity is AdyArrow && key == "color" -> MetaColor(key)
                 // 生物
                 entity is AdyEntityLiving && key == "potionEffectColor" -> MetaColor(key)
+                // 矿车
+                entity is AdyMinecart && key == "customBlock" -> MetaItem.Minecart()
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java, useIndex = false)
                 // 不支持

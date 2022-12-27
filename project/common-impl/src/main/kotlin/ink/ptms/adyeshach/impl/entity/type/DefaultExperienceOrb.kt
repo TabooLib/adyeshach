@@ -22,6 +22,7 @@ abstract class DefaultExperienceOrb(entityTypes: EntityTypes) : DefaultEntity(en
 
     override fun setAmount(amount: Int) {
         this.amount = amount
+        respawn()
     }
 
     override fun getAmount(): Int {

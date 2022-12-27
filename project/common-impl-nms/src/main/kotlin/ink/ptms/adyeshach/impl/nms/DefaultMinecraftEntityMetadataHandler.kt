@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.warning
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
@@ -222,16 +223,20 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createParticleMeta(index: Int, particle: BukkitParticles): MinecraftMeta {
         val param = helper.adapt(particle)
-        return DefaultMeta(
-            when {
-                majorLegacy >= 11900 -> {
-                    NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.PARTICLE), param as NMSParticleParam)
+        return try {
+            DefaultMeta(
+                when {
+                    majorLegacy >= 11900 -> NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.PARTICLE), param as NMSParticleParam)
+                    else -> NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.j), param as NMS16ParticleParam)
                 }
-                else -> {
-                    NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.j), param as NMS16ParticleParam)
-                }
+            )
+        } catch (ex: ClassCastException) {
+            if (particle == BukkitParticles.HAPPY_VILLAGER) {
+                error("Particle \"HAPPY_VILLAGER\" is not supported in this version")
             }
-        )
+            warning("Particle \"$particle\" is not supported in this version")
+            return createParticleMeta(index, BukkitParticles.HAPPY_VILLAGER)
+        }
     }
 
     override fun createBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta {

@@ -12,6 +12,7 @@ import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
+import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.platform.util.sendLang
 
@@ -51,7 +52,7 @@ val editSubCommand = subCommand {
                         // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
                         // 默认值
-                        val def = args.substringAfter("->").substringAfter(' ')
+                        val def = args.substringAfter("->").substringAfter(' ', "")
                         // 获取编辑器类型
                         val editType = EditType::class.java.getEnumOrNull(args.substringAfter("->").substringBefore(' ')) ?: EditType.AUTO
                         // 自动识别
@@ -88,11 +89,17 @@ val editSubCommand = subCommand {
                             if (value.equals("@RESET", true)) {
                                 entity.setMetadata(metaFirst.key, metaFirst.def)
                             } else {
-                                entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
+                                // 这里需要对 Masked 类型的元数据进行特殊兼容
+                                // 因为 Masked 类型的元数据使用 ByteMetadataParser
+                                if (metaFirst.def is Boolean) {
+                                    entity.setMetadata(metaFirst.key, value.cbool)
+                                } else {
+                                    entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
+                                }
                             }
                         }
                         // 设置自定义元数据
-                        else if (!entity.setCustomMeta(key.lowercase(), value)) {
+                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), value)) {
                             sender.sendLang("command-meta-not-found", key)
                         }
                     }
