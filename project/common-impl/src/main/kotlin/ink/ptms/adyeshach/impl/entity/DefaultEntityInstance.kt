@@ -48,6 +48,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     /** 可见玩家 */
     override val viewPlayers = DefaultViewPlayers(this)
 
+    /** 实体大小 */
+    override val entitySize = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
+
+    /** 实体路径类型 */
+    override val entityPathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
+
     /** 是否移除 */
     override var isRemoved = false
 
@@ -136,9 +142,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             // 更新移动路径
             updateMoveFrames()
         }
-
-    /** 实体路径类型 */
-    val pathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
     /** 管理器 */
     override var manager: Manager? = null
@@ -309,7 +312,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
         // 强制更新
         if (forceUpdate) {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !entityPathType.isFly())
         } else {
             teleport(clientPosition.toLocation().modify(yaw, pitch))
         }
@@ -342,7 +345,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         val json = JsonParser().parse(toJson()).asJsonObject
         json.addProperty("id", newId)
         json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
-        val entity = Adyeshach.api().getEntitySerializer().fromJson(json.toString()) ?: return null
+        val entity = Adyeshach.api().getEntitySerializer().fromJson(json.toString())
         (manager ?: this.manager)?.add(entity)
         entity as DefaultEntityInstance
         entity.tag.putAll(tag)

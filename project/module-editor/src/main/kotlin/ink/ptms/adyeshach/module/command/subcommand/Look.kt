@@ -10,7 +10,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cdouble
 import taboolib.common5.cfloat
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_LOOK_TRACKER = "look"
 

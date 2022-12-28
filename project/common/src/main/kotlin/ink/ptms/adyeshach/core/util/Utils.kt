@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.util.NumberConversions
@@ -15,7 +16,14 @@ import taboolib.library.xseries.parseToMaterial
 import taboolib.platform.util.modifyMeta
 
 /**
- * 获取语言文件文本
+ * 使用 AdyeshachLanguage 发送语言文件
+ */
+fun CommandSender.sendLang(node: String, vararg args: Any) {
+    Adyeshach.api().getLanguage().sendLang(this, node, *args)
+}
+
+/**
+ * 通过 AdyeshachLanguage 获取语言文件文本
  */
 fun asLang(node: String, vararg args: Any) = Adyeshach.api().getLanguage().getLang(console().cast(), node, *args) ?: node
 

@@ -5,6 +5,10 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.console
+import taboolib.module.kether.KetherFunction
+import taboolib.module.kether.KetherShell
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -17,11 +21,13 @@ import java.util.concurrent.CompletableFuture
 class DefaultAdyeshachKetherHandler : AdyeshachKetherHandler {
 
     override fun invoke(source: String, player: Player?, vars: Map<String, Any>): CompletableFuture<Any?> {
-        TODO("Not yet implemented")
+        val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
+        return KetherShell.eval(source, sender = if (player != null) adaptPlayer(player) else console(), namespace = listOf("adyeshach"), vars = map)
     }
 
     override fun parseInline(source: String, player: Player?, vars: Map<String, Any>): String {
-        TODO("Not yet implemented")
+        val map = KetherShell.VariableMap(*vars.map { it.key to it.value }.toTypedArray())
+        return KetherFunction.parse(source, sender = if (player != null) adaptPlayer(player) else console(), namespace = listOf("adyeshach"), vars = map)
     }
 
     companion object {

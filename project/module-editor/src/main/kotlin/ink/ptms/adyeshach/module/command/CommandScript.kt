@@ -13,7 +13,7 @@ import taboolib.module.kether.Kether
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.printKetherErrorMessage
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 
 @CommandHeader(name = "adyeshachscript", aliases = ["ascript"], permission = "adyeshach.command")
 object CommandScript {

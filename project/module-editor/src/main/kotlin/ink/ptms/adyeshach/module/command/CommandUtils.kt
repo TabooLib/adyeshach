@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBuilder
 import taboolib.common.platform.function.allWorlds
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 import java.math.BigDecimal
 import java.math.RoundingMode
 

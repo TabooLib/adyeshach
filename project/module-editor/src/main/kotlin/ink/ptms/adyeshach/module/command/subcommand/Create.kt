@@ -8,7 +8,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggest
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 
 /**
  * npc create (type) (id) (action)?

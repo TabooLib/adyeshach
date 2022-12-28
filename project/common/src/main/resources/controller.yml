@@ -1,0 +1,33 @@
+
+
+#         Powered by TabooLib 6.0         #
+
+
+Controllers:
+  - icon:
+      material: ENDER_EYE
+      name: '&7看向玩家 (1%)'
+      lore:
+        - ''
+        - '&8模拟原版生物的视线效果'
+        - '&8参数:'
+        - '&f1% &7的概率看向 &f8 &7格内的玩家持续至少 &f40 &7游戏刻'
+    type: LOOK_AT_PLAYER:8,0.01,false,40
+  - icon:
+      material: ENDER_EYE
+      name: '&7看向玩家 (100%)'
+      lore:
+        - ''
+        - '&8固定看向玩家的视线效果'
+        - '&8参数:'
+        - '&f100% &7的概率看向 &f8 &7格内的玩家持续至少 &f100 &7游戏刻'
+    type: LOOK_AT_PLAYER:8,1.00,false,100
+  - icon:
+      material: ENDER_EYE
+      name: '&7看向周围 (1%)'
+      lore:
+        - ''
+        - '&8模拟原版生物的视线效果'
+        - '&8参数:'
+        - '&f1% &7的概率看向周围随机方向'
+    type: RANDOM_LOOKAROUND:0.01

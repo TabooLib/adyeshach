@@ -55,7 +55,7 @@ command-find-more-rename:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach rename {uuid} '
-        hover: '点击更名为...'
+        hover: '点击更名为..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-rename-update:
@@ -63,7 +63,7 @@ command-find-more-rename-update:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance} &8&l››&r [&6{new_id}]'
     args:
       - suggest: '/adyeshach rename {uuid} '
-        hover: '点击更名为...'
+        hover: '点击更名为..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
       - command: '/adyeshach rename {uuid} {old_id}'
@@ -73,7 +73,7 @@ command-find-teleport-rename:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach tp {uuid} '
-        hover: '点击传送到...'
+        hover: '点击传送到..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-move-rename:
@@ -81,7 +81,7 @@ command-find-move-rename:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach move {uuid} '
-        hover: '点击移动到...'
+        hover: '点击移动到..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-look:
@@ -89,7 +89,7 @@ command-find-more-look:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach look {uuid} '
-        hover: '点击看向...'
+        hover: '点击看向..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-edit:
@@ -144,13 +144,13 @@ command-meta-not-support-editor: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不支持
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
   - ' &5&l‹ ›&r &7{0}'
-command-script-not-found: ' &5&l‹ ›&r &7脚本不存在.'
-command-script-not-running: ' &5&l‹ ›&r &7脚本未在运行.'
+command-script-not-found: ' &5&l‹ ›&r &7脚本不存在。'
+command-script-not-running: ' &5&l‹ ›&r &7脚本未在运行。'
 command-script-list-all:
   - ' &5&l‹ ›&r &7所有脚本: &f{0}'
   - ' &5&l‹ ›&r &7运行脚本: &f{1}'
 command-script-reload-all:
-  - ' &5&l‹ ›&r &7重载完成.'
+  - ' &5&l‹ ›&r &7重载完成。'
 
 editor-copy: '复制'
 editor-manager-public: '&6公有单位'
@@ -219,6 +219,18 @@ editor-input-villager-type: '&7类型'
 editor-input-villager-profession: '&7职业'
 editor-input-villager-description: '&8当前: {0}'
 editor-input-enums: '请选择 {0}'
+editor-input-primitive: '请选择输入方式'
+editor-input-primitive-sign: '&7牌子输入'
+editor-input-primitive-sign-description: '&c首次使用会出现短暂的卡顿'
+editor-input-primitive-chat: '&7聊天输入'
+editor-input-chat:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}]'
+    args:
+      - suggest: '{0}'
+        hover: '点击复制'
+editor-input-book-name: '&f打开并输入内容'
+editor-input-book-description: '&7单位编辑器'
 
 editor-meta-nitwit: '傻子'
 editor-meta-nitwit-description: |-
@@ -415,6 +427,53 @@ editor-meta-has-left-horn: 'Has Left Horn'
 editor-meta-has-right-horn: 'Has Right Horn'
 editor-meta-anger-level: '愤怒等级'
 editor-meta-variant: '变体'
+
+trait-sit-manager-not-set: ' &5&l‹ ›&r &7单位管理器未被初始化。'
+trait-sit-remove: ' &5&l‹ ›&r &7生物已站立。'
+trait-sit-create: ' &5&l‹ ›&r &7生物已坐下。'
+trait-patrol:
+  - type: TITLE
+    title: ''
+    subtitle: '&7路径节点: &8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+  - type: ACTIONBAR
+    text: '&7按下 &fF &7键保存该 NPC 的路径节点 &8| &7按下 &fSHIFT + F &7重置。'
+trait-patrol-update:
+  - type: TITLE
+    title: ''
+    subtitle: '&7路径节点: &8{0}'
+    fadein: 0
+    stay: 60
+    fadeout: 0
+trait-patrol-tool-name: '&b路径工具'
+trait-patrol-tool-lore: '&7左键点击添加路径节点, 右键点击移除。'
+trait-title-finish: ' &5&l‹ ›&r &7特性已保存。'
+trait-title:
+  - type: TITLE
+    title: '&3&l特性 : 头衔'
+    subtitle: '&7打开书并输入指令内容'
+    fadein: 10
+    stay: 40
+    fadeout: 10
+trait-command-finish: ' &5&l‹ ›&r &7特性已保存。'
+trait-command:
+  - type: TITLE
+    title: '&3&l特性 : 指令'
+    subtitle: '&7打开书并输入指令内容'
+    fadein: 10
+    stay: 40
+    fadeout: 10
+trait-view-condition-finish: ' &5&l‹ ›&r &7特性已保存。'
+trait-view-condition:
+  - type: TITLE
+    title: '&3&l特性 : 可视条件'
+    subtitle: '&7打开书并输入条件内容'
+    fadein: 10
+    stay: 40
+    fadeout: 10
+trait-data-error: '&c[Adyeshach] &7文件 {0} 加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
 
 group-move-position: '当前位置'
 group-move-xyz: 'X & Y & Z'

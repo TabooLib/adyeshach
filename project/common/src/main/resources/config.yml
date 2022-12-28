@@ -13,17 +13,18 @@ Database:
 
 Settings:
   debug: false
-  # Must be less than "view-distance" in server.properties
+  # 必须小于 server.properties 中的 "view-distance"
   visible-distance: 64
-  # JOIN: When player joined the server
-  # KEEP_ALIVE: When player sent a first position packet
+  # JOIN: 当玩家加入服务器时
+  # KEEP_ALIVE: 当玩家发送第一个位置数据包时
   spawn-event: KEEP_ALIVE
-  # Calculate on the main thread (Very low latency, Otherwise >2000ms)
+  # 是否在主线程上进行路径计算
+  # 异步计算会带来延迟
   pathfinder-sync: true
-  # Delete NPC files when the specified world does not exist
+  # 当指定的世界不存在时删除单位文件
   delete-file-in-unknown-world:
     - 'dungeon_world_1'
     - 'dungeon_world_2'
     - 'custom?'
-  # Refresh cycle for view conditions
+  # 可视条件的刷新周期
   view-condition-interval: 40

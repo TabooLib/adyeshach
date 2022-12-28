@@ -14,12 +14,18 @@ import java.util.Random;
 public class ControllerRandomLookaround extends Controller {
 
     protected final EntityInstance entity;
-    private double relX;
-    private double relZ;
-    private int lookTime;
+    protected float probability;
+    protected double relX;
+    protected double relZ;
+    protected int lookTime;
 
     public ControllerRandomLookaround(EntityInstance entity) {
+        this(entity, 0.01f);
+    }
+
+    public ControllerRandomLookaround(EntityInstance entity, float probability) {
         this.entity = entity;
+        this.probability = probability;
     }
 
     @NotNull
@@ -41,7 +47,7 @@ public class ControllerRandomLookaround extends Controller {
 
     @Override
     public boolean shouldExecute() {
-        return this.entity.random().nextFloat() < 0.01F;
+        return this.entity.random().nextFloat() < this.probability;
     }
 
     @Override

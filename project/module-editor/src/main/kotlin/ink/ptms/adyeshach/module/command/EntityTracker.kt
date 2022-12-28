@@ -8,7 +8,7 @@ import org.bukkit.Particle
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common5.Coerce
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 import java.util.concurrent.TimeUnit
 
 /**

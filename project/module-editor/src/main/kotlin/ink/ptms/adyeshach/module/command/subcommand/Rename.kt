@@ -7,7 +7,7 @@ import ink.ptms.adyeshach.module.command.multiControl
 import ink.ptms.adyeshach.module.command.suggestEntityList
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.subCommand
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_RENAME_TRACKER = "rename"
 

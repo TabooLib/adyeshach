@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.core.entity.path.PathType
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
@@ -18,6 +19,16 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
      * 实体类型
      */
     val entityType: EntityTypes
+
+    /**
+     * 实体大小
+     */
+    val entitySize: EntitySize
+
+    /**
+     * 实体寻路方式
+     */
+    val entityPathType: PathType
 
     /**
      * 实体生成序号（名字）

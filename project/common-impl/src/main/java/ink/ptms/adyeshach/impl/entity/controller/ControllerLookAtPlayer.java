@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.entity.EntityInstance;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import taboolib.library.xseries.XMaterial;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -20,23 +21,33 @@ public class ControllerLookAtPlayer extends Controller {
     protected int lookTime;
     protected float probability;
     protected boolean onlyHorizontal;
+    protected int baseLookTime;
 
     @Nullable
     protected LivingEntity lookAt;
+
+    public ControllerLookAtPlayer(EntityInstance entity) {
+        this(entity, 8f, 0.01F);
+    }
 
     public ControllerLookAtPlayer(EntityInstance entity, float lookDistance) {
         this(entity, lookDistance, 0.01F);
     }
 
     public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability) {
-        this(entity, lookDistance, probability, false);
+        this(entity, lookDistance, probability, false, 40);
     }
 
     public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability, boolean onlyHorizontal) {
+        this(entity, lookDistance, probability, onlyHorizontal, 40);
+    }
+
+    public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability, boolean onlyHorizontal, int baseLookTime) {
         this.entity = entity;
         this.lookDistance = lookDistance;
         this.probability = probability;
         this.onlyHorizontal = onlyHorizontal;
+        this.baseLookTime = baseLookTime;
     }
 
     @NotNull
@@ -87,7 +98,7 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public void start() {
-        this.lookTime = this.adjustedTickDelay(40 + this.entity.random().nextInt(40));
+        this.lookTime = this.adjustedTickDelay(this.baseLookTime + this.entity.random().nextInt(this.baseLookTime));
     }
 
     @Override

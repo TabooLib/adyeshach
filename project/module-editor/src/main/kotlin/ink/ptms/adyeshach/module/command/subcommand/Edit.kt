@@ -14,7 +14,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cbool
 import taboolib.common5.cint
-import taboolib.platform.util.sendLang
+import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_EDIT_TRACKER = "edit"
 

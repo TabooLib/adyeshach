@@ -68,7 +68,7 @@ fun DefaultEntityInstance.updateMoveFrames() {
     // 设置标签
     setTag(StandardTags.IS_PATHFINDING, "true")
     // 请求路径
-    PathFinderHandler.request(position.toLocation(), moveTarget!!, pathType) {
+    PathFinderHandler.request(position.toLocation(), moveTarget!!, entityPathType) {
         it as ResultNavigation
         // 移除标签
         removeTag(StandardTags.IS_PATHFINDING)
@@ -205,7 +205,7 @@ fun DefaultEntityInstance.syncPosition() {
             val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
             if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
                 clientPositionFixed = System.currentTimeMillis()
-                operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), !pathType.isFly())
+                operator.teleportEntity(getVisiblePlayers(), index, clientPosition.toLocation(), !entityPathType.isFly())
                 position = clientPosition
             } else {
                 val updatePosition = offset.lengthSquared() > 1E-6
@@ -213,14 +213,14 @@ fun DefaultEntityInstance.syncPosition() {
                     // 更新间隔
                     if (clientUpdateInterval.hasNext()) {
                         if (updateRotation) {
-                            operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, !pathType.isFly())
+                            operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, !entityPathType.isFly())
                         } else {
-                            operator.updateRelEntityMove(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), !pathType.isFly())
+                            operator.updateRelEntityMove(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), !entityPathType.isFly())
                         }
                         position = clientPosition
                     }
                 } else {
-                    operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !pathType.isFly())
+                    operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !entityPathType.isFly())
                     position = clientPosition
                 }
             }
