@@ -72,4 +72,8 @@ abstract class Page(val editor: EditPanel) {
     fun TellrawJson.appendLang(node: String, vararg args: Any): TellrawJson {
         return append(player.lang(node, *args))
     }
+
+    fun TellrawJson.hoverLang(node: String, vararg args: Any): TellrawJson {
+        return hoverText(player.lang(node, *args))
+    }
 }

@@ -1,17 +1,17 @@
 package ink.ptms.adyeshach.module.editor.meta.impl
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.util.sendLang
+import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
-import taboolib.library.xseries.XMaterial
+import taboolib.common.platform.function.submit
+import taboolib.common.util.unsafeLazy
+import taboolib.module.configuration.Type
+import taboolib.module.configuration.createLocal
 import taboolib.module.nms.inputSign
-import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
-import taboolib.platform.util.Slots
-import taboolib.platform.util.buildItem
 import taboolib.platform.util.nextChat
-import ink.ptms.adyeshach.core.util.sendLang
 
 /**
  * Adyeshach
@@ -23,26 +23,37 @@ import ink.ptms.adyeshach.core.util.sendLang
 class MetaPrimitive(val key: String) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
-        player.openMenu<Basic>(player.lang("input-primitive")) {
-            rows(3)
-            set(Slots.LINE_2_MIDDLE - 1, buildItem(XMaterial.OAK_SIGN) {
-                name = player.lang("input-primitive-sign")
-                lore += player.lang("input-primitive-sign-description")
-            }) {
-                // 牌子输入
+        when (getPreferenceInputType(player)) {
+            InputType.SIGN -> {
                 player.inputSign(arrayOf(def, "", "", player.lang("input-sign"))) {
                     player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it[0] + it[1] + it[2]}")
                 }
             }
-            set(Slots.LINE_2_MIDDLE + 1, buildItem(XMaterial.PLAYER_HEAD) {
-                name = player.lang("input-primitive-chat")
-            }) {
-                // 聊天输入
-                language.sendLang(player, "editor-input-chat", def)
+            InputType.CHAT -> {
+                player.clearScreen()
+                player.sendLang("editor-input-chat", def)
                 player.nextChat {
-                    player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}")
+                    submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
                 }
             }
+        }
+    }
+
+    enum class InputType {
+
+        SIGN, CHAT
+    }
+
+    companion object {
+
+        val preference by unsafeLazy { createLocal("input-preference.json", type = Type.FAST_JSON) }
+
+        fun getPreferenceInputType(player: Player): InputType {
+            return preference.getString("${player.name}.input-type")?.let { InputType.valueOf(it) } ?: InputType.SIGN
+        }
+
+        fun setPreferenceInputType(player: Player, type: InputType) {
+            preference["${player.name}.input-type"] = type.name
         }
     }
 }

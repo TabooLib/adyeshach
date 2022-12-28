@@ -33,10 +33,24 @@ data class EntityPosition(
         return this
     }
 
+    fun add(position: EntityPosition): EntityPosition {
+        this.x += position.x
+        this.y += position.y
+        this.z += position.z
+        return this
+    }
+
     fun subtract(x: Double, y: Double, z: Double): EntityPosition {
         this.x -= x
         this.y -= y
         this.z -= z
+        return this
+    }
+
+    fun subtract(position: EntityPosition): EntityPosition {
+        this.x -= position.x
+        this.y -= position.y
+        this.z -= position.z
         return this
     }
 

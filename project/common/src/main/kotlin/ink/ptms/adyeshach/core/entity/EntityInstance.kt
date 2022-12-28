@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.core.entity
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
 import org.bukkit.Location
 
 /**
@@ -29,6 +30,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * 是否傻子（即禁用 AI）
      */
     var isNitwit: Boolean
+
+    /**
+     * 移动定位
+     */
+    var moveFrames: InterpolatedLocation?
 
     /**
      * 移动目标

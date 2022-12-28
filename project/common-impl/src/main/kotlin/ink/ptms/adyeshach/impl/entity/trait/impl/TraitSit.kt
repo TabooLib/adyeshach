@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import org.bukkit.entity.Player
 import taboolib.common.platform.event.SubscribeEvent
+import java.util.concurrent.CompletableFuture
 
 object TraitSit : Trait() {
 
@@ -18,36 +19,55 @@ object TraitSit : Trait() {
         }
     }
 
-    override fun getName(): String {
+    override fun id(): String {
         return "sit"
     }
 
-    override fun edit(player: Player, entityInstance: EntityInstance) {
+    override fun edit(player: Player, entityInstance: EntityInstance): CompletableFuture<Void> {
         if (entityInstance.manager == null) {
-            language.sendLang(player, "trait-sit-manager-not-set")
-            return
+            error("Entity manager is null.")
         }
         if (entityInstance.getVehicle()?.getCustomName() == "trait_sit_npc") {
-            val vehicle = entityInstance.getVehicle()!!
-            vehicle.removePassenger(entityInstance)
-            vehicle.remove()
-            language.sendLang(player, "trait-sit-remove")
+            entityInstance.setTraitSit(false)
         } else {
-            val inside = entityInstance.position.y.toString().substringAfter(".").startsWith("5")
-            val sitNPC = entityInstance.manager!!.create(EntityTypes.ARMOR_STAND, entityInstance.getLocation().run {
-                if (inside) {
-                    this.y -= 0.4
-                } else {
-                    this.y -= 0.2
-                }
-                this
-            }) as AdyArmorStand
-            sitNPC.setCustomName("trait_sit_npc")
-            sitNPC.setInvisible(true)
-            sitNPC.setMarker(true)
-            sitNPC.setSmall(true)
-            sitNPC.addPassenger(entityInstance)
-            language.sendLang(player, "trait-sit-create")
+            entityInstance.setTraitSit(true)
         }
+        return CompletableFuture.completedFuture(null)
+    }
+}
+
+/**
+ * 是否在坐下
+ */
+fun EntityInstance.isTraitSit(): Boolean {
+    return getVehicle()?.getCustomName() == "trait_sit_npc"
+}
+
+/**
+ * 切换坐下状态
+ */
+fun EntityInstance.setTraitSit(value: Boolean) {
+    if (value) {
+        setTraitSit(false)
+        // 生成椅子
+        val chair = manager!!.create(EntityTypes.ARMOR_STAND, getLocation().run {
+            // 位于方块中间
+            if (position.y.toString().substringAfter(".").startsWith("5")) {
+                this.y -= 0.4
+            } else {
+                this.y -= 0.2
+            }
+            this
+        }) as AdyArmorStand
+        chair.setDerived("AdyeshachTrait")
+        chair.setCustomName("trait_sit_npc")
+        chair.setInvisible(true)
+        chair.setMarker(true)
+        chair.setSmall(true)
+        chair.addPassenger(this)
+    } else if (getVehicle()?.getCustomName() == "trait_sit_npc") {
+        val chair = getVehicle()!!
+        chair.removePassenger(this)
+        chair.remove()
     }
 }

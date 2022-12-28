@@ -59,4 +59,16 @@ interface TagContainer {
      * 移除持久化标签
      */
     fun removePersistentTag(key: String)
+
+    /**
+     * 添加衍生物标签并设置为傻子
+     */
+    fun setDerived(id: String)
+
+    /**
+     * 是否为衍生物
+     */
+    fun isDerived(): Boolean {
+        return hasPersistentTag(StandardTags.DERIVED)
+    }
 }

@@ -33,9 +33,9 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, sche
         // 调试模式下将显示路径节点
         if (AdyeshachSettings.debug) {
             for (point in pointList) {
-                world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
+                world.spawnParticle(org.bukkit.Particle.END_ROD, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
             }
-            (0..interpolatedLocation.end).forEach {
+            (0..interpolatedLocation.length).forEach {
                 val next = interpolatedLocation.get(it)
                 world.spawnParticle(org.bukkit.Particle.FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
             }

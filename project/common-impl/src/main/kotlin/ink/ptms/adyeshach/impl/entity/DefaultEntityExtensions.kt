@@ -13,6 +13,7 @@ import ink.ptms.adyeshach.impl.compat.CompatServerTours
 import ink.ptms.adyeshach.impl.entity.manager.DefaultEventBus
 import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
 import ink.ptms.adyeshach.impl.util.ChunkAccess
+import org.bukkit.Location
 import org.bukkit.util.Vector
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -126,11 +127,11 @@ fun DefaultEntityInstance.handleMove() {
             temp.direction = Vector(next.x, temp.y, next.z).subtract(temp.toVector())
             // 不会看向脚下
             if (temp.pitch < 90f) {
-                next.yaw = temp.yaw
-                next.pitch = temp.pitch
+                next.yaw = Location.normalizeYaw(temp.yaw)
+                next.pitch = Location.normalizePitch(temp.pitch)
             }
             // 更新位置
-            clientPosition = EntityPosition.fromLocation(next)
+            teleport(EntityPosition.fromLocation(next))
             // 调试模式下显示路径
             if (AdyeshachSettings.debug) {
                 world.spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
@@ -175,13 +176,13 @@ fun DefaultEntityInstance.allowSyncPosition(): Boolean {
 
 /** 同步位置 */
 fun DefaultEntityInstance.syncPosition() {
-    val updateRotation = (clientPosition.yaw - yaw).absoluteValue >= 1 || (clientPosition.pitch - pitch).absoluteValue >= 1
+    val updateRotation = (clientPosition.yaw - position.yaw).absoluteValue >= 1 || (clientPosition.pitch - position.pitch).absoluteValue >= 1
     val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
     // 乘坐实体
     if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
         // 是否需要更新视角
         if (updateRotation) {
-            operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
+            operator.updateEntityLook(getVisiblePlayers(), index, clientPosition.yaw, clientPosition.pitch, true)
         }
         // 是否需要同步到载具位置
         if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
@@ -196,7 +197,7 @@ fun DefaultEntityInstance.syncPosition() {
         // 是否需要更新位置
         if (clientPosition != position) {
             // 计算差值
-            val offset = clientPosition.clone().subtract(x, y, z)
+            val offset = clientPosition.clone().subtract(position)
             val x = encodePos(offset.x)
             val y = encodePos(offset.y)
             val z = encodePos(offset.z)

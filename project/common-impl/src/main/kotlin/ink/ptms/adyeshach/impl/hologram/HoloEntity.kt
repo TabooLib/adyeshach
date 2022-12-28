@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.impl.hologram
 
 import ink.ptms.adyeshach.core.AdyeshachHologram
-import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.util.plus
@@ -35,7 +34,7 @@ abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.Item
         this.offset = offset
         this.origin = location.clone()
         this.entity = manager.create(type, origin.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
-        this.entity.setPersistentTag(StandardTags.DERIVED, "AdyeshachHologram")
+        this.entity.setDerived("AdyeshachHologram")
     }
 
     /** 删除全息 */

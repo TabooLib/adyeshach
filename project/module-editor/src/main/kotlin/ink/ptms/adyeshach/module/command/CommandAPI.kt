@@ -1,12 +1,10 @@
 package ink.ptms.adyeshach.module.command
 
 import ink.ptms.adyeshach.module.editor.ChatEditor
+import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
-import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.command.*
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.expansion.createHelper
 import taboolib.platform.util.hasMeta
@@ -21,6 +19,9 @@ object CommandAPI {
         createHelper()
     }
 
+    /**
+     * 静默输入
+     */
     @CommandBody
     val se = subCommand {
         dynamic("command") {
@@ -36,6 +37,9 @@ object CommandAPI {
         }
     }
 
+    /**
+     * 静默输入并刷新页面
+     */
     @CommandBody
     val ee = subCommand {
         dynamic("command") {
@@ -48,6 +52,20 @@ object CommandAPI {
                 }
                 ChatEditor.refresh(sender)
                 sender.removeMeta("adyeshach_ignore_notice")
+            }
+        }
+    }
+
+    /**
+     * 输入设置
+     */
+    @CommandBody
+    val pi = subCommand {
+        dynamic("input-type") {
+            suggest { listOf("SIGN", "CHAT") }
+            execute<Player> { sender, _, args ->
+                MetaPrimitive.setPreferenceInputType(sender, MetaPrimitive.InputType.valueOf(args))
+                ChatEditor.refresh(sender)
             }
         }
     }

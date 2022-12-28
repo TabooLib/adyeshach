@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.module.editor.page
 
 import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
+import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import taboolib.module.chat.colored
 
 /**
@@ -107,6 +108,19 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
                 .runCommand("/adyeshach edit ${entity.uniqueId} ${subpage()}:${index + 1}")
         } else {
             json.append("&8[ &8&l${RIGHT_ARROW}&8 ]".colored())
+        }
+        // 偏好设置
+        json.append(" ")
+        when (MetaPrimitive.getPreferenceInputType(player)) {
+            MetaPrimitive.InputType.SIGN -> {
+                json.appendLang("input-primitive-type-sign")
+                    .hoverLang("input-primitive-type-sign-warn")
+                    .runCommand("/adyeshach api pi CHAT")
+            }
+            MetaPrimitive.InputType.CHAT -> {
+                json.appendLang("input-primitive-type-chat")
+                    .runCommand("/adyeshach api pi SIGN")
+            }
         }
     }
 

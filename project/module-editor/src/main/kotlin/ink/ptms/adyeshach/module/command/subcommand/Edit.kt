@@ -1,20 +1,24 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
 import ink.ptms.adyeshach.core.util.getEnumOrNull
+import ink.ptms.adyeshach.core.util.sendLang
+import ink.ptms.adyeshach.impl.entity.trait.TraitFactory
+import ink.ptms.adyeshach.impl.entity.trait.impl.getTraitPatrolWaitTime
+import ink.ptms.adyeshach.impl.entity.trait.impl.refreshTraitPatrolNodes
+import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitPatrolWaitTime
 import ink.ptms.adyeshach.module.command.Command
 import ink.ptms.adyeshach.module.command.EntitySource
 import ink.ptms.adyeshach.module.command.multiControl
 import ink.ptms.adyeshach.module.command.suggestEntityList
-import ink.ptms.adyeshach.module.editor.EditPanel
-import ink.ptms.adyeshach.module.editor.EditPanelType
-import ink.ptms.adyeshach.module.editor.EditType
+import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cbool
 import taboolib.common5.cint
-import ink.ptms.adyeshach.core.util.sendLang
+import taboolib.common5.clong
+import taboolib.module.nms.inputSign
 
 const val STANDARD_EDIT_TRACKER = "edit"
 
@@ -101,6 +105,28 @@ val editSubCommand = subCommand {
                         // 设置自定义元数据
                         else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), value)) {
                             sender.sendLang("command-meta-not-found", key)
+                        }
+                    }
+                    // 特性
+                    "t" -> {
+                        // 获取节点
+                        when (val id = args.substringAfter(":")) {
+                            "sit", "title", "command", "view-condition" -> {
+                                TraitFactory.getTraitById(id)?.edit(sender, entity)?.thenRun { ChatEditor.refresh(sender) }
+                            }
+                            "patrols" -> {
+                                TraitFactory.getTraitById("patrol")?.edit(sender, entity)
+                            }
+                            "patrols-wait-time" -> {
+                                val l1 = sender.lang("input-patrols-wait-time0")
+                                val l2 = sender.lang("input-patrols-wait-time1")
+                                // 牌子输入
+                                sender.inputSign(arrayOf("${entity.getTraitPatrolWaitTime()}", "", l1, l2)) {
+                                    entity.setTraitPatrolWaitTime(it[0].clong)
+                                    ChatEditor.refresh(sender)
+                                }
+                            }
+                            "patrols-update" -> entity.refreshTraitPatrolNodes()
                         }
                     }
                 }

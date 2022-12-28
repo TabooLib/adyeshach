@@ -219,10 +219,9 @@ editor-input-villager-type: '&7类型'
 editor-input-villager-profession: '&7职业'
 editor-input-villager-description: '&8当前: {0}'
 editor-input-enums: '请选择 {0}'
-editor-input-primitive: '请选择输入方式'
-editor-input-primitive-sign: '&7牌子输入'
-editor-input-primitive-sign-description: '&c首次使用会出现短暂的卡顿'
-editor-input-primitive-chat: '&7聊天输入'
+editor-input-primitive-type-chat: '&8[&7聊天输入&8]'
+editor-input-primitive-type-sign: '&8[&7牌子输入&8]'
+editor-input-primitive-type-sign-warn: '&c首次使用会出现短暂的卡顿'
 editor-input-chat:
   - ==: JSON
     text: ' &5&l‹ ›&r &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}]'
@@ -231,6 +230,8 @@ editor-input-chat:
         hover: '点击复制'
 editor-input-book-name: '&f打开并输入内容'
 editor-input-book-description: '&7单位编辑器'
+editor-input-patrols-wait-time0: '请在第一行输入等待时间'
+editor-input-patrols-wait-time1: '单位: 毫秒'
 
 editor-meta-nitwit: '傻子'
 editor-meta-nitwit-description: |-
@@ -253,6 +254,13 @@ editor-meta-title: '头衔'
 editor-meta-sit: '坐下'
 editor-meta-command: '绑定指令'
 editor-meta-patrols: '巡逻'
+editor-meta-patrols-wait-time: '巡逻等待时间'
+editor-meta-patrols-update: '更新巡逻路径'
+editor-meta-patrols-update-description: |-
+  &6巡逻节点保存后将会立刻计算出移动路径, 以提高性能
+  &6因此在修改地形或移动速度后需要重新计算路径
+  &r
+  &c点一次就行, 没有提示。
 editor-meta-view-condition: '可视条件'
 editor-meta-is-dancing: '跳舞'
 editor-meta-is-faceplanted: '脸部埋入地下'
@@ -428,9 +436,6 @@ editor-meta-has-right-horn: 'Has Right Horn'
 editor-meta-anger-level: '愤怒等级'
 editor-meta-variant: '变体'
 
-trait-sit-manager-not-set: ' &5&l‹ ›&r &7单位管理器未被初始化。'
-trait-sit-remove: ' &5&l‹ ›&r &7生物已站立。'
-trait-sit-create: ' &5&l‹ ›&r &7生物已坐下。'
 trait-patrol:
   - type: TITLE
     title: ''
@@ -449,7 +454,6 @@ trait-patrol-update:
     fadeout: 0
 trait-patrol-tool-name: '&b路径工具'
 trait-patrol-tool-lore: '&7左键点击添加路径节点, 右键点击移除。'
-trait-title-finish: ' &5&l‹ ›&r &7特性已保存。'
 trait-title:
   - type: TITLE
     title: '&3&l特性 : 头衔'
@@ -457,7 +461,6 @@ trait-title:
     fadein: 10
     stay: 40
     fadeout: 10
-trait-command-finish: ' &5&l‹ ›&r &7特性已保存。'
 trait-command:
   - type: TITLE
     title: '&3&l特性 : 指令'
@@ -465,7 +468,6 @@ trait-command:
     fadein: 10
     stay: 40
     fadeout: 10
-trait-view-condition-finish: ' &5&l‹ ›&r &7特性已保存。'
 trait-view-condition:
   - type: TITLE
     title: '&3&l特性 : 可视条件'
@@ -480,7 +482,8 @@ group-move-xyz: 'X & Y & Z'
 group-move-yp: 'YAW & PITCH'
 group-traits0: '实体特性'
 group-traits1: '生物特性'
-group-traits2: '附加特性'
+group-traits2: '附加特性 0'
+group-traits3: '附加特性 1'
 group-extras0: '附加 0'
 group-extras1: '附加 1'
 group-base0: '基础 0'

@@ -3,12 +3,12 @@ package ink.ptms.adyeshach.module.command
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.core.util.sendLang
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBuilder
 import taboolib.common.platform.function.allWorlds
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
-import ink.ptms.adyeshach.core.util.sendLang
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,14 +38,16 @@ fun EntityInstance.getName(): String {
 }
 
 fun CommandBuilder.CommandComponentDynamic.suggestEntityList() {
-    suggestion<CommandSender>(uncheck = true) { sender, _ -> Command.finder.getEntities(if (sender is Player) sender else null).map { it.id } }
+    suggestion<CommandSender>(uncheck = true) { sender, _ ->
+        Command.finder.getEntities(if (sender is Player) sender else null) { !it.isDerived() }.map { it.id }
+    }
 }
 
 /**
  * 就近复选操作
  */
 inline fun <reified T : EntitySource> multiControl(sender: Player, action: String) {
-    val npcList = Command.finder.getEntities(sender) { it.getLocation().safeDistance(sender.location) < 16 }
+    val npcList = Command.finder.getEntities(sender) { it.getLocation().safeDistance(sender.location) < 16 && !it.isDerived() }
     if (npcList.isEmpty()) {
         sender.sendLang("command-find-empty")
     } else {
@@ -63,7 +65,7 @@ inline fun <reified T : EntitySource> multiControl(
     unified: Boolean = true,
     singleAction: (EntityInstance) -> Unit = {}
 ) {
-    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, if (sender is Player) sender else null)
+    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, if (sender is Player) sender else null).filter { !it.isDerived() }
     when {
         // 空列表
         npcList.isEmpty() -> {

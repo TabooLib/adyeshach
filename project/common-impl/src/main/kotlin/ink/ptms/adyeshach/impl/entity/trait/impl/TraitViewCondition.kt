@@ -12,11 +12,12 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
-import taboolib.common5.Coerce
+import taboolib.common5.cbool
 import taboolib.common5.clong
 import taboolib.module.kether.KetherShell
-import taboolib.module.kether.printKetherErrorMessage
+import taboolib.module.kether.bool
 import taboolib.module.kether.runKether
+import java.util.concurrent.CompletableFuture
 
 object TraitViewCondition : Trait() {
 
@@ -46,11 +47,12 @@ object TraitViewCondition : Trait() {
         }
     }
 
-    override fun getName(): String {
+    override fun id(): String {
         return "view-condition"
     }
 
-    override fun edit(player: Player, entityInstance: EntityInstance) {
+    override fun edit(player: Player, entityInstance: EntityInstance): CompletableFuture<Void> {
+        val future = CompletableFuture<Void>()
         language.sendLang(player, "trait-view-condition")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             if (it.all { line -> line.isBlank() }) {
@@ -60,26 +62,28 @@ object TraitViewCondition : Trait() {
             }
             entityInstance.despawn()
             entityInstance.respawn()
-            language.sendLang(player, "trait-view-condition-finish")
+            future.complete(null)
         }
+        return future
     }
 
     fun checkView(entity: EntityInstance, viewer: Player): Boolean {
         if (data.contains(entity.uniqueId)) {
-            try {
-                val script = data.getStringList(entity.uniqueId)
-                return Coerce.toBoolean(KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(viewer)) {
-                    rootFrame().variables()["@entities"] = listOf(entity)
-                }.getNow(false))
-            } catch (ex: Exception) {
-                ex.printKetherErrorMessage()
-            }
+            return runKether {
+                KetherShell.eval(data.getStringList(entity.uniqueId), namespace = listOf("adyeshach"), sender = adaptPlayer(viewer)) {
+                    set("@entities", entity)
+                    set("@manager", entity.manager)
+                }.getNow(false).cbool
+            } ?: false
         }
         return true
     }
 }
 
-fun EntityInstance.setViewCondition(condition: List<String>?) {
+/**
+ * 设置可视条件
+ */
+fun EntityInstance.setTraitViewCondition(condition: List<String>?) {
     if (condition == null || condition.all { line -> line.isBlank() }) {
         TraitViewCondition.data[uniqueId] = null
     } else {
@@ -89,7 +93,17 @@ fun EntityInstance.setViewCondition(condition: List<String>?) {
     }
 }
 
-fun EntityInstance.updateViewCondition() {
+/**
+ * 获取可视条件
+ */
+fun EntityInstance.getTraitViewCondition(): List<String> {
+    return TraitViewCondition.data.getStringList(uniqueId)
+}
+
+/**
+ * 更新可视条件
+ */
+fun EntityInstance.updateTraitViewCondition() {
     val nextCheckTime = getTag("view-condition-next-check")?.clong ?: 0
     if (nextCheckTime > System.currentTimeMillis()) {
         return
@@ -108,9 +122,10 @@ fun EntityInstance.updateViewCondition() {
         viewPlayers.getPlayersInViewDistance().forEach {
             runKether {
                 KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
-                    rootFrame().variables()["@entities"] = listOf(this)
-                }.thenAccept { cond ->
-                    if (Coerce.toBoolean(cond)) {
+                    set("@entities", listOf(this@updateTraitViewCondition))
+                    set("@manager", manager)
+                }.bool { cond ->
+                    if (cond) {
                         // 看不见但是满足可视条件
                         if (it.name !in viewPlayers.visible) {
                             visible(it, true)

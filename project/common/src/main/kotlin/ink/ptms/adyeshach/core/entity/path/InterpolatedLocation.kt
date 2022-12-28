@@ -10,25 +10,30 @@ import taboolib.common.platform.function.warning
 import java.util.*
 import kotlin.math.acos
 
-class InterpolatedLocation(val world: World, val target: Location, frames: Map<Int, Location> = HashMap()) {
+open class InterpolatedLocation(val world: World, val target: Location, frames: Map<Int, Location> = HashMap()) {
 
     val frames = TreeMap(frames)
+
+    /** 序号 */
     var index = 0
-    var end = 0
+
+    /** 长度 */
+    var length = 0
+        private set
 
     fun addPoint(tick: Int, point: Vector) {
         if (frames.containsKey(tick)) {
             warning("Duplicate tick $tick -> $point")
         }
         frames[tick] = Location(world, point.x, point.y, point.z)
-        end = tick
+        length = tick
     }
 
-    fun next(): Location? {
-        return if (index <= end) get(index++) else null
+    open fun next(): Location? {
+        return if (index <= length) get(index++) else null
     }
 
-    fun get(tick: Int): Location {
+    open fun get(tick: Int): Location {
         val left = frames.floorEntry(tick)
         return if (left == null) {
             frames.firstEntry().value

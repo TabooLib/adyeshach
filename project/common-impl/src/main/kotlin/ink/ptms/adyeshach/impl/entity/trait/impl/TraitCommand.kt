@@ -13,6 +13,7 @@ import taboolib.common.platform.function.console
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.runKether
 import taboolib.platform.compat.replacePlaceholder
+import java.util.concurrent.CompletableFuture
 
 object TraitCommand : Trait() {
 
@@ -49,7 +50,8 @@ object TraitCommand : Trait() {
                     it.startsWith("kether:") -> {
                         runKether {
                             KetherShell.eval(it.substringAfter("kether:").trim(), namespace = listOf("adyeshach"), sender = adaptPlayer(e.player)) {
-                                rootFrame().variables()["@entities"] = listOf(e.entity)
+                                set("@entities", e.entity)
+                                set("@manager", e.entity.manager)
                             }
                         }
                     }
@@ -61,19 +63,29 @@ object TraitCommand : Trait() {
         }
     }
 
-    override fun getName(): String {
+    override fun id(): String {
         return "command"
     }
 
-    override fun edit(player: Player, entityInstance: EntityInstance) {
+    override fun edit(player: Player, entityInstance: EntityInstance): CompletableFuture<Void> {
+        val future = CompletableFuture<Void>()
         language.sendLang(player, "trait-command")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
-            if (it.all { line -> line.isBlank() }) {
-                data[entityInstance.uniqueId] = null
-            } else {
-                data[entityInstance.uniqueId] = it
-            }
-            language.sendLang(player, "trait-command-finish")
+            entityInstance.setTraitCommands(it)
+            future.complete(null)
         }
+        return future
     }
+}
+
+fun EntityInstance.setTraitCommands(commands: List<String>?) {
+    if (commands == null || commands.all { line -> line.isBlank() }) {
+        TraitCommand.data[uniqueId] = null
+    } else {
+        TraitCommand.data[uniqueId] = commands
+    }
+}
+
+fun EntityInstance.getTraitCommands(): List<String> {
+    return TraitCommand.data.getStringList(uniqueId)
 }

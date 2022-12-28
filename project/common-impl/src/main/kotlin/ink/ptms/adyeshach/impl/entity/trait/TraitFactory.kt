@@ -20,4 +20,8 @@ object TraitFactory {
             }
         }
     }
+
+    fun getTraitById(id: String): Trait? {
+        return traits.firstOrNull { it.id() == id }
+    }
 }

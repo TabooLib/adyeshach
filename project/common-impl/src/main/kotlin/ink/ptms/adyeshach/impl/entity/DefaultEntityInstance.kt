@@ -21,6 +21,7 @@ import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
@@ -41,6 +42,24 @@ import java.util.concurrent.CopyOnWriteArraySet
 @Suppress("LeakingThis", "SpellCheckingInspection")
 abstract class DefaultEntityInstance(entityType: EntityTypes) :
     DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultViewable, InternalEntity, TickService {
+
+    override val x: Double
+        get() = clientPosition.x
+
+    override val y: Double
+        get() = clientPosition.y
+
+    override val z: Double
+        get() = clientPosition.z
+
+    override val yaw: Float
+        get() = clientPosition.yaw
+
+    override val pitch: Float
+        get() = clientPosition.pitch
+
+    override val world: World
+        get() = clientPosition.world
 
     /** 实体序号 */
     override val index: Int = Indexs.nextIndex()
@@ -133,7 +152,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     var vehicleSync = System.currentTimeMillis()
 
     /** 插值定位 */
-    var moveFrames: InterpolatedLocation? = null
+    override var moveFrames: InterpolatedLocation? = null
 
     /** 移动目的 */
     override var moveTarget: Location? = null
@@ -360,6 +379,11 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
             p.clone("${newId}_passenger_$i", location)?.let { entity.addPassenger(it) }
         }
         return entity
+    }
+
+    override fun setDerived(id: String) {
+        isNitwit = true
+        setPersistentTag(StandardTags.DERIVED, id)
     }
 
     @Deprecated("请使用 setVelocity(vector)", replaceWith = ReplaceWith("setVelocity(vector)"))

@@ -9,7 +9,9 @@ import kotlin.math.ceil
  * @author 坏黑
  * @since 2022/12/27 00:53
  */
-open class SimpleGroup(val id: String, val actionPerLine: Int, val actions: List<Action>) : ActionGroup {
+open class SimpleGroup(val id: String, val actionPerLine: Int, actions: List<Action>) : ActionGroup {
+
+    val actions = actions.filter { it !is SimpleAction.None }
 
     override fun id(): String {
         return id

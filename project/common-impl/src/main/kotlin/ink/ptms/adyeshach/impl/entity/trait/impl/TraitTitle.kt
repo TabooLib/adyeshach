@@ -19,6 +19,8 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.module.configuration.util.getStringListColored
 import taboolib.module.kether.KetherFunction
+import taboolib.module.kether.runKether
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
 object TraitTitle : Trait() {
@@ -56,7 +58,7 @@ object TraitTitle : Trait() {
     private fun onTeleport(e: TeleportEvent) {
         if (entityLookup.containsKey(e.entity.uniqueId)) {
             entityLookup[e.entity.uniqueId]!!.forEach {
-                it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height + 0.25, 0.0))
+                it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height, 0.0))
             }
         }
     }
@@ -83,6 +85,9 @@ object TraitTitle : Trait() {
         }
     }
 
+    /**
+     * 创建全息
+     */
     fun create(entity: EntityInstance) {
         Bukkit.getOnlinePlayers().forEach { create(it, entity) }
     }
@@ -96,9 +101,9 @@ object TraitTitle : Trait() {
             // 先移除
             remove(viewer, entity)
             // 再创建
-            val loc = entity.getLocation().add(0.0, entity.entitySize.height + 0.25, 0.0)
+            val loc = entity.getLocation().add(0.0, entity.entitySize.height, 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
-                KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer))
+                runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
             }
             if (message.isEmpty()) {
                 return
@@ -113,6 +118,9 @@ object TraitTitle : Trait() {
         }
     }
 
+    /**
+     * 更新全息内容
+     */
     fun update(entity: EntityInstance) {
         Bukkit.getOnlinePlayers().forEach { update(it, entity) }
     }
@@ -128,7 +136,7 @@ object TraitTitle : Trait() {
             // 只有内容中存在 Kether 脚本才会触发刷新机制
             if (message.isNotEmpty() && message.any { it.contains("{{") }) {
                 val newMessage = message.map {
-                    KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer))
+                    runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
                 }
                 // 如果长度不变，则更新内容
                 if (hologram.contents().size == newMessage.size) {
@@ -142,6 +150,9 @@ object TraitTitle : Trait() {
         }
     }
 
+    /**
+     * 移除全息缓存
+     */
     fun remove(entity: EntityInstance) {
         Bukkit.getOnlinePlayers().forEach { remove(it, entity) }
     }
@@ -159,11 +170,12 @@ object TraitTitle : Trait() {
         }
     }
 
-    override fun getName(): String {
+    override fun id(): String {
         return "title"
     }
 
-    override fun edit(player: Player, entityInstance: EntityInstance) {
+    override fun edit(player: Player, entityInstance: EntityInstance): CompletableFuture<Void> {
+        val future = CompletableFuture<Void>()
         language.sendLang(player, "trait-title")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
             remove(entityInstance)
@@ -173,8 +185,9 @@ object TraitTitle : Trait() {
                 data[entityInstance.uniqueId] = it
                 create(entityInstance)
             }
-            language.sendLang(player, "trait-title-finish")
+            future.complete(null)
         }
+        return future
     }
 }
 
@@ -186,4 +199,8 @@ fun EntityInstance.setTraitTitle(title: List<String>?) {
         TraitTitle.data[uniqueId] = title
         TraitTitle.create(this)
     }
+}
+
+fun EntityInstance.getTraitTitle(): List<String> {
+    return TraitTitle.data.getStringList(uniqueId)
 }

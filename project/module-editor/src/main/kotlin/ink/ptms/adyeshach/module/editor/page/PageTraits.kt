@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.module.editor.page
 
 import ink.ptms.adyeshach.core.entity.ModelEngine
 import ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
+import ink.ptms.adyeshach.impl.entity.trait.impl.*
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
@@ -20,31 +21,48 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
     override fun subpage() = "traits"
 
     override fun groups(): List<ActionGroup> {
-        val traits0 = arrayListOf(
-            SimpleAction.MetaBool("nitwit", value = entity.isNitwit, hasDescription = true),
-            SimpleAction.Meta("move-speed", EditType.SIGN, value = entity.moveSpeed),
-            SimpleAction.Meta("visible-distance", EditType.SIGN, value = entity.visibleDistance),
-            SimpleAction.MetaBool("visible-after-loaded", value = entity.visibleAfterLoaded, hasDescription = true),
+        val groups = arrayListOf<ActionGroup>()
+        // 基础特性
+        groups += SimpleGroup(
+            "traits0", 999, arrayListOf(
+                SimpleAction.MetaBool("nitwit", value = entity.isNitwit, hasDescription = true),
+                // 傻子不能编辑移动速度
+                if (entity.isNitwit) SimpleAction.None else SimpleAction.Meta("move-speed", EditType.SIGN, value = entity.moveSpeed),
+                // 可视距离
+                SimpleAction.Meta("visible-distance", EditType.SIGN, value = entity.visibleDistance),
+                SimpleAction.MetaBool("visible-after-loaded", value = entity.visibleAfterLoaded, hasDescription = true),
+                // 模型
+                if (entity !is ModelEngine) SimpleAction.None else SimpleAction.Meta("model-engine", EditType.SIGN, value = entity.modelEngineName, true)
+            )
         )
-        if (entity is ModelEngine) {
-            traits0 += SimpleAction.Meta("model-engine", EditType.SIGN, value = entity.modelEngineName, hasDescription = true)
-        }
-        val groups = arrayListOf<ActionGroup>(SimpleGroup("traits0", 999, traits0))
         // 生物特性
         if (entity is AdyEntityLiving) {
-            groups += SimpleGroup("traits1", 999, listOf(
-                SimpleAction.MetaBool("die", value = entity.isDie, hasDescription = true),
-                SimpleAction.Meta("equipment", EditType.EQUIPMENT, isResettable = false)
-            ))
+            groups += SimpleGroup(
+                "traits1", 999, listOf(
+                    SimpleAction.MetaBool("die", value = entity.isDie, hasDescription = true),
+                    SimpleAction.Meta("equipment", EditType.EQUIPMENT, isResettable = false)
+                )
+            )
         }
-        // 附加特性
-        groups += SimpleGroup("traits2", 999, listOf(
-            SimpleAction.Meta("title", EditType.SIGN, isResettable = false),
-            SimpleAction.Meta("sit", EditType.SIGN, isResettable = false),
-            SimpleAction.Meta("command", EditType.SIGN, isResettable = false),
-            SimpleAction.Meta("patrols", EditType.SIGN, isResettable = false),
-            SimpleAction.Meta("view-condition", EditType.SIGN, isResettable = false),
-        ))
+        // 附加特性 1
+        groups += SimpleGroup(
+            "traits2", 999, listOf(
+                SimpleAction.MetaTraitBool("sit", entity.isTraitSit()),
+                SimpleAction.MetaTrait("title", entity.getTraitTitle().joinToString("\n")),
+                SimpleAction.MetaTrait("command", entity.getTraitCommands().joinToString("\n")),
+                SimpleAction.MetaTrait("view-condition", entity.getTraitViewCondition().joinToString("\n")),
+            )
+        )
+        // 附加特性 2
+        if (!entity.isNitwit) {
+            groups += SimpleGroup(
+                "traits3", 999, listOf(
+                    SimpleAction.MetaTrait("patrols", entity.getTraitPatrolNodes().size),
+                    SimpleAction.MetaTrait("patrols-wait-time", entity.getTraitPatrolWaitTime()),
+                    SimpleAction.MetaTraitLiteral("patrols-update"),
+                )
+            )
+        }
         return groups
     }
 }

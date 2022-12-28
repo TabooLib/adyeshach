@@ -22,6 +22,8 @@ abstract class SimpleAction(val id: String) : Action {
         return id
     }
 
+    object None : Literal("none")
+
     open class Literal(val display: String, val description: String? = null) : SimpleAction(UUID.randomUUID().toString()) {
 
         override fun display(player: Player): String {
@@ -37,7 +39,7 @@ abstract class SimpleAction(val id: String) : Action {
         }
     }
 
-    class Meta(
+    open class Meta(
         val node: String,
         val editor: EditType,
         val value: Any? = null,
@@ -70,7 +72,7 @@ abstract class SimpleAction(val id: String) : Action {
         }
     }
 
-    class MetaBool(
+    open class MetaBool(
         val node: String,
         val value: Boolean,
         val hasDescription: Boolean = false,
@@ -96,6 +98,27 @@ abstract class SimpleAction(val id: String) : Action {
 
         override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
             return "adyeshach edit ${entity.uniqueId} m:${id().replace("-", "_")}->${!value}" // 使用 MODIFY 切换布尔值
+        }
+    }
+
+    class MetaTrait(node: String, value: Any) : Meta(node, EditType.AUTO, value, false, false) {
+
+        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
+            return "adyeshach edit ${entity.uniqueId} t:$node" // 使用 TRAIT 编辑特性
+        }
+    }
+
+    class MetaTraitBool(node: String, value: Boolean) : MetaBool(node, value, false, false) {
+
+        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
+            return "adyeshach edit ${entity.uniqueId} t:$node" // 使用 TRAIT 编辑特性
+        }
+    }
+
+    class MetaTraitLiteral(node: String) : Meta(node, EditType.AUTO, null, true, false) {
+
+        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
+            return "adyeshach edit ${entity.uniqueId} t:$node" // 使用 TRAIT 编辑特性
         }
     }
 }

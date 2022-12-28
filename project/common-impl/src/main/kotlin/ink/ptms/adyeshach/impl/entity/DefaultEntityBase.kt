@@ -8,7 +8,6 @@ import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.plus
 import org.bukkit.Location
-import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -61,50 +60,23 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) :
      * 实体在服务端中的确定位置
      */
     @Expose
-    final override var position = EntityPosition.empty()
+    override var position = EntityPosition.empty()
         get() = field.clone()
 
     /**
      * 是否为测试类型
      */
-    final override var isTesting = false
+    override var isTesting = false
 
     /**
      * 是否为无效类型
      */
-    final override var isInvalid = false
-
-    /**
-     * 位置
-     */
-    final override val x: Double
-        get() = position.x
-
-    final override val y: Double
-        get() = position.y
-
-    final override val z: Double
-        get() = position.z
-
-    /**
-     * 角度
-     */
-    final override val yaw: Float
-        get() = position.yaw
-
-    final override val pitch: Float
-        get() = position.pitch
-
-    /**
-     * 世界
-     */
-    final override val world: World
-        get() = position.world
+    override var isInvalid = false
 
     /**
      * 转换为 Bukkit 坐标
      */
-    final override fun getLocation(): Location {
+    override fun getLocation(): Location {
         return position.toLocation()
     }
 
