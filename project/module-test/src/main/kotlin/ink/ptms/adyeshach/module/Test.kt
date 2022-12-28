@@ -133,7 +133,7 @@ object Test {
     @CommandBody
     val lookai = subCommand {
         execute<Player> { sender, _, _ ->
-            entity.registerController(ControllerLookAtPlayer(entity, 8f))
+            entity.registerController(ControllerLookAtPlayer(entity))
             entity.registerController(ControllerRandomLookaround(entity))
             sender.info("OK")
         }

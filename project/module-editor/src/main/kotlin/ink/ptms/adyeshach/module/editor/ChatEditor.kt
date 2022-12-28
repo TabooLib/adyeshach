@@ -7,6 +7,10 @@ import ink.ptms.adyeshach.module.editor.page.Page
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.util.resettableLazy
+import taboolib.module.configuration.Config
+import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.util.mapListAs
 import taboolib.platform.util.getMetaFirstOrNull
 
 /**
@@ -17,6 +21,16 @@ import taboolib.platform.util.getMetaFirstOrNull
  * @since 2022/6/19 17:08
  */
 object ChatEditor : AdyeshachEditor {
+
+    @Config("editor/controller.yml")
+    lateinit var controller: Configuration
+        private set
+
+    /** 预设控制器列表 */
+    val presetControllers by resettableLazy {
+        controller.reload()
+        controller.mapListAs("Controllers") { Configuration.fromMap(it) }.map { PresetController(it) }
+    }
 
     @Awake(LifeCycle.LOAD)
     fun init() {

@@ -46,11 +46,14 @@ val editSubCommand = subCommand {
                 val page = args.substringAfter(":").cint
                 // 类型
                 when (args.substringBefore(":")) {
+                    // 基础面板
                     "main" -> editPanel.open(EditPanelType.MAIN, page)
                     "traits" -> editPanel.open(EditPanelType.TRAITS, page)
                     "public-meta" -> editPanel.open(EditPanelType.PUBLIC_META, page)
                     "private-meta" -> editPanel.open(EditPanelType.PRIVATE_META, page)
                     "move" -> editPanel.open(EditPanelType.MOVE, page)
+                    // 控制器
+                    "controller" -> PresetController.open(sender, entity)
                     // 可视化修改
                     "e" -> {
                         // 获取节点
@@ -111,12 +114,15 @@ val editSubCommand = subCommand {
                     "t" -> {
                         // 获取节点
                         when (val id = args.substringAfter(":")) {
+                            // 基础特性
                             "sit", "title", "command", "view-condition" -> {
                                 TraitFactory.getTraitById(id)?.edit(sender, entity)?.thenRun { ChatEditor.refresh(sender) }
                             }
+                            // 巡逻
                             "patrols" -> {
                                 TraitFactory.getTraitById("patrol")?.edit(sender, entity)
                             }
+                            // 巡逻等待
                             "patrols-wait-time" -> {
                                 val l1 = sender.lang("input-patrols-wait-time0")
                                 val l2 = sender.lang("input-patrols-wait-time1")
@@ -126,6 +132,7 @@ val editSubCommand = subCommand {
                                     ChatEditor.refresh(sender)
                                 }
                             }
+                            // 巡逻更新
                             "patrols-update" -> entity.refreshTraitPatrolNodes()
                         }
                     }

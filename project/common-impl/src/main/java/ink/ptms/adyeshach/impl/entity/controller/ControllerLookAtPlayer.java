@@ -17,9 +17,9 @@ import java.util.Random;
 public class ControllerLookAtPlayer extends Controller {
 
     protected final EntityInstance entity;
-    protected float lookDistance;
+    protected double lookDistance;
     protected int lookTime;
-    protected float probability;
+    protected double probability;
     protected boolean onlyHorizontal;
     protected int baseLookTime;
 
@@ -30,19 +30,19 @@ public class ControllerLookAtPlayer extends Controller {
         this(entity, 8f, 0.01F);
     }
 
-    public ControllerLookAtPlayer(EntityInstance entity, float lookDistance) {
+    public ControllerLookAtPlayer(EntityInstance entity, double lookDistance) {
         this(entity, lookDistance, 0.01F);
     }
 
-    public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability) {
+    public ControllerLookAtPlayer(EntityInstance entity, double lookDistance, double probability) {
         this(entity, lookDistance, probability, false, 40);
     }
 
-    public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability, boolean onlyHorizontal) {
+    public ControllerLookAtPlayer(EntityInstance entity, double lookDistance, double probability, boolean onlyHorizontal) {
         this(entity, lookDistance, probability, onlyHorizontal, 40);
     }
 
-    public ControllerLookAtPlayer(EntityInstance entity, float lookDistance, float probability, boolean onlyHorizontal, int baseLookTime) {
+    public ControllerLookAtPlayer(EntityInstance entity, double lookDistance, double probability, boolean onlyHorizontal, int baseLookTime) {
         this.entity = entity;
         this.lookDistance = lookDistance;
         this.probability = probability;
@@ -113,5 +113,10 @@ public class ControllerLookAtPlayer extends Controller {
             this.entity.controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
             this.lookTime--;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "LOOK_AT_PLAYER:" + lookDistance + "," + probability + "," + onlyHorizontal + "," + baseLookTime;
     }
 }

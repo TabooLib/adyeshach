@@ -14,7 +14,7 @@ import java.util.Random;
 public class ControllerRandomLookaround extends Controller {
 
     protected final EntityInstance entity;
-    protected float probability;
+    protected double probability;
     protected double relX;
     protected double relZ;
     protected int lookTime;
@@ -23,7 +23,7 @@ public class ControllerRandomLookaround extends Controller {
         this(entity, 0.01f);
     }
 
-    public ControllerRandomLookaround(EntityInstance entity, float probability) {
+    public ControllerRandomLookaround(EntityInstance entity, double probability) {
         this.entity = entity;
         this.probability = probability;
     }
@@ -67,5 +67,10 @@ public class ControllerRandomLookaround extends Controller {
     public void tick() {
         this.lookTime--;
         this.entity.controllerLookAt(this.entity.getX() + this.relX, this.entity.getEyeLocation().getY(), this.entity.getZ() + this.relZ);
+    }
+
+    @Override
+    public String toString() {
+        return "RANDOM_LOOKAROUND:" + probability;
     }
 }

@@ -39,7 +39,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
             // 观察者
             json.appendLang("viewer", entity.viewPlayers.viewers.size).hoverText(hoverViewers())
             // 控制器
-            json.append(" ").appendLang("controller", entity.getController().size).hoverText(hoverController())
+            json.append(" ").appendLang("controller", entity.getController().size).hoverText(hoverController()).runCommand("/adyeshach edit ${entity.uniqueId} controller")
             // 标签
             json.append(" ").appendLang("tags", entity.getTags().size).hoverText(hoverTags())
             // 关联
@@ -94,7 +94,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
 
     /** 控制器描述 */
     fun hoverController(): String {
-        return entity.getController().map { "&7${it.priority()}. &f${it.id()} &8(${it.key()})" }.colored().joinToString("\n")
+        return entity.getController().map { "&7${it.priority()}. &f${it} &8(${it.key()})" }.colored().joinToString("\n")
     }
 
     /** 标签描述 */

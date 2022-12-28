@@ -232,6 +232,7 @@ editor-input-book-name: '&f打开并输入内容'
 editor-input-book-description: '&7单位编辑器'
 editor-input-patrols-wait-time0: '请在第一行输入等待时间'
 editor-input-patrols-wait-time1: '单位: 毫秒'
+editor-input-controller: '请选择预设控制器'
 
 editor-meta-nitwit: '傻子'
 editor-meta-nitwit-description: |-
