@@ -3,9 +3,6 @@ package ink.ptms.adyeshach.core
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
-import org.bukkit.Art
-import org.bukkit.entity.Cat
-import org.bukkit.entity.Frog
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -111,19 +108,19 @@ interface MinecraftEntityMetadataHandler {
      *
      * 1.19+
      */
-    fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta
+    fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta
 
     /**
      * 生成 FrogVariant 类型的元数据，对应 FROG_VARIANT 字段
      *
      * 1.19+
      */
-    fun createFrogVariantMeta(index: Int, type: Frog.Variant): MinecraftMeta
+    fun createFrogVariantMeta(index: Int, type: Any): MinecraftMeta
 
     /**
      * 生成 Holder<PaintingVariant> 类型的元数据，对应 PAINTING_VARIANT 字段
      *
      * 1.19+
      */
-    fun createPaintingVariantMeta(index: Int, type: Art): MinecraftMeta
+    fun createPaintingVariantMeta(index: Int, type: Any): MinecraftMeta
 }

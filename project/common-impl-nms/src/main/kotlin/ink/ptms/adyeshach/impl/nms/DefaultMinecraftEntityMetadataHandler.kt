@@ -393,14 +393,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
-    override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
+    override fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta {
         return if (majorLegacy >= 11903) {
-            NMSJ17.instance.createCatVariantMeta(index, type)
+            NMSJ17.instance.createCatVariantMeta(index, type as Cat.Type)
         } else {
             DefaultMeta(
                 NMSDataWatcherItem(
                     NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
-                    when (type) {
+                    when (type as Cat.Type) {
                         Cat.Type.TABBY -> NMSCatVariant.TABBY
                         Cat.Type.BLACK -> NMSCatVariant.BLACK
                         Cat.Type.RED -> NMSCatVariant.RED
@@ -418,11 +418,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         }
     }
 
-    override fun createFrogVariantMeta(index: Int, type: Frog.Variant): MinecraftMeta {
+    override fun createFrogVariantMeta(index: Int, type: Any): MinecraftMeta {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.FROG_VARIANT),
-                when (type) {
+                when (type as Frog.Variant) {
                     Frog.Variant.TEMPERATE -> NMSFrogVariant.TEMPERATE
                     Frog.Variant.WARM -> NMSFrogVariant.WARM
                     Frog.Variant.COLD -> NMSFrogVariant.COLD
@@ -431,11 +431,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
-    override fun createPaintingVariantMeta(index: Int, type: Art): MinecraftMeta {
+    override fun createPaintingVariantMeta(index: Int, type: Any): MinecraftMeta {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.PAINTING_VARIANT),
-                CraftArt19.BukkitToNotch(type)
+                CraftArt19.BukkitToNotch(type as Art)
             )
         )
     }

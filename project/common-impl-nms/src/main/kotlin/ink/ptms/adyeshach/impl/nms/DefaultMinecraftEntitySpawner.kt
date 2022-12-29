@@ -96,8 +96,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(pitch)
                     writeByte(yaw)
-                    writeByte(yaw)
-                    writeVarInt(data)
+                    writeInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -115,8 +114,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(pitch)
                     writeByte(yaw)
-                    writeByte(yaw)
-                    writeVarInt(data)
+                    writeInt(data)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -150,8 +148,13 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 // yRot     -> yaw -> 普通实体没效果
                 writeByte(yaw)
                 // yHeadRot -> yaw -> 横向视角
-                writeByte(yaw)
-                writeVarInt(data)
+                // 1.19 才有这个
+                if (major == 11) {
+                    writeByte(yaw)
+                    writeVarInt(data)
+                } else {
+                    writeInt(data)
+                }
                 writeShort(0)
                 writeShort(0)
                 writeShort(0)
