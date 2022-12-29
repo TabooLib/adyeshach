@@ -14,11 +14,7 @@ import org.bukkit.Location
 class Hologram(val manager: Manager, var origin: Location, var content: List<AdyeshachHologram.Item>) : AdyeshachHologram {
 
     init {
-        var offset = 0.0
-        content.filterIsInstance<HoloEntity<*>>().reversed().forEach {
-            it.spawn(offset, origin, manager)
-            offset += it.space
-        }
+        refresh()
     }
 
     override fun teleport(location: Location) {
@@ -29,6 +25,7 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
     override fun update(content: List<AdyeshachHologram.Item>) {
         this.content.forEach { it.remove() }
         this.content = content
+        refresh()
     }
 
     override fun remove() {
@@ -38,5 +35,13 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
 
     override fun contents(): List<AdyeshachHologram.Item> {
         return content
+    }
+
+    fun refresh() {
+        var offset = 0.0
+        content.filterIsInstance<HoloEntity<*>>().reversed().forEach {
+            it.spawn(offset, origin, manager)
+            offset += it.space
+        }
     }
 }
