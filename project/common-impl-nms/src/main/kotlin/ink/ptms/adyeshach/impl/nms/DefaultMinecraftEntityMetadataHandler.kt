@@ -400,18 +400,19 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
             DefaultMeta(
                 NMSDataWatcherItem(
                     NMSDataWatcherObject(index, NMSDataWatcherRegistry.CAT_VARIANT),
-                    when (type as Cat.Type) {
-                        Cat.Type.TABBY -> NMSCatVariant.TABBY
-                        Cat.Type.BLACK -> NMSCatVariant.BLACK
-                        Cat.Type.RED -> NMSCatVariant.RED
-                        Cat.Type.SIAMESE -> NMSCatVariant.SIAMESE
-                        Cat.Type.BRITISH_SHORTHAIR -> NMSCatVariant.BRITISH_SHORTHAIR
-                        Cat.Type.CALICO -> NMSCatVariant.CALICO
-                        Cat.Type.PERSIAN -> NMSCatVariant.PERSIAN
-                        Cat.Type.RAGDOLL -> NMSCatVariant.RAGDOLL
-                        Cat.Type.WHITE -> NMSCatVariant.WHITE
-                        Cat.Type.JELLIE -> NMSCatVariant.JELLIE
-                        Cat.Type.ALL_BLACK -> NMSCatVariant.ALL_BLACK
+                    when (type.toString()) {
+                        "TABBY" -> NMSCatVariant.TABBY
+                        "BLACK" -> NMSCatVariant.BLACK
+                        "RED" -> NMSCatVariant.RED
+                        "SIAMESE" -> NMSCatVariant.SIAMESE
+                        "BRITISH_SHORTHAIR" -> NMSCatVariant.BRITISH_SHORTHAIR
+                        "CALICO" -> NMSCatVariant.CALICO
+                        "PERSIAN" -> NMSCatVariant.PERSIAN
+                        "RAGDOLL" -> NMSCatVariant.RAGDOLL
+                        "WHITE" -> NMSCatVariant.WHITE
+                        "JELLIE" -> NMSCatVariant.JELLIE
+                        "ALL_BLACK" -> NMSCatVariant.ALL_BLACK
+                        else -> NMSCatVariant.TABBY
                     }
                 )
             )
@@ -422,10 +423,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.FROG_VARIANT),
-                when (type as Frog.Variant) {
-                    Frog.Variant.TEMPERATE -> NMSFrogVariant.TEMPERATE
-                    Frog.Variant.WARM -> NMSFrogVariant.WARM
-                    Frog.Variant.COLD -> NMSFrogVariant.COLD
+                when (type.toString()) {
+                    "TEMPERATE" -> NMSFrogVariant.TEMPERATE
+                    "WARM" -> NMSFrogVariant.WARM
+                    "COLD" -> NMSFrogVariant.COLD
+                    else -> NMSFrogVariant.TEMPERATE
                 }
             )
         )
