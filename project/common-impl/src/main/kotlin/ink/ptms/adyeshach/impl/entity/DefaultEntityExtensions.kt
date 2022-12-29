@@ -10,8 +10,8 @@ import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.compat.CompatServerTours
-import ink.ptms.adyeshach.impl.entity.manager.DefaultEventBus
-import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
+import ink.ptms.adyeshach.impl.manager.DefaultEventBus
+import ink.ptms.adyeshach.impl.manager.DefaultManager
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.util.Vector
@@ -34,20 +34,20 @@ fun DefaultEntityInstance.isChunkLoaded(): Boolean {
 fun DefaultEntityInstance.updateManagerTags() {
     // 孤立单位
     if (manager == null || manager !is TickService) {
-        tag[StandardTags.ISOLATED] = "true"
+        tag[StandardTags.ISOLATED] = true
     } else {
         tag.remove(StandardTags.ISOLATED)
         // 公共单位
         if (manager!!.isPublic()) {
-            tag[StandardTags.IS_PUBLIC] = "true"
+            tag[StandardTags.IS_PUBLIC] = true
             tag.remove(StandardTags.IS_PRIVATE)
         } else {
-            tag[StandardTags.IS_PRIVATE] = "true"
+            tag[StandardTags.IS_PRIVATE] = true
             tag.remove(StandardTags.IS_PUBLIC)
         }
         // 临时单位
         if (manager!!.isTemporary()) {
-            tag[StandardTags.IS_TEMPORARY] = "true"
+            tag[StandardTags.IS_TEMPORARY] = true
         } else {
             tag.remove(StandardTags.IS_TEMPORARY)
         }
@@ -67,7 +67,7 @@ fun DefaultEntityInstance.updateMoveFrames() {
         return
     }
     // 设置标签
-    setTag(StandardTags.IS_PATHFINDING, "true")
+    setTag(StandardTags.IS_PATHFINDING, true)
     // 请求路径
     PathFinderHandler.request(position.toLocation(), moveTarget!!, entityPathType) {
         it as ResultNavigation
@@ -119,7 +119,7 @@ fun DefaultEntityInstance.handleMove() {
         val next = moveFrames!!.next()
         if (next != null) {
             // 设置移动标签
-            tag[StandardTags.IS_MOVING] = "true"
+            tag[StandardTags.IS_MOVING] = true
             // 默认会看向移动方向
             val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
             val temp = clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0)

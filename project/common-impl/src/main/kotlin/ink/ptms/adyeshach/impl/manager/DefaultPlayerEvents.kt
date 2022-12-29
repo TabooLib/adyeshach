@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity.manager
+package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
@@ -19,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerEvents
+ * ink.ptms.adyeshach.impl.manager.DefaultPlayerEvents
  *
  * @author 坏黑
  * @since 2022/8/18 10:41

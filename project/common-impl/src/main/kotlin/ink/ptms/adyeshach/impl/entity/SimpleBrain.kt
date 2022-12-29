@@ -42,7 +42,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
             // 当前正在运行
             if (h == controller) {
                 // 无法继续运行
-                if (!controller.continueExecute()) {
+                if (controller.runSafely(true) { !continueExecute() }) {
                     // 停止
                     hold.remove(controller.key())
                     controller.stop()
@@ -52,7 +52,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
             // 能被打断的前提是优先级高于正在运行的控制器（数字较小）
             else if (h == null || (controller < h && h.isInterruptable())) {
                 // 是否需要开始运行
-                if (controller.shouldExecute()) {
+                if (controller.runSafely(false) { shouldExecute() }) {
                     // 开始
                     interrupt[controller.key()] = controller
                 }
@@ -80,9 +80,9 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
             if (!interrupt.containsKey(k)) {
                 // 执行
                 if (controller.isAsync()) {
-                    pool.submit { controller.tick() }
+                    pool.submit { controller.runSafely(Unit) { tick() } }
                 } else {
-                    controller.tick()
+                    controller.runSafely(Unit) { tick() }
                 }
             }
         }
@@ -96,5 +96,18 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
     companion object {
 
         private val pool = Executors.newFixedThreadPool(16)!!
+
+        private inline fun <T> Controller.runSafely(def: T, func: Controller.() -> T): T {
+            if (error) {
+                return def
+            }
+            return try {
+                func(this)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+                error = true
+                def
+            }
+        }
     }
 }

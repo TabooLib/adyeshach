@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.command.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
-import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_REMOVE_TRACKER = "remove"
 
@@ -49,7 +49,12 @@ val removeSubCommand = subCommand {
         }
     }
     // 就近删除
-    execute<Player> { sender, _, _ -> multiControl<RemoveEntitySource>(sender, STANDARD_REMOVE_TRACKER) }
+    execute<Player> { sender, _, _ ->
+        multiControl<RemoveEntitySource>(sender, STANDARD_REMOVE_TRACKER) {
+            it.remove()
+            sender.sendLang("command-remove-success", it.id, it.uniqueId)
+        }
+    }
 }
 
 class RemoveEntitySource(elements: List<EntityInstance>) : EntitySource(elements) {

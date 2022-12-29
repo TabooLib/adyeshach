@@ -82,6 +82,10 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
         return descriptionEntityMap[entityType]!!.bukkitType ?: errorBy("error-entity-type-not-supported", entityType.name)
     }
 
+    override fun getBukkitEntityTypeOrNull(entityType: EntityTypes): EntityType? {
+        return descriptionEntityMap[entityType]!!.bukkitType
+    }
+
     override fun getBukkitEntityId(entityType: EntityTypes): Int {
         return descriptionEntityMap[entityType]!!.id
     }

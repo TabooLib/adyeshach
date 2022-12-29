@@ -81,6 +81,7 @@ interface MetaEditor {
                 // 船
                 entity is AdyBoat && key == "type" -> MetaEnum(key, BukkitBoat::class.java)
                 // 潜影壳
+                entity is AdyShulker && key == "attachPosition" -> MetaVector(key)
                 entity is AdyShulker && key == "attachFace" -> MetaEnum(key, BukkitDirection::class.java)
                 entity is AdyShulker && key == "color" -> MetaEnum(key, DyeColor::class.java)
                 // 豹猫
@@ -110,6 +111,8 @@ interface MetaEditor {
                 entity is AdyEntityLiving && key == "potionEffectColor" -> MetaColor(key)
                 // 矿车
                 entity is AdyMinecart && key == "customBlock" -> MetaItem.Minecart()
+                // 水晶
+                entity is AdyEndCrystal && key == "beamTarget" -> MetaVector(key)
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java, useIndex = false)
                 // 不支持

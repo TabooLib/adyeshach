@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity.manager
+package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.TickService
@@ -10,7 +10,7 @@ import java.util.function.Predicate
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.manager.DefaultManager
+ * ink.ptms.adyeshach.impl.manager.DefaultManager
  *
  * @author 坏黑
  * @since 2022/6/28 00:19
@@ -28,7 +28,7 @@ open class DefaultManager : BaseManager() {
         activeEntity.add(entity)
     }
 
-    override fun delete(entityInstance: EntityInstance) {
+    override fun remove(entityInstance: EntityInstance) {
         activeEntity.remove(entityInstance)
     }
 
@@ -66,7 +66,6 @@ open class DefaultManager : BaseManager() {
 
     override fun onDisable() {
         activeEntity.forEach { it.despawn() }
-        activeEntity.clear()
     }
 
     override fun onTick() {

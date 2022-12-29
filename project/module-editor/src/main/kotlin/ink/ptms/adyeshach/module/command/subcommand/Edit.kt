@@ -145,5 +145,7 @@ val editSubCommand = subCommand {
         }
     }
     // 就近编辑
-    execute<Player> { sender, _, _ -> multiControl<EntitySource.Empty>(sender, STANDARD_EDIT_TRACKER) }
+    execute<Player> { sender, _, _ ->
+        multiControl<EntitySource.Empty>(sender, STANDARD_EDIT_TRACKER) { EditPanel(sender, it).open() }
+    }
 }

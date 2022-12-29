@@ -18,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap
  * @author 坏黑
  * @since 2022/6/19 15:59
  */
-abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes) : EntityBase, DefaultMetaable, DefaultTagContainer, DefaultSerializable {
+abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes = EntityTypes.ZOMBIE) : EntityBase, DefaultMetaable, DefaultTagContainer, DefaultSerializable {
 
     /** 临时标签 */
-    val tag = ConcurrentHashMap<String, String>()
+    val tag = ConcurrentHashMap<String, Any>()
 
     /** 持久化标签 */
     @Expose

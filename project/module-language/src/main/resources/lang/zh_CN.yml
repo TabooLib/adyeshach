@@ -113,7 +113,7 @@ command-remove-success:
   - ==: JSON
     text:
       - ' &5&l‹ ›&r &7已将 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
+      - ' &5&l‹ ›&r &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
@@ -121,7 +121,7 @@ command-remove-success-all:
   - ==: JSON
     text:
       - ' &5&l‹ ›&r &7已将所有 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
+      - ' &5&l‹ ›&r &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
@@ -481,6 +481,12 @@ trait-data-error: '&c[Adyeshach] &7文件 {0} 加载失败，使用 {1} 作为�
 group-move-position: '当前位置'
 group-move-xyz: 'X & Y & Z'
 group-move-yp: 'YAW & PITCH'
+group-angle-head: '头部角度'
+group-angle-body: '身体角度'
+group-angle-left-arm: '左手臂角度'
+group-angle-right-arm: '右手臂角度'
+group-angle-left-leg: '左腿角度'
+group-angle-right-leg: '右腿角度'
 group-traits0: '实体特性'
 group-traits1: '生物特性'
 group-traits2: '附加特性 0'

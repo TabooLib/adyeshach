@@ -13,12 +13,12 @@ interface TagContainer {
     /**
      * 获取所有标签
      */
-    fun getTags(): Set<Map.Entry<String, String>>
+    fun getTags(): Set<Map.Entry<String, Any>>
 
     /**
      * 获取标签
      */
-    fun getTag(key: String): String?
+    fun getTag(key: String): Any?
 
     /**
      * 是否持有标签
@@ -28,7 +28,7 @@ interface TagContainer {
     /**
      * 设置标签
      */
-    fun setTag(key: String, value: String?)
+    fun setTag(key: String, value: Any?)
 
     /**
      * 移除标签

@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntitySize
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.path.PathType
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import org.bukkit.entity.EntityType
 
 /**
@@ -22,6 +21,11 @@ interface AdyeshachEntityTypeRegistry {
      * 无法获取时会产生 [error-entity-type-not-supported] 异常
      */
     fun getBukkitEntityType(entityType: EntityTypes): EntityType
+
+    /**
+     * 获取 Bukkit 对应的实体类型（可能为空）
+     */
+    fun getBukkitEntityTypeOrNull(entityType: EntityTypes): EntityType?
 
     /**
      * 获取 Bukkit 对应的实体序号

@@ -17,7 +17,7 @@ import taboolib.module.chat.colored
  */
 class PageMain(editor: EditPanel) : Page(editor) {
 
-    val derivedId = entity.getTag(StandardTags.DERIVED)
+    val derivedId = entity.getTag(StandardTags.DERIVED)?.toString()
 
     override fun open(index: Int) {
         super.open(index)

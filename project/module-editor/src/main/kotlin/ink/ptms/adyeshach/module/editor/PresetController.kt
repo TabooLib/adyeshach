@@ -45,7 +45,7 @@ class PresetController(val root: ConfigurationSection) {
     }
 
     override fun toString(): String {
-        return root.getString("instance").toString()
+        return root.getString("instance").toString().substringBefore(':') + ":" + args.joinToString(",") { if (it is Double) it.format() else it.toString() }
     }
 
     companion object {

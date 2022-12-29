@@ -24,7 +24,7 @@ class PagePublicMeta(editor: EditPanel) : MetaPage(editor) {
     override fun groups(): List<ActionGroup> {
         return publicMeta.computeIfAbsent(entity.entityType) {
             val availableMeta = getMetaList()
-            val meta = arrayListOf<Meta<*>>()
+            val activeMeta = arrayListOf<Meta<*>>()
             var f = false
             fun read(cla: Class<*>) {
                 // 公有数据 —— 从 AdyMob 层开始搜索
@@ -32,13 +32,13 @@ class PagePublicMeta(editor: EditPanel) : MetaPage(editor) {
                     f = true
                 }
                 if (f) {
-                    meta += Adyeshach.api().getEntityMetadataRegistry().getEntityMeta(cla).filter { it in availableMeta }
+                    activeMeta += Adyeshach.api().getEntityMetadataRegistry().getEntityMeta(cla).filter { it in availableMeta }
                 }
                 // 向上搜索
                 cla.interfaces.forEach { read(it) }
             }
             read(getAdyClass())
-            meta
+            activeMeta
         }.toGroups()
     }
 

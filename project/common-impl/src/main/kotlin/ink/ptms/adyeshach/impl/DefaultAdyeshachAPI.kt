@@ -2,10 +2,7 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
-import ink.ptms.adyeshach.impl.entity.manager.BaseManager
-import ink.ptms.adyeshach.impl.entity.manager.BasePlayerManager
-import ink.ptms.adyeshach.impl.entity.manager.DefaultManager
-import ink.ptms.adyeshach.impl.entity.manager.DefaultPlayerManager
+import ink.ptms.adyeshach.impl.manager.*
 import org.bukkit.entity.Player
 import taboolib.common.platform.PlatformFactory
 import taboolib.platform.util.removeMeta
@@ -52,10 +49,10 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     var localLanguage = PlatformFactory.getAPI<AdyeshachLanguage>()
 
     /** 公共单位管理器 **/
-    var localPublicEntityManager = DefaultManager()
+    var localPublicEntityManager = LocalPersistentManager()
 
     /** 公共单位管理器（孤立） **/
-    var localPublicEntityManagerIsolated = DefaultManager()
+    var localPublicEntityManagerIsolated = BaseManager()
 
     /** 公共单位管理器（临时） **/
     var localPublicEntityManagerTemporary = DefaultManager()

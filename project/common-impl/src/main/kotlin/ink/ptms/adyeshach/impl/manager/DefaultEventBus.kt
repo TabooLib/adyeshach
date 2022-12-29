@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity.manager
+package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.EventBus
@@ -10,7 +10,7 @@ import java.util.function.Predicate
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.manager.DefaultEventBus
+ * ink.ptms.adyeshach.impl.manager.DefaultEventBus
  *
  * @author 坏黑
  * @since 2022/12/14 20:14

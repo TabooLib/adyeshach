@@ -2,6 +2,7 @@
 
 package ink.ptms.adyeshach.module.command.subcommand
 
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.command.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -11,7 +12,6 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cdouble
 import taboolib.common5.cfloat
-import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_TP_TRACKER = "teleport"
 
@@ -87,7 +87,12 @@ val tpSubCommand = subCommand {
         }
     }
     // 就近传送
-    execute<Player> { sender, _, _ -> multiControl<RemoveEntitySource>(sender, STANDARD_TP_TRACKER) }
+    execute<Player> { sender, _, _ ->
+        multiControl<RemoveEntitySource>(sender, STANDARD_TP_TRACKER) {
+            sender.teleport(it.getLocation())
+            sender.sendLang("command-teleport-to-entity", it.id)
+        }
+    }
 }
 
 private fun teleport(sender: CommandSender, id: String, world: String, x: String, y: String, z: String, yaw: String, pitch: String) {

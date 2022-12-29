@@ -1,7 +1,9 @@
 package ink.ptms.adyeshach.impl.entity.trait.impl
 
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
@@ -9,9 +11,11 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
 import org.bukkit.entity.Player
+import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.util.random
 import taboolib.common5.cbool
 import taboolib.common5.clong
 import taboolib.module.kether.KetherShell
@@ -20,6 +24,14 @@ import taboolib.module.kether.runKether
 import java.util.concurrent.CompletableFuture
 
 object TraitViewCondition : Trait() {
+
+    /** 检查标签 */
+    const val CHECK_TAG = "VIEW_CONDITION_NEXT_CHECK"
+
+    @Schedule(period = 20, async = true)
+    fun update() {
+        Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities { !it.isDerived() }.forEach { it.updateTraitViewCondition() }
+    }
 
     @SubscribeEvent
     private fun onRemove(e: AdyeshachEntityRemoveEvent) {
@@ -55,13 +67,7 @@ object TraitViewCondition : Trait() {
         val future = CompletableFuture<Void>()
         language.sendLang(player, "trait-view-condition")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
-            if (it.all { line -> line.isBlank() }) {
-                data[entityInstance.uniqueId] = null
-            } else {
-                data[entityInstance.uniqueId] = it
-            }
-            entityInstance.despawn()
-            entityInstance.respawn()
+            entityInstance.setTraitViewCondition(it)
             future.complete(null)
         }
         return future
@@ -84,6 +90,7 @@ object TraitViewCondition : Trait() {
  * 设置可视条件
  */
 fun EntityInstance.setTraitViewCondition(condition: List<String>?) {
+    removeTag(TraitViewCondition.CHECK_TAG)
     if (condition == null || condition.all { line -> line.isBlank() }) {
         TraitViewCondition.data[uniqueId] = null
     } else {
@@ -104,12 +111,8 @@ fun EntityInstance.getTraitViewCondition(): List<String> {
  * 更新可视条件
  */
 fun EntityInstance.updateTraitViewCondition() {
-    val nextCheckTime = getTag("view-condition-next-check")?.clong ?: 0
-    if (nextCheckTime > System.currentTimeMillis()) {
-        return
-    }
-    val nextUpdateTime = getTag("view-condition-next-update")?.clong ?: 0
-    if (nextUpdateTime > System.currentTimeMillis()) {
+    val checkTime = getTag(TraitViewCondition.CHECK_TAG)?.clong ?: 0
+    if (checkTime > System.currentTimeMillis()) {
         return
     }
     // 持有观察条件
@@ -117,7 +120,7 @@ fun EntityInstance.updateTraitViewCondition() {
         // 获取条件
         val script = TraitViewCondition.data.getStringList(uniqueId)
         // 设置冷却
-        setTag("view-condition-next-update", (System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50)).toString())
+        setTag(TraitViewCondition.CHECK_TAG, System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50))
         // 获取玩家
         viewPlayers.getPlayersInViewDistance().forEach {
             runKether {
@@ -142,6 +145,6 @@ fun EntityInstance.updateTraitViewCondition() {
         }
     } else {
         // 若不持有观察条件则在一段时间后检测
-        setTag("view-condition-next-check", (System.currentTimeMillis() + 5000).toString())
+        setTag(TraitViewCondition.CHECK_TAG, System.currentTimeMillis() + 5000 + random(5000))
     }
 }

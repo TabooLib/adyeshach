@@ -72,7 +72,7 @@ interface Manager {
     /**
      * 从管理器中删除单位
      */
-    fun delete(entityInstance: EntityInstance)
+    fun remove(entityInstance: EntityInstance)
 
     /**
      * 获取单位管理器中的所有单位

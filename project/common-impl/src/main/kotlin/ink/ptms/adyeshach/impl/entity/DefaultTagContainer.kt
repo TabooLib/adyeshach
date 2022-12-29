@@ -13,11 +13,11 @@ import ink.ptms.adyeshach.core.event.AdyeshachTagUpdateEvent
  */
 interface DefaultTagContainer : TagContainer {
 
-    override fun getTags(): Set<Map.Entry<String, String>> {
+    override fun getTags(): Set<Map.Entry<String, Any>> {
         return collectTagMap().entries
     }
 
-    override fun getTag(key: String): String? {
+    override fun getTag(key: String): Any? {
         return collectTagMap()[key]
     }
 
@@ -25,7 +25,7 @@ interface DefaultTagContainer : TagContainer {
         return collectTagMap().containsKey(key)
     }
 
-    override fun setTag(key: String, value: String?) {
+    override fun setTag(key: String, value: Any?) {
         this as DefaultEntityInstance
         val self = tag[key]
         if (self == value) {
@@ -84,9 +84,9 @@ interface DefaultTagContainer : TagContainer {
 /**
  * 整理实体标签
  */
-fun DefaultTagContainer.collectTagMap(): Map<String, String> {
+fun DefaultTagContainer.collectTagMap(): Map<String, Any> {
     this as DefaultEntityInstance
-    val tags = HashMap<String, String>()
+    val tags = HashMap<String, Any>()
     tags.putAll(tag)
     tags.putAll(persistentTag)
     return tags

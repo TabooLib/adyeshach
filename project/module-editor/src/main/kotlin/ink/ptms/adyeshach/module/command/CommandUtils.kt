@@ -46,10 +46,12 @@ fun CommandBuilder.CommandComponentDynamic.suggestEntityList() {
 /**
  * 就近复选操作
  */
-inline fun <reified T : EntitySource> multiControl(sender: Player, action: String) {
+inline fun <reified T : EntitySource> multiControl(sender: Player, action: String, singleAction: (EntityInstance) -> Unit = {}) {
     val npcList = Command.finder.getEntities(sender) { it.getLocation().safeDistance(sender.location) < 16 && !it.isDerived() }
     if (npcList.isEmpty()) {
         sender.sendLang("command-find-empty")
+    } else if (npcList.size == 1) {
+        singleAction(npcList.first())
     } else {
         EntityTracker.trackerMap.put(sender.name, EntityTracker(sender, action, T::class.java.invokeConstructor(npcList)).printNearby())
     }

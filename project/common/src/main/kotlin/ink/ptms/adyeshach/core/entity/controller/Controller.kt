@@ -10,7 +10,9 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
  * @since 2022/6/15 23:38
  */
 @Suppress("SpellCheckingInspection")
-abstract class Controller(val entity: EntityInstance? = null): Comparable<Controller> {
+abstract class Controller(var entity: EntityInstance? = null): Comparable<Controller> {
+
+    var error = false
 
     override fun compareTo(other: Controller): Int {
         return priority().compareTo(other.priority())

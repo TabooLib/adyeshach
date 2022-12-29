@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.controller;
 
+import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import org.bukkit.entity.LivingEntity;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import taboolib.library.xseries.XMaterial;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -16,12 +18,19 @@ import java.util.Random;
  */
 public class ControllerLookAtPlayer extends Controller {
 
-    protected final EntityInstance entity;
-    protected double lookDistance;
+    @Expose
+    protected final double lookDistance;
+
+    @Expose
+    protected final double probability;
+
+    @Expose
+    protected final boolean onlyHorizontal;
+
+    @Expose
+    protected final int baseLookTime;
+
     protected int lookTime;
-    protected double probability;
-    protected boolean onlyHorizontal;
-    protected int baseLookTime;
 
     @Nullable
     protected LivingEntity lookAt;
@@ -43,7 +52,7 @@ public class ControllerLookAtPlayer extends Controller {
     }
 
     public ControllerLookAtPlayer(EntityInstance entity, double lookDistance, double probability, boolean onlyHorizontal, int baseLookTime) {
-        this.entity = entity;
+        super(entity);
         this.lookDistance = lookDistance;
         this.probability = probability;
         this.onlyHorizontal = onlyHorizontal;
@@ -69,14 +78,14 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public boolean shouldExecute() {
-        if (this.entity.random().nextFloat() >= this.probability) {
+        if (Objects.requireNonNull(getEntity()).random().nextFloat() >= this.probability) {
             return false;
         } else {
-            this.entity.getWorld().getPlayers().stream()
-                    .filter(player -> player.getLocation().distanceSquared(entity.getLocation()) <= lookDistance * lookDistance)
+            getEntity().getWorld().getPlayers().stream()
+                    .filter(player -> player.getLocation().distanceSquared(getEntity().getLocation()) <= lookDistance * lookDistance)
                     .min((o1, o2) -> {
-                        double d1 = o1.getLocation().distanceSquared(entity.getLocation());
-                        double d2 = o2.getLocation().distanceSquared(entity.getLocation());
+                        double d1 = o1.getLocation().distanceSquared(getEntity().getLocation());
+                        double d2 = o2.getLocation().distanceSquared(getEntity().getLocation());
                         return Double.compare(d1, d2);
                     }).ifPresent(player -> {
                         this.lookAt = player;
@@ -87,9 +96,10 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public boolean continueExecute() {
+        Objects.requireNonNull(getEntity());
         if (this.lookAt == null || !this.lookAt.isValid()) {
             return false;
-        } else if (this.entity.getWorld() != this.lookAt.getWorld() || this.entity.getEyeLocation().distanceSquared(this.lookAt.getLocation()) > (double) (this.lookDistance * this.lookDistance)) {
+        } else if (getEntity().getWorld() != this.lookAt.getWorld() || getEntity().getEyeLocation().distanceSquared(this.lookAt.getLocation()) > (this.lookDistance * this.lookDistance)) {
             return false;
         } else {
             return this.lookTime > 0;
@@ -98,7 +108,7 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public void start() {
-        this.lookTime = this.adjustedTickDelay(this.baseLookTime + this.entity.random().nextInt(this.baseLookTime));
+        this.lookTime = this.adjustedTickDelay(this.baseLookTime + Objects.requireNonNull(getEntity()).random().nextInt(this.baseLookTime));
     }
 
     @Override
@@ -109,14 +119,15 @@ public class ControllerLookAtPlayer extends Controller {
     @Override
     public void tick() {
         if (this.lookAt != null && this.lookAt.isValid()) {
-            double y = this.onlyHorizontal ? this.entity.getEyeLocation().getY() : this.lookAt.getEyeLocation().getY();
-            this.entity.controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
+            Objects.requireNonNull(getEntity());
+            double y = this.onlyHorizontal ? getEntity().getEyeLocation().getY() : this.lookAt.getEyeLocation().getY();
+            getEntity().controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
             this.lookTime--;
         }
     }
 
     @Override
     public String toString() {
-        return "LOOK_AT_PLAYER:" + lookDistance + "," + probability + "," + onlyHorizontal + "," + baseLookTime;
+        return "LOOK_AT_PLAYER:" + String.format("%.2f", lookDistance) + "," + String.format("%.2f", probability) + "," + onlyHorizontal + "," + baseLookTime;
     }
 }

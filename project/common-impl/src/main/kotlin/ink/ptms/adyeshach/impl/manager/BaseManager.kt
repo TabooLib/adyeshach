@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity.manager
+package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
@@ -17,7 +17,7 @@ import java.util.function.Predicate
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.manager.BaseManager
+ * ink.ptms.adyeshach.impl.manager.BaseManager
  *
  * @author 坏黑
  * @since 2022/6/28 00:19
@@ -66,7 +66,7 @@ open class BaseManager : Manager, ManagerService, TickService {
     override fun add(entity: EntityInstance) {
     }
 
-    override fun delete(entityInstance: EntityInstance) {
+    override fun remove(entityInstance: EntityInstance) {
     }
 
     override fun getEntities(): List<EntityInstance> {

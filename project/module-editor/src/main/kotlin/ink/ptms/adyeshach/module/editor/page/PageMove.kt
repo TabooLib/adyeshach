@@ -6,8 +6,8 @@ import ink.ptms.adyeshach.module.editor.action.Action
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
+import ink.ptms.adyeshach.module.editor.format
 import org.bukkit.entity.Player
-import taboolib.common5.format
 
 /**
  * Adyeshach
@@ -36,14 +36,6 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
         )
     }
 
-    fun Double.format(): String {
-        return String.format("%.2f", this)
-    }
-
-    fun Float.format(): String {
-        return String.format("%.2f", this)
-    }
-
     enum class Type {
 
         X, Y, Z, YAW, PITCH;
@@ -59,13 +51,13 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
             return true
         }
 
-        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String? {
+        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
             return when (type) {
-                Type.X -> "adyeshach tp 1 to ~ ~$value ~ ~"
-                Type.Y -> "adyeshach tp 1 to ~ ~ ~$value ~"
-                Type.Z -> "adyeshach tp 1 to ~ ~ ~ ~$value"
-                Type.YAW -> "adyeshach tp 1 to ~ ~ ~ ~ ~$value"
-                Type.PITCH -> "adyeshach tp 1 to ~ ~ ~ ~ ~ ~$value"
+                Type.X -> "adyeshach tp ${entity.uniqueId} to ~ ~$value ~ ~"
+                Type.Y -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~$value ~"
+                Type.Z -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~$value"
+                Type.YAW -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~$value"
+                Type.PITCH -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~ ~$value"
             }
         }
     }

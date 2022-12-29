@@ -35,7 +35,10 @@ class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegist
 
         init {
             registeredControllerGenerator["LOOK_AT_PLAYER"] = ControllerGenerator(ControllerLookAtPlayer::class.java) {
-                ControllerLookAtPlayer(it)
+                ControllerLookAtPlayer(it, 8.0, 0.01)
+            }
+            registeredControllerGenerator["LOOK_AT_PLAYER_ALWAYS"] = ControllerGenerator(ControllerLookAtPlayer::class.java) {
+                ControllerLookAtPlayer(it, 8.0, 1.0)
             }
             registeredControllerGenerator["RANDOM_LOOKAROUND"] = ControllerGenerator(ControllerRandomLookaround::class.java) {
                 ControllerRandomLookaround(it)

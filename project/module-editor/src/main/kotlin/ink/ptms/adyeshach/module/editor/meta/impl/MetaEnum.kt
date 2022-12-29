@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author 坏黑
  * @since 2022/12/27 04:04
  */
-class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = false) : MetaEditor {
+class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = true) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
         val enums = enumClass.enums()

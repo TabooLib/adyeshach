@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.core.entity.controller
 
+import com.google.gson.JsonElement
+
 /**
  * Adyeshach
  * ink.ptms.adyeshach.core.entity.ai.PrepareController
@@ -7,13 +9,17 @@ package ink.ptms.adyeshach.core.entity.controller
  * @author 坏黑
  * @since 2022/6/19 23:01
  */
-class PrepareController(val generator: ControllerGenerator): Controller() {
+open class PrepareController(val generator: ControllerGenerator, override val source: JsonElement): Controller(), ControllerSource {
 
     override fun id(): String {
-        return "prepare_${generator.type.name}"
+        return "prepare:${generator.type.simpleName}"
     }
 
     override fun shouldExecute(): Boolean {
         return true
+    }
+
+    override fun toString(): String {
+        return id()
     }
 }

@@ -18,14 +18,16 @@ import java.util.*
  */
 object Serializer {
 
-    val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().run {
-        runningClasses.forEach {
-            if (it.isAnnotationPresent(SerializerType::class.java)) {
-                registerTypeHierarchyAdapter(it.getAnnotation(SerializerType::class.java).baseClass.java, it.newInstance())
+    val gson = GsonBuilder()
+        .setPrettyPrinting()
+        .excludeFieldsWithoutExposeAnnotation().run {
+            runningClasses.forEach {
+                if (it.isAnnotationPresent(SerializerType::class.java)) {
+                    registerTypeHierarchyAdapter(it.getAnnotation(SerializerType::class.java).baseClass.java, it.newInstance())
+                }
             }
-        }
-        create()
-    }!!
+            create()
+        }!!
 
     fun toItemStack(data: String): ItemStack {
         ByteArrayInputStream(Base64.getDecoder().decode(data)).use { byteArrayInputStream ->

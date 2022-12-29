@@ -40,7 +40,7 @@ import java.util.concurrent.CopyOnWriteArraySet
  * @since 2022/6/19 21:26
  */
 @Suppress("LeakingThis", "SpellCheckingInspection")
-abstract class DefaultEntityInstance(entityType: EntityTypes) :
+abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBIE) :
     DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultViewable, InternalEntity, TickService {
 
     override val x: Double
@@ -131,9 +131,17 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
     var bionicSight = BionicSight(this)
 
     /** 客户端位置 */
+    @Expose
     var clientPosition = position
         set(value) {
             field = value.clone()
+        }
+        get() {
+            // 修正因反序列化带来的坐标偏移
+            if (field.isZero() && field != position) {
+                field = position
+            }
+            return field
         }
 
     /** 客户端位置修正 */
@@ -263,7 +271,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes) :
         if (removeFromManager) {
             if (manager != null) {
                 isRemoved = true
-                manager!!.delete(this)
+                manager!!.remove(this)
                 manager = null
                 AdyeshachEntityRemoveEvent(this).call()
             }

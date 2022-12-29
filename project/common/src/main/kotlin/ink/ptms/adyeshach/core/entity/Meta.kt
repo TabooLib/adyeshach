@@ -28,3 +28,6 @@ abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val gro
      */
     abstract fun updateEntityMetadata(entityInstance: EntityInstance)
 }
+
+/** 是否为布尔值类型的元数据 */
+fun Meta<*>.isBool() = def is Boolean || this is MetaMasked<*>

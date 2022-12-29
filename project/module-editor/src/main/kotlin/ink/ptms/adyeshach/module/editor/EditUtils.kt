@@ -57,3 +57,11 @@ fun String.toLocaleKey(): String {
     }
     return builder.toString()
 }
+
+fun Double.format(): String {
+    return String.format("%.2f", this)
+}
+
+fun Float.format(): String {
+    return String.format("%.2f", this)
+}

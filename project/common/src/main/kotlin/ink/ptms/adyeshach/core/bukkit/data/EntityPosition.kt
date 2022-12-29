@@ -55,7 +55,7 @@ data class EntityPosition(
     }
 
     fun isZero(): Boolean {
-        return x == 0.0 && y == 0.0 && z == 0.0
+        return x == 0.0 && y == 0.0 && z == 0.0 && yaw == 0f && pitch == 0f
     }
 
     fun lengthSquared(): Double {

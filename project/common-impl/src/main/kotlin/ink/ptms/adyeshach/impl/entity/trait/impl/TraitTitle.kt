@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachHologram
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
-import ink.ptms.adyeshach.core.entity.manager.event.TeleportEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
@@ -31,14 +30,14 @@ object TraitTitle : Trait() {
     // <NPC, <玩家, 全息>>
     val entityLookup = ConcurrentHashMap<String, MutableMap<String, AdyeshachHologram>>()
 
-    @Awake(LifeCycle.ENABLE)
+    @Awake(LifeCycle.ACTIVE)
     fun enable() {
         Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEventBus()?.prepareTeleport { e ->
-            onTeleport(e)
-            true
-        }
-        Adyeshach.api().getPublicEntityManager(ManagerType.TEMPORARY).getEventBus()?.prepareTeleport { e ->
-            onTeleport(e)
+            if (entityLookup.containsKey(e.entity.uniqueId) && !e.entity.isDerived()) {
+                entityLookup[e.entity.uniqueId]!!.forEach {
+                    it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height, 0.0))
+                }
+            }
             true
         }
     }
@@ -51,16 +50,7 @@ object TraitTitle : Trait() {
 
     @Schedule(period = 100, async = true)
     fun update() {
-        Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { update(it) }
-        Adyeshach.api().getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { update(it) }
-    }
-
-    private fun onTeleport(e: TeleportEvent) {
-        if (entityLookup.containsKey(e.entity.uniqueId)) {
-            entityLookup[e.entity.uniqueId]!!.forEach {
-                it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height, 0.0))
-            }
-        }
+        Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities { !it.isDerived() }.forEach { update(it) }
     }
 
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)

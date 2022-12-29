@@ -1,9 +1,11 @@
 package ink.ptms.adyeshach.impl.entity.controller;
 
+import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -13,10 +15,13 @@ import java.util.Random;
  */
 public class ControllerRandomLookaround extends Controller {
 
-    protected final EntityInstance entity;
-    protected double probability;
+    @Expose
+    protected final double probability;
+
     protected double relX;
+
     protected double relZ;
+
     protected int lookTime;
 
     public ControllerRandomLookaround(EntityInstance entity) {
@@ -24,7 +29,7 @@ public class ControllerRandomLookaround extends Controller {
     }
 
     public ControllerRandomLookaround(EntityInstance entity, double probability) {
-        this.entity = entity;
+        super(entity);
         this.probability = probability;
     }
 
@@ -47,7 +52,7 @@ public class ControllerRandomLookaround extends Controller {
 
     @Override
     public boolean shouldExecute() {
-        return this.entity.random().nextFloat() < this.probability;
+        return Objects.requireNonNull(getEntity()).random().nextFloat() < this.probability;
     }
 
     @Override
@@ -57,16 +62,16 @@ public class ControllerRandomLookaround extends Controller {
 
     @Override
     public void start() {
-        double r = 6.283185307179586 * entity.random().nextDouble();
+        double r = 6.283185307179586 * Objects.requireNonNull(getEntity()).random().nextDouble();
         this.relX = Math.cos(r);
         this.relZ = Math.sin(r);
-        this.lookTime = 20 + entity.random().nextInt(20);
+        this.lookTime = 20 + getEntity().random().nextInt(20);
     }
 
     @Override
     public void tick() {
         this.lookTime--;
-        this.entity.controllerLookAt(this.entity.getX() + this.relX, this.entity.getEyeLocation().getY(), this.entity.getZ() + this.relZ);
+        Objects.requireNonNull(getEntity()).controllerLookAt(getEntity().getX() + this.relX, getEntity().getEyeLocation().getY(), getEntity().getZ() + this.relZ);
     }
 
     @Override
