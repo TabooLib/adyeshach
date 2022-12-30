@@ -18,8 +18,8 @@ class HoloEntityText(text: String, space: Double) : HoloEntity<AdyArmorStand>(sp
         set(value) {
             if (field != value) {
                 field = value
-                entity.setCustomName(field)
-                entity.setCustomNameVisible(text.isNotEmpty())
+                entity?.setCustomName(field)
+                entity?.setCustomNameVisible(text.isNotEmpty())
             }
         }
 

@@ -18,6 +18,7 @@ import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.common5.clong
+import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
 
 const val STANDARD_EDIT_TRACKER = "edit"
@@ -89,7 +90,7 @@ val editSubCommand = subCommand {
                         // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
                         // 获取值
-                        val value = args.substringAfter("->")
+                        val value = args.substringAfter("->").colored()
                         // 获取有效的实体元数据
                         val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
                         if (metaFirst != null) {

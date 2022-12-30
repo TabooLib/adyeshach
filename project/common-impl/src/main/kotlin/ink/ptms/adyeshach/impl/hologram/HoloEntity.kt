@@ -18,12 +18,13 @@ abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.Item
 
     var offset = 0.0
 
-    lateinit var entity: T
-    lateinit var origin: Location
+    var entity: T? = null
+    var origin: Location? = null
+
     override var space = space
         set(value) {
             field = value
-            teleport(origin)
+            teleport(origin ?: return)
         }
 
     /** 生成回调 */
@@ -33,23 +34,23 @@ abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.Item
     override fun spawn(offset: Double, location: Location, manager: Manager) {
         this.offset = offset
         this.origin = location.clone()
-        this.entity = manager.create(type, origin.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
-        this.entity.setDerived("AdyeshachHologram")
+        this.entity = manager.create(type, origin!!.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
+        this.entity?.setDerived("AdyeshachHologram")
     }
 
     /** 删除全息 */
     override fun remove() {
-        entity.remove()
+        entity?.remove()
     }
 
     /** 传送到某处 */
     override fun teleport(location: Location) {
         origin = location
-        entity.teleport(origin.clone().plus(y = offset + space))
+        entity?.teleport(origin!!.clone().plus(y = offset + space))
     }
 
     /** 获取实体 */
     override fun entity(): T {
-        return entity
+        return entity!!
     }
 }

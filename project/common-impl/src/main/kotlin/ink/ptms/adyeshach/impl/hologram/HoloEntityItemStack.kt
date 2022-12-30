@@ -19,7 +19,7 @@ class HoloEntityItemStack(itemStack: ItemStack, space: Double) : HoloEntity<AdyI
         set(value) {
             if (field != value) {
                 field = value
-                entity.setItem(itemStack)
+                entity?.setItem(itemStack)
             }
         }
 

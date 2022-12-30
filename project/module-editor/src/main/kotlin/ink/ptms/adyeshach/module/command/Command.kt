@@ -59,6 +59,9 @@ object Command {
     val edit = editSubCommand
 
     @CommandBody
+    val clone = renameSubCommand
+
+    @CommandBody
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
             AdyeshachSettings.conf.reload()

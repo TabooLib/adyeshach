@@ -50,7 +50,7 @@ object TraitPatrol : Trait() {
                 // 获取所有节点
                 val nodes = entity.getTraitPatrolNodes()
                 if (nodes.isEmpty()) {
-                    return
+                    return@forEach
                 }
                 // 获取等待时间
                 val waitTime = entity.getTraitPatrolWaitTime()
@@ -58,7 +58,7 @@ object TraitPatrol : Trait() {
                     if (waitTime > 0) {
                         // 等待下一个节点
                         if (entity.getTag(WAIT_TAG).clong > System.currentTimeMillis()) {
-                            return
+                            return@forEach
                         }
                         entity.removeTag(WAIT_TAG)
                     }
