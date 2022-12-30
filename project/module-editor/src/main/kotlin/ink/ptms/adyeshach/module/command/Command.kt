@@ -59,7 +59,7 @@ object Command {
     val edit = editSubCommand
 
     @CommandBody
-    val clone = renameSubCommand
+    val clone = cloneSubCommand
 
     @CommandBody
     val reload = subCommand {
