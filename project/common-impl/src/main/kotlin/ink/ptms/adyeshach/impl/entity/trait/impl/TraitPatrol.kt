@@ -89,7 +89,8 @@ object TraitPatrol : Trait() {
     fun edit() {
         Bukkit.getOnlinePlayers().forEach { player ->
             if (editCacheMap.containsKey(player.name)) {
-                val nodes = editCacheMap[player.name]!!.getTraitPatrolNodes()
+                val entity = editCacheMap[player.name]!!
+                val nodes = entity.getTraitPatrolNodes()
                 nodes.forEachIndexed { i, node ->
                     // 播放轨迹
                     node.index = 0
@@ -107,7 +108,7 @@ object TraitPatrol : Trait() {
                     // 延迟删除
                     submit(delay = 20) { hologram.remove() }
                 }
-                language.sendLang(player, "trait-patrol", nodes.size)
+                language.sendLang(player, "trait-patrol", entity.getTraitPatrolNodeCount())
             }
         }
     }
@@ -146,6 +147,7 @@ object TraitPatrol : Trait() {
             val entity = editCacheMap[e.player.name]!!
             if (e.isLeftClickBlock() && e.item?.type == Material.BLAZE_ROD) {
                 e.isCancelled = true
+                e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                 // 增加节点
                 val nodes = TraitPatrol.data.mapListAs("${entity.uniqueId}.nodes") { Location.deserialize(it) }.toMutableList()
                 nodes += e.clickedBlock!!.location.add(0.0, 1.0, 0.0)
@@ -161,7 +163,7 @@ object TraitPatrol : Trait() {
                 // 更新节点
                 entity.setTraitPatrolNodes(nodes)
             }
-            language.sendLang(e.player, "trait-patrol", entity.getTraitPatrolNodes().size)
+            language.sendLang(e.player, "trait-patrol", entity.getTraitPatrolNodeCount())
         }
     }
 
@@ -254,6 +256,13 @@ fun EntityInstance.getTraitPatrolNodes(): List<InterpolatedLocation> {
         TraitPatrol.nodesCacheMap[uniqueId] = it
     }
     return emptyList()
+}
+
+/**
+ * 获取单位的移动轨迹数量
+ */
+fun EntityInstance.getTraitPatrolNodeCount(): Int {
+    return TraitPatrol.data.getMapList("$uniqueId.nodes").size
 }
 
 /**
