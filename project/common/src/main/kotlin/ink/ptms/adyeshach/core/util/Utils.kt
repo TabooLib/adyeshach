@@ -23,6 +23,20 @@ fun CommandSender.sendLang(node: String, vararg args: Any) {
 }
 
 /**
+ * 使用 AdyeshachLanguage 获取语言文件
+ */
+fun CommandSender.asLang(node: String, vararg args: Any): String? {
+    return Adyeshach.api().getLanguage().getLang(this, node, *args)
+}
+
+/**
+ * 使用 AdyeshachLanguage 获取语言文件
+ */
+fun CommandSender.asLangList(node: String, vararg args: Any): List<String> {
+    return Adyeshach.api().getLanguage().getLangList(this, node, *args)
+}
+
+/**
  * 通过 AdyeshachLanguage 获取语言文件文本
  */
 fun asLang(node: String, vararg args: Any) = Adyeshach.api().getLanguage().getLang(console().cast(), node, *args) ?: node

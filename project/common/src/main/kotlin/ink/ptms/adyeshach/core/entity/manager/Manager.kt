@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.errorBy
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import java.io.File
 import java.util.function.Consumer
 import java.util.function.Predicate
 
@@ -108,6 +109,11 @@ interface Manager {
      * 获取事件总线，可能没有
      */
     fun getEventBus(): EventBus?
+
+    /**
+     * 从文件中加载单位
+     */
+    fun loadEntityFromFile(file: File): EntityInstance
 }
 
 /**

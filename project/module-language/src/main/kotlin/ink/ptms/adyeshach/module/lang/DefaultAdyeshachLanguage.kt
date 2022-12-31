@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.platform.util.asLangTextList
 import taboolib.platform.util.asLangTextOrNull
 import taboolib.platform.util.sendLang
 
@@ -23,6 +24,10 @@ class DefaultAdyeshachLanguage : AdyeshachLanguage {
 
     override fun getLang(sender: CommandSender, key: String, vararg args: Any): String? {
         return sender.asLangTextOrNull(key, *args)
+    }
+
+    override fun getLangList(sender: CommandSender, key: String, vararg args: Any): List<String> {
+        return sender.asLangTextList(key, *args)
     }
 
     companion object {

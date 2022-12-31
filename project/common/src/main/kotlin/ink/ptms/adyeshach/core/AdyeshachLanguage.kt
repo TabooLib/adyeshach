@@ -20,4 +20,9 @@ interface AdyeshachLanguage {
      * 获取语言文件
      */
     fun getLang(sender: CommandSender, key: String, vararg args: Any): String?
+
+    /**
+     * 获取语言文件
+     */
+    fun getLangList(sender: CommandSender, key: String, vararg args: Any): List<String>
 }

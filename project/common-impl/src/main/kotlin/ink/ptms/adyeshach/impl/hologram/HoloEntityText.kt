@@ -31,4 +31,16 @@ class HoloEntityText(text: String, space: Double) : HoloEntity<AdyArmorStand>(sp
         entity.setCustomName(text)
         entity.setCustomNameVisible(text.isNotEmpty())
     }
+
+    override fun merge(item: Any): Boolean {
+        if (item is HoloEntityText) {
+            text = item.text
+            return true
+        }
+        if (item is String) {
+            text = item
+            return true
+        }
+        return false
+    }
 }

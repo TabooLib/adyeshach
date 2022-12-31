@@ -68,15 +68,7 @@ command-find-more-rename-update:
         hover: '点击传送'
       - command: '/adyeshach rename {uuid} {old_id}'
         hover: '点击恢复'
-command-find-more-clone:
-  - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
-    args:
-      - suggest: '/adyeshach clone {uuid} '
-        hover: '点击克隆为..。'
-      - command: '/adyeshach tp {uuid}'
-        hover: '点击传送'
-command-find-teleport-rename:
+command-find-more-teleport:
   - ==: JSON
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
@@ -84,7 +76,7 @@ command-find-teleport-rename:
         hover: '点击传送到..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
-command-find-move-rename:
+command-find-more-move:
   - ==: JSON
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
@@ -106,6 +98,14 @@ command-find-more-edit:
     args:
       - command: '/adyeshach edit {uuid}'
         hover: '点击编辑'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-clone:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach clone {uuid} '
+        hover: '点击克隆为..。'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 
@@ -149,6 +149,21 @@ command-world-different: ' &5&l‹ ›&r &7你与 &f"{0}" &7不在同一世界�
 command-world-not-found: ' &5&l‹ ›&r &7世界 &f"{0}" &7不存在。'
 command-meta-not-found: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不存在。'
 command-meta-not-support-editor: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不支持编辑器修改。'
+command-undo-not-found: ' &5&l‹ ›&r &7回收站没有找到符合要求的单位。'
+command-undo-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7从回收站恢复。'
+command-undo-failed: ' &5&l‹ ›&r &7无法恢复 &f"{0}" &7: &8{1}'
+command-undo-list-title: '回收站列表'
+command-undo-list-title-with-search: '回收站列表 : {0}'
+command-undo-list-search-name: '&7搜索'
+command-undo-list-search-description: '&8点击搜索回收站中符合要求的单位'
+command-undo-list-search-placeholder: '&7请输入搜索内容'
+command-undo-list-item-name: '&7{0}'
+command-undo-list-item-description:
+  - '&8{1} &8({2}&8)'
+  - '&c于 {3} 前删除, 点击恢复'
+command-undo-list-time-hour: '时'
+command-undo-list-time-minute: '分'
+command-undo-list-time-second: '秒'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'

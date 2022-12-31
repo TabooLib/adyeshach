@@ -24,24 +24,14 @@ interface AdyeshachHologramHandler {
     fun createHologramItem(itemStack: ItemStack, space: Double = 0.4): AdyeshachHologram.ItemByItemStack
 
     /**
-     * 创建全服玩家可见的混合全息
+     * 创建全服可见的混合全息
      */
-    fun createHologram(location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean = false): AdyeshachHologram
-
-    /**
-     * 创建全服玩家可见的文本全息
-     */
-    fun createHologramByText(location: Location, content: List<String>, isolate: Boolean = false): AdyeshachHologram
+    fun createHologram(location: Location, content: List<Any>, isolate: Boolean = false): AdyeshachHologram
 
     /**
      * 创建玩家私有的混合全息
      */
-    fun createHologram(player: Player, location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean = false): AdyeshachHologram
-
-    /**
-     * 创建玩家私有的文本全息
-     */
-    fun createHologramByText(player: Player, location: Location, content: List<String>, isolate: Boolean = false): AdyeshachHologram
+    fun createHologram(player: Player, location: Location, content: List<Any>, isolate: Boolean = false): AdyeshachHologram
 
     /**
      * 创建全息通告（以全息形式发送位于世界中的提示信息）

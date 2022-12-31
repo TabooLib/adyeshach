@@ -11,7 +11,10 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.core.util.safeDistance
 import org.bukkit.Location
 import org.bukkit.entity.Player
+import taboolib.common.platform.function.warning
 import taboolib.platform.util.onlinePlayers
+import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.function.Consumer
 import java.util.function.Predicate
 
@@ -115,5 +118,16 @@ open class BaseManager : Manager, ManagerService, TickService {
 
     override fun getEventBus(): EventBus? {
         return null
+    }
+
+    override fun loadEntityFromFile(file: File): EntityInstance {
+        val entity = Adyeshach.api().getEntitySerializer().fromJson(file.readText(StandardCharsets.UTF_8))
+        if (Adyeshach.api().getEntityTypeRegistry().getBukkitEntityTypeOrNull(entity.entityType) == null) {
+            warning("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
+        } else {
+            entity.manager = this
+            add(entity)
+        }
+        return entity
     }
 }

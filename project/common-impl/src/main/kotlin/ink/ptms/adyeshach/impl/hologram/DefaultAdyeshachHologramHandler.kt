@@ -30,22 +30,14 @@ class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
         return HoloEntityItemStack(itemStack, space)
     }
 
-    override fun createHologram(location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
+    override fun createHologram(location: Location, content: List<Any>, isolate: Boolean): AdyeshachHologram {
         val manager = Adyeshach.api().getPublicEntityManager(if (isolate) ManagerType.ISOLATED else ManagerType.TEMPORARY)
-        return Hologram(manager, location, content)
+        return Hologram(manager, location, content.toHologramContents())
     }
 
-    override fun createHologram(player: Player, location: Location, content: List<AdyeshachHologram.Item>, isolate: Boolean): AdyeshachHologram {
+    override fun createHologram(player: Player, location: Location, content: List<Any>, isolate: Boolean): AdyeshachHologram {
         val manager = Adyeshach.api().getPrivateEntityManager(player, if (isolate) ManagerType.ISOLATED else ManagerType.TEMPORARY)
-        return Hologram(manager, location, content)
-    }
-
-    override fun createHologramByText(location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
-        return createHologram(location, content.map { createHologramItem(it) }, isolate)
-    }
-
-    override fun createHologramByText(player: Player, location: Location, content: List<String>, isolate: Boolean): AdyeshachHologram {
-        return createHologram(player, location, content.map { createHologramItem(it) }, isolate)
+        return Hologram(manager, location, content.toHologramContents())
     }
 
     override fun sendHologramMessage(location: Location, message: List<String>, stay: Long) {
@@ -61,9 +53,9 @@ class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
             return
         }
         val hologram = if (player == null) {
-            Adyeshach.api().getHologramHandler().createHologramByText(location, message.map { "" }, true)
+            Adyeshach.api().getHologramHandler().createHologram(location, message.map { "" }, true)
         } else {
-            Adyeshach.api().getHologramHandler().createHologramByText(player, location, message.map { "" }, true)
+            Adyeshach.api().getHologramHandler().createHologram(player, location, message.map { "" }, true)
         }
         val hologramItems = hologram.contents().map { it as HoloEntityText }
         val content = message.map { it.printed("_") }
@@ -84,6 +76,17 @@ class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
         @Awake(LifeCycle.LOAD)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachHologramHandler>(DefaultAdyeshachHologramHandler())
+        }
+
+        fun List<Any>.toHologramContents(): List<AdyeshachHologram.Item> {
+            return map {
+                when (it) {
+                    is AdyeshachHologram.Item -> it
+                    is String -> Adyeshach.api().getHologramHandler().createHologramItem(it)
+                    is ItemStack -> Adyeshach.api().getHologramHandler().createHologramItem(it)
+                    else -> throw IllegalArgumentException("Unknown content type: $it")
+                }
+            }
         }
     }
 }

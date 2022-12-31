@@ -26,4 +26,16 @@ class HoloEntityItemStack(itemStack: ItemStack, space: Double) : HoloEntity<AdyI
     override fun prepareSpawn(entity: AdyItem) {
         entity.setItem(itemStack)
     }
+
+    override fun merge(item: Any): Boolean {
+        if (item is HoloEntityItemStack) {
+            itemStack = item.itemStack
+            return true
+        }
+        if (item is ItemStack) {
+            itemStack = item
+            return true
+        }
+        return false
+    }
 }

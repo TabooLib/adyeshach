@@ -28,7 +28,7 @@ val tpSubCommand = subCommand {
         suggestEntityList()
         // 定向传送
         execute<Player> { sender, ctx, _ ->
-            multiControl<EntitySource.Empty>(sender, ctx.argument(0), STANDARD_TP_TRACKER) {
+            multiControl<EntitySource.Empty>(sender, ctx.argument(0), STANDARD_TP_TRACKER, unified = false) {
                 sender.teleport(it.getLocation())
                 if (!sender.isIgnoreNotice()) {
                     sender.sendLang("command-teleport-to-entity", it.id)
@@ -38,7 +38,7 @@ val tpSubCommand = subCommand {
         // 传送到当前位置
         literal("here") {
             execute<Player> { sender, ctx, _ ->
-                multiControl<EntitySource.Empty>(sender, ctx.argument(-1), STANDARD_TP_TRACKER) {
+                multiControl<EntitySource.Empty>(sender, ctx.argument(-1), STANDARD_TP_TRACKER, unified = false) {
                     it.teleport(sender.location)
                     if (!sender.isIgnoreNotice()) {
                         sender.sendLang("command-teleport-to-here", it.id)
@@ -96,7 +96,7 @@ val tpSubCommand = subCommand {
 }
 
 private fun teleport(sender: CommandSender, id: String, world: String, x: String, y: String, z: String, yaw: String, pitch: String) {
-    multiControl<EntitySource.Empty>(sender, id, STANDARD_TP_TRACKER) {
+    multiControl<EntitySource.Empty>(sender, id, STANDARD_TP_TRACKER, unified = false) {
         val loc = Location(
             if (world == "~") it.world else Bukkit.getWorld(world),
             if (x.startsWith("~")) it.x + x.substring(1).cdouble else x.cdouble,

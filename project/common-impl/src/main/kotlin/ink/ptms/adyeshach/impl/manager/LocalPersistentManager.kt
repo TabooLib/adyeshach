@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.manager
 
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.serializer.UnknownWorldException
@@ -9,9 +8,7 @@ import taboolib.common.io.digest
 import taboolib.common.io.newFile
 import taboolib.common.io.newFolder
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.warning
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -29,17 +26,7 @@ open class LocalPersistentManager : DefaultManager() {
         activeEntity.clear()
         newFolder(getDataFolder(), "npc").listFiles()?.filter { it.extension == "json" }?.forEach { file ->
             try {
-                val entity = Adyeshach.api().getEntitySerializer().fromJson(file.readText(StandardCharsets.UTF_8))
-                if (Adyeshach.api().getEntityTypeRegistry().getBukkitEntityTypeOrNull(entity.entityType) == null) {
-                    warning("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
-                } else {
-                    entity.manager = this
-                    activeEntity += entity
-                    hash[entity.uniqueId] = entity.toJson().digest("sha-1")
-                    if (entity.visibleAfterLoaded) {
-                        Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
-                    }
-                }
+                loadEntityFromFile(file)
             } catch (ex: UnknownWorldException) {
                 if (AdyeshachSettings.isAutoDeleteWorld(ex.world)) {
                     file.delete()
@@ -61,9 +48,10 @@ open class LocalPersistentManager : DefaultManager() {
 
     override fun remove(entityInstance: EntityInstance) {
         super.remove(entityInstance)
-        val file = File(getDataFolder(), "npc/${entityInstance.uniqueId}.json")
+        val file = newFile(getDataFolder(), "npc/${entityInstance.uniqueId}.json")
         if (file.exists()) {
-            file.copyTo(File(getDataFolder(), "npc/trash/${entityInstance.uniqueId}.json"))
+            file.writeText(entityInstance.toJson())
+            file.copyTo(File(getDataFolder(), "npc/trash/${entityInstance.uniqueId}.json"), overwrite = true)
             file.delete()
         }
         hash.remove(entityInstance.uniqueId)
@@ -71,5 +59,14 @@ open class LocalPersistentManager : DefaultManager() {
 
     override fun isTemporary(): Boolean {
         return false
+    }
+
+    override fun loadEntityFromFile(file: File): EntityInstance {
+        val entity = super.loadEntityFromFile(file)
+        hash[entity.uniqueId] = entity.toJson().digest("sha-1")
+        if (entity.visibleAfterLoaded) {
+            Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
+        }
+        return entity
     }
 }

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.hologram
 
 import ink.ptms.adyeshach.core.AdyeshachHologram
 import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.impl.hologram.DefaultAdyeshachHologramHandler.Companion.toHologramContents
 import org.bukkit.Location
 
 /**
@@ -22,9 +23,9 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
         this.content.filterIsInstance<HoloEntity<*>>().reversed().forEach { it.teleport(origin) }
     }
 
-    override fun update(content: List<AdyeshachHologram.Item>) {
+    override fun update(content: List<Any>) {
         this.content.forEach { it.remove() }
-        this.content = content
+        this.content = content.toHologramContents()
         refresh()
     }
 

@@ -3,12 +3,12 @@ package ink.ptms.adyeshach.module.command
 import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.editor.clearScreen
 import org.bukkit.Particle
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common5.Coerce
-import ink.ptms.adyeshach.core.util.sendLang
 import java.util.concurrent.TimeUnit
 
 /**
@@ -67,6 +67,14 @@ open class EntityTracker(val sender: CommandSender, val action: String, val enti
         val trackerMap = Caffeine.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build<String, EntityTracker>()
+
+        fun get(sender: CommandSender, id: String): EntityTracker? {
+            val printer = trackerMap.getIfPresent(sender.name) ?: return null
+            if (printer.id == null || printer.id == id) {
+                return printer
+            }
+            return null
+        }
 
         fun check(sender: CommandSender, id: String, checkEntity: EntityInstance? = null) {
             val printer = trackerMap.getIfPresent(sender.name) ?: return

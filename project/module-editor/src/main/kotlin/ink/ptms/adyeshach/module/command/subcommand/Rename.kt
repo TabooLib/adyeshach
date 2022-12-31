@@ -1,13 +1,13 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.command.EntitySource
 import ink.ptms.adyeshach.module.command.EntityTracker
 import ink.ptms.adyeshach.module.command.multiControl
 import ink.ptms.adyeshach.module.command.suggestEntityList
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.subCommand
-import ink.ptms.adyeshach.core.util.sendLang
 
 const val STANDARD_RENAME_TRACKER = "rename"
 
@@ -36,7 +36,7 @@ val renameSubCommand = subCommand {
     }
 }
 
-class RenameEntitySource(elements: List<EntityInstance>) : EntitySource(elements) {
+class RenameEntitySource(elements: MutableList<EntityInstance>) : EntitySource(elements) {
 
     val idMap = elements.associate { it.uniqueId to it.id }
 

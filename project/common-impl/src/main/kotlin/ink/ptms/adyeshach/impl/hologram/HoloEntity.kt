@@ -34,6 +34,7 @@ abstract class HoloEntity<T : AdyEntity>(space: Double) : AdyeshachHologram.Item
     override fun spawn(offset: Double, location: Location, manager: Manager) {
         this.offset = offset
         this.origin = location.clone()
+        this.entity?.remove()
         this.entity = manager.create(type, origin!!.clone().plus(y = offset + space)) { prepareSpawn(it as T) } as T
         this.entity?.setDerived("AdyeshachHologram")
     }

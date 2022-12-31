@@ -9,13 +9,13 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
  * @author 坏黑
  * @since 2022/12/23 19:23
  */
-abstract class EntitySource(val elements: List<EntityInstance>) {
+abstract class EntitySource(val elements: MutableList<EntityInstance>) {
 
     abstract fun isUpdated(entity: EntityInstance): Boolean
 
     abstract fun extraArgs(entity: EntityInstance): Array<Any>
 
-    class Empty(elements: List<EntityInstance>) : EntitySource(elements) {
+    class Empty(elements: MutableList<EntityInstance>) : EntitySource(elements) {
 
         override fun isUpdated(entity: EntityInstance): Boolean {
             return false

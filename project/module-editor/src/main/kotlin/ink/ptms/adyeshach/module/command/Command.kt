@@ -59,6 +59,9 @@ object Command {
     val edit = editSubCommand
 
     @CommandBody
+    val undo = undoSubCommand
+
+    @CommandBody
     val clone = cloneSubCommand
 
     @CommandBody

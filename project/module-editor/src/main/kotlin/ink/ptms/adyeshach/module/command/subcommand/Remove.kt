@@ -57,7 +57,7 @@ val removeSubCommand = subCommand {
     }
 }
 
-class RemoveEntitySource(elements: List<EntityInstance>) : EntitySource(elements) {
+class RemoveEntitySource(elements: MutableList<EntityInstance>) : EntitySource(elements) {
 
     override fun isUpdated(entity: EntityInstance): Boolean {
         return entity.isRemoved

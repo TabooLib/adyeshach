@@ -104,7 +104,7 @@ object TraitPatrol : Trait() {
                     // 节点粒子
                     player.spawnParticle(Particle.END_ROD, pos.clone().plus(0.5, 0.5, 0.5), 10, 0.0, 1.0, 0.0, 0.0)
                     // 节点全息
-                    val hologram = Adyeshach.api().getHologramHandler().createHologramByText(player, pos.clone().plus(0.5, 1.0, 0.5), listOf("#${i + 1}"))
+                    val hologram = Adyeshach.api().getHologramHandler().createHologram(player, pos.clone().plus(0.5, 1.0, 0.5), listOf("#${i + 1}"))
                     // 延迟删除
                     submit(delay = 20) { hologram.remove() }
                 }

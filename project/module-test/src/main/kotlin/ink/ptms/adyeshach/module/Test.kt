@@ -160,7 +160,7 @@ object Test {
     val holo2 = subCommand {
         execute<Player> { sender, _, _ ->
             val handler = Adyeshach.api().getHologramHandler()
-            handler.createHologramByText(sender.eyeLocation, listOf("我是", "我是脑瘫", "我是一个脑瘫"))
+            handler.createHologram(sender.eyeLocation, listOf("我是", "我是脑瘫", "我是一个脑瘫"))
             sender.info("OK")
         }
     }
