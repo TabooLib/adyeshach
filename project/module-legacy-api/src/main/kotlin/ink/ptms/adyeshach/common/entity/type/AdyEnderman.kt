@@ -1,0 +1,50 @@
+package ink.ptms.adyeshach.common.entity.type
+
+import ink.ptms.adyeshach.common.entity.EntityTypes
+import org.bukkit.material.MaterialData
+
+/**
+ * 1.16,1.15
+ * 15 ->Carried block
+ * 16 ->Is screaming
+ * 17 ->Is stared at
+ * 1.14
+ * 14 ->Carried block
+ * 15 ->Is screaming
+ * 1.13,1.12,1.11,1.10
+ * 12 ->Carried block
+ * 13 ->Is screaming
+ * 1.9
+ * 11 ->Carried block
+ * 12 ->Is screaming
+ *
+ * @author sky
+ * @date 2020/8/4 23:15
+ */
+@Deprecated("Outdated but usable")
+class AdyEnderman(v2: ink.ptms.adyeshach.core.entity.EntityInstance):  AdyMob(EntityTypes.ENDERMAN, v2) {
+
+    fun setCarriedBlock(materialData: MaterialData) {
+        setMetadata("carriedBlock", materialData)
+    }
+
+    fun getCarriedBlock(): MaterialData {
+        return getMetadata("carriedBlock")
+    }
+
+    fun isScreaming(): Boolean {
+        return getMetadata("isScreaming")
+    }
+
+    fun setScreaming(screaming: Boolean) {
+        setMetadata("isScreaming", screaming)
+    }
+
+    fun isStaring(): Boolean {
+        return getMetadata("isStaring")
+    }
+
+    fun setStaring(staring: Boolean) {
+        setMetadata("isStaring", staring)
+    }
+}

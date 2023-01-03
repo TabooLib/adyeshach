@@ -31,6 +31,8 @@ open class LocalPersistentManager : DefaultManager() {
                 if (AdyeshachSettings.isAutoDeleteWorld(ex.world)) {
                     file.delete()
                 }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }

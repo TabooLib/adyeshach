@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.core
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Meta
 
 /**
@@ -30,4 +31,9 @@ interface AdyeshachEntityMetadataRegistry {
      * 获取实体无意义的元数据
      */
     fun getEntityUnusedMeta(type: Class<*>): List<String>
+
+    /**
+     * 是否为无意义的元数据
+     */
+    fun isUnusedMeta(entity: EntityInstance, id: String): Boolean
 }

@@ -14,7 +14,12 @@ interface AdyeshachEntityControllerRegistry {
     /**
      * 注册 Controller 生成器
      */
-    fun registerControllerGenerator(name: String, event: ControllerGenerator)
+    fun registerControllerGenerator(name: String, generator: ControllerGenerator)
+
+    /**
+     * 注销 Controller 生成器
+     */
+    fun unregisterControllerGenerator(name: String)
 
     /**
      * 获取 Controller 生成器

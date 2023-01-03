@@ -4,6 +4,7 @@ import com.google.gson.*
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.controller.*
 import ink.ptms.adyeshach.core.serializer.SerializerType
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import java.lang.reflect.Type
 
 /**
@@ -19,7 +20,7 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
         }
         return JsonObject().also {
             it.addProperty("type", controller::class.java.name)
-            it.add("data", gson.toJsonTree(controller))
+            it.add("data", if (controller is CustomSerializable) controller.serialize() else gson.toJsonTree(controller))
         }
     }
 
@@ -38,11 +39,18 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
         return try {
             val obj = element.asJsonObject
             val clazz = Class.forName(obj.get("type").asString) as Class<Controller>
-            val controller = gson.fromJson(obj.get("data"), clazz)
-            PrepareController(ControllerGenerator(clazz) {
-                controller.entity = it
-                controller
-            }, element)
+            // 自定义序列化
+            // 需要实现 CustomSerializable 接口，并且提供一个静态方法 deserialize(data: JsonObject): ControllerGenerator 用于反序列化
+            val generator = if (CustomSerializable::class.java.isAssignableFrom(clazz)) {
+                clazz.invokeMethod("deserialize", obj.get("data").asJsonObject, isStatic = true, remap = false, findToParent = false)!!
+            } else {
+                val controller = gson.fromJson(obj.get("data"), clazz)
+                ControllerGenerator(clazz) {
+                    controller.entity = it
+                    controller
+                }
+            }
+            PrepareController(generator, element)
         } catch (ex: Throwable) {
             PrepareController(ControllerGenerator(ErrorController::class.java) { ErrorController(it, element, ex) }, element)
         }

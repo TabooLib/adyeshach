@@ -26,6 +26,6 @@ class DescEntityUnusedMeta(input: InputStream) : Description(input) {
     }
 
     override fun loaded() {
-        info("Load ${metaMap.size} unused entity metadata from the \"$name\"")
+        info("Loaded ${metaMap.size} unused entity metadata from the \"$name\"")
     }
 }

@@ -58,6 +58,6 @@ class DescEntityTypes(input: InputStream) : Description(input) {
     }
 
     override fun loaded() {
-        info("Load ${types.size} entity types from the \"$name\"")
+        info("Loaded ${types.size} entity type(s) from the \"$name\"")
     }
 }

@@ -55,7 +55,7 @@ command-find-more-rename:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach rename {uuid} '
-        hover: '点击更名为..。'
+        hover: '点击更名为...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-rename-update:
@@ -63,7 +63,7 @@ command-find-more-rename-update:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance} &8&l››&r [&6{new_id}]'
     args:
       - suggest: '/adyeshach rename {uuid} '
-        hover: '点击更名为..。'
+        hover: '点击更名为...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
       - command: '/adyeshach rename {uuid} {old_id}'
@@ -73,7 +73,7 @@ command-find-more-teleport:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach tp {uuid} '
-        hover: '点击传送到..。'
+        hover: '点击传送到...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-move:
@@ -81,7 +81,7 @@ command-find-more-move:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach move {uuid} '
-        hover: '点击移动到..。'
+        hover: '点击移动到...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-look:
@@ -89,7 +89,7 @@ command-find-more-look:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach look {uuid} '
-        hover: '点击看向..。'
+        hover: '点击看向...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 command-find-more-edit:
@@ -105,7 +105,7 @@ command-find-more-clone:
     text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
     args:
       - suggest: '/adyeshach clone {uuid} '
-        hover: '点击克隆为..。'
+        hover: '点击克隆为...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
 
@@ -164,6 +164,15 @@ command-undo-list-item-description:
 command-undo-list-time-hour: '时'
 command-undo-list-time-minute: '分'
 command-undo-list-time-second: '秒'
+command-list-title: '世界单位列表'
+command-list-title-with-search: '世界单位列表 : {0}'
+command-list-search-name: '&7搜索'
+command-list-search-description: '&8点击搜索回收站中符合要求的单位'
+command-list-search-placeholder: '&7请输入搜索内容'
+command-list-item-name: '&7{0} ({1}m)'
+command-list-item-description:
+  - '&8{0} &8({1}&8)'
+  - '&c左键传送, 右键编辑'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
@@ -258,6 +267,10 @@ editor-input-patrols-wait-time0: '请在第一行输入等待时间'
 editor-input-patrols-wait-time1: '单位: 毫秒'
 editor-input-controller: '请选择预设控制器'
 
+editor-meta-unused: |-
+  &r
+  &c根据实验环境下的测试结果
+  &c这个元数据的修改可能不会产生具体的效果
 editor-meta-nitwit: '傻子'
 editor-meta-nitwit-description: |-
   &c这个选项默认关闭

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.editor.page
 
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
@@ -58,7 +59,18 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
             json.append("&8[".colored())
             // 展示文本
             json.append(action.display(player))
-            action.description(player)?.let { json.hoverText(it) }
+            // 描述
+            val hoverText = arrayListOf<String>()
+            val description = action.description(player)
+            if (description != null) {
+                hoverText += description.lines()
+            }
+            if (Adyeshach.api().getEntityMetadataRegistry().isUnusedMeta(entity, action.id())) {
+                hoverText += player.lang("meta-unused").lines()
+            }
+            if (hoverText.isNotEmpty()) {
+                json.hoverText(hoverText.joinToString("\n"))
+            }
             // 点击命令
             if (action.isCustomCommand()) {
                 val clickCommand = action.clickCommand(player, entity, this, index)

@@ -109,7 +109,7 @@ class DescEntityMeta(input: InputStream) : Description(input) {
     }
 
     override fun loaded() {
-        info("Load $count entity metadata from the \"$name\"")
+        info("Loaded $count entity metadata from the \"$name\"")
     }
 
     private fun parseMeta(input: String): PrepareMeta {

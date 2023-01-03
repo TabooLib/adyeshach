@@ -17,8 +17,12 @@ import taboolib.common.platform.PlatformFactory
  */
 class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegistry {
 
-    override fun registerControllerGenerator(name: String, event: ControllerGenerator) {
-        registeredControllerGenerator[name] = event
+    override fun registerControllerGenerator(name: String, generator: ControllerGenerator) {
+        registeredControllerGenerator[name] = generator
+    }
+
+    override fun unregisterControllerGenerator(name: String) {
+        registeredControllerGenerator.remove(name)
     }
 
     override fun getControllerGenerator(name: String): ControllerGenerator? {

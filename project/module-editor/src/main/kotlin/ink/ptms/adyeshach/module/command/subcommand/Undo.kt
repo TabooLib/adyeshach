@@ -8,11 +8,10 @@ import ink.ptms.adyeshach.core.util.asLangList
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.command.EntityTracker
+import ink.ptms.adyeshach.module.command.toEgg
 import ink.ptms.adyeshach.module.editor.lang
-import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common.platform.function.getDataFolder
@@ -64,6 +63,7 @@ val undoSubCommand = subCommand {
     }
 }
 
+@Suppress("DuplicatedCode")
 private fun Player.openTrashMenu(search: String? = null) {
     // 获取所有文件
     val files = File(getDataFolder(), "npc/trash").listFiles()?.filter { it.extension == "json" } ?: emptyList()
@@ -111,7 +111,7 @@ private fun Player.openTrashMenu(search: String? = null) {
             lore += asLang("command-undo-list-search-description").toString()
         }) {
             inputSign(arrayOf(search ?: "", "", "", asLang("command-undo-list-search-placeholder").toString())) {
-                openTrashMenu(it[0] + it[1] + it[2])
+                openTrashMenu((it[0] + it[1] + it[2]).ifBlank { null })
             }
         }
         setNextPage(Slots.LINE_6_MIDDLE + 2) { _, _ ->
@@ -132,8 +132,4 @@ private fun Player.openTrashMenu(search: String? = null) {
 private fun File.match(search: String): Boolean {
     val conf = Configuration.loadFromFile(this, Type.JSON)
     return conf.getValues(true).any { it.value.toString().contains(search, true) }
-}
-
-private fun EntityTypes.toEgg(): ItemStack {
-    return XMaterial.matchXMaterial("${name}_SPAWN_EGG").orElse(XMaterial.SKELETON_SPAWN_EGG).parseItem() ?: ItemStack(Material.STONE)
 }

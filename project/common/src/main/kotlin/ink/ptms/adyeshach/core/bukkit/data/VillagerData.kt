@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core.bukkit.data
 
 import org.bukkit.Material
+import org.bukkit.entity.Villager
 
 /**
  * @author sky
@@ -26,7 +27,11 @@ data class VillagerData(val type: Type, val profession: Profession) {
 
         SWAMP(Material.SLIME_BLOCK),
 
-        TAIGA(Material.SPRUCE_LOG),
+        TAIGA(Material.SPRUCE_LOG);
+
+        fun toBukkit(): Villager.Type {
+            return Villager.Type.valueOf(name)
+        }
     }
 
     enum class Profession(val material: Material) {
@@ -60,5 +65,9 @@ data class VillagerData(val type: Type, val profession: Profession) {
         TOOLSMITH(Material.SMITHING_TABLE),
 
         WEAPONSMITH(Material.GRINDSTONE);
+
+        fun toBukkit(): Villager.Profession {
+            return Villager.Profession.valueOf(name)
+        }
     }
 }

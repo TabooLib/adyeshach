@@ -1,14 +1,18 @@
 package ink.ptms.adyeshach.module.command
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.util.safeDistance
 import ink.ptms.adyeshach.core.util.sendLang
+import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.command.CommandBuilder
 import taboolib.common.platform.function.allWorlds
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
+import taboolib.library.xseries.XMaterial
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -86,4 +90,8 @@ inline fun <reified T : EntitySource> multiControl(
             singleAction(npcList.first())
         }
     }
+}
+
+fun EntityTypes.toEgg(): ItemStack {
+    return XMaterial.matchXMaterial("${name}_SPAWN_EGG").orElse(XMaterial.SKELETON_SPAWN_EGG).parseItem() ?: ItemStack(Material.STONE)
 }

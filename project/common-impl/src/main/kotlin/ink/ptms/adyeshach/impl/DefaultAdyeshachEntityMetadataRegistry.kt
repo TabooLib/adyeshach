@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.AdyeshachEntityMetadataRegistry
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Meta
+import ink.ptms.adyeshach.core.entity.type.AdyIronGolem
 import ink.ptms.adyeshach.impl.description.DescEntityMeta
 import ink.ptms.adyeshach.impl.description.DescEntityUnusedMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
@@ -47,6 +48,14 @@ class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
 
     override fun getEntityUnusedMeta(type: Class<*>): List<String> {
         return descriptionUnusedMeta.metaMap[type] ?: emptyList()
+    }
+
+    override fun isUnusedMeta(entity: EntityInstance, id: String): Boolean {
+        // 目前已知只有铁傀儡会因 Health 元数据而改变外貌
+        if (id == "health" && entity !is AdyIronGolem) {
+            return true
+        }
+        return descriptionUnusedMeta.metaMap.any { it.key.isInstance(entity) && it.value.contains(id) }
     }
 
     companion object {

@@ -30,7 +30,6 @@ dependencies {
     implementation(project(":project:module-editor"))
     implementation(project(":project:module-language"))
     implementation(project(":project:module-legacy-api"))
-    implementation(project(":project:module-test"))
     implementation(project(":project:api-data-serializer"))
 }
 

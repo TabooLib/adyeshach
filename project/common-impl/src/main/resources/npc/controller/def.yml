@@ -1,0 +1,17 @@
+example-custom-controller:
+  # 概率
+  chance: 0.001
+  # 冷却
+  cooldown: 20s
+  # 是否异步
+  async: false
+  # 条件
+  if: true
+  # 执行内容
+  # 当变量名为 "__XXX__" 形式时，会被临时持久化在当前控制器中
+  then: |-
+    if check &__num__ == null then {
+      set __num__ to 0
+    }
+    set __num__ to math &__num__ + 1
+    tell inline "你好, 我是傻逼。这是我第 {{ &__num__ }} 次发言。"

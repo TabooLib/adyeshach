@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.command
 
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.impl.DefaultScriptManager
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -13,7 +14,6 @@ import taboolib.module.kether.Kether
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.printKetherErrorMessage
-import ink.ptms.adyeshach.core.util.sendLang
 
 @CommandHeader(name = "adyeshachscript", aliases = ["ascript"], permission = "adyeshach.command")
 object CommandScript {
@@ -95,9 +95,9 @@ object CommandScript {
     @CommandBody
     val debug = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            sender.sendMessage("§c[Adyeshach] §7RegisteredActions:")
+            sender.sendMessage(" §5§l‹ ›§r §7RegisteredActions:")
             Kether.scriptRegistry.registeredNamespace.forEach {
-                sender.sendMessage("§c[Adyeshach] §7  ${it}: §r${Kether.scriptRegistry.getRegisteredActions(it)}")
+                sender.sendMessage(" §5§l‹ ›§r §7  ${it}: §r${Kether.scriptRegistry.getRegisteredActions(it)}")
             }
         }
     }
@@ -108,7 +108,7 @@ object CommandScript {
             execute<CommandSender> { sender, _, argument ->
                 try {
                     KetherShell.eval(argument, namespace = listOf("adyeshach"), sender = adaptCommandSender(sender)).thenApply { v ->
-                        sender.sendMessage("§c[Adyeshach] §7Result: $v")
+                        sender.sendMessage(" §5§l‹ ›§r §7Result: $v")
                     }
                 } catch (ex: Throwable) {
                     ex.printKetherErrorMessage()

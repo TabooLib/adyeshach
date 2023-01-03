@@ -62,6 +62,9 @@ object Command {
     val undo = undoSubCommand
 
     @CommandBody
+    val list = listSubCommand
+
+    @CommandBody
     val clone = cloneSubCommand
 
     @CommandBody
