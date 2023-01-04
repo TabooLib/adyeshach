@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.core.bukkit.data
 
-import org.bukkit.Material
 import org.bukkit.entity.Villager
+import taboolib.library.xseries.XMaterial
 
 /**
  * @author sky
@@ -13,58 +13,58 @@ data class VillagerData(val type: Type, val profession: Profession) {
         return "$type $profession"
     }
 
-    enum class Type(val material: Material) {
+    enum class Type(val material: XMaterial) {
 
-        DESERT(Material.SAND),
+        DESERT(XMaterial.SAND),
 
-        JUNGLE(Material.JUNGLE_LOG),
+        JUNGLE(XMaterial.JUNGLE_LOG),
 
-        PLAINS(Material.GRASS_BLOCK),
+        PLAINS(XMaterial.GRASS_BLOCK),
 
-        SAVANNA(Material.ACACIA_LOG),
+        SAVANNA(XMaterial.ACACIA_LOG),
 
-        SNOW(Material.SNOW_BLOCK),
+        SNOW(XMaterial.SNOW_BLOCK),
 
-        SWAMP(Material.SLIME_BLOCK),
+        SWAMP(XMaterial.SLIME_BLOCK),
 
-        TAIGA(Material.SPRUCE_LOG);
+        TAIGA(XMaterial.SPRUCE_LOG);
 
         fun toBukkit(): Villager.Type {
             return Villager.Type.valueOf(name)
         }
     }
 
-    enum class Profession(val material: Material) {
+    enum class Profession(val material: XMaterial) {
 
-        NONE(Material.STONE),
+        NONE(XMaterial.STONE),
 
-        ARMORER(Material.BLAST_FURNACE),
+        ARMORER(XMaterial.BLAST_FURNACE),
 
-        BUTCHER(Material.SMOKER),
+        BUTCHER(XMaterial.SMOKER),
 
-        CARTOGRAPHER(Material.CARTOGRAPHY_TABLE),
+        CARTOGRAPHER(XMaterial.CARTOGRAPHY_TABLE),
 
-        CLERIC(Material.BREWING_STAND),
+        CLERIC(XMaterial.BREWING_STAND),
 
-        FARMER(Material.COMPOSTER),
+        FARMER(XMaterial.COMPOSTER),
 
-        FISHERMAN(Material.BARREL),
+        FISHERMAN(XMaterial.BARREL),
 
-        FLETCHER(Material.FLETCHING_TABLE),
+        FLETCHER(XMaterial.FLETCHING_TABLE),
 
-        LEATHERWORKER(Material.CAULDRON),
+        LEATHERWORKER(XMaterial.CAULDRON),
 
-        LIBRARIAN(Material.ENCHANTING_TABLE),
+        LIBRARIAN(XMaterial.ENCHANTING_TABLE),
 
-        MASON(Material.STONECUTTER),
+        MASON(XMaterial.STONECUTTER),
 
-        NITWIT(Material.GREEN_WOOL),
+        NITWIT(XMaterial.GREEN_WOOL),
 
-        SHEPHERD(Material.LOOM),
+        SHEPHERD(XMaterial.LOOM),
 
-        TOOLSMITH(Material.SMITHING_TABLE),
+        TOOLSMITH(XMaterial.SMITHING_TABLE),
 
-        WEAPONSMITH(Material.GRINDSTONE);
+        WEAPONSMITH(XMaterial.GRINDSTONE);
 
         fun toBukkit(): Villager.Profession {
             return Villager.Profession.valueOf(name)

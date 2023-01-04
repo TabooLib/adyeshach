@@ -360,6 +360,8 @@ typealias NMS9PacketDataSerializer = net.minecraft.server.v1_9_R2.PacketDataSeri
 
 typealias NMS9IBlockAccess = net.minecraft.server.v1_9_R2.IBlockAccess
 
+typealias NMS9Chunk = net.minecraft.server.v1_9_R2.Chunk
+
 typealias NMS9BlockPosition = net.minecraft.server.v1_9_R2.BlockPosition
 
 typealias CraftItemStack9 = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemStack

@@ -29,7 +29,7 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
         if (element is JsonPrimitive) {
             val registry = Adyeshach.api().getEntityControllerRegistry()
             // 对旧版本进行兼容
-            when (element.asString) {
+            return when (element.asString) {
                 "LookAtPlayer" -> PrepareController(registry.getControllerGenerator("LOOK_AT_PLAYER")!!, element)
                 "LookAtPlayerAlways" -> PrepareController(registry.getControllerGenerator("LOOK_AT_PLAYER_ALWAYS")!!, element)
                 "RandomLookGround" -> PrepareController(registry.getControllerGenerator("RANDOM_LOOKAROUND")!!, element)

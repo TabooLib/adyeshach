@@ -15,6 +15,7 @@ import taboolib.module.nms.MinecraftVersion
  * @author 坏黑
  * @since 2022/10/19 09:23
  */
+@Suppress("CAST_NEVER_SUCCEEDS")
 class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, override val z: Int) : MinecraftWorldAccess.BlockAccess {
 
     constructor() : this(null, 0, 0)
@@ -26,11 +27,14 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
     override fun getBlockType(x: Int, y: Int, z: Int): Material {
         val block: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13
-            1, 2, 3, 4, 5 -> (nmsChunk as NMS9IBlockAccess).getType(NMS9BlockPosition(x, y, z)).block
-            // 1.14, 1.15, 1.16
+            1, 2, 3, 4, 5 -> (nmsChunk as NMS9Chunk).getBlockData(NMS9BlockPosition(x, y, z)).block
+            // 1.14, 1.15, 1.16, 1.17
             6, 7, 8 -> (nmsChunk as NMS16IBlockAccess).getType(NMS16BlockPosition(x, y, z)).block
-            // 1.17, 1.18, 1.19
-            9, 10, 11 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
+            // 1.17
+            // 这个版本的命名与 1.16 相同，但是类型不同
+            9 -> ((nmsChunk as NMS16IBlockAccess).getType(NMS16BlockPosition(x, y, z)) as NMSBlockData).block
+            // 1.18, 1.19
+            10, 11 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
             // 不支持
             else -> error("Unsupported version: $major")
         }

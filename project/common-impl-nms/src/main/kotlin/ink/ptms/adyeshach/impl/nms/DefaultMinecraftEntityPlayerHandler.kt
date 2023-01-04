@@ -51,7 +51,7 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
         // 1.17, 1.18, 1.19
         else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutPlayerInfo(createDataSerializer {
-                writeAddProfile(uuid, gameProfile)
+                writeAddProfile(uuid, gameProfile, majorLegacy >= 11900)
             }.toNMS() as NMSPacketDataSerializer))
         }
         // 1.9 ~ 1.16
@@ -86,7 +86,7 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
         }
     }
 
-    private fun DataSerializer.writeAddProfile(uuid: UUID, gameProfile: GameProfile) {
+    private fun DataSerializer.writeAddProfile(uuid: UUID, gameProfile: GameProfile, profilePublicKey: Boolean = false) {
         // ADD_PLAYER
         writeVarInt(0)
         // Count
@@ -104,6 +104,10 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
             val component = Adyeshach.api().getMinecraftAPI().getHelper().craftChatMessageFromString(it)
             val json = Adyeshach.api().getMinecraftAPI().getHelper().craftChatSerializerToJson(component)
             writeUtf(json, 262144)
+        }
+        // ProfilePublicKey
+        if (profilePublicKey) {
+            writeBoolean(false)
         }
     }
 

@@ -13,7 +13,7 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 class ErrorController(entity: EntityInstance, override val source: JsonElement, val exception: Throwable) : Controller(entity), ControllerSource {
 
     override fun id(): String {
-        return "error:$source"
+        return "error:$source (${source.javaClass.simpleName})"
     }
 
     override fun shouldExecute(): Boolean {
