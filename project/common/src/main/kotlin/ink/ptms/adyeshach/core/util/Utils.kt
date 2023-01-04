@@ -57,7 +57,7 @@ fun Location.safeDistance(loc: Location): Double {
  * 通过字符串获取枚举值
  */
 fun <T : Enum<T>> Class<T>.getEnum(vararg name: Any): T {
-    name.forEach { Enums.getIfPresent(this, it.toString()).orNull()?.let { e -> return e } }
+    name.forEach { Enums.getIfPresent(this, it.toString().uppercase()).orNull()?.let { e -> return e } }
     errorBy("error-unable-to-find-enum", simpleName, name.joinToString(" "))
 }
 
@@ -65,7 +65,7 @@ fun <T : Enum<T>> Class<T>.getEnum(vararg name: Any): T {
  * 通过字符串获取枚举值
  */
 fun <T : Enum<T>> Class<T>.getEnumOrNull(vararg name: Any): T? {
-    name.forEach { Enums.getIfPresent(this, it.toString()).orNull()?.let { e -> return e } }
+    name.forEach { Enums.getIfPresent(this, it.toString().uppercase()).orNull()?.let { e -> return e } }
     return null
 }
 

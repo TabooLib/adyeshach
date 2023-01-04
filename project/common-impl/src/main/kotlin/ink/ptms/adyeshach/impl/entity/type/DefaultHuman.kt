@@ -104,27 +104,27 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     override fun setCustomMeta(key: String, value: String): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
-            "hidefromtablist", "hide_from_tab_list", "is_hide_from_tab_list" -> {
+            "hidefromtablist", "ishidefromtablist", "hide_from_tab_list", "is_hide_from_tab_list" -> {
                 isHideFromTabList = value.cbool
                 true
             }
-            "name", "player_name" -> {
+            "name", "player_name", "playername" -> {
                 setName(value)
                 true
             }
-            "ping", "player_ping" -> {
+            "ping", "player_ping", "playerping" -> {
                 setPing(value.cint)
                 true
             }
-            "ping_bar", "playe_ping_bar" -> {
+            "ping_bar", "playe_ping_bar", "playerPingBar", "pingbar" -> {
                 setPingBar(PingBar::class.java.getEnum(value))
                 true
             }
-            "texture", "player_texture" -> {
+            "texture", "player_texture", "playertexture" -> {
                 setTexture(value)
                 true
             }
-            "sleeping", "is_sleeping" -> {
+            "sleeping", "is_sleeping", "issleeping" -> {
                 setSleeping(value.cbool)
                 true
             }

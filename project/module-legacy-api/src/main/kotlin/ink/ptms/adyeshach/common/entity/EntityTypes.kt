@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.common.entity
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.entity.type.*
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.core.util.getEnum
 import org.bukkit.entity.EntityType
@@ -245,7 +246,10 @@ enum class EntityTypes(val entityBase: Class<out EntityInstance>, val toV1: (ink
         get() = -1
 
     val entitySize: EntitySize
-        get() = EntitySize(0.0, 0.0)
+        get() {
+            val v2 = Adyeshach.api().getEntityTypeRegistry().getEntitySize(v2())
+            return EntitySize(v2.width, v2.height)
+        }
 
     val internalName: String
         get() = error("Outdated api is being called, please contact the plugin author to update.")
