@@ -1,0 +1,68 @@
+package ink.ptms.adyeshach.impl.script
+
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.impl.getEntities
+import ink.ptms.adyeshach.impl.getManager
+import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.loadError
+import taboolib.module.kether.*
+import java.util.concurrent.CompletableFuture
+
+/**
+ * @author IzzelAliz
+ */
+class ActionController(val symbol: Symbol, val controller: String?) : ScriptAction<Void>() {
+
+    enum class Symbol {
+
+        ADD, REMOVE, RESET
+    }
+
+    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val script = frame.script()
+        if (script.getManager() == null || !script.isEntitySelected()) {
+            errorBy("error-no-manager-or-entity-selected")
+        }
+        var id = controller
+        // 忽略无效的 v1 控制器
+        if (id == "Move" || id == "Gravity" || id == "SmoothLook" || id == "RandomStrollLand") {
+            return CompletableFuture.completedFuture(null)
+        }
+        // 转换有效的 v1 控制器
+        when (id) {
+            "LookAtPlayer" -> id = "LOOK_AT_PLAYER"
+            "LookAtPlayerAlways" -> id = "LOOK_AT_PLAYER_ALWAYS"
+            "RandomLookGround" -> id = "RANDOM_LOOKAROUND"
+        }
+        val registry = Adyeshach.api().getEntityControllerRegistry()
+        script.getEntities().forEach {
+            when (symbol) {
+                Symbol.ADD -> {
+                    val controller = registry.getControllerGenerator(id!!) ?: error("Unknown controller $id")
+                    it.registerController(controller.func.apply(it))
+                }
+                Symbol.REMOVE -> {
+                    val controller = registry.getControllerGenerator(id!!) ?: error("Unknown controller $id")
+                    it.unregisterController(controller.type)
+                }
+                Symbol.RESET -> it.resetController()
+            }
+        }
+        return CompletableFuture.completedFuture(null)
+    }
+
+    companion object {
+
+        @KetherParser(["controller"], namespace = "adyeshach", shared = true)
+        fun parser() = scriptParser {
+            val symbol = when (val type = it.nextToken()) {
+                "add" -> Symbol.ADD
+                "remove" -> Symbol.REMOVE
+                "reset" -> Symbol.RESET
+                else -> throw loadError("Unknown controller operator $type")
+            }
+            ActionController(symbol, if (symbol != Symbol.RESET) it.nextToken() else null)
+        }
+    }
+}

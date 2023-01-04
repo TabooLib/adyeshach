@@ -4,6 +4,8 @@ dependencies {
     compileOnly("net.md-5:bungeecord-chat:1.17")
     compileOnly("io.netty:netty-all:4.1.77.Final")
     compileOnly("public:ServerTours:1.6.5")
+    compileOnly("public:GermPlugin:4.0.3")
+    compileOnly("public:ModelEngine:3.0.0")
     compileOnly(project(":project:common"))
 }
 

@@ -209,6 +209,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 modelEngineName = value
                 true
             }
+            "freeze", "isfreeze", "is_freeze" -> {
+                isFreeze = value.cbool
+                true
+            }
             else -> false
         }
     }

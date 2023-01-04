@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.GenericEntity
 import ink.ptms.adyeshach.core.entity.Metaable
+import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.util.toReadable
 
 /**
@@ -26,8 +27,11 @@ interface DefaultGenericEntity : GenericEntity {
         }
 
     override fun getDisplayName(): String {
-        this as EntityBase
-        return getCustomName().ifEmpty { entityType.name.lowercase().toReadable() }
+        return when (this) {
+            is AdyHuman -> getName()
+            is EntityBase -> getCustomName().ifEmpty { entityType.name.lowercase().toReadable() }
+            else -> error("Unknown entity type.")
+        }
     }
 
     override fun isFired(): Boolean {
