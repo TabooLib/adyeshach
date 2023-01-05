@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.MetaNatural
 import ink.ptms.adyeshach.core.entity.manager.event.MetaNaturalGenerateEvent
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 
@@ -34,8 +35,8 @@ class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, group: 
         var obj = entityInstance.metadata[key] ?: return null
         obj = parser.parse(obj)
         val event = MetaNaturalGenerateEvent(entityInstance, player, this as MetaNatural<Any, out EntityInstance>, obj)
-        val eventBus = entityInstance.getEventBus()
-        if (eventBus == null || eventBus.callNaturalMetaGenerate(event)) {
+        val eventBus = DefaultAdyeshachAPI.localEventBus
+        if (eventBus.callNaturalMetaGenerate(event)) {
             return parser.createMeta(index, event.value)
         }
         return null

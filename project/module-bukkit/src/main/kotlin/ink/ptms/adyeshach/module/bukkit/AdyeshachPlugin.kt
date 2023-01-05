@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.module.bukkit
 
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
+import taboolib.common.LifeCycle
+import taboolib.common.TabooLibCommon
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.disablePlugin
 
@@ -13,12 +15,14 @@ import taboolib.common.platform.function.disablePlugin
  */
 object AdyeshachPlugin : Plugin() {
 
-    override fun onLoad() {
-        try {
-            DefaultAdyeshachBooster.startup()
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-            disablePlugin()
+    init {
+        TabooLibCommon.postpone(LifeCycle.LOAD) {
+            try {
+                DefaultAdyeshachBooster.startup()
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+                disablePlugin()
+            }
         }
     }
 }

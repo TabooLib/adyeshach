@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.core
 
+import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import org.bukkit.entity.Player
@@ -92,4 +93,9 @@ interface AdyeshachAPI {
      * 获取 Adyeshach 中的语言文件接口
      */
     fun getLanguage(): AdyeshachLanguage
+
+    /**
+     * 获取事件总线，可能没有
+     */
+    fun getEventBus(): EventBus
 }

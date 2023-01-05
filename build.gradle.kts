@@ -3,14 +3,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val taboolib_version: String by project
 
 plugins {
-    id("org.gradle.java")
-    id("org.gradle.maven-publish")
+    `maven-publish`
+    java
     id("org.jetbrains.kotlin.jvm") version "1.5.31" apply false
 }
 
 subprojects {
     apply<JavaPlugin>()
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "maven-publish")
 
     repositories {
         mavenLocal()
@@ -45,6 +46,9 @@ subprojects {
         compileOnly("org.spongepowered:math:2.0.1")
         compileOnly(kotlin("stdlib"))
     }
+    java {
+        withSourcesJar()
+    }
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
@@ -60,10 +64,20 @@ subprojects {
     }
 }
 
-publishing {
+gradle.buildFinished {
+    buildDir.deleteRecursively()
+}
+
+subprojects
+    .filter { it.name != "project" && it.name != "plugin" }
+    .forEach { proj ->
+        proj.publishing { applyToSub(proj) }
+    }
+
+fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
-        maven {
-            url = uri("https://repo.tabooproject.org/repository/releases")
+        maven("http://ptms.ink:8081/repository/releases") {
+            isAllowInsecureProtocol = true
             credentials {
                 username = project.findProperty("taboolibUsername").toString()
                 password = project.findProperty("taboolibPassword").toString()
@@ -72,15 +86,16 @@ publishing {
                 create<BasicAuthentication>("basic")
             }
         }
+        mavenLocal()
     }
     publications {
-        create<MavenPublication>("library") {
-            from(components["java"])
-            groupId = project.group.toString()
+        create<MavenPublication>("maven") {
+            artifactId = subProject.name
+            groupId = "ink.ptms.adyeshach"
+            version = project.version.toString()
+            artifact(subProject.tasks["kotlinSourcesJar"])
+            artifact(subProject.tasks.jar)
+            println("> Apply \"$groupId:$artifactId:$version\"")
         }
     }
-}
-
-gradle.buildFinished {
-    buildDir.deleteRecursively()
 }

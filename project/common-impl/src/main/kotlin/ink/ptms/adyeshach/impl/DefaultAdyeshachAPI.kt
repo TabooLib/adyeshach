@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.*
+import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.impl.manager.*
 import org.bukkit.entity.Player
@@ -154,11 +155,18 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         return localLanguage
     }
 
+    override fun getEventBus(): EventBus {
+        return localEventBus
+    }
+
     companion object {
 
         /** 玩家单位管理器 **/
         val playerEntityManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
         /** 玩家单位管理器（临时） **/
         val playerEntityTemporaryManagerMap = ConcurrentHashMap<String, DefaultPlayerManager>()
+
+        /** 事件总线 */
+        val localEventBus = DefaultEventBus()
     }
 }

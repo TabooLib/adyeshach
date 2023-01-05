@@ -12,6 +12,8 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.function.info
+import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.util.unsafeLazy
 
@@ -30,6 +32,8 @@ interface DefaultModelEngine : ModelEngine {
             if (modelEngineUniqueId != null) {
                 // TODO
                 // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
+
+                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.models?.forEach { (_, v) -> v.showToPlayer(viewer) } ?: return false
                 return true
             } else if (modelEngineName.isNotBlank()) {
                 return refreshModelEngine()
@@ -43,6 +47,8 @@ interface DefaultModelEngine : ModelEngine {
             if (modelEngineUniqueId != null) {
                 // TODO
                 // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
+
+                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.models?.forEach { (_, v) -> v.hideFromPlayer(viewer) } ?: return false
                 return true
             }
         }
@@ -50,7 +56,9 @@ interface DefaultModelEngine : ModelEngine {
     }
 
     override fun refreshModelEngine(): Boolean {
+        info("refreshModelEngine call")
         if (isModelEngineHooked) {
+            info("refreshModelEngine isModelEngineHooked")
             this as DefaultEntityInstance
             // 删除模型
             if (modelEngineUniqueId != null) {
@@ -59,6 +67,12 @@ interface DefaultModelEngine : ModelEngine {
                     // TODO
                     // modeledEntity.clearModels()
                     // forViewers { modeledEntity.removePlayer(it) }
+
+                    modeledEntity.models.toMap().forEach { (k, v) ->
+                        modeledEntity.removeModel(k)
+                        forViewers { v.hideFromPlayer(it) }
+                    }
+
                     ModelEngineAPI.removeModeledEntity(modelEngineUniqueId)
                     modelEngineUniqueId = null
                     // 是否恢复单位
@@ -109,6 +123,8 @@ interface DefaultModelEngine : ModelEngine {
                 // 于 2022-05-16 日由阿瑞（1484813603）反馈
                 // TODO
                 // submit { forViewers { modeledEntity.addPlayer(it) } }
+
+                submit { forViewers { model.showToPlayer(it) } }
                 return true
             }
         }
@@ -130,18 +146,18 @@ interface DefaultModelEngine : ModelEngine {
         }
     }
 
+    override fun hurt() {
+        ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.hurt()
+    }
+
     companion object {
 
         val isModelEngineHooked by unsafeLazy {
             (Bukkit.getPluginManager().getPlugin("ModelEngine") != null) && kotlin.runCatching { ModelEngineAPI.api.modelRegistry }.isSuccess
         }
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.LOAD)
         fun init() {
-            if (isModelEngineHooked) {
-                warning("ModelEngine 3 is not supported at the moment because the API has changed too much.")
-                return
-            }
             // 注册生成回调
             Adyeshach.api().getEntityTypeRegistry().prepareGenerate(object : AdyeshachEntityTypeRegistry.GenerateCallback {
 

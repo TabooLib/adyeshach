@@ -18,12 +18,14 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.modify
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
 import taboolib.common5.cbool
@@ -110,6 +112,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     var modelEngineName = ""
         set(value) {
             field = value
+            info("modelEngineName -> $value")
             // 重新加载模型
             if (this is ModelEngine) {
                 refreshModelEngine()
@@ -292,8 +295,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun teleport(location: Location) {
         // 处理事件
-        val eventBus = getEventBus()
-        if (eventBus != null && !eventBus.callTeleport(this, location)) {
+        val eventBus = DefaultAdyeshachAPI.localEventBus
+        if (!eventBus.callTeleport(this, location)) {
             return
         }
         val newPosition = EntityPosition.fromLocation(location)
@@ -318,8 +321,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun setVelocity(vector: Vector) {
-        val eventBus = getEventBus()
-        if (eventBus == null || eventBus.callVelocity(this, vector)) {
+        val eventBus = DefaultAdyeshachAPI.localEventBus
+        if (eventBus.callVelocity(this, vector)) {
             deltaMovement = vector.clone()
         }
     }

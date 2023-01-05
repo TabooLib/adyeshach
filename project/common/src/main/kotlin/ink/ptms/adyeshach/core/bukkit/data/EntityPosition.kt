@@ -106,5 +106,26 @@ data class EntityPosition(
         fun fromLocation(location: Location): EntityPosition {
             return EntityPosition(location.world!!, location.x, location.y, location.z, location.yaw, location.pitch)
         }
+
+        fun normalizeYaw(yaw: Float): Float {
+            var y = yaw
+            y %= 360.0f
+            if (y >= 180.0f) {
+                y -= 360.0f
+            } else if (y < -180.0f) {
+                y += 360.0f
+            }
+            return y
+        }
+
+        fun normalizePitch(pitch: Float): Float {
+            var p = pitch
+            if (p > 90.0f) {
+                p = 90.0f
+            } else if (p < -90.0f) {
+                p = -90.0f
+            }
+            return p
+        }
     }
 }

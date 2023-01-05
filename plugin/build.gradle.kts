@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":project:common-impl"))
     implementation(project(":project:common-impl-nms"))
     implementation(project(":project:common-impl-nms-j17"))
+    implementation(project(":project:compat-model-engine-v2"))
+    implementation(project(":project:compat-model-engine-v3"))
     implementation(project(":project:module-bukkit"))
     implementation(project(":project:module-editor"))
     implementation(project(":project:module-language"))

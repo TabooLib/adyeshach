@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.MetaMasked
 import ink.ptms.adyeshach.core.entity.manager.event.MetaMaskedGenerateEvent
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 
@@ -36,8 +37,8 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: Stri
         entityInstance.getAvailableEntityMeta().filter { it.index == index && it is MetaMasked<*> }.forEach {
             event.byteMask[it as MetaMasked<*>] = byteMask[it.key] == true
         }
-        val eventBus = entityInstance.getEventBus()
-        if (eventBus == null || eventBus.callMaskedMetaGenerate(event)) {
+        val eventBus = DefaultAdyeshachAPI.localEventBus
+        if (eventBus.callMaskedMetaGenerate(event)) {
             event.byteMask.filter { it.value }.forEach { (k, _) -> bits += k.mask }
             return parser.createMeta(index, bits.toByte())
         }

@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.TickService
-import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.manager.ManagerService
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
@@ -114,10 +113,6 @@ open class BaseManager : Manager, ManagerService, TickService {
     }
 
     override fun onTick() {
-    }
-
-    override fun getEventBus(): EventBus? {
-        return null
     }
 
     override fun loadEntityFromFile(file: File): EntityInstance {

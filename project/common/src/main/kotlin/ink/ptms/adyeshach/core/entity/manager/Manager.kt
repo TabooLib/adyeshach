@@ -106,11 +106,6 @@ interface Manager {
     fun getEntityByUniqueId(id: String): EntityInstance?
 
     /**
-     * 获取事件总线，可能没有
-     */
-    fun getEventBus(): EventBus?
-
-    /**
      * 从文件中加载单位
      */
     fun loadEntityFromFile(file: File): EntityInstance

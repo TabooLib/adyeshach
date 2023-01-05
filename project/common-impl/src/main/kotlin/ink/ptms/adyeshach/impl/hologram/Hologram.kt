@@ -39,7 +39,10 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
     }
 
     fun refresh() {
-        var offset = 0.0
+        if (content.isEmpty()) {
+            return
+        }
+        var offset = -content.first().space
         content.filterIsInstance<HoloEntity<*>>().reversed().forEach {
             it.spawn(offset, origin, manager)
             offset += it.space

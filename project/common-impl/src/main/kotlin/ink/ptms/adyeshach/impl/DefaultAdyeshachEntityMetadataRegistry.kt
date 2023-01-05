@@ -64,7 +64,7 @@ class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
         val metaTypeLookup = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
         val metaKeyLookup = ConcurrentHashMap<Class<*>, String>()
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntityMetadataRegistry>(DefaultAdyeshachEntityMetadataRegistry())
         }

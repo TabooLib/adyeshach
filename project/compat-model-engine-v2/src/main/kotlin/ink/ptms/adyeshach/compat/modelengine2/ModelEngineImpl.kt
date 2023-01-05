@@ -119,13 +119,17 @@ interface DefaultModelEngine : ModelEngine {
         }
     }
 
+    override fun hurt() {
+        ModelEngineAPI.api.modelManager.getModeledEntity(modelEngineUniqueId)?.hurt()
+    }
+
     companion object {
 
         val isModelEngineHooked by unsafeLazy {
-            Bukkit.getPluginManager().getPlugin("ModelEngine") != null && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
+            Bukkit.getPluginManager().getPlugin("ModelEngine") != null  && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
         }
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.LOAD)
         fun init() {
             // 注册生成回调
             Adyeshach.api().getEntityTypeRegistry().prepareGenerate(object : AdyeshachEntityTypeRegistry.GenerateCallback {

@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.core.entity.MetaMasked
 import ink.ptms.adyeshach.core.entity.Metaable
 import ink.ptms.adyeshach.core.entity.manager.event.MetaUpdateEvent
 import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.metaKeyLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.metaTypeLookup
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityMetadataRegistry.Companion.registeredEntityMeta
@@ -47,9 +48,9 @@ interface DefaultMetaable : Metaable {
             errorBy("error-meta-not-allow", key)
         }
         this as DefaultEntityInstance
-        val eventBus = getEventBus()
+        val eventBus = DefaultAdyeshachAPI.localEventBus
         val event = MetaUpdateEvent(this, meta, key, value)
-        if (eventBus == null || eventBus.callMetaUpdate(event)) {
+        if (eventBus.callMetaUpdate(event)) {
             if (meta is MetaMasked) {
                 metadataMask.computeIfAbsent(getByteMaskKey(meta.index)) { ConcurrentHashMap() }[key] = event.value as Boolean
             } else {

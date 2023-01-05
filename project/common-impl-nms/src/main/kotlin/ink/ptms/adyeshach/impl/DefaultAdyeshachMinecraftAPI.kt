@@ -76,7 +76,7 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
         val blockHeight = Configuration.loadFromInputStream(releaseResourceFile("block_height.json", true).readBytes().inputStream(), Type.JSON)
         val blockHeightMap = blockHeight.mapValue { it.cdouble }
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachMinecraftAPI>(DefaultAdyeshachMinecraftAPI())
         }

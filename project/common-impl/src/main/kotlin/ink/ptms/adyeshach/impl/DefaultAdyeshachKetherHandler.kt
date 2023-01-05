@@ -32,7 +32,7 @@ class DefaultAdyeshachKetherHandler : AdyeshachKetherHandler {
 
     companion object {
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachKetherHandler>(DefaultAdyeshachKetherHandler())
         }

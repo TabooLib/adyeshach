@@ -32,10 +32,10 @@ object TraitTitle : Trait() {
 
     @Awake(LifeCycle.ACTIVE)
     fun enable() {
-        Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEventBus()?.prepareTeleport { e ->
+        Adyeshach.api().getEventBus().prepareTeleport { e ->
             if (entityLookup.containsKey(e.entity.uniqueId) && !e.entity.isDerived()) {
                 entityLookup[e.entity.uniqueId]!!.forEach {
-                    it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height - 0.2, 0.0))
+                    it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height + 0.25, 0.0))
                 }
             }
             true
@@ -91,7 +91,7 @@ object TraitTitle : Trait() {
             // 先移除
             remove(viewer, entity)
             // 再创建
-            val loc = entity.getLocation().add(0.0, entity.entitySize.height - 0.2, 0.0)
+            val loc = entity.getLocation().add(0.0, entity.entitySize.height + 0.25, 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
                 runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
             }

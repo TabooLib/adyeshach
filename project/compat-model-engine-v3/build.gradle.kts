@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("public:ModelEngine:3.0.0")
+    compileOnly("public:ModelEngine:3.1.2")
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-impl"))
 }

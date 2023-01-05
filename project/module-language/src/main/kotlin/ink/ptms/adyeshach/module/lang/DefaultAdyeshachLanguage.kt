@@ -32,7 +32,7 @@ class DefaultAdyeshachLanguage : AdyeshachLanguage {
 
     companion object {
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachLanguage>(DefaultAdyeshachLanguage())
         }

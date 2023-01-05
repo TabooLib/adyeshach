@@ -10,20 +10,12 @@ import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.compat.CompatServerTours
-import ink.ptms.adyeshach.impl.manager.DefaultEventBus
-import ink.ptms.adyeshach.impl.manager.DefaultManager
 import ink.ptms.adyeshach.impl.util.ChunkAccess
-import org.bukkit.Location
 import org.bukkit.util.Vector
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.roundToInt
-
-/** 获取事件总线 */
-fun DefaultEntityInstance.getEventBus(): DefaultEventBus? {
-    return (manager as? DefaultManager)?.eventBus
-}
 
 /** 所在区块是否加载 */
 fun DefaultEntityInstance.isChunkLoaded(): Boolean {
@@ -127,8 +119,8 @@ fun DefaultEntityInstance.handleMove() {
             temp.direction = Vector(next.x, temp.y, next.z).subtract(temp.toVector())
             // 不会看向脚下
             if (temp.pitch < 90f) {
-                next.yaw = Location.normalizeYaw(temp.yaw)
-                next.pitch = Location.normalizePitch(temp.pitch)
+                next.yaw = EntityPosition.normalizeYaw(temp.yaw)
+                next.pitch = EntityPosition.normalizePitch(temp.pitch)
             }
             // 更新位置
             teleport(EntityPosition.fromLocation(next))

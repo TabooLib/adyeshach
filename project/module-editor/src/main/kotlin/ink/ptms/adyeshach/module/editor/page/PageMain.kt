@@ -73,7 +73,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
                     2 -> "move ${entity.uniqueId} here"
                     3 -> "look ${entity.uniqueId} here"
                     4 -> "look ${entity.uniqueId} like"
-                    5 -> "clone ${entity.uniqueId} ${entity.id}_copy"
+                    5 -> "clone ${entity.uniqueId}"
                     6 -> "remove ${entity.uniqueId}"
                     else -> error("Unknown command $i")
                 }

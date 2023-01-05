@@ -1,20 +1,30 @@
 package ink.ptms.adyeshach.compat.modelengine3
 
+import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.entity.BaseEntity
 import com.ticxo.modelengine.api.generator.Hitbox
 import com.ticxo.modelengine.api.model.IModel
+import com.ticxo.modelengine.api.nms.entity.hitbox.ModelHitbox
+import com.ticxo.modelengine.api.nms.entity.impl.DefaultBodyRotationController
+import com.ticxo.modelengine.api.nms.entity.impl.EmptyLookController
+import com.ticxo.modelengine.api.nms.entity.impl.EmptyMoveController
+import com.ticxo.modelengine.api.nms.entity.impl.EmptyRangeManager
 import com.ticxo.modelengine.api.nms.entity.wrapper.BodyRotationController
 import com.ticxo.modelengine.api.nms.entity.wrapper.LookController
 import com.ticxo.modelengine.api.nms.entity.wrapper.MoveController
 import com.ticxo.modelengine.api.nms.entity.wrapper.RangeManager
 import com.ticxo.modelengine.api.nms.world.IDamageSource
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
 /**
@@ -28,127 +38,139 @@ class EntityModeled(val entityInstance: EntityInstance) : BaseEntity<EntityInsta
 
     val modelUniqueId: UUID = UUID.randomUUID()
 
-    val moveController = ModelMoveController(entityInstance)
-    val lookController = ModelLookController(entityInstance)
-    val bodyRotationController = ModelBodyRotationController(entityInstance)
+    private var stepHeight: Double? = null
+    private var hitbox: Hitbox? = null
+    private var modelHitbox: ModelHitbox? = null
 
     override fun getOriginal(): EntityInstance {
         return entityInstance
     }
 
     override fun wrapMoveControl(): MoveController {
-        return moveController
+        return EmptyMoveController()
     }
 
     override fun wrapLookControl(): LookController {
-        return lookController
+        return EmptyLookController()
     }
 
     override fun wrapBodyRotationControl(): BodyRotationController {
-        return bodyRotationController
+        val controller = DefaultBodyRotationController(this)
+        controller.maxHeadAngle = 75.0f
+        controller.maxBodyAngle = 75.0f
+        controller.isPlayerMode = true
+        return controller
     }
 
     override fun wrapNavigation() {
-        TODO("Not yet implemented")
     }
 
     override fun wrapRangeManager(p0: IModel?): RangeManager {
-        TODO("Not yet implemented")
+        return EmptyRangeManager()
     }
 
     override fun getRangeManager(): RangeManager {
-        TODO("Not yet implemented")
+        return EmptyRangeManager()
     }
 
     override fun onHurt(p0: IDamageSource?, p1: Float): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun onInteract(p0: Player?, p1: EquipmentSlot?) {
-        TODO("Not yet implemented")
     }
 
-    override fun setHitbox(p0: Hitbox?) {
-        TODO("Not yet implemented")
+    override fun setHitbox(box: Hitbox?) {
+        hitbox = box ?: Hitbox(original.entitySize.width, original.entitySize.height, original.entitySize.width, original.entitySize.height)
+        if (modelHitbox == null) {
+            modelHitbox = ModelEngineAPI.getEntityHandler().createModelHitbox(this)
+        }
+        modelHitbox?.refresh()
     }
 
-    override fun getHitbox(): Hitbox {
-        TODO("Not yet implemented")
+    override fun getHitbox(): Hitbox? {
+        return hitbox
+    }
+
+    override fun getModelHitbox(): ModelHitbox? {
+        return modelHitbox
     }
 
     override fun setStepHeight(p0: Double) {
-        TODO("Not yet implemented")
+        stepHeight = p0
     }
 
     override fun getStepHeight(): Double {
-        TODO("Not yet implemented")
+        return stepHeight ?: 0.0
     }
 
     override fun setCollidableToLiving(p0: LivingEntity?, p1: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override fun broadcastSpawnPacket() {
-        TODO("Not yet implemented")
+        original.respawn()
     }
 
     override fun broadcastDespawnPacket() {
-        TODO("Not yet implemented")
+        original.despawn()
     }
 
     override fun getEntityId(): Int {
-        TODO("Not yet implemented")
+        return original.index
     }
 
     override fun getUniqueId(): UUID {
-        TODO("Not yet implemented")
+        return original.normalizeUniqueId
     }
 
     override fun getLocation(): Location {
-        TODO("Not yet implemented")
+        return original.getLocation()
     }
 
     override fun getWorld(): World {
-        TODO("Not yet implemented")
+        return original.world
     }
 
     override fun isDead(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
     override fun isGlowing(): Boolean {
-        TODO("Not yet implemented")
+        return original.isGlowing()
     }
 
     override fun isOnGround(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun isMoving(): Boolean {
-        TODO("Not yet implemented")
+        return original.hasTag(StandardTags.IS_MOVING)
     }
 
     override fun setYHeadRot(p0: Float) {
-        TODO("Not yet implemented")
     }
 
     override fun getYHeadRot(): Float {
-        TODO("Not yet implemented")
+        return original.yaw
     }
 
     override fun getXHeadRot(): Float {
-        TODO("Not yet implemented")
+        return original.pitch
     }
 
     override fun setYBodyRot(p0: Float) {
-        TODO("Not yet implemented")
     }
 
     override fun getYBodyRot(): Float {
-        TODO("Not yet implemented")
+        return original.yaw
     }
 
     override fun getPassengers(): MutableList<Entity> {
-        TODO("Not yet implemented")
+        return arrayListOf()
+    }
+
+    override fun getItemInSlot(p0: EquipmentSlot): ItemStack {
+        entityInstance as AdyEntityLiving
+        return entityInstance.getEquipment(p0) ?: ItemStack(Material.AIR)
     }
 }

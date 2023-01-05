@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
+import taboolib.common.platform.function.info
 
 /**
  * Adyeshach
@@ -21,6 +22,11 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
     override fun subpage() = "traits"
 
     override fun groups(): List<ActionGroup> {
+        info("is modelengien -> ${entity is ModelEngine}")
+        entity.javaClass.interfaces.forEach {
+            info("interface -> $it")
+        }
+
         val groups = arrayListOf<ActionGroup>()
         // 基础特性
         groups += SimpleGroup(
@@ -32,7 +38,7 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
                 SimpleAction.Meta("visible-distance", EditType.SIGN, value = entity.visibleDistance),
                 SimpleAction.MetaBool("visible-after-loaded", value = entity.visibleAfterLoaded, hasDescription = true),
                 // 模型
-                if (entity !is ModelEngine) SimpleAction.None else SimpleAction.Meta("model-engine", EditType.SIGN, value = entity.modelEngineName, true)
+                if (entity is ModelEngine) SimpleAction.Meta("model-engine", EditType.SIGN, value = entity.modelEngineName, true) else SimpleAction.None
             )
         )
         // 生物特性

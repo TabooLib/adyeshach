@@ -49,7 +49,7 @@ class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegist
             }
         }
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntityControllerRegistry>(DefaultAdyeshachEntityControllerRegistry())
         }

@@ -46,7 +46,7 @@ class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
 
     companion object {
 
-        @Awake(LifeCycle.LOAD)
+        @Awake(LifeCycle.INIT)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntitySerializer>(DefaultAdyeshachEntitySerializer())
         }

@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.compat.modelengine2
+package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.ModelEngineAPI
 import ink.ptms.adyeshach.core.entity.ModelEngine
@@ -11,13 +11,12 @@ import taboolib.common.platform.Awake
 import taboolib.module.kether.*
 
 /**
- * modelengine animation add {token} [speed {double} [lerpin {int} [lerpout {int}]]]
- * modelengine animation remove {token} [ingorelerp {boolean}]
+ * modelengine animation add {token} [speed {double} [lerpin {double} [lerpout {double}]] [ingorelerp {boolean}]]
+ * modelengine animation remove {token}
  */
 @Awake(LifeCycle.LOAD)
 fun init() {
     if (DefaultModelEngine.isModelEngineHooked) {
-        val modelManager = ModelEngineAPI.api.modelManager
         KetherLoader.registerParser(combinationParser {
             it.group(
                 symbol(), // animation
@@ -34,20 +33,20 @@ fun init() {
                     }
                     script().getEntities().filterIsInstance<ModelEngine>().forEach { e ->
                         if (e.modelEngineUniqueId != null) {
-                            val modeledEntity = modelManager.getModeledEntity(e.modelEngineUniqueId)
+                            val modeledEntity = ModelEngineAPI.getModeledEntity(e.modelEngineUniqueId)
                             when (action.lowercase()) {
                                 // 播放动画
                                 "animation" -> {
                                     when (method.lowercase()) {
                                         // 添加
                                         "add" -> {
-                                            modeledEntity.allActiveModel.forEach { (_, model) ->
-                                                model.addState(token, speed.toInt(), lerpin.toInt(), lerpout)
+                                            modeledEntity.models.forEach { (_, model) ->
+                                                model.animationHandler.playAnimation(token, speed, lerpin, lerpout, ingorelerp)
                                             }
                                         }
                                         // 删除
                                         "remove" -> {
-                                            modeledEntity.allActiveModel.forEach { (_, model) -> model.removeState(token, ingorelerp) }
+                                            modeledEntity.models.forEach { (_, model) -> model.animationHandler.stopAnimation(token) }
                                         }
                                         // 其他
                                         else -> error("Unknown method: $method (add, remove)")

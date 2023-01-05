@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.TickService
-import ink.ptms.adyeshach.core.entity.manager.EventBus
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.CopyOnWriteArrayList
@@ -17,7 +17,6 @@ import java.util.function.Predicate
  */
 open class DefaultManager : BaseManager() {
 
-    val eventBus = DefaultEventBus()
     val activeEntity = CopyOnWriteArrayList<EntityInstance>()
 
     override fun getPlayers(): List<Player> {
@@ -72,13 +71,9 @@ open class DefaultManager : BaseManager() {
         // 处理列表
         activeEntity.forEach {
             // 实体受 Tick 服务影响 && 事件处理
-            if (it is TickService && eventBus.callTick(it)) {
+            if (it is TickService && DefaultAdyeshachAPI.localEventBus.callTick(it)) {
                 it.onTick()
             }
         }
-    }
-
-    override fun getEventBus(): EventBus? {
-        return eventBus
     }
 }
