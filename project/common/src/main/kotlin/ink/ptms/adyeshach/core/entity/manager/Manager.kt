@@ -2,11 +2,8 @@
 
 package ink.ptms.adyeshach.core.entity.manager
 
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.core.entity.type.AdyEntity
-import ink.ptms.adyeshach.core.entity.type.errorBy
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.io.File
@@ -109,36 +106,4 @@ interface Manager {
      * 从文件中加载单位
      */
     fun loadEntityFromFile(file: File): EntityInstance
-}
-
-/**
- * [Manager#create] 衍生方法
- */
-fun <T : AdyEntity> Manager.create(location: Location, entityType: Class<out AdyEntity>): T {
-    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(entityType) ?: errorBy("error-entity-type-not-found", entityType.name)
-    return create(type, location) as T
-}
-
-/**
- * [Manager#create] 衍生方法
- */
-fun <T : AdyEntity> Manager.create(location: Location, entityType: Class<out AdyEntity>, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(entityType) ?: errorBy("error-entity-type-not-found", entityType.name)
-    return create(type, location, callback) as T
-}
-
-/**
- * [Manager#create] 衍生方法
- */
-fun <T : AdyEntity> Manager.create(location: Location, player: List<Player>, entityType: Class<out AdyEntity>): T {
-    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(entityType) ?: errorBy("error-entity-type-not-found", entityType.name)
-    return create(type, location, player) as T
-}
-
-/**
- * [Manager#create] 衍生方法
- */
-fun <T : AdyEntity> Manager.create(location: Location, player: List<Player>, entityType: Class<out AdyEntity>, callback: Consumer<EntityInstance>): T {
-    val type = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(entityType) ?: errorBy("error-entity-type-not-found", entityType.name)
-    return create(type, location, player, callback) as T
 }

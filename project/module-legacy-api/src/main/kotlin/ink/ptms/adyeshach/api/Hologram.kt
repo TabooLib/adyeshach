@@ -98,6 +98,7 @@ abstract class Hologram<T> {
             npc.setInvisible(true)
             npc.setCustomName(line)
             npc.setCustomNameVisible(line.isNotEmpty())
+            npc.v2.setDerived("LegacyHologram")
         }
     }
 }

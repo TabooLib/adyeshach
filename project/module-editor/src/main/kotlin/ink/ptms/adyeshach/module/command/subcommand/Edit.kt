@@ -36,7 +36,7 @@ val editSubCommand = subCommand {
         dynamic("action") {
             suggestUncheck { listOf("main", "traits", "public-meta", "private-meta", "move") }
             execute<Player> { sender, ctx, args ->
-                val npcList = Command.finder.getEntitiesFromIdOrUniqueId(ctx.argument(-1), sender)
+                val npcList = Command.finder.getEntitiesFromIdOrUniqueId(ctx["id"], sender)
                 if (npcList.isEmpty()) {
                     sender.sendLang("command-find-empty")
                     return@execute
@@ -142,7 +142,7 @@ val editSubCommand = subCommand {
         }
         // 定向编辑
         execute<Player> { sender, ctx, _ ->
-            multiControl<EntitySource.Empty>(sender, ctx.argument(0), STANDARD_EDIT_TRACKER, unified = false) { EditPanel(sender, it).open() }
+            multiControl<EntitySource.Empty>(sender, ctx.self(), STANDARD_EDIT_TRACKER, unified = false) { EditPanel(sender, it).open() }
         }
     }
     // 就近编辑

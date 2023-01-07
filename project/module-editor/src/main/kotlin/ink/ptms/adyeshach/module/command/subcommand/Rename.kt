@@ -22,10 +22,10 @@ val renameSubCommand = subCommand {
         dynamic("new-id") {
             // 定向重命名
             execute<CommandSender> { sender, ctx, _ ->
-                multiControl<RenameEntitySource>(sender, ctx.argument(-1), STANDARD_RENAME_TRACKER, unified = false) {
+                multiControl<RenameEntitySource>(sender, ctx["id"], STANDARD_RENAME_TRACKER, unified = false) {
                     val old = it.id
                     // 更名
-                    it.id = ctx.argument(0)
+                    it.id = ctx.self()
                     // 打印追踪器
                     EntityTracker.check(sender, STANDARD_RENAME_TRACKER, it)
                     // 提示信息

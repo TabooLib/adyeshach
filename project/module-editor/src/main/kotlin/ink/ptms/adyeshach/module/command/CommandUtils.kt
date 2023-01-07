@@ -9,7 +9,7 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.command.CommandBuilder
+import taboolib.common.platform.command.component.CommandComponentDynamic
 import taboolib.common.platform.function.allWorlds
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.library.xseries.XMaterial
@@ -41,7 +41,7 @@ fun EntityInstance.getName(): String {
     return if (this is AdyHuman) getName() else getDisplayName()
 }
 
-fun CommandBuilder.CommandComponentDynamic.suggestEntityList() {
+fun CommandComponentDynamic.suggestEntityList() {
     suggestion<CommandSender>(uncheck = true) { sender, _ ->
         Command.finder.getEntities(if (sender is Player) sender else null) { !it.isDerived() }.map { it.id }
     }

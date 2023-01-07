@@ -21,19 +21,19 @@ val cloneSubCommand = subCommand {
         dynamic("new-id") {
             // 定向克隆
             execute<Player> { sender, ctx, _ ->
-                multiControl<EntitySource.Empty>(sender, ctx.argument(-1), STANDARD_CLONE_TRACKER, unified = false) {
+                multiControl<EntitySource.Empty>(sender, ctx["id"], STANDARD_CLONE_TRACKER, unified = false) {
                     // 克隆
-                    it.clone(ctx.argument(0), sender.location)
+                    it.clone(ctx.self(), sender.location)
                     // 打印追踪器
                     EntityTracker.check(sender, STANDARD_CLONE_TRACKER, it)
                     // 提示信息
-                    sender.sendLang("command-clone-success", it.id, ctx.argument(0))
+                    sender.sendLang("command-clone-success", it.id, ctx.self())
                 }
             }
         }
         // 定向克隆（自动命名）
         execute<Player> { sender, ctx, _ ->
-            multiControl<EntitySource.Empty>(sender, ctx.argument(0), STANDARD_CLONE_TRACKER, unified = false) {
+            multiControl<EntitySource.Empty>(sender, ctx.self(), STANDARD_CLONE_TRACKER, unified = false) {
                 val manager = it.manager
                 val newId = if (manager == null) {
                     // 没有管理器则固定后缀为 [id]_copy

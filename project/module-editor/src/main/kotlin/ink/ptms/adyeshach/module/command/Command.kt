@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.module.command
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
-import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.module.command.subcommand.*
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
@@ -24,7 +23,6 @@ import taboolib.expansion.createHelper
 object Command {
 
     val finder by unsafeLazy { Adyeshach.api().getEntityFinder() }
-    val manager by unsafeLazy { Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT) }
 
     @CommandBody
     val main = mainCommand {

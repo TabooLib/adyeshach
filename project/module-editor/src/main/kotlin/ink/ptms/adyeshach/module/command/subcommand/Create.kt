@@ -2,13 +2,14 @@ package ink.ptms.adyeshach.module.command.subcommand
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
-import ink.ptms.adyeshach.module.command.Command
+import ink.ptms.adyeshach.core.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.entity.manager.spawnEntity
+import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.editor.EditPanel
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggest
-import ink.ptms.adyeshach.core.util.sendLang
 
 /**
  * npc create (type) (id) (action)?
@@ -24,7 +25,7 @@ val createSubCommand = subCommand {
                 suggest { listOf("t", "target", "e", "edit") }
                 execute<Player> { sender, ctx, _ ->
                     // 快捷操作
-                    when (ctx.argument(0)) {
+                    when (ctx.self()) {
                         // 生成在目标位置
                         "t", "target" -> {
                             val targetBlock = sender.getTargetBlock(hashSetOf(Material.AIR), 32)
@@ -39,22 +40,25 @@ val createSubCommand = subCommand {
                                 }
                                 targetBlock.location.add(0.5, blockHeight, 0.5)
                             }
-                            val npc = Command.manager.create(EntityTypes.valueOf(ctx.argument(-2).uppercase()), loc)
-                            npc.id = ctx.argument(-1)
+                            val type = EntityTypes.valueOf(ctx["type"].uppercase())
+                            val npc = loc.world.spawnEntity(loc, type, ManagerType.PERSISTENT)
+                            npc.id = ctx["id"]
                             sender.sendLang("command-create-success-1", npc.uniqueId)
                         }
                         // 打开编辑面板
                         "e", "edit" -> {
-                            val npc = Command.manager.create(EntityTypes.valueOf(ctx.argument(-2).uppercase()), sender.location)
-                            npc.id = ctx.argument(-1)
+                            val type = EntityTypes.valueOf(ctx["type"].uppercase())
+                            val npc = sender.location.world.spawnEntity(sender.location, type, ManagerType.PERSISTENT)
+                            npc.id = ctx["id"]
                             EditPanel(sender, npc).open()
                         }
                     }
                 }
             }
             execute<Player> { sender, ctx, _ ->
-                val npc = Command.manager.create(EntityTypes.valueOf(ctx.argument(-1).uppercase()), sender.location)
-                npc.id = ctx.argument(0)
+                val type = EntityTypes.valueOf(ctx["type"].uppercase())
+                val npc = sender.location.world.spawnEntity(sender.location, type, ManagerType.PERSISTENT)
+                npc.id = ctx.self()
                 sender.sendLang("command-create-success-1", npc.uniqueId)
             }
         }
