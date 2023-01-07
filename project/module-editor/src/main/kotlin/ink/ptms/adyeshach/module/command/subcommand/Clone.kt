@@ -8,7 +8,7 @@ import ink.ptms.adyeshach.module.command.suggestEntityList
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 
-const val STANDARD_CLONE_TRACKER = "clone"
+private const val STANDARD_CLONE_TRACKER = "clone"
 
 /**
  * npc clone (id) (new-id)
@@ -39,8 +39,14 @@ val cloneSubCommand = subCommand {
                     // 没有管理器则固定后缀为 [id]_copy
                     if (it.id.endsWith("_copy")) it.id else "${it.id}_copy"
                 } else {
-                    // 有任何管理器则自动命名为 [id]_copy_[序号]，例如 test 克隆后为 test_2
-                    "${it.id}_${manager.getEntityById(it.id).size + 1}"
+                    // 有任何管理器则自动命名为 [id]_[序号]，例如 test 克隆后为 test_2
+                    var i = 2
+                    while (true) {
+                        if (manager.getEntityById("${it.id}_${i++}").isEmpty()) {
+                            break
+                        }
+                    }
+                    "${it.id}_$i"
                 }
                 // 克隆
                 it.clone(newId, sender.location)

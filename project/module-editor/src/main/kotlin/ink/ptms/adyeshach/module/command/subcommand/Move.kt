@@ -10,7 +10,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.*
 import taboolib.platform.util.toProxyLocation
 
-const val STANDARD_MOVE_TRACKER = "move"
+private const val STANDARD_MOVE_TRACKER = "move"
 
 /**
  * npc move (id)? (method) (...)?

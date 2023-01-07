@@ -65,7 +65,6 @@ open class LocalPersistentManager : DefaultManager() {
 
     override fun loadEntityFromFile(file: File): EntityInstance {
         val entity = super.loadEntityFromFile(file)
-        hash[entity.uniqueId] = entity.toJson().digest("sha-1")
         if (entity.visibleAfterLoaded) {
             Bukkit.getOnlinePlayers().forEach { p -> entity.addViewer(p) }
         }

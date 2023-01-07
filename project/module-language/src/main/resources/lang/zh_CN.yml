@@ -36,6 +36,7 @@ command-find-near: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如�
 command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表变更)'
 command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
 command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表变更)'
+command-find-more-in-console: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个，在控制台请使用 UUID 进行操作。'
 
 # 以下为 EntityTracker 的控制输出，因变量体系复杂故采用别名形式，而非下标形式。
 

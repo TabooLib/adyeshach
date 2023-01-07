@@ -10,7 +10,7 @@ import taboolib.common.platform.command.*
 import taboolib.platform.util.toBukkitLocation
 import taboolib.platform.util.toProxyLocation
 
-const val STANDARD_LOOK_TRACKER = "look"
+private const val STANDARD_LOOK_TRACKER = "look"
 
 /**
  * npc look (id)? (method) (...)?

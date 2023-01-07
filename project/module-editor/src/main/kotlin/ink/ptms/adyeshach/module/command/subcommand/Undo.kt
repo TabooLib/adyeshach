@@ -25,6 +25,8 @@ import taboolib.platform.util.Slots
 import taboolib.platform.util.buildItem
 import java.io.File
 
+private const val STANDARD_REMOVE_TRACKER = "remove"
+
 /**
  * npc undo (uuid)
  */

@@ -380,12 +380,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         json.addProperty("id", newId)
         json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
         val entity = Adyeshach.api().getEntitySerializer().fromJson(json.toString())
-        (manager ?: this.manager)?.add(entity)
         entity as DefaultEntityInstance
         entity.tag.putAll(tag)
         entity.persistentTag.putAll(persistentTag)
         entity.manager = (manager ?: this.manager)
         entity.position = EntityPosition.fromLocation(location)
+        entity.clientPosition = entity.position
         entity.passengers.clear()
         // 复制观察者
         forViewers { entity.addViewer(it) }
@@ -393,6 +393,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         getPassengers().forEachIndexed { i, p ->
             p.clone("${newId}_passenger_$i", location)?.let { entity.addPassenger(it) }
         }
+        // 添加到管理器
+        entity.manager?.add(entity)
         return entity
     }
 

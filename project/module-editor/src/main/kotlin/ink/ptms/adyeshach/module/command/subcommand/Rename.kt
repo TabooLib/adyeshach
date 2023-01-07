@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.module.command.suggestEntityList
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.subCommand
 
-const val STANDARD_RENAME_TRACKER = "rename"
+private const val STANDARD_RENAME_TRACKER = "rename"
 
 /**
  * npc rename (id) (new-id)

@@ -11,7 +11,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.platform.util.toBukkitLocation
 import taboolib.platform.util.toProxyLocation
 
-const val STANDARD_TP_TRACKER = "teleport"
+private const val STANDARD_TP_TRACKER = "teleport"
 
 /**
  * npc tp (id)? (method) (...)?

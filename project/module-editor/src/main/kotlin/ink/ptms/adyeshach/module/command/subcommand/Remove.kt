@@ -8,7 +8,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 
-const val STANDARD_REMOVE_TRACKER = "remove"
+private const val STANDARD_REMOVE_TRACKER = "remove"
 
 /**
  * npc remove (id)? (action)?

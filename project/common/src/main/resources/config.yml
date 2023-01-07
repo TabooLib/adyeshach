@@ -5,7 +5,7 @@
 
 Database:
   # LOCAL, MONGODB, DISABLE
-  method: LOCAL
+  method: DISABLE
   url:
     client: 'mongodb://localhost:3307'
     database: test

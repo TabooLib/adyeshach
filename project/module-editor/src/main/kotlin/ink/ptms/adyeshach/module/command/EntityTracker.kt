@@ -20,26 +20,26 @@ import java.util.concurrent.TimeUnit
  */
 open class EntityTracker(val sender: CommandSender, val action: String, val entitySource: EntitySource) {
 
-    var id: String? = null
+    var id = "null"
     var isNearby = false
 
     fun printNearby(): EntityTracker {
         return print(true)
     }
 
-    fun printBy(id: String): EntityTracker {
+    fun printById(id: String): EntityTracker {
         return print(false, id)
     }
 
     fun print(): EntityTracker {
-        return print(isNearby, null, true)
+        return print(isNearby, id, true)
     }
 
     fun print(isNearby: Boolean, id: String? = null, update: Boolean = false): EntityTracker {
+        this.id = id ?: "null"
         this.isNearby = isNearby
-        this.id = id
         sender.clearScreen()
-        sender.sendLang("${if (isNearby) "command-find-near" else "command-find-more"}${if (update) "-update" else ""}", id.toString())
+        sender.sendLang("${if (isNearby) "command-find-near" else "command-find-more"}${if (update) "-update" else ""}", this.id)
         // 打印列表
         entitySource.elements.forEach {
             // 粒子效果
@@ -68,17 +68,17 @@ open class EntityTracker(val sender: CommandSender, val action: String, val enti
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .build<String, EntityTracker>()
 
-        fun get(sender: CommandSender, id: String): EntityTracker? {
+        fun get(sender: CommandSender, action: String): EntityTracker? {
             val printer = trackerMap.getIfPresent(sender.name) ?: return null
-            if (printer.id == null || printer.id == id) {
+            if (printer.action == action) {
                 return printer
             }
             return null
         }
 
-        fun check(sender: CommandSender, id: String, checkEntity: EntityInstance? = null) {
+        fun check(sender: CommandSender, action: String, checkEntity: EntityInstance? = null) {
             val printer = trackerMap.getIfPresent(sender.name) ?: return
-            if ((printer.id == null || printer.id == id) && (checkEntity == null || checkEntity in printer.entitySource.elements)) {
+            if (printer.action == action && (checkEntity == null || checkEntity in printer.entitySource.elements)) {
                 printer.print()
             }
         }

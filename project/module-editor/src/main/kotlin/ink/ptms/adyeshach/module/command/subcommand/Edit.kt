@@ -21,7 +21,7 @@ import taboolib.common5.clong
 import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
 
-const val STANDARD_EDIT_TRACKER = "edit"
+private const val STANDARD_EDIT_TRACKER = "edit"
 
 /**
  * npc edit (action)?
@@ -147,6 +147,11 @@ val editSubCommand = subCommand {
     }
     // 就近编辑
     execute<Player> { sender, _, _ ->
-        multiControl<EntitySource.Empty>(sender, STANDARD_EDIT_TRACKER) { EditPanel(sender, it).open() }
+        val nearestEntity = Command.finder.getNearestEntity(sender)
+        if (nearestEntity == null) {
+            sender.sendLang("command-find-empty")
+        } else {
+            EditPanel(sender, nearestEntity).open()
+        }
     }
 }
