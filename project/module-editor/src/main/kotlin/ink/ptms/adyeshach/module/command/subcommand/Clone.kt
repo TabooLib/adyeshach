@@ -42,9 +42,10 @@ val cloneSubCommand = subCommand {
                     // 有任何管理器则自动命名为 [id]_[序号]，例如 test 克隆后为 test_2
                     var i = 2
                     while (true) {
-                        if (manager.getEntityById("${it.id}_${i++}").isEmpty()) {
+                        if (manager.getEntityById("${it.id}_$i").isEmpty()) {
                             break
                         }
+                        i++
                     }
                     "${it.id}_$i"
                 }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.command
 
+import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.module.command.subcommand.*
@@ -54,23 +55,26 @@ object Command {
     val look = lookSubCommand
 
     @CommandBody
+    val passenger = passengerSubCommand
+
+    @CommandBody(aliases = ["copy"])
+    val clone = cloneSubCommand
+
+    @CommandBody
     val edit = editSubCommand
 
     @CommandBody
     val undo = undoSubCommand
 
-    @CommandBody
+    @CommandBody(aliases = ["near"])
     val list = listSubCommand
-
-    @CommandBody
-    val clone = cloneSubCommand
 
     @CommandBody
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
             AdyeshachSettings.conf.reload()
             ResettableLazy.reset()
-            sender.sendMessage("§c[Adyeshach] §7Reloaded.")
+            sender.sendMessage("${ADYESHACH_PREFIX}Reloaded.")
         }
     }
 }

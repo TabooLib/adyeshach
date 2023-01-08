@@ -42,9 +42,7 @@ fun EntityInstance.getName(): String {
 }
 
 fun CommandComponentDynamic.suggestEntityList() {
-    suggestion<CommandSender>(uncheck = true) { sender, _ ->
-        Command.finder.getEntities(if (sender is Player) sender else null) { !it.isDerived() }.map { it.id }
-    }
+    suggestion<CommandSender>(uncheck = true) { sender, _ -> Command.finder.getEntities(sender as? Player) { !it.isDerived() }.map { it.id } }
 }
 
 /**
@@ -71,7 +69,7 @@ inline fun <reified T : EntitySource> multiControl(
     unified: Boolean = true,
     singleAction: (EntityInstance) -> Unit = {}
 ) {
-    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, if (sender is Player) sender else null).filter { !it.isDerived() }
+    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, sender as? Player).filter { !it.isDerived() }
     when {
         // 空列表
         npcList.isEmpty() -> {

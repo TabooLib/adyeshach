@@ -38,20 +38,24 @@ interface DefaultRideable : Rideable {
 
     override fun addPassenger(vararg entity: EntityInstance) {
         this as DefaultEntityInstance
+        // 单位管理器必须有效
         if (manager == null || entity.any { it.manager == null }) {
             errorBy("error-entity-manager-is-null")
         }
+        // 单位管理器必须相同
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.forEach {
+        entity.forEach { target ->
             // 避免循环骑乘
-            it.removePassenger(this)
+            target.removePassenger(this)
+            // 从载具中离开
+            target.getVehicle()?.removePassenger(target)
             // 事件
-            if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
-                passengers.add(it.uniqueId)
+            if (AdyeshachEntityVehicleEnterEvent(target, this).call()) {
+                passengers.add(target.uniqueId)
                 // 设置标签
-                it.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
+                target.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
             }
         }
         refreshPassenger()
@@ -59,21 +63,26 @@ interface DefaultRideable : Rideable {
 
     override fun removePassenger(vararg entity: EntityInstance) {
         this as DefaultEntityInstance
+        // 单位管理器必须有效
         if (manager == null || entity.any { it.manager == null }) {
             errorBy("error-entity-manager-is-null")
         }
+        // 单位管理器必须相同
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.forEach {
-            // 事件
-            if (AdyeshachEntityVehicleEnterEvent(it, this).call()) {
-                passengers.remove(it.uniqueId)
-                // 移除标签
-                it.removePersistentTag(StandardTags.IS_IN_VEHICLE)
-                // 将实体传送到正确的位置
-                val en = manager?.getEntityByUniqueId(it.uniqueId)
-                en?.teleport(en.getLocation())
+        entity.forEach { target ->
+            // 进行二次判断是否为乘客
+            if (passengers.contains(target.uniqueId)) {
+                // 事件
+                if (AdyeshachEntityVehicleEnterEvent(target, this).call()) {
+                    passengers.remove(target.uniqueId)
+                    // 移除标签
+                    target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
+                    // 将实体传送到正确的位置
+                    val en = manager?.getEntityByUniqueId(target.uniqueId)
+                    en?.teleport(en.getLocation())
+                }
             }
         }
         refreshPassenger()

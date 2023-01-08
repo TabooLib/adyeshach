@@ -77,3 +77,5 @@ enum class SpawnTrigger {
 
     KEEP_ALIVE, JOIN
 }
+
+const val ADYESHACH_PREFIX = " §5§l‹ ›§r§7 "

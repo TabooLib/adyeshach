@@ -1,9 +1,12 @@
-package ink.ptms.adyeshach.module.editor
+package ink.ptms.adyeshach.module.editor.controller
 
 import com.google.gson.JsonPrimitive
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.controller.Controller
+import ink.ptms.adyeshach.module.editor.ChatEditor
+import ink.ptms.adyeshach.module.editor.format
+import ink.ptms.adyeshach.module.editor.lang
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -19,28 +22,28 @@ import taboolib.platform.util.buildItem
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.module.editor.PresetController
+ * ink.ptms.adyeshach.module.editor.controller.PresetController
  *
  * @author 坏黑
  * @since 2022/12/28 19:54
  */
 @Suppress("DuplicatedCode")
-class PresetController(val root: ConfigurationSection) {
+open class PresetController(val root: ConfigurationSection) {
 
     /** 图标 */
-    val icon = root.getItemStack("icon") ?: ItemStack(Material.STONE)
+    open val icon = root.getItemStack("icon") ?: ItemStack(Material.STONE)
 
     /** 控制器生成器 */
-    val cg = Adyeshach.api().getEntityControllerRegistry().getControllerGenerator(root.getString("instance").toString().substringBefore(':'))
+    open val cg = Adyeshach.api().getEntityControllerRegistry().getControllerGenerator(root.getString("instance").toString().substringBefore(':'))
 
     /** 控制器参数 */
-    val args = root.getString("instance").toString().substringAfter(':', "").split(',').map { it.toPrimitive() }.toTypedArray()
+    open val args = root.getString("instance")?.substringAfter(':', "")?.split(',')?.map { it.toPrimitive() }?.toTypedArray() ?: emptyArray()
 
     /** 异常 */
-    var error = false
+    open var error = false
 
     /** 生成控制器 */
-    fun newInstance(entity: EntityInstance): Controller? {
+    open fun newInstance(entity: EntityInstance): Controller? {
         return cg?.type?.invokeConstructor(entity, *args)
     }
 
@@ -62,7 +65,7 @@ class PresetController(val root: ConfigurationSection) {
             player.openMenu<Linked<PresetController>>(player.lang("input-controller")) {
                 rows(6)
                 slots(Slots.CENTER)
-                elements { ChatEditor.presetControllers.filter { it.cg != null } }
+                elements { ChatEditor.presetControllers.filter { it.cg != null || it is PresetControllerForKether } }
                 onGenerate { _, element, _, _ ->
                     // 异常
                     if (element.error) {

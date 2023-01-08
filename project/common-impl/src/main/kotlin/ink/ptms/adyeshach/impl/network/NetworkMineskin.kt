@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.network
 
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
+import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
 import ink.ptms.adyeshach.core.serializer.Serializer
@@ -99,21 +100,21 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                                 val error = Gson().fromJson(reader.readText(), Error::class.java)
                                 when (error.code) {
                                     403 -> {
-                                        sender.sendMessage("§c[Adyeshach] §7mineskin.org denied access to that url")
+                                        sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org denied access to that url")
                                     }
                                     404 -> {
-                                        sender.sendMessage("§c[Adyeshach] §7mineskin.org unable to find an image at that url")
+                                        sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org unable to find an image at that url")
                                     }
                                     408, 504, 599 -> {
-                                        sender.sendMessage("§c[Adyeshach] §7Took too long to connect to mineskin.org!")
+                                        sender.sendMessage("${ADYESHACH_PREFIX}Took too long to connect to mineskin.org!")
                                     }
                                     else -> {
-                                        sender.sendMessage("§c[Adyeshach] §7mineskin.org took too long to connect! Is your image valid?")
+                                        sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org took too long to connect! Is your image valid?")
                                     }
                                 }
                             }
                             400 -> {
-                                sender.sendMessage("§c[Adyeshach] §7Invalid file provided! Please ensure it is a valid .png skin!")
+                                sender.sendMessage("${ADYESHACH_PREFIX}Invalid file provided! Please ensure it is a valid .png skin!")
                             }
                             else -> {
                                 connection.inputStream.use { input ->
@@ -126,9 +127,9 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                 }
             }
         } catch (t: SocketTimeoutException) {
-            sender.sendMessage("§c[Adyeshach] §7Took too long to connect to mineskin.org!")
+            sender.sendMessage("${ADYESHACH_PREFIX}Took too long to connect to mineskin.org!")
         } catch (t: Throwable) {
-            sender.sendMessage("§c[Adyeshach] §7Unexpected error while accessing mineskin.org, please try again.")
+            sender.sendMessage("${ADYESHACH_PREFIX}Unexpected error while accessing mineskin.org, please try again.")
             t.printStackTrace()
         }
         return null

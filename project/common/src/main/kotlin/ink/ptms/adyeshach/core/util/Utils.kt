@@ -42,6 +42,11 @@ fun CommandSender.asLangList(node: String, vararg args: Any): List<String> {
 fun asLang(node: String, vararg args: Any) = Adyeshach.api().getLanguage().getLang(console().cast(), node, *args) ?: node
 
 /**
+ * 通过 AdyeshachLanguage 获取语言文件文本
+ */
+fun asLangList(node: String, vararg args: Any) = Adyeshach.api().getLanguage().getLangList(console().cast(), node, *args)
+
+/**
  * 使用语言文件文本抛出异常
  */
 fun errorBy(node: String, vararg args: Any): Nothing = error(Adyeshach.api().getLanguage().getLang(console().cast(), node, *args) ?: node)

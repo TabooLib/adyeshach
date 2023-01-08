@@ -47,6 +47,7 @@ tasks {
         relocate("com.google.errorprone", "ink.ptms.adyeshach.taboolib.library.errorprone")
         relocate("com.eatthepath.uuid", "ink.ptms.adyeshach.taboolib.library.uuid")
         relocate("org.spongepowered.math", "ink.ptms.adyeshach.taboolib.library.math")
+        relocate("org.mongodb", "org.mongodb_3_12_11")
         relocate("kotlin.", "kotlin1531.") {
             exclude("kotlin.Metadata")
         }

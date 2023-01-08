@@ -20,6 +20,7 @@ import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.warning
 import taboolib.common5.clong
 import taboolib.library.xseries.XMaterial
 import taboolib.module.configuration.util.mapListAs
@@ -70,7 +71,7 @@ object TraitPatrol : Trait() {
                             entity.moveFrames = nodes[index]
                             entity.setNodeIndex(index + 1)
                         } catch (e: Exception) {
-                            println("[Adyeshach] Patrol Error: $e")
+                            warning("Patrol Error: $e")
                         }
                     } else {
                         entity.setNodeIndex(0)

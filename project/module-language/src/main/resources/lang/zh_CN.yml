@@ -112,6 +112,30 @@ command-find-more-clone:
         hover: '点击克隆为...'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
+command-find-more-passenger-add:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach passenger {uuid} add '
+        hover: '点击添加骑乘...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-passenger-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - suggest: '/adyeshach passenger {uuid} remove '
+        hover: '点击移除骑乘...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-passenger-reset:
+  - ==: JSON
+    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    args:
+      - command: '/adyeshach passenger {uuid} reset'
+        hover: '点击重制骑乘'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
 
 # END
 
@@ -177,6 +201,10 @@ command-list-item-name: '&7{0} ({1}m)'
 command-list-item-description:
   - '&8{0} &8({1}&8)'
   - '&c左键传送, 右键编辑'
+command-passenger-not-found: ' &5&l‹ ›&r &7未找到 &f"{0}" &7。'
+command-passenger-add-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7添加为 &f"{1}" &7的乘客。'
+command-passenger-remove-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7从 &f"{1}" &7的乘客列表中移除。'
+command-passenger-reset-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7的乘客列表重置。'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
@@ -270,6 +298,11 @@ editor-input-book-description: '&7单位编辑器'
 editor-input-patrols-wait-time0: '请在第一行输入等待时间'
 editor-input-patrols-wait-time1: '单位: 毫秒'
 editor-input-controller: '请选择预设控制器'
+editor-controller-for-kether-name: '&7自定义控制器'
+editor-controller-for-kether-description:
+  - ''
+  - '&8这是一个使用 Kether 编写的控制器'
+  - '&8名称: &f{0}'
 
 editor-meta-unused: |-
   &r
@@ -517,7 +550,7 @@ trait-view-condition:
     fadein: 10
     stay: 40
     fadeout: 10
-trait-data-error: '&c[Adyeshach] &7文件 {0} 加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
+trait-data-error: ' &5&l‹ ›&r &7文件 {0} 加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
 
 group-move-position: '当前位置'
 group-move-xyz: 'X & Y & Z'
