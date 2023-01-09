@@ -82,7 +82,7 @@ object CommandAPI {
     @CommandBody
     val uploadSkin = subCommand {
         dynamic("file") {
-            suggestUncheck { File(getDataFolder(), "npc/skin/upload").listFiles()?.map { it.name } ?: emptyList() }
+            suggestUncheck { File(getDataFolder(), "skin/upload").listFiles()?.map { it.name } ?: emptyList() }
             dynamic("model") {
                 suggest { listOf("DEFAULT", "SLIM") }
                 execute<CommandSender> { sender, ctx, _ ->
@@ -100,7 +100,7 @@ object CommandAPI {
             sender.sendMessage("${ADYESHACH_PREFIX}Currently uploading, please wait.")
             return
         }
-        val file = File(getDataFolder(), name)
+        val file = File(getDataFolder(), "skin/upload/$name")
         if (file.exists()) {
             sender.sendMessage("${ADYESHACH_PREFIX}Skin §f\"${file.nameWithoutExtension} (DEFAULT)\"§7 is uploading...")
             submitAsync {
@@ -108,7 +108,7 @@ object CommandAPI {
                 try {
                     val uploadTexture = Adyeshach.api().getNetworkAPI().getSkin().uploadTexture(file, model, sender)
                     if (uploadTexture != null) {
-                        newFile(getDataFolder(), "npc/skin/${file.nameWithoutExtension}").writeText(uploadTexture.toString())
+                        newFile(getDataFolder(), "skin/${file.nameWithoutExtension}").writeText(uploadTexture.toString())
                         sender.sendMessage("${ADYESHACH_PREFIX}Skin §f\"${file.nameWithoutExtension} (DEFAULT)\"§7 has been uploaded.")
                     }
                 } catch (ex: Throwable) {
