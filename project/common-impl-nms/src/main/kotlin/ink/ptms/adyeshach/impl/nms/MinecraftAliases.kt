@@ -46,6 +46,8 @@ typealias NMSPacketPlayOutAnimation = net.minecraft.network.protocol.game.Packet
 
 typealias NMSPacketPlayOutAttachEntity = net.minecraft.network.protocol.game.PacketPlayOutAttachEntity
 
+typealias NMSPacketPlayOutScoreboardTeam = net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam
+
 typealias NMSPacketDataSerializer = net.minecraft.network.PacketDataSerializer
 
 typealias NMSIRegistry<T> = net.minecraft.core.IRegistry<T>
@@ -158,6 +160,8 @@ typealias NMS16PacketPlayOutAnimation = net.minecraft.server.v1_16_R3.PacketPlay
 
 typealias NMS16PacketPlayOutAttachEntity = net.minecraft.server.v1_16_R3.PacketPlayOutAttachEntity
 
+typealias NMS16PacketPlayOutScoreboardTeam = net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam
+
 typealias NMS16PacketDataSerializer = net.minecraft.server.v1_16_R3.PacketDataSerializer
 
 typealias NMS16EntityTypes<T> = net.minecraft.server.v1_16_R3.EntityTypes<T>
@@ -228,6 +232,8 @@ typealias NMS14DataWatcher = net.minecraft.server.v1_14_R1.DataWatcher
 
 typealias NMS14PacketDataSerializer = net.minecraft.server.v1_14_R1.PacketDataSerializer
 
+typealias NMS14PacketPlayOutScoreboardTeam = net.minecraft.server.v1_14_R1.PacketPlayOutScoreboardTeam
+
 // 1.13
 
 typealias NMS13PacketPlayOutBed = net.minecraft.server.v1_13_R2.PacketPlayOutBed
@@ -247,6 +253,8 @@ typealias NMS13PacketPlayOutEntityEquipment = net.minecraft.server.v1_13_R2.Pack
 typealias NMS13PacketPlayOutMount = net.minecraft.server.v1_13_R2.PacketPlayOutMount
 
 typealias NMS13PacketPlayOutEntityMetadata = net.minecraft.server.v1_13_R2.PacketPlayOutEntityMetadata
+
+typealias NMS13PacketPlayOutScoreboardTeam = net.minecraft.server.v1_13_R2.PacketPlayOutScoreboardTeam
 
 typealias NMS13PacketDataSerializer = net.minecraft.server.v1_13_R2.PacketDataSerializer
 
@@ -343,6 +351,8 @@ typealias NMS9PacketPlayOutPlayerInfo = net.minecraft.server.v1_9_R2.PacketPlayO
 typealias NMS9PacketPlayOutPlayerInfoEnumPlayerInfoAction = net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 
 typealias NMS9PacketPlayOutEntityTeleport = net.minecraft.server.v1_9_R2.PacketPlayOutEntityTeleport
+
+typealias NMS9PacketPlayOutScoreboardTeam = net.minecraft.server.v1_9_R2.PacketPlayOutScoreboardTeam
 
 typealias NMS9EnumDirection = net.minecraft.server.v1_9_R2.EnumDirection
 

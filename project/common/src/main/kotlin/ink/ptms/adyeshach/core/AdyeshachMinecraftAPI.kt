@@ -37,6 +37,11 @@ interface AdyeshachMinecraftAPI {
     fun getEntityPlayerHandler(): MinecraftEntityPlayerHandler
 
     /**
+     * 获取用于控制虚拟记分板的接口
+     */
+    fun getScoreboardOperator(): MinecraftScoreboardOperator
+
+    /**
      * 获取用于控制数据包的接口
      */
     fun getPacketHandler(): MinecraftPacketHandler

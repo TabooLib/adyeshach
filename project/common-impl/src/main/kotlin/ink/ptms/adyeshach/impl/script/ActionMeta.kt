@@ -32,20 +32,21 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: ParsedAction<*>
             Symbol.SET -> {
                 frame.run(value!!).str { value ->
                     script.getEntities().forEach { entity ->
-                        // 获取有效的实体元数据
-                        val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
-                        if (metaFirst != null) {
-                            // 这里需要对 Masked 类型的元数据进行特殊兼容
-                            // 因为 Masked 类型的元数据使用 ByteMetadataParser
-                            if (metaFirst.def is Boolean) {
-                                entity.setMetadata(metaFirst.key, value.cbool)
-                            } else {
-                                entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
-                            }
-                        }
                         // 设置自定义元数据
-                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), if (value != "@RESET") value else null)) {
-                            errorBy("command-meta-not-found", key)
+                        if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), if (value != "@RESET") value else null)) {
+                            // 获取有效的实体元数据
+                            val metaFirst = entity.getAvailableEntityMeta().firstOrNull { it.key.equals(key, true) }
+                            if (metaFirst != null) {
+                                // 这里需要对 Masked 类型的元数据进行特殊兼容
+                                // 因为 Masked 类型的元数据使用 ByteMetadataParser
+                                if (metaFirst.def is Boolean) {
+                                    entity.setMetadata(metaFirst.key, value.cbool)
+                                } else {
+                                    entity.setMetadata(metaFirst.key, metaFirst.getMetadataParser().parse(value))
+                                }
+                            } else {
+                                errorBy("command-meta-not-found", key)
+                            }
                         }
                     }
                 }

@@ -1,10 +1,12 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.entity.EntityFireball
 import ink.ptms.adyeshach.core.entity.EntityThrowable
 import ink.ptms.adyeshach.core.entity.type.AdyMinecart
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
+import org.bukkit.ChatColor
 import org.bukkit.event.player.PlayerRespawnEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
@@ -50,5 +52,14 @@ internal object DefaultEntityFixer {
                 entity.setNoGravity(true)
             }
         }
+
+//        val team = MinecraftScoreboardOperator.Team("adyeshach_public", color = ChatColor.RED)
+//        team.members += e.entity.uniqueId
+//        val operator = Adyeshach.api().getMinecraftAPI().getScoreboardOperator()
+//
+//        operator.updateTeam(e.entity.getVisiblePlayers(), team, MinecraftScoreboardOperator.TeamMethod.ADD)
+//        operator.updateTeam(e.entity.getVisiblePlayers(), team, MinecraftScoreboardOperator.TeamMethod.JOIN)
+//
+//        e.entity.setGlowing(true)
     }
 }

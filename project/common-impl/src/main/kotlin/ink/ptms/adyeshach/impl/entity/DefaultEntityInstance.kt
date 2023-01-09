@@ -352,7 +352,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun sendAnimation(animation: BukkitAnimation) {
-        if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE) {
+        if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE && modelEngineName.isNotBlank()) {
             hurt()
         } else {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)

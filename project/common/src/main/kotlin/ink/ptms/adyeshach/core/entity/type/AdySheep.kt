@@ -8,19 +8,11 @@ import org.bukkit.DyeColor
  */
 interface AdySheep : AdyEntityAgeable {
 
-    fun getDyeColor(): DyeColor {
-        return DyeColor.getByWoolData(getMetadata("dyeColor")) ?: DyeColor.WHITE
-    }
+    fun getDyeColor(): DyeColor
 
-    fun setDyeColor(dyeColor: DyeColor) {
-        setMetadata("dyeColor", dyeColor.woolData)
-    }
+    fun setDyeColor(dyeColor: DyeColor)
 
-    fun isSheared(): Boolean {
-        return getMetadata("isSheared")
-    }
+    fun isSheared(): Boolean
 
-    fun setSheared(value: Boolean) {
-        setMetadata("isSheared", value)
-    }
+    fun setSheared(value: Boolean)
 }

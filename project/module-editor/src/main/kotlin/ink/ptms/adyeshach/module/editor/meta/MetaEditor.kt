@@ -84,12 +84,14 @@ interface MetaEditor {
                 entity is AdyShulker && key == "attachPosition" -> MetaVector(key)
                 entity is AdyShulker && key == "attachFace" -> MetaEnum(key, BukkitDirection::class.java)
                 entity is AdyShulker && key == "color" -> MetaEnum(key, DyeColor::class.java)
+                // 羊
+                entity is AdySheep && key == "dyeColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)
                 // 豹猫
                 entity is AdyOcelot && key == "type" -> MetaEnum(key, BukkitOcelotType::class.java)
                 // 狐狸
                 entity is AdyFox && key == "type" -> MetaEnum(key, Fox.Type::class.java)
                 // 蘑菇
-                entity is AdyMushroom && key == "type" -> MetaEnum(key, MushroomCow.Variant::class.java, useIndex = false)
+                entity is AdyMushroom && key == "type" -> MetaEnum(key, MushroomCow.Variant::class.java, useIndex = false, lowercase = true)
                 // 热带鱼
                 entity is AdyTropicalFish && key == "bodyColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)
                 entity is AdyTropicalFish && key == "patternColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)

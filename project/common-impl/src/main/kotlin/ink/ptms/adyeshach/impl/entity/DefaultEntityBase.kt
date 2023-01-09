@@ -18,7 +18,9 @@ import java.util.concurrent.ConcurrentHashMap
  * @author 坏黑
  * @since 2022/6/19 15:59
  */
-abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes = EntityTypes.ZOMBIE) : EntityBase, DefaultMetaable, DefaultTagContainer, DefaultSerializable {
+abstract class DefaultEntityBase(
+    @Expose final override val entityType: EntityTypes = EntityTypes.ZOMBIE
+) : EntityBase, DefaultMetaable, DefaultTagContainer, DefaultSerializable {
 
     /** 临时标签 */
     val tag = ConcurrentHashMap<String, Any>()
@@ -66,12 +68,12 @@ abstract class DefaultEntityBase(@Expose override val entityType: EntityTypes = 
     /**
      * 是否为测试类型
      */
-    override var isTesting = false
+    override val isTesting = Adyeshach.api().getEntityTypeRegistry().getEntityFlags(entityType).contains("TESTING")
 
     /**
      * 是否为无效类型
      */
-    override var isInvalid = false
+    override val isInvalid = Adyeshach.api().getEntityTypeRegistry().getEntityFlags(entityType).contains("INVALID")
 
     /**
      * 转换为 Bukkit 坐标

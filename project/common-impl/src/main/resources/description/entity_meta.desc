@@ -460,7 +460,7 @@ ink.ptms.adyeshach.core.entity.type.AdyRabbit
         09 -
 
 ink.ptms.adyeshach.core.entity.type.AdySheep
-    dyeColor !SheepColor | isSheared 16b
+    dyeColor b
         &sheep0
         17 17
         15 -

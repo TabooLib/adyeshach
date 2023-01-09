@@ -37,6 +37,9 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
     /** 玩家控制接口 **/
     val nmsEntityPlayerHandler = nmsProxy<MinecraftEntityPlayerHandler>("$group.DefaultMinecraftEntityPlayerHandler")
 
+    /** 记分板控制接口 **/
+    val nmsScoreboardOperator = nmsProxy<MinecraftScoreboardOperator>("$group.DefaultMinecraftScoreboardOperator")
+
     /** 数据包控制接口 **/
     val nmsPacketHandler = nmsProxy<MinecraftPacketHandler>("$group.DefaultMinecraftPacketHandler")
 
@@ -61,6 +64,10 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
     override fun getEntityPlayerHandler(): MinecraftEntityPlayerHandler {
         return nmsEntityPlayerHandler
+    }
+
+    override fun getScoreboardOperator(): MinecraftScoreboardOperator {
+        return nmsScoreboardOperator
     }
 
     override fun getPacketHandler(): MinecraftPacketHandler {

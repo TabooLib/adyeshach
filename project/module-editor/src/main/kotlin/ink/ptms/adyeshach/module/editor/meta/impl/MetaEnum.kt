@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @since 2022/12/27 04:04
  */
 @Suppress("DuplicatedCode")
-class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = true) : MetaEditor {
+class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = true, val lowercase: Boolean = false) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
         val enums = enumClass.enums()
@@ -54,7 +54,8 @@ class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean =
                     }
                     // 名称
                     else -> {
-                        player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->$element")
+                        val name = if (lowercase) element.toString().lowercase() else element
+                        player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->$name")
                     }
                 }
             }
