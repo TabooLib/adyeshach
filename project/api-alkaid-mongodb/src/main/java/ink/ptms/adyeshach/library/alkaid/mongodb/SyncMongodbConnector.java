@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.alkaidmc.alkaid.mongodb;
+package ink.ptms.adyeshach.library.alkaid.mongodb;
 
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;

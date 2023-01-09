@@ -5,6 +5,8 @@ import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.impl.manager.*
 import org.bukkit.entity.Player
+import taboolib.common.env.RuntimeDependencies
+import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.PlatformFactory
 import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
@@ -17,6 +19,13 @@ import java.util.concurrent.ConcurrentHashMap
  * @author 坏黑
  * @since 2022/6/18 16:20
  */
+@RuntimeDependencies(
+    RuntimeDependency(
+        "!com.github.ben-manes.caffeine:caffeine:2.9.3",
+        test = "!com.github.benmanes.caffeine_2_9_3.cache.Caffeine",
+        relocate = ["!com.github.benmanes.caffeine", "!com.github.benmanes.caffeine_2_9_3"]
+    )
+)
 class DefaultAdyeshachAPI : AdyeshachAPI {
 
     /** 单位检索接口 **/

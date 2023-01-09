@@ -20,7 +20,6 @@ dependencies {
     implementation("io.izzel.taboolib:platform-bukkit:$taboolib_version")
     implementation("io.izzel.taboolib:expansion-command-helper:$taboolib_version")
     implementation("com.eatthepath:fast-uuid:0.2.0")
-    implementation("com.github.ben-manes.caffeine:caffeine:2.8.5")
     implementation("org.spongepowered:math:2.0.1")
     implementation(project(":project:common"))
     implementation(project(":project:common-impl"))
@@ -45,18 +44,52 @@ tasks {
         exclude("META-INF/maven/**")
         exclude("META-INF/tf/**")
         exclude("module-info.java")
+
+        // include
         relocate("taboolib", "ink.ptms.adyeshach.taboolib")
-        relocate("com.github.benmanes.caffeine", "ink.ptms.adyeshach.taboolib.library.caffeine")
-        relocate("org.checkerframework", "ink.ptms.adyeshach.taboolib.library.checkerframework")
-        relocate("com.google.errorprone", "ink.ptms.adyeshach.taboolib.library.errorprone")
         relocate("com.eatthepath.uuid", "ink.ptms.adyeshach.taboolib.library.uuid")
         relocate("org.spongepowered.math", "ink.ptms.adyeshach.taboolib.library.math")
+
+        // download
+        relocate("com.github.benmanes.caffeine", "com.github.benmanes.caffeine_2_9_3")
         relocate("org.mongodb", "org.mongodb_3_12_11")
+
+        // kotlin
         relocate("kotlin.", "kotlin1531.") {
             exclude("kotlin.Metadata")
         }
     }
+    kotlinSourcesJar {
+        // include subprojects
+        rootProject.subprojects.forEach { from(it.sourceSets["main"].allSource) }
+    }
     build {
         dependsOn(shadowJar)
+    }
+}
+
+publishing {
+    repositories {
+        maven("http://ptms.ink:8081/repository/releases") {
+            isAllowInsecureProtocol = true
+            credentials {
+                username = project.findProperty("taboolibUsername").toString()
+                password = project.findProperty("taboolibPassword").toString()
+            }
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
+        mavenLocal()
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "all"
+            groupId = "ink.ptms.adyeshach"
+            version = project.version.toString()
+            artifact(tasks["kotlinSourcesJar"])
+            artifact(tasks.named<ShadowJar>("shadowJar"))
+            println("> Apply \"$groupId:$artifactId:$version\"")
+        }
     }
 }

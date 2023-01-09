@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.alkaidmc.alkaid.mongodb.interfaces;
+package ink.ptms.adyeshach.library.alkaid.mongodb.interfaces;
 
 import java.util.List;
 import java.util.Map;

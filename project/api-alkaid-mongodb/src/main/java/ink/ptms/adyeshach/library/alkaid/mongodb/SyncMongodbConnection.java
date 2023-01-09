@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.alkaidmc.alkaid.mongodb;
+package ink.ptms.adyeshach.library.alkaid.mongodb;
 
-import com.alkaidmc.alkaid.mongodb.interfaces.SyncQueryActions;
-import com.alkaidmc.alkaid.mongodb.interfaces.WriteableActions;
+import ink.ptms.adyeshach.library.alkaid.mongodb.interfaces.SyncQueryActions;
+import ink.ptms.adyeshach.library.alkaid.mongodb.interfaces.WriteableActions;
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoDatabase;

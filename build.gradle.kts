@@ -42,7 +42,7 @@ subprojects {
         compileOnly("com.google.code.gson:gson:2.8.5")
         compileOnly("com.google.guava:guava:21.0")
         compileOnly("com.eatthepath:fast-uuid:0.2.0")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:2.8.5")
+        compileOnly("com.github.ben-manes.caffeine:caffeine:2.9.3")
         compileOnly("org.spongepowered:math:2.0.1")
         compileOnly(kotlin("stdlib"))
     }
