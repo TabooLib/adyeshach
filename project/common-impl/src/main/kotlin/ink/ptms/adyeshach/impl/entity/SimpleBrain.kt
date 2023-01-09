@@ -33,7 +33,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
         entity.controller.forEach { controller ->
             // 是否为预加载控制器
             if (controller is PrepareController) {
-                postponeAdd += controller.generator(entity)
+                postponeAdd += controller.generator.generate(entity)
                 entity.controller.remove(controller)
                 return@forEach
             }

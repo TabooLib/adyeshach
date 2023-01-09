@@ -2,9 +2,9 @@ package ink.ptms.adyeshach.module.editor.controller
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.controller.Controller
-import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
 import ink.ptms.adyeshach.core.util.asLang
 import ink.ptms.adyeshach.core.util.asLangList
+import ink.ptms.adyeshach.impl.entity.controller.KetherControllerGenerator
 import org.bukkit.inventory.ItemStack
 import taboolib.library.xseries.XMaterial
 import taboolib.module.configuration.Configuration
@@ -17,7 +17,7 @@ import taboolib.platform.util.buildItem
  * @author 坏黑
  * @since 2023/1/8 20:27
  */
-class PresetControllerForKether(val id: String, val generator: ControllerGenerator) : PresetController(Configuration.empty()) {
+class PresetControllerForKether(val id: String, val generator: KetherControllerGenerator) : PresetController(Configuration.empty()) {
 
     override val icon: ItemStack
         get() = buildItem(XMaterial.COMMAND_BLOCK_MINECART) {
@@ -26,7 +26,7 @@ class PresetControllerForKether(val id: String, val generator: ControllerGenerat
         }
 
     override fun newInstance(entity: EntityInstance): Controller {
-        return generator(entity)
+        return generator.generate(entity)
     }
 
     override fun toString(): String {

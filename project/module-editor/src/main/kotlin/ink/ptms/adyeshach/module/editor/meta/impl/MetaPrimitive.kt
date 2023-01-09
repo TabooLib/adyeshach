@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
 import taboolib.common.util.unsafeLazy
+import taboolib.module.chat.uncolored
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
 import taboolib.module.nms.inputSign
@@ -25,13 +26,13 @@ class MetaPrimitive(val key: String) : MetaEditor {
     override fun open(entity: EntityInstance, player: Player, def: String) {
         when (getPreferenceInputType(player)) {
             InputType.SIGN -> {
-                player.inputSign(arrayOf(def, "", "", player.lang("input-sign"))) {
+                player.inputSign(arrayOf(def.uncolored(), "", "", player.lang("input-sign"))) {
                     player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it[0] + it[1] + it[2]}")
                 }
             }
             InputType.CHAT -> {
                 player.clearScreen()
-                player.sendLang("editor-input-chat", def)
+                player.sendLang("editor-input-chat", def.uncolored())
                 player.nextChat {
                     submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
                 }

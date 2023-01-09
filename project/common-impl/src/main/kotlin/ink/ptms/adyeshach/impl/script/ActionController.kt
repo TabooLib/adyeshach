@@ -40,7 +40,7 @@ class ActionController(val symbol: Symbol, val controller: String?) : ScriptActi
             when (symbol) {
                 Symbol.ADD -> {
                     val controller = registry.getControllerGenerator(id!!) ?: error("Unknown controller $id")
-                    it.registerController(controller.func.apply(it))
+                    it.registerController(controller.generate(it))
                 }
                 Symbol.REMOVE -> {
                     val controller = registry.getControllerGenerator(id!!) ?: error("Unknown controller $id")

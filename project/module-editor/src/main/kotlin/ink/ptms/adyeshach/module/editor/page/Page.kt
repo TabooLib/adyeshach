@@ -59,8 +59,12 @@ abstract class Page(val editor: EditPanel) {
         json.append("§e${entity.entityType.name}")
         // 分页
         json.append(" §8§l${RIGHT_ARROW}§r ")
-        // ID
-        json.append("§f${entity.id}")
+        // 测试阶段
+        if (entity.isTesting) {
+            json.append("§c§n${entity.id}§r §c(?)§r").hoverText(player.lang("entity-is-testing"))
+        } else {
+            json.append("§f${entity.id}")
+        }
         // 下级页面标题
         if (subpage() != null) {
             json.append(" §8§l${RIGHT_ARROW}§r ")

@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.module.editor
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachEditor
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.impl.entity.controller.KetherControllerGenerator
 import ink.ptms.adyeshach.module.editor.controller.PresetController
 import ink.ptms.adyeshach.module.editor.controller.PresetControllerForKether
 import ink.ptms.adyeshach.module.editor.page.Page
@@ -35,9 +36,9 @@ object ChatEditor : AdyeshachEditor {
         // 加载预设控制器
         list += controller.mapListAs("Controllers") { Configuration.fromMap(it) }.map { PresetController(it) }
         // 加载 Kether 控制器
-        Adyeshach.api().getEntityControllerRegistry().getControllerGenerator().forEach { (k, v) ->
-            if (k.startsWith("inner:")) {
-                list += PresetControllerForKether(k.substringAfter("inner:"), v)
+        Adyeshach.api().getEntityControllerRegistry().getControllerGenerator().forEach { (_, generator) ->
+            if (generator is KetherControllerGenerator) {
+                list += PresetControllerForKether(generator.name, generator)
             }
         }
         list

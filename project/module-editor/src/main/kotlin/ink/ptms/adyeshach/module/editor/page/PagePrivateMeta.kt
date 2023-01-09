@@ -58,47 +58,48 @@ class PagePrivateMeta(editor: EditPanel) : MetaPage(editor) {
         // 热带鱼
         if (entity is AdyTropicalFish) {
             groups ah extras0(
-                SimpleAction.Meta("bodyColor", EditType.AUTO, value = entity.getBodyColor()),
-                SimpleAction.Meta("patternColor", EditType.AUTO, value = entity.getPatternColor()),
-                SimpleAction.Meta("pattern", EditType.AUTO, value = entity.getPattern()),
+                SimpleAction.Meta("bodyColor", EditType.AUTO, value = entity.getBodyColor(), isResettable = false),
+                SimpleAction.Meta("patternColor", EditType.AUTO, value = entity.getPatternColor(), isResettable = false),
+                SimpleAction.Meta("pattern", EditType.AUTO, value = entity.getPattern(), isResettable = false),
             )
         }
         // 画
         if (entity is AdyPainting && minecraftVersion >= 11900) {
             groups ah extras0(
-                SimpleAction.Meta("painting", EditType.AUTO, value = entity.getPainting()),
-                SimpleAction.Meta("direction", EditType.AUTO, value = entity.getDirection()),
+                SimpleAction.Meta("painting", EditType.AUTO, value = entity.getPainting(), isResettable = false),
+                // 画的方向
+                kotlin.runCatching { SimpleAction.Meta("direction", EditType.AUTO, value = entity.getDirection(), isResettable = false) }.getOrElse { SimpleAction.None },
             )
         }
         // 马
         if (entity is AdyHorse) {
             groups ah extras0(
-                SimpleAction.Meta("color", EditType.AUTO, value = entity.getColor()),
-                SimpleAction.Meta("style", EditType.AUTO, value = entity.getStyle()),
+                SimpleAction.Meta("color", EditType.AUTO, value = entity.getColor(), isResettable = false),
+                SimpleAction.Meta("style", EditType.AUTO, value = entity.getStyle(), isResettable = false),
             )
         }
         // 经验球
         if (entity is AdyExperienceOrb) {
             groups ah extras0(
-                SimpleAction.Meta("amount", EditType.SIGN, value = entity.getAmount()),
+                SimpleAction.Meta("amount", EditType.SIGN, value = entity.getAmount(), isResettable = false),
             )
         }
         // 坠落方块
         if (entity is AdyFallingBlock) {
             groups ah extras0(
-                SimpleAction.Meta("block", EditType.FALLING_BLOCK, value = entity.getMaterial()),
+                SimpleAction.Meta("block", EditType.FALLING_BLOCK, value = entity.getMaterial(), isResettable = false),
             )
         }
         // 玩家
         if (entity is AdyHuman) {
             groups ah extras1(
-                SimpleAction.MetaBool("is-sleeping", value = entity.isSleeping()),
-                SimpleAction.MetaBool("is-hide-from-tab-list", value = entity.isHideFromTabList),
+                SimpleAction.MetaBool("is-sleeping", value = entity.isSleeping(), isResettable = false),
+                SimpleAction.MetaBool("is-hide-from-tab-list", value = entity.isHideFromTabList, isResettable = false),
             )
             groups ah extras0(
-                SimpleAction.Meta("player-name", EditType.SIGN, value = entity.getName()),
-                SimpleAction.Meta("player-texture", EditType.SIGN, value = entity.getTextureName()),
-                SimpleAction.Meta("player-ping", EditType.SIGN, value = entity.getPing()),
+                SimpleAction.Meta("player-name", EditType.SIGN, value = entity.getName(), isResettable = false),
+                SimpleAction.Meta("player-texture", EditType.SIGN, value = entity.getTextureName(), isResettable = false),
+                SimpleAction.Meta("player-ping", EditType.SIGN, value = entity.getPing(), isResettable = false),
             )
         }
         // 盔甲架

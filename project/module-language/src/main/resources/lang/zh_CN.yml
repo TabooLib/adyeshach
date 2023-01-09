@@ -234,6 +234,8 @@ editor-tags: '&f标签 &7({0})'
 editor-link: '&f关联 &7({0})'
 editor-link-vehicle: '&f这个单位的载具:'
 editor-link-passengers: '&f这个单位的乘客:'
+editor-entity-is-invalid: '&c这个实体类型暂不支持, 无法编辑。'
+editor-entity-is-testing: '&c这个实体类型处于测试阶段，可能会出现问题。'
 editor-entity-is-derived:
   - ==: JSON
     text: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'

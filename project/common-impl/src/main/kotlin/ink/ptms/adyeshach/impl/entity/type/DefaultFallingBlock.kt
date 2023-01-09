@@ -71,7 +71,7 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
     override fun setCustomMeta(key: String, value: String): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
-            "material" -> {
+            "material", "block" -> {
                 setMaterial(value.parseToMaterial())
                 true
             }

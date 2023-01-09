@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
  * @author 坏黑
  * @since 2023/1/3 22:23
  */
-class ControllerKether(entity: EntityInstance, val root: ConfigurationSection) : Controller(entity), CustomSerializable {
+class KetherController(entity: EntityInstance, val root: ConfigurationSection) : Controller(entity), CustomSerializable {
 
     val id = root.name
 
@@ -129,8 +129,7 @@ class ControllerKether(entity: EntityInstance, val root: ConfigurationSection) :
             File(getDataFolder(), "npc/controller").walk().filter { it.extension == "yml" }.forEach {
                 // 从文件中读取配置
                 Configuration.loadFromFile(it).mapSection { section ->
-                    val generator = ControllerGenerator(ControllerKether::class.java) { e -> ControllerKether(e, section) }
-                    registry.registerControllerGenerator("inner:${section.name}", generator)
+                    registry.registerControllerGenerator("inner:${section.name}", KetherControllerGenerator(section))
                     i++
                 }
             }
@@ -153,7 +152,7 @@ class ControllerKether(entity: EntityInstance, val root: ConfigurationSection) :
         @KetherParser(["flush"], namespace = "adyeshach-inner")
         fun parser() = scriptParser {
             actionNow {
-                val controller = script().rootFrame().variables().get<ControllerKether?>("@controller")?.orNull()
+                val controller = script().rootFrame().variables().get<KetherController?>("@controller")?.orNull()
                 if (controller != null) {
                     controller.variables.clear()
                     controller.variables.putAll(deepVars().filterKeys { it.startsWith("__") && it.endsWith("__") })
