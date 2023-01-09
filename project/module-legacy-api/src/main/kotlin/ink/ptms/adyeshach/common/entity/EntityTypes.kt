@@ -266,7 +266,7 @@ enum class EntityTypes(val entityBase: Class<out EntityInstance>, val toV1: (ink
     }
 
     fun getEntityTypeNMS(): Any {
-        error("Outdated api is being called, please contact the plugin author to update.")
+        return Adyeshach.api().getMinecraftAPI().getHelper().adapt(v2())
     }
 
     fun getPathType(): PathType {

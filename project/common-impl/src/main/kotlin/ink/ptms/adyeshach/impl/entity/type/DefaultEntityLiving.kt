@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
@@ -87,35 +88,35 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
         }
     }
 
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "die" -> {
-                die(value.cbool)
+                die(value?.cbool ?: false)
                 true
             }
             "helmet", "head" -> {
-                setHelmet(value.toItem())
+                setHelmet(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             "chestplate", "chest" -> {
-                setChestplate(value.toItem())
+                setChestplate(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             "leggings", "legs" -> {
-                setLeggings(value.toItem())
+                setLeggings(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             "boots", "feet" -> {
-                setBoots(value.toItem())
+                setBoots(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             "hand", "mainhand", "main_hand" -> {
-                setItemInMainHand(value.toItem())
+                setItemInMainHand(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             "offhand", "off_hand" -> {
-                setItemInOffHand(value.toItem())
+                setItemInOffHand(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
             else -> false

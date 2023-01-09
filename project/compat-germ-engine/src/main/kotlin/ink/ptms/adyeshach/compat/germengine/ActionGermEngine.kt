@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.script.compat
+package ink.ptms.adyeshach.compat.germengine
 
 import com.germ.germplugin.api.GermPacketAPI
 import ink.ptms.adyeshach.core.util.errorBy

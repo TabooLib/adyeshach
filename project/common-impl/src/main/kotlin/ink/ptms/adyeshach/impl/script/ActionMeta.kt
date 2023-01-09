@@ -44,7 +44,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: ParsedAction<*>
                             }
                         }
                         // 设置自定义元数据
-                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), value)) {
+                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), if (value != "@RESET") value else null)) {
                             errorBy("command-meta-not-found", key)
                         }
                     }

@@ -18,19 +18,19 @@ import org.bukkit.entity.TropicalFish
 abstract class DefaultTropicalFish(entityTypes: EntityTypes) : DefaultEntityLiving(entityTypes), AdyTropicalFish {
 
     @Suppress("SpellCheckingInspection")
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "bodycolor", "body_color" -> {
-                setBodyColor(DyeColor::class.java.getEnum(value))
+                setBodyColor(if (value != null) DyeColor::class.java.getEnum(value) else DyeColor.WHITE)
                 true
             }
             "patterncolor", "pattern_color" -> {
-                setPatternColor(DyeColor::class.java.getEnum(value))
+                setPatternColor(if (value != null) DyeColor::class.java.getEnum(value) else DyeColor.WHITE)
                 true
             }
             "pattern" -> {
-                setPattern(TropicalFish.Pattern::class.java.getEnum(value))
+                setPattern(if (value != null) TropicalFish.Pattern::class.java.getEnum(value) else TropicalFish.Pattern.KOB)
                 true
             }
             else -> false

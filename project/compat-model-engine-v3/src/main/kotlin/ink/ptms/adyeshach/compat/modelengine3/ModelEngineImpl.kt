@@ -12,8 +12,6 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
-import taboolib.common.platform.function.info
-import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.util.unsafeLazy
 
@@ -30,12 +28,13 @@ interface DefaultModelEngine : ModelEngine {
     override fun showModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked) {
             if (modelEngineUniqueId != null) {
-                // TODO
-                // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.addPlayer(viewer) ?: return false
-
-                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.models?.forEach { (_, v) -> v.showToPlayer(viewer) } ?: return false
-                return true
-            } else if (modelEngineName.isNotBlank()) {
+                val modeledEntity = ModelEngineAPI.getModeledEntity(modelEngineUniqueId)
+                if (modeledEntity != null) {
+                    modeledEntity.models.forEach { (_, v) -> v.showToPlayer(viewer) }
+                    return true
+                }
+            }
+            if (modelEngineName.isNotBlank()) {
                 return refreshModelEngine()
             }
         }
@@ -45,20 +44,20 @@ interface DefaultModelEngine : ModelEngine {
     override fun hideModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked) {
             if (modelEngineUniqueId != null) {
-                // TODO
-                // ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.removePlayer(viewer) ?: return false
-
-                ModelEngineAPI.getModeledEntity(modelEngineUniqueId)?.models?.forEach { (_, v) -> v.hideFromPlayer(viewer) } ?: return false
-                return true
+                val modeledEntity = ModelEngineAPI.getModeledEntity(modelEngineUniqueId)
+                if (modeledEntity != null) {
+                    modeledEntity.models.forEach { (_, v) -> v.hideFromPlayer(viewer) }
+                    return true
+                } else {
+                    warning("Not found modeled entity: $modelEngineUniqueId")
+                }
             }
         }
         return false
     }
 
     override fun refreshModelEngine(): Boolean {
-        info("refreshModelEngine call")
         if (isModelEngineHooked) {
-            info("refreshModelEngine isModelEngineHooked")
             this as DefaultEntityInstance
             // 删除模型
             if (modelEngineUniqueId != null) {
@@ -84,23 +83,34 @@ interface DefaultModelEngine : ModelEngine {
             // 创建模型
             if (modelEngineName.isNotBlank()) {
                 val entityModeled = EntityModeled(this)
-                val model = ModelEngineAPI.createActiveModel(modelEngineName)
-                if (model == null) {
+                val blueprint = ModelEngineAPI.getBlueprint(modelEngineName)
+                if (blueprint == null) {
                     warning(asLang("error-failed-to-load-model", modelEngineName))
                     return false
                 }
                 val modeledEntity = ModelEngineAPI.createModeledEntity(entityModeled)
-                if (modeledEntity == null) {
-                    warning(asLang("error-failed-to-create-modeled-entity"))
-                    return false
-                }
-                try {
-                    modeledEntity.addModel(model, true)
-                } catch (ex: NullPointerException) {
-                    warning(asLang("error-failed-to-add-model", modelEngineName, ex.message.toString()))
-                    return false
-                }
-                despawn()
+                modeledEntity.isBaseEntityVisible = false
+                val activeModel = ModelEngineAPI.createActiveModel(blueprint)
+                modeledEntity.addModel(activeModel, true)
+                forViewers { activeModel.showToPlayer(it) }
+
+//                val model = ModelEngineAPI.createActiveModel(modelEngineName)
+//                if (model == null) {
+//                    warning(asLang("error-failed-to-load-model", modelEngineName))
+//                    return false
+//                }
+//                val modeledEntity = ModelEngineAPI.createModeledEntity(entityModeled)
+//                if (modeledEntity == null) {
+//                    warning(asLang("error-failed-to-create-modeled-entity"))
+//                    return false
+//                }
+//                try {
+//                    modeledEntity.addModel(model, false)
+//                } catch (ex: NullPointerException) {
+//                    warning(asLang("error-failed-to-add-model", modelEngineName, ex.message.toString()))
+//                    return false
+//                }
+//                despawn()
 
                 // v2展示名称
                 // modeledEntity.isInvisible = true
@@ -111,11 +121,11 @@ interface DefaultModelEngine : ModelEngine {
                 // }
 
                 // v3展示名称
-                val nameTag = model.nametagHandler.bones["nametag"]
-                if (nameTag != null) {
-                    nameTag.customName = getCustomName()
-                    nameTag.isCustomNameVisible = isCustomNameVisible()
-                }
+//                val nameTag = model.nametagHandler.bones["nametag"]
+//                if (nameTag != null) {
+//                    nameTag.customName = getCustomName()
+//                    nameTag.isCustomNameVisible = isCustomNameVisible()
+//                }
 
                 modelEngineUniqueId = entityModeled.modelUniqueId
                 // 首次加载模型的时候还不存在任何观察者，因此需要延迟添加
@@ -124,7 +134,7 @@ interface DefaultModelEngine : ModelEngine {
                 // TODO
                 // submit { forViewers { modeledEntity.addPlayer(it) } }
 
-                submit { forViewers { model.showToPlayer(it) } }
+                // submit { forViewers { model.showToPlayer(it) } }
                 return true
             }
         }

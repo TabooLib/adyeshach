@@ -108,7 +108,7 @@ val editSubCommand = subCommand {
                             }
                         }
                         // 设置自定义元数据
-                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), value)) {
+                        else if (!entity.setCustomMeta(key.replace("-", "_").lowercase(), if (value != "@RESET") value else null)) {
                             sender.sendLang("command-meta-not-found", key)
                         }
                     }

@@ -19,7 +19,7 @@ package com.alkaidmc.alkaid.mongodb;
 import taboolib.common.env.RuntimeDependency;
 
 @RuntimeDependency(
-        value = "org.mongodb:mongo-java-driver:3.12.11",
+        value = "!org.mongodb:mongo-java-driver:3.12.11",
         test = "!com.mongodb_3_12_11.client.MongoDatabase"
 )
 public class AlkaidMongodb {

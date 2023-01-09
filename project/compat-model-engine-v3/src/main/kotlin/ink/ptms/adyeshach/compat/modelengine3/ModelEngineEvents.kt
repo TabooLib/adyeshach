@@ -1,7 +1,8 @@
-package ink.ptms.adyeshach.compat.modelengine2
+package ink.ptms.adyeshach.compat.modelengine3
 
 import com.ticxo.modelengine.api.ModelEngineAPI
-import ink.ptms.adyeshach.compat.modelengine2.DefaultModelEngine.Companion.isModelEngineHooked
+import com.ticxo.modelengine.api.animation.state.ModelState
+import ink.ptms.adyeshach.compat.modelengine3.DefaultModelEngine.Companion.isModelEngineHooked
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.ModelEngine
@@ -24,6 +25,11 @@ object ModelEngineEvents {
     @Awake(LifeCycle.ENABLE)
     fun init() {
         if (isModelEngineHooked) {
+            // 实体生成，若未生成 ModelEngine 模型则发送原版数据包
+            // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
+            Adyeshach.api().getEventBus().prepareSpawn { e -> !(e.entity as ModelEngine).showModelEngine(e.viewer) }
+            // 实体销毁
+            Adyeshach.api().getEventBus().prepareDestroy { e -> !(e.entity as ModelEngine).hideModelEngine(e.viewer) }
             // 名称变动
             Adyeshach.api().getEventBus().prepareMetaUpdate { e ->
                 val entity = e.entity as? ModelEngine ?: return@prepareMetaUpdate true
@@ -34,10 +40,9 @@ object ModelEngineEvents {
             }
             // 移动状态变动
             Adyeshach.api().getEventBus().prepareMove { e ->
-                val modelManager = ModelEngineAPI.api.modelManager
                 val entity = e.entity as? ModelEngine ?: return@prepareMove
                 if (entity.modelEngineUniqueId != null) {
-                    modelManager.getModeledEntity(entity.modelEngineUniqueId)?.isWalking = e.isMoving
+                    ModelEngineAPI.getModeledEntity(entity.modelEngineUniqueId)?.state = if (e.isMoving) ModelState.WALK else ModelState.IDLE
                 }
             }
         }
@@ -46,17 +51,16 @@ object ModelEngineEvents {
     @SubscribeEvent
     private fun onInteract(e: PlayerInteractEvent) {
         if (isModelEngineHooked && e.action != Action.PHYSICAL) {
-            val modelManager = ModelEngineAPI.api.modelManager
             val entities = ArrayList<Pair<EntityInstance, BoundingBox>>()
             Adyeshach.api().getEntityFinder().getEntities(e.player) { it.getLocation().safeDistance(e.player.location) <= 5 }.forEach {
                 if (it !is ModelEngine) {
                     return@forEach
                 }
                 if (it.modelEngineUniqueId != null) {
-                    val modeledEntity = modelManager.getModeledEntity(it.modelEngineUniqueId) ?: return@forEach
-                    val blueprint = modeledEntity.getActiveModel(it.modelEngineName).blueprint ?: return@forEach
-                    val boundingBoxHeight = blueprint.boundingBoxHeight
-                    val boundingBoxWidth = blueprint.boundingBoxWidth / 2
+                    val modeledEntity = ModelEngineAPI.getModeledEntity(it.modelEngineUniqueId) ?: return@forEach
+                    val blueprint = modeledEntity.getModel(it.modelEngineName).blueprint ?: return@forEach
+                    val boundingBoxHeight = blueprint.mainHitbox.height
+                    val boundingBoxWidth = blueprint.mainHitbox.width / 2
                     val location = it.getLocation()
                     entities += it to BoundingBox(
                         location.x - boundingBoxWidth,

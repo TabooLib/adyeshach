@@ -75,15 +75,15 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
     }
 
     @Suppress("SpellCheckingInspection")
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "painting" -> {
-                setPainting(BukkitPaintings::class.java.getEnum(value))
+                setPainting(if (value != null) BukkitPaintings::class.java.getEnum(value) else BukkitPaintings.KEBAB)
                 true
             }
             "direction" -> {
-                setDirection(BukkitDirection::class.java.getEnum(value))
+                setDirection(if (value != null) BukkitDirection::class.java.getEnum(value) else BukkitDirection.NORTH)
                 true
             }
             else -> false

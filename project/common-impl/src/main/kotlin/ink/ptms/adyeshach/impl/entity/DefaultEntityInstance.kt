@@ -25,7 +25,6 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
 import taboolib.common5.cbool
@@ -112,7 +111,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     var modelEngineName = ""
         set(value) {
             field = value
-            info("modelEngineName -> $value")
             // 重新加载模型
             if (this is ModelEngine) {
                 refreshModelEngine()
@@ -164,6 +162,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     /** 插值定位 */
     override var moveFrames: InterpolatedLocation? = null
+        set(value) {
+            field = value
+            DefaultAdyeshachAPI.localEventBus.callMove(this, value != null)
+        }
 
     /** 移动目的 */
     override var moveTarget: Location? = null
@@ -186,34 +188,34 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             }
         }
 
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         return when (key) {
             "pose" -> {
-                setPose(BukkitPose::class.java.getEnum(value))
+                setPose(if (value != null) BukkitPose::class.java.getEnum(value) else BukkitPose.STANDING)
                 true
             }
             "nitwit" -> {
-                isNitwit = value.cbool
+                isNitwit = value?.cbool ?: false
                 true
             }
             "movespeed", "move_speed" -> {
-                moveSpeed = value.cdouble
+                moveSpeed = value?.cdouble ?: 0.2
                 true
             }
             "visibledistance", "visible_distance" -> {
-                visibleDistance = value.cdouble
+                visibleDistance = value?.cdouble ?: AdyeshachSettings.visibleDistance
                 true
             }
             "visibleafterloaded", "visible_after_loaded" -> {
-                visibleAfterLoaded = value.cbool
+                visibleAfterLoaded = value?.cbool ?: true
                 true
             }
-            "modelenginename", "modelengine_name", "modelengine" -> {
-                modelEngineName = value
+            "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
+                modelEngineName = value ?: ""
                 true
             }
             "freeze", "isfreeze", "is_freeze" -> {
-                isFreeze = value.cbool
+                isFreeze = value?.cbool ?: false
                 true
             }
             else -> false
@@ -222,10 +224,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
-            // 若未生成 ModelEngine 模型则发送原版数据包
-            // 这可能会导致 getEntityFromClientUniqueId 方法无法获取
-            if (this !is ModelEngine || !showModelEngine(viewer)) {
-                // 调用生成方法
+            // 使用事件系统控制实体显示
+            if (DefaultAdyeshachAPI.localEventBus.callSpawn(this, viewer)) {
                 spawn.run()
             }
             // 更新单位属性
@@ -241,9 +241,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
         if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
-            // 销毁模型
-            if (this !is ModelEngine || !hideModelEngine(viewer)) {
-                // 调用销毁方法
+            // 使用事件系统控制实体销毁
+            if (DefaultAdyeshachAPI.localEventBus.callDestroy(this, viewer)) {
                 destroy.run()
             }
             return true

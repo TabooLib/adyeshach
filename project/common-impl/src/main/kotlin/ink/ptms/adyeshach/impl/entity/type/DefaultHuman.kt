@@ -101,31 +101,31 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     }
 
     @Suppress("SpellCheckingInspection")
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "hidefromtablist", "ishidefromtablist", "hide_from_tab_list", "is_hide_from_tab_list" -> {
-                isHideFromTabList = value.cbool
+                isHideFromTabList = value?.cbool ?: true
                 true
             }
             "name", "player_name", "playername" -> {
-                setName(value)
+                setName(value ?: "Adyeshach")
                 true
             }
             "ping", "player_ping", "playerping" -> {
-                setPing(value.cint)
+                setPing(value?.cint ?: 0)
                 true
             }
             "ping_bar", "playe_ping_bar", "playerPingBar", "pingbar" -> {
-                setPingBar(PingBar::class.java.getEnum(value))
+                setPingBar(if (value != null) PingBar::class.java.getEnum(value) else PingBar.BAR_5)
                 true
             }
             "texture", "player_texture", "playertexture" -> {
-                setTexture(value)
+                setTexture(value ?: "")
                 true
             }
             "sleeping", "is_sleeping", "issleeping" -> {
-                setSleeping(value.cbool)
+                setSleeping(value?.cbool ?: false)
                 true
             }
             else -> false
@@ -157,6 +157,10 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
 
     override fun setTexture(name: String) {
         gameProfile.textureName = name
+        // 无皮肤
+        if (name.isBlank()) {
+            return
+        }
         // 加载皮肤
         Adyeshach.api().getNetworkAPI().getSkin().getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
     }

@@ -44,15 +44,15 @@ abstract class DefaultHorse(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         }
     }
 
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "color" -> {
-                setColor(Horse.Color::class.java.getEnum(value))
+                setColor(if (value != null) Horse.Color::class.java.getEnum(value) else Horse.Color.WHITE)
                 true
             }
             "style" -> {
-                setStyle(Horse.Style::class.java.getEnum(value))
+                setStyle(if (value != null) Horse.Style::class.java.getEnum(value) else Horse.Style.WHITE)
                 true
             }
             else -> false

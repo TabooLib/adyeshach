@@ -8,7 +8,6 @@ import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
-import taboolib.common.platform.function.info
 
 /**
  * Adyeshach
@@ -22,11 +21,6 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
     override fun subpage() = "traits"
 
     override fun groups(): List<ActionGroup> {
-        info("is modelengien -> ${entity is ModelEngine}")
-        entity.javaClass.interfaces.forEach {
-            info("interface -> $it")
-        }
-
         val groups = arrayListOf<ActionGroup>()
         // 基础特性
         groups += SimpleGroup(

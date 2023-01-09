@@ -45,11 +45,11 @@ abstract class DefaultMinecart(entityTypes: EntityTypes) : DefaultEntity(entityT
     }
 
     @Suppress("SpellCheckingInspection")
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "customblock", "custom_block" -> {
-                val mat = value.parseToXMaterial()
+                val mat = value?.parseToXMaterial() ?: XMaterial.STONE
                 setCustomBlock(MaterialData(mat.parseMaterial() ?: Material.STONE, mat.data))
                 true
             }

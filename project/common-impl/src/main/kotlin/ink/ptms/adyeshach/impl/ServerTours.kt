@@ -1,10 +1,10 @@
-package ink.ptms.adyeshach.impl.compat
+package ink.ptms.adyeshach.impl
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import tech.mistermel.servertours.api.ServerToursAPI
 
-object CompatServerTours {
+object ServerTours {
 
     val serverToursHooked by lazy { Bukkit.getPluginManager().getPlugin("ServerTours") != null }
 

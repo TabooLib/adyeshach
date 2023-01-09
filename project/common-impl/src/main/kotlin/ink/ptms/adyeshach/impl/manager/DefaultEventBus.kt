@@ -4,8 +4,10 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.event.*
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import java.util.*
+import java.util.function.Consumer
 import java.util.function.Predicate
 
 /**
@@ -17,15 +19,30 @@ import java.util.function.Predicate
  */
 class DefaultEventBus : EventBus {
 
+    val prepareSpawn = ArrayList<Predicate<SpawnEvent>>()
+    val prepareDestroy = ArrayList<Predicate<DestroyEvent>>()
     val prepareTicks = LinkedList<Predicate<EntityInstance>>()
+    val prepareMoves = LinkedList<Consumer<MoveEvent>>()
     val prepareTeleports = LinkedList<Predicate<TeleportEvent>>()
     val prepareVelocities = LinkedList<Predicate<VelocityEvent>>()
     val prepareMetaUpdates = LinkedList<Predicate<MetaUpdateEvent>>()
     val prepareMaskedMetaGenerates = LinkedList<Predicate<MetaMaskedGenerateEvent>>()
     val prepareNaturalMetaGenerates = LinkedList<Predicate<MetaNaturalGenerateEvent>>()
 
+    fun callSpawn(entity: EntityInstance, viewer: Player): Boolean {
+        return prepareSpawn.all { it.test(SpawnEvent(entity, viewer)) }
+    }
+
+    fun callDestroy(entity: EntityInstance, viewer: Player): Boolean {
+        return prepareDestroy.all { it.test(DestroyEvent(entity, viewer)) }
+    }
+
     fun callTick(entity: EntityInstance): Boolean {
         return prepareTicks.all { it.test(entity) }
+    }
+
+    fun callMove(entity: EntityInstance, isMoving: Boolean) {
+        prepareMoves.forEach { it.accept(MoveEvent(entity, isMoving)) }
     }
 
     fun callTeleport(entity: EntityInstance, location: Location): Boolean {
@@ -48,8 +65,20 @@ class DefaultEventBus : EventBus {
         return prepareNaturalMetaGenerates.all { it.test(event) }
     }
 
+    override fun prepareSpawn(callback: Predicate<SpawnEvent>) {
+        prepareSpawn.add(callback)
+    }
+
+    override fun prepareDestroy(callback: Predicate<DestroyEvent>) {
+        prepareDestroy.add(callback)
+    }
+
     override fun prepareTick(callback: Predicate<EntityInstance>) {
         prepareTicks.add(callback)
+    }
+
+    override fun prepareMove(callback: Consumer<MoveEvent>) {
+        prepareMoves.add(callback)
     }
 
     override fun prepareTeleport(callback: Predicate<TeleportEvent>) {

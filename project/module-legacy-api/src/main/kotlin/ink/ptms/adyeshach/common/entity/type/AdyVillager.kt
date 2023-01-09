@@ -20,15 +20,11 @@ open class AdyVillager(entityTypes: EntityTypes, v2: ink.ptms.adyeshach.core.ent
     }
 
     override fun setVillagerData(villagerData: VillagerData) {
-        val type = ink.ptms.adyeshach.core.bukkit.data.VillagerData.Type.values()[villagerData.type.ordinal]
-        val profession = ink.ptms.adyeshach.core.bukkit.data.VillagerData.Profession.values()[villagerData.profession.ordinal]
-        val v1 = ink.ptms.adyeshach.core.bukkit.data.VillagerData(type, profession)
-        setMetadata("villagerData", v1)
+        setMetadata("villagerData", villagerData.v2())
     }
 
     override fun getVillagerData(): VillagerData {
-        val v2 = getMetadata<ink.ptms.adyeshach.core.bukkit.data.VillagerData>("villagerData")
-        return VillagerData(v2.type.toBukkit(), v2.profession.toBukkit())
+        return VillagerData.fromV2(getMetadata("villagerData"))
     }
 
     override fun setLegacyProfession(profession: BukkitProfession) {

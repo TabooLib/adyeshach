@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyItem
 import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.util.ifTrue
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
@@ -48,11 +49,11 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
         return getMetadata("item")
     }
 
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "item" -> {
-                setItem(value.toItem())
+                setItem(value?.toItem() ?: ItemStack(Material.APPLE))
                 true
             }
             else -> false

@@ -17,11 +17,11 @@ class AdyZombieVillager(v2: ink.ptms.adyeshach.core.entity.EntityInstance):  Ady
     }
 
     override fun setVillagerData(villagerData: VillagerData) {
-        setMetadata("villagerData", villagerData)
+        setMetadata("villagerData", villagerData.v2())
     }
 
     override fun getVillagerData(): VillagerData {
-        return getMetadata("villagerData")
+        return VillagerData.fromV2(getMetadata("villagerData"))
     }
 
     override fun setLegacyProfession(profession: BukkitProfession) {

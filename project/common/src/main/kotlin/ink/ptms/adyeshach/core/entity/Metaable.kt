@@ -26,7 +26,7 @@ interface Metaable {
     /**
      * 设置实体元数据（通过字符串设置并自动解析为对应的值）
      */
-    fun setCustomMeta(key: String, value: String): Boolean
+    fun setCustomMeta(key: String, value: String?): Boolean
 
     /**
      * 获取实体所有元数据模型

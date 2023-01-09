@@ -40,11 +40,11 @@ abstract class DefaultExperienceOrb(entityTypes: EntityTypes) : DefaultEntity(en
         }
     }
 
-    override fun setCustomMeta(key: String, value: String): Boolean {
+    override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
             "amount" -> {
-                setAmount(value.cint)
+                setAmount(value?.cint ?: 1)
                 true
             }
             else -> false

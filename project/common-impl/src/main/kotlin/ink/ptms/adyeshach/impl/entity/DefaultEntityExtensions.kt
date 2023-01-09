@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
-import ink.ptms.adyeshach.impl.compat.CompatServerTours
+import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.util.Vector
 import java.util.concurrent.TimeUnit
@@ -92,7 +92,7 @@ fun DefaultEntityInstance.handleTracker() {
         }
         // 销毁不在可视范围内的实体
         viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-            if (visible(player, false) && !CompatServerTours.isRoutePlaying(player)) {
+            if (visible(player, false) && !ServerTours.isRoutePlaying(player)) {
                 viewPlayers.visible -= player.name
             }
         }

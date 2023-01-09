@@ -26,12 +26,16 @@ dependencies {
     implementation(project(":project:common-impl"))
     implementation(project(":project:common-impl-nms"))
     implementation(project(":project:common-impl-nms-j17"))
+    implementation(project(":project:compat-beton-quest"))
+    implementation(project(":project:compat-germ-engine"))
     implementation(project(":project:compat-model-engine-v2"))
-    implementation(project(":project:compat-model-engine-v3"))
+    // 谁能兼容谁来兼容，我不会
+    // implementation(project(":project:compat-model-engine-v3"))
     implementation(project(":project:module-bukkit"))
     implementation(project(":project:module-editor"))
     implementation(project(":project:module-language"))
     implementation(project(":project:module-legacy-api"))
+    implementation(project(":project:api-alkaid-mongodb"))
     implementation(project(":project:api-data-serializer"))
 }
 
