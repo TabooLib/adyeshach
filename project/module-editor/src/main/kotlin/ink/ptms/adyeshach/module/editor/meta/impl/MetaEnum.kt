@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.bukkit.BukkitCreeperState
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
+import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.entity.Player
 import taboolib.library.xseries.XMaterial
@@ -24,21 +25,33 @@ import java.util.concurrent.ConcurrentHashMap
 class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = true, val lowercase: Boolean = false) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
-        val enums = enumClass.enums()
+        var enums = enumClass.enums().toList()
+        if (enumClass == ChatColor::class.java) {
+            enums = enums.filter { (it as ChatColor).toWool() != null }
+        }
         player.openMenu<Linked<Any>>(player.lang("input-enums", enumClass.simpleName)) {
             rows(6)
             slots(Slots.CENTER)
-            elements { enums.toList() }
+            elements { enums }
             onGenerate { _, element, _, _ ->
-                if (enumClass == DyeColor::class.java) {
-                    buildItem((element as DyeColor).toWool()) {
-                        name = "&7$element"
-                        colored()
+                when (enumClass) {
+                    ChatColor::class.java -> {
+                        buildItem((element as ChatColor).toWool()!!) {
+                            name = "$element${element.name}"
+                            colored()
+                        }
                     }
-                } else {
-                    buildItem(XMaterial.PAPER) {
-                        name = "&7$element"
-                        colored()
+                    DyeColor::class.java -> {
+                        buildItem((element as DyeColor).toWool()) {
+                            name = "&7$element"
+                            colored()
+                        }
+                    }
+                    else -> {
+                        buildItem(XMaterial.PAPER) {
+                            name = "&7$element"
+                            colored()
+                        }
                     }
                 }
             }
@@ -54,7 +67,11 @@ class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean =
                     }
                     // 名称
                     else -> {
-                        val name = if (lowercase) element.toString().lowercase() else element
+                        val name = when {
+                            lowercase -> element.toString().lowercase()
+                            element is ChatColor -> element.name
+                            else -> element
+                        }
                         player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->$name")
                     }
                 }
@@ -83,6 +100,28 @@ class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean =
          */
         fun Class<*>.enums(): Array<out Any> {
             return cacheEnums.computeIfAbsent(name) { enumConstants }
+        }
+
+        fun ChatColor.toWool(): XMaterial? {
+            return when (this) {
+                ChatColor.BLACK -> XMaterial.BLACK_WOOL
+                ChatColor.DARK_BLUE -> XMaterial.BLUE_WOOL
+                ChatColor.DARK_GREEN -> XMaterial.GREEN_WOOL
+                ChatColor.DARK_AQUA -> XMaterial.CYAN_WOOL
+                ChatColor.DARK_RED -> XMaterial.RED_WOOL
+                ChatColor.DARK_PURPLE -> XMaterial.PURPLE_WOOL
+                ChatColor.GOLD -> XMaterial.ORANGE_WOOL
+                ChatColor.GRAY -> XMaterial.LIGHT_GRAY_WOOL
+                ChatColor.DARK_GRAY -> XMaterial.GRAY_WOOL
+                ChatColor.BLUE -> XMaterial.LIGHT_BLUE_WOOL
+                ChatColor.GREEN -> XMaterial.LIME_WOOL
+                ChatColor.AQUA -> XMaterial.LIGHT_BLUE_WOOL
+                ChatColor.RED -> XMaterial.RED_WOOL
+                ChatColor.LIGHT_PURPLE -> XMaterial.PINK_WOOL
+                ChatColor.YELLOW -> XMaterial.YELLOW_WOOL
+                ChatColor.WHITE -> XMaterial.WHITE_WOOL
+                else -> null
+            }
         }
 
         fun DyeColor.toWool(): XMaterial {

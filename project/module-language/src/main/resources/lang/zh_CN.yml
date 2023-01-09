@@ -513,6 +513,9 @@ editor-meta-has-left-horn: 'Has Left Horn'
 editor-meta-has-right-horn: 'Has Right Horn'
 editor-meta-anger-level: '愤怒等级'
 editor-meta-variant: '变体'
+editor-meta-name-tag-visible: '是否显示名称'
+editor-meta-collision: '是否启用碰撞箱'
+editor-meta-glowing-color: '发光颜色'
 
 trait-patrol:
   - type: TITLE
@@ -568,6 +571,7 @@ group-traits0: '实体特性'
 group-traits1: '生物特性'
 group-traits2: '附加特性 0'
 group-traits3: '附加特性 1'
+group-traits4: '附加特性 2'
 group-extras0: '附加 0'
 group-extras1: '附加 1'
 group-base0: '基础 0'

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import org.bukkit.ChatColor
 
 /**
  * Adyeshach
@@ -11,6 +12,21 @@ import ink.ptms.adyeshach.core.bukkit.BukkitPose
  */
 @Suppress("SpellCheckingInspection")
 interface GenericEntity {
+
+    /**
+     * 是否可见名称
+     */
+    var isNameTagVisible: Boolean
+
+    /**
+     * 是否碰撞
+     */
+    var isCollision: Boolean
+
+    /**
+     * 发光颜色
+     */
+    var glowingColor: ChatColor
 
     /**
      * 实体在细雪中的停留的时间（应该是）

@@ -37,23 +37,23 @@ interface MinecraftScoreboardOperator {
     fun createTeam(
         player: List<Player>,
         name: String,
-        members: List<String>,
+        members: Set<String>,
         nameTagVisible: Boolean = true,
         collision: Boolean = true,
         color: ChatColor = ChatColor.WHITE
     ) {
-        updateTeam(player, Team(name, members.toMutableList(), nameTagVisible, collision, color), TeamMethod.ADD)
+        updateTeam(player, Team(name, members.toMutableSet(), nameTagVisible, collision, color), TeamMethod.ADD)
     }
 
     fun createTeam(
         player: Player,
         name: String,
-        members: List<String>,
+        members: Set<String>,
         nameTagVisible: Boolean = true,
         collision: Boolean = true,
         color: ChatColor = ChatColor.WHITE
     ) {
-        updateTeam(listOf(player), Team(name, members.toMutableList(), nameTagVisible, collision, color), TeamMethod.ADD)
+        updateTeam(listOf(player), Team(name, members.toMutableSet(), nameTagVisible, collision, color), TeamMethod.ADD)
     }
 
     /**
@@ -63,12 +63,12 @@ interface MinecraftScoreboardOperator {
      * @param name 队伍名称
      * @param members 队伍成员
      */
-    fun joinTeam(player: List<Player>, name: String, members: List<String>) {
-        updateTeam(player, Team(name, members.toMutableList()), TeamMethod.JOIN)
+    fun joinTeam(player: List<Player>, name: String, members: Set<String>) {
+        updateTeam(player, Team(name, members.toMutableSet()), TeamMethod.JOIN)
     }
 
-    fun joinTeam(player: Player, name: String, members: List<String>) {
-        updateTeam(listOf(player), Team(name, members.toMutableList()), TeamMethod.JOIN)
+    fun joinTeam(player: Player, name: String, members: Set<String>) {
+        updateTeam(listOf(player), Team(name, members.toMutableSet()), TeamMethod.JOIN)
     }
 
     /**
@@ -78,12 +78,12 @@ interface MinecraftScoreboardOperator {
      * @param name 队伍名称
      * @param members 队伍成员
      */
-    fun leaveTeam(player: List<Player>, name: String, members: List<String>) {
-        updateTeam(player, Team(name, members.toMutableList()), TeamMethod.LEAVE)
+    fun leaveTeam(player: List<Player>, name: String, members: Set<String>) {
+        updateTeam(player, Team(name, members.toMutableSet()), TeamMethod.LEAVE)
     }
 
-    fun leaveTeam(player: Player, name: String, members: List<String>) {
-        updateTeam(listOf(player), Team(name, members.toMutableList()), TeamMethod.LEAVE)
+    fun leaveTeam(player: Player, name: String, members: Set<String>) {
+        updateTeam(listOf(player), Team(name, members.toMutableSet()), TeamMethod.LEAVE)
     }
 
     /**
@@ -122,7 +122,7 @@ interface MinecraftScoreboardOperator {
      */
     data class Team(
         var name: String,
-        var members: MutableList<String> = arrayListOf(),
+        var members: MutableSet<String> = hashSetOf(),
         var nameTagVisible: Boolean = true,
         var collision: Boolean = true,
         var color: ChatColor = ChatColor.WHITE

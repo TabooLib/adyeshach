@@ -25,28 +25,49 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
         // 基础特性
         groups += SimpleGroup(
             "traits0", 999, arrayListOf(
-                SimpleAction.MetaBool("nitwit", value = entity.isNitwit, hasDescription = true),
+                SimpleAction.MetaBool("nitwit", entity.isNitwit, true),
                 // 傻子不能编辑移动速度
-                if (entity.isNitwit) SimpleAction.None else SimpleAction.Meta("move-speed", EditType.SIGN, value = entity.moveSpeed),
+                if (entity.isNitwit) {
+                    SimpleAction.None
+                } else {
+                    SimpleAction.Meta("move-speed", EditType.SIGN, entity.moveSpeed)
+                },
                 // 可视距离
-                SimpleAction.Meta("visible-distance", EditType.SIGN, value = entity.visibleDistance),
-                SimpleAction.MetaBool("visible-after-loaded", value = entity.visibleAfterLoaded, hasDescription = true),
+                SimpleAction.Meta("visible-distance", EditType.SIGN, entity.visibleDistance),
+                SimpleAction.MetaBool("visible-after-loaded", entity.visibleAfterLoaded, true),
                 // 模型
-                if (entity is ModelEngine) SimpleAction.Meta("model-engine", EditType.SIGN, value = entity.modelEngineName, true) else SimpleAction.None
+                if (entity is ModelEngine) {
+                    SimpleAction.Meta("model-engine", EditType.SIGN, entity.modelEngineName, true)
+                } else {
+                    SimpleAction.None
+                }
             )
         )
         // 生物特性
         if (entity is AdyEntityLiving) {
             groups += SimpleGroup(
                 "traits1", 999, listOf(
-                    SimpleAction.MetaBool("die", value = entity.isDie, hasDescription = true),
-                    SimpleAction.Meta("equipment", EditType.EQUIPMENT, isResettable = false)
+                    SimpleAction.MetaBool("die", entity.isDie, true),
+                    SimpleAction.Meta("equipment", EditType.EQUIPMENT, false)
                 )
             )
         }
-        // 附加特性 1
+        // 附加特性 0
         groups += SimpleGroup(
             "traits2", 999, listOf(
+                SimpleAction.MetaBool("name-tag-visible", entity.isNameTagVisible),
+                SimpleAction.MetaBool("collision", entity.isCollision),
+                // 发光
+                if (entity.isGlowing()) {
+                    SimpleAction.Meta("glowing-color", EditType.CHAT_COLOR, "${entity.glowingColor}${entity.glowingColor.name}")
+                } else {
+                    SimpleAction.None
+                },
+            )
+        )
+        // 附加特性 1
+        groups += SimpleGroup(
+            "traits3", 999, listOf(
                 SimpleAction.MetaTraitBool("sit", entity.isTraitSit()),
                 SimpleAction.MetaTrait("title", entity.getTraitTitle().joinToString("\n")),
                 SimpleAction.MetaTrait("command", entity.getTraitCommands().joinToString("\n")),
@@ -56,7 +77,7 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
         // 附加特性 2
         if (!entity.isNitwit) {
             groups += SimpleGroup(
-                "traits3", 999, listOf(
+                "traits4", 999, listOf(
                     SimpleAction.MetaTrait("patrols", entity.getTraitPatrolNodes().size),
                     SimpleAction.MetaTrait("patrols-wait-time", entity.getTraitPatrolWaitTime()),
                     SimpleAction.MetaTraitLiteral("patrols-update"),

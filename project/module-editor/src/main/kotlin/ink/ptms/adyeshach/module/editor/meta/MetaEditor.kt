@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.core.entity.type.*
 import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.meta.impl.*
 import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
@@ -34,6 +35,7 @@ interface MetaEditor {
                 EditType.SIGN -> MetaPrimitive(key)
                 EditType.EQUIPMENT -> MetaEquipment()
                 EditType.FALLING_BLOCK -> MetaItem.FallingBlock()
+                EditType.CHAT_COLOR -> MetaEnum(key, ChatColor::class.java, useIndex = false)
                 else -> error("Unsupported type: $type")
             }
         }

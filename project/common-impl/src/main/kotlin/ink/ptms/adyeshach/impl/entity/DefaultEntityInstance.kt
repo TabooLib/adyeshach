@@ -19,8 +19,10 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
+import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.util.Indexs
+import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -84,6 +86,30 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     /** 移动速度 */
     @Expose
     override var moveSpeed = 0.2
+
+    /** 是否可见名称 */
+    @Expose
+    override var isNameTagVisible = true
+        set(value) {
+            field = value
+            VisualTeam.updateTeam(this)
+        }
+
+    /** 是否碰撞 */
+    @Expose
+    override var isCollision = true
+        set(value) {
+            field = value
+            VisualTeam.updateTeam(this)
+        }
+
+    /** 发光颜色 */
+    @Expose
+    override var glowingColor = ChatColor.WHITE
+        set(value) {
+            field = value
+            VisualTeam.updateTeam(this)
+        }
 
     /** 可视距离 */
     @Expose
@@ -200,6 +226,26 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             }
             "movespeed", "move_speed" -> {
                 moveSpeed = value?.cdouble ?: 0.2
+                true
+            }
+            "nametagvisible", "name_tag_visible" -> {
+                isNameTagVisible = value?.cbool ?: true
+                true
+            }
+            "collision", "is_collision" -> {
+                isCollision = value?.cbool ?: true
+                true
+            }
+            "glowingcolor", "glowing_color" -> {
+                glowingColor = if (value != null) {
+                    if (value.startsWith('§')) {
+                        ChatColor.getByChar(value) ?: ChatColor.WHITE
+                    } else {
+                        ChatColor::class.java.getEnum(value)
+                    }
+                } else {
+                    ChatColor.WHITE
+                }
                 true
             }
             "visibledistance", "visible_distance" -> {

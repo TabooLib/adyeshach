@@ -9,5 +9,5 @@ package ink.ptms.adyeshach.module.editor
  */
 enum class EditType {
 
-    AUTO, SIGN, EQUIPMENT, FALLING_BLOCK
+    AUTO, SIGN, EQUIPMENT, FALLING_BLOCK, CHAT_COLOR
 }
