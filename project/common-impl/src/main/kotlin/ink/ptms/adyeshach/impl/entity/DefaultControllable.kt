@@ -4,8 +4,10 @@ import ink.ptms.adyeshach.core.entity.Controllable
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.TagContainer
 import ink.ptms.adyeshach.core.entity.controller.Controller
+import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.event.AdyeshachControllerAddEvent
 import ink.ptms.adyeshach.core.event.AdyeshachControllerRemoveEvent
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import java.util.*
 
@@ -97,6 +99,24 @@ interface DefaultControllable : Controllable {
     override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
         this as DefaultEntityInstance
         this.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
+    }
+
+    override fun controllerMoveTo(location: Location) {
+        this as DefaultEntityInstance
+        moveTarget = location
+    }
+
+    override fun controllerMoveBy(locations: List<Location>, speed: Double) {
+        if (locations.isEmpty()) {
+            return
+        }
+        this as DefaultEntityInstance
+        moveFrames = ResultNavigation(locations.map { it.toVector() }.toMutableList(), 0, 0).toInterpolated(locations[0].world, speed, locations.last())
+    }
+
+    override fun controllerStopMove() {
+        this as DefaultEntityInstance
+        moveFrames = null
     }
 
     override fun random(): Random {

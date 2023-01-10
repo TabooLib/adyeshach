@@ -19,6 +19,7 @@ import ink.ptms.adyeshach.common.entity.path.PathType
 import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.ModelEngine
+import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -232,15 +233,15 @@ abstract class EntityInstance(entityTypes: EntityTypes, v2: ink.ptms.adyeshach.c
     }
 
     fun isTryMoving(): Boolean {
-        return hasTag("tryMoving")
+        return hasTag(StandardTags.IS_PATHFINDING)
     }
 
     fun isControllerMoving(): Boolean {
-        return hasTag("isMoving")
+        return hasTag(StandardTags.IS_MOVING)
     }
 
     fun isControllerJumping(): Boolean {
-        return hasTag("isJumping")
+        return false
     }
 
     fun isControllerOnGround(): Boolean {

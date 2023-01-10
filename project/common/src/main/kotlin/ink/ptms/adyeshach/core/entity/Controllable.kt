@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.entity.controller.Controller
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import java.util.*
 
@@ -63,13 +64,40 @@ interface Controllable {
      */
     fun resetController()
 
+    /**
+     * 看向某个实体
+     */
     fun controllerLookAt(entity: Entity)
 
+    /**
+     * 看向某个实体
+     */
     fun controllerLookAt(entity: Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float)
 
+    /**
+     * 看向某个位置
+     */
     fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double)
 
+    /**
+     * 看向某个位置
+     */
     fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float)
+
+    /**
+     * 移动到某个位置
+     */
+    fun controllerMoveTo(location: Location)
+
+    /**
+     * 按照规定的路径移动
+     */
+    fun controllerMoveBy(locations: List<Location>, speed: Double = moveSpeed)
+
+    /**
+     * 停止移动
+     */
+    fun controllerStopMove()
 
     fun random(): Random
 }
