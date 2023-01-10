@@ -103,7 +103,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
 
     /** 控制器描述 */
     fun hoverController(): String {
-        return entity.getController().map { "&7${it.priority()}. &f${it} &8(${it.key()})" }.colored().joinToString("\n")
+        return entity.getController().map { "&7${it.priority()}. &f${it} &8(${it.group()})" }.colored().joinToString("\n")
     }
 
     /** 标签描述 */

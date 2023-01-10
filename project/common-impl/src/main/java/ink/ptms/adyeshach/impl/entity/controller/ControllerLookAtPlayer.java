@@ -67,7 +67,7 @@ public class ControllerLookAtPlayer extends Controller {
 
     @NotNull
     @Override
-    public String key() {
+    public String group() {
         return "LOOK";
     }
 

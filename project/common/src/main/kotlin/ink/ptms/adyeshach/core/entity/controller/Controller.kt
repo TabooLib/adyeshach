@@ -26,7 +26,7 @@ abstract class Controller(var entity: EntityInstance? = null): Comparable<Contro
     /**
      * 控制器组
      */
-    open fun key() = "default"
+    open fun group() = "default"
 
     /**
      * 优先级

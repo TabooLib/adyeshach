@@ -38,13 +38,13 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
                 return@forEach
             }
             // 获取当前正在运行的同组控制器
-            val h = hold[controller.key()]
+            val h = hold[controller.group()]
             // 当前正在运行
             if (h == controller) {
                 // 无法继续运行
                 if (controller.runSafely(true) { !continueExecute() }) {
                     // 停止
-                    hold.remove(controller.key())
+                    hold.remove(controller.group())
                     controller.stop()
                 }
             }
@@ -54,7 +54,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
                 // 是否需要开始运行
                 if (controller.runSafely(false) { shouldExecute() }) {
                     // 开始
-                    interrupt[controller.key()] = controller
+                    interrupt[controller.group()] = controller
                 }
             }
         }

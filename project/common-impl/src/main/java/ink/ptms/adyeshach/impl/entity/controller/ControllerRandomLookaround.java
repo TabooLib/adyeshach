@@ -41,7 +41,7 @@ public class ControllerRandomLookaround extends Controller {
 
     @NotNull
     @Override
-    public String key() {
+    public String group() {
         return "LOOK";
     }
 
