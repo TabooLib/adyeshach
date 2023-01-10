@@ -80,7 +80,7 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
     companion object {
 
-        val blockHeight = Configuration.loadFromInputStream(releaseResourceFile("block_height.json", true).readBytes().inputStream(), Type.JSON)
+        val blockHeight = Configuration.loadFromInputStream(releaseResourceFile("core/block_height.json", true).readBytes().inputStream(), Type.JSON)
         val blockHeightMap = blockHeight.mapValue { it.cdouble }
 
         @Awake(LifeCycle.INIT)

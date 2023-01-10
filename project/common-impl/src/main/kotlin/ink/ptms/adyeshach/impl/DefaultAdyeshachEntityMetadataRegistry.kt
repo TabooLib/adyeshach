@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
 
-    val descriptionMeta = DescEntityMeta(releaseResourceFile("description/entity_meta.desc", true).readBytes().inputStream())
-    val descriptionUnusedMeta = DescEntityUnusedMeta(releaseResourceFile("description/entity_meta_unused.desc", true).readBytes().inputStream())
+    val descriptionMeta = DescEntityMeta(releaseResourceFile("core/description/entity_meta.desc", true).readBytes().inputStream())
+    val descriptionUnusedMeta = DescEntityUnusedMeta(releaseResourceFile("core/description/entity_meta_unused.desc", true).readBytes().inputStream())
 
     init {
         TabooLibCommon.postpone(LifeCycle.ENABLE) {

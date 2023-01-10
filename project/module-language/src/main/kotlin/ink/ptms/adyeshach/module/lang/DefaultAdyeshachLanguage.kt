@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.module.lang.Language
 import taboolib.platform.util.asLangTextList
 import taboolib.platform.util.asLangTextOrNull
 import taboolib.platform.util.sendLang
@@ -31,6 +32,11 @@ class DefaultAdyeshachLanguage : AdyeshachLanguage {
     }
 
     companion object {
+
+        @Awake(LifeCycle.CONST)
+        fun const() {
+            Language.path = "core/lang"
+        }
 
         @Awake(LifeCycle.INIT)
         fun init() {

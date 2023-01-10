@@ -39,7 +39,7 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
     val callback = ArrayList<AdyeshachEntityTypeRegistry.GenerateCallback>()
 
     /** 实体类型描述文件 */
-    val description = DescEntityTypes(releaseResourceFile("description/entity_types.desc", true).readBytes().inputStream())
+    val description = DescEntityTypes(releaseResourceFile("core/description/entity_types.desc", true).readBytes().inputStream())
 
     /** 描述文件中的实体数据 */
     val descriptionEntityMap = HashMap<EntityTypes, Entity>()

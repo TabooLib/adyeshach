@@ -6,12 +6,14 @@ plugins {
     `maven-publish`
     java
     id("org.jetbrains.kotlin.jvm") version "1.5.31" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 subprojects {
     apply<JavaPlugin>()
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "maven-publish")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     repositories {
         mavenLocal()
@@ -23,6 +25,8 @@ subprojects {
         }
     }
     dependencies {
+        compileOnly(kotlin("stdlib"))
+        // taboolib
         compileOnly("io.izzel.taboolib:common:$taboolib_version")
         compileOnly("io.izzel.taboolib:common-5:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-chat:$taboolib_version")
@@ -30,7 +34,6 @@ subprojects {
         compileOnly("io.izzel.taboolib:module-database:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-effect:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-lang:$taboolib_version")
-        compileOnly("io.izzel.taboolib:module-nms-util:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-nms:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-nms-util:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-kether:$taboolib_version")
@@ -38,14 +41,16 @@ subprojects {
         compileOnly("io.izzel.taboolib:module-navigation:$taboolib_version")
         compileOnly("io.izzel.taboolib:platform-bukkit:$taboolib_version")
         compileOnly("io.izzel.taboolib:expansion-command-helper:$taboolib_version")
+        // server
         compileOnly("ink.ptms.core:v11604:11604")
         compileOnly("ink.ptms:nms-all:1.0.0")
         compileOnly("com.google.code.gson:gson:2.8.5")
         compileOnly("com.google.guava:guava:21.0")
+        // include
         compileOnly("com.eatthepath:fast-uuid:0.2.0")
-        compileOnly("com.github.ben-manes.caffeine:caffeine:2.9.3")
         compileOnly("org.spongepowered:math:2.0.1")
-        compileOnly(kotlin("stdlib"))
+        // download
+        compileOnly("com.github.ben-manes.caffeine:caffeine:2.9.3")
     }
     java {
         withSourcesJar()
@@ -95,7 +100,9 @@ fun PublishingExtension.applyToSub(subProject: Project) {
             groupId = "ink.ptms.adyeshach"
             version = project.version.toString()
             artifact(subProject.tasks["kotlinSourcesJar"])
-            artifact(subProject.tasks.jar)
+            artifact(subProject.tasks["shadowJar"]) {
+                classifier = null
+            }
             println("> Apply \"$groupId:$artifactId:$version\"")
         }
     }

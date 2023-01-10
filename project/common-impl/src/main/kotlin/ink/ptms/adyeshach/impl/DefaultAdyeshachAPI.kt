@@ -76,8 +76,11 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
-            // 异步加载私有管理器
-            submitAsync { getPrivateEntityManager(player, ManagerType.PERSISTENT).onEnable() }
+            // 是否启用持久化私有管理器
+            if (EntityStorage.isEnabled()) {
+                // 异步加载私有管理器
+                submitAsync { getPrivateEntityManager(player, ManagerType.PERSISTENT).onEnable() }
+            }
         }
     }
 
@@ -89,11 +92,14 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
             // 异步卸载私有管理器
             submitAsync {
-                var privateManager = getPrivateEntityManager(player, ManagerType.PERSISTENT)
+                var privateManager = getPrivateEntityManager(player, ManagerType.TEMPORARY)
                 privateManager.onDisable()
-                privateManager.onSave()
-                privateManager = getPrivateEntityManager(player, ManagerType.TEMPORARY)
-                privateManager.onDisable()
+                // 是否启用持久化私有管理器
+                if (EntityStorage.isEnabled()) {
+                    privateManager = getPrivateEntityManager(player, ManagerType.PERSISTENT)
+                    privateManager.onDisable()
+                    privateManager.onSave()
+                }
             }
             // 移除管理器
             playerEntityManagerMap.remove(player.name)

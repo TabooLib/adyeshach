@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.impl.storage.EntityStorage
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
@@ -34,7 +35,9 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         api.getPublicEntityManager(ManagerType.PERSISTENT).getEntity(match)?.let { return it }
         api.getPublicEntityManager(ManagerType.TEMPORARY).getEntity(match)?.let { return it }
         if (player != null) {
-            api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntity(match)?.let { return it }
+            if (EntityStorage.isEnabled()) {
+                api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntity(match)?.let { return it }
+            }
             api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntity(match)?.let { return it }
         }
         return null
@@ -45,7 +48,9 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
         entity.addAll(api.getPublicEntityManager(ManagerType.PERSISTENT).getEntities(filter))
         entity.addAll(api.getPublicEntityManager(ManagerType.TEMPORARY).getEntities(filter))
         if (player != null) {
-            entity.addAll(api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntities(filter))
+            if (EntityStorage.isEnabled()) {
+                entity.addAll(api.getPrivateEntityManager(player, ManagerType.PERSISTENT).getEntities(filter))
+            }
             entity.addAll(api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntities(filter))
         }
         return entity
