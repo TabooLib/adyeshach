@@ -18,10 +18,6 @@ package ink.ptms.adyeshach.library.alkaid.mongodb;
 
 import taboolib.common.env.RuntimeDependency;
 
-@RuntimeDependency(
-        value = "!org.mongodb:mongo-java-driver:3.12.11",
-        test = "!com.mongodb_3_12_11.client.MongoDatabase"
-)
 public class AlkaidMongodb {
 
     public static SyncMongodbConnector sync() {

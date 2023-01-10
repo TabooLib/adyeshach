@@ -21,27 +21,29 @@ import java.util.function.Function
  * @author 坏黑
  * @since 2022/6/19 15:44
  */
+@Suppress("DuplicatedCode")
 class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
 
     override fun fromYaml(source: String, transfer: Function<String, String>): EntityInstance {
-        val copy = Configuration.loadFromString(source, Type.YAML)
-        copy.changeType(Type.JSON)
-        return fromJson(copy.saveToString(), transfer)
+        return fromSection(Configuration.loadFromString(source, Type.YAML), transfer)
     }
 
     override fun fromJson(source: String, transfer: Function<String, String>): EntityInstance {
-        val copy = Configuration.empty(Type.JSON)
-        val section = Configuration.loadFromString(source, Type.JSON)
+        return fromSection(Configuration.loadFromString(source, Type.JSON), transfer)
+    }
+
+    override fun fromSection(section: ConfigurationSection, transfer: Function<String, String>): EntityInstance {
+        val output = Configuration.empty(Type.JSON)
         // 对节点进行转换
         section.getValues(true).forEach { (k, v) ->
             if (v !is ConfigurationSection) {
-                copy[transfer.apply(k)] = v
+                output[transfer.apply(k)] = v
             }
         }
         // 加载单位
-        val type = EntityTypes::class.java.getEnum(copy.getString("entityType")!!)
+        val type = EntityTypes::class.java.getEnum(output.getString("entityType")!!)
         val typeRegistry = Adyeshach.api().getEntityTypeRegistry()
-        return Serializer.gson.fromJson(copy.toString(), typeRegistry.getEntityClass(type)) as EntityInstance
+        return Serializer.gson.fromJson(output.toString(), typeRegistry.getEntityClass(type)) as EntityInstance
     }
 
     companion object {

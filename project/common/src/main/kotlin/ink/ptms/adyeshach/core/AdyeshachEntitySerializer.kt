@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
+import taboolib.library.configuration.ConfigurationSection
 import java.util.function.Function
 
 /**
@@ -21,4 +22,9 @@ interface AdyeshachEntitySerializer {
      * 从 Json 中读取单位
      */
     fun fromJson(source: String, transfer: Function<String, String> = Function { it }): EntityInstance
+
+    /**
+     * 从 ConfigurationSection 中读取单位
+     */
+    fun fromSection(section: ConfigurationSection, transfer: Function<String, String> = Function { it }): EntityInstance
 }

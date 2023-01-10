@@ -220,22 +220,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 setPose(if (value != null) BukkitPose::class.java.getEnum(value) else BukkitPose.STANDING)
                 true
             }
+
             "nitwit" -> {
                 isNitwit = value?.cbool ?: false
                 true
             }
+
             "movespeed", "move_speed" -> {
                 moveSpeed = value?.cdouble ?: 0.2
                 true
             }
+
             "nametagvisible", "name_tag_visible" -> {
                 isNameTagVisible = value?.cbool ?: true
                 true
             }
+
             "collision", "is_collision" -> {
                 isCollision = value?.cbool ?: true
                 true
             }
+
             "glowingcolor", "glowing_color" -> {
                 glowingColor = if (value != null) {
                     if (value.startsWith('§')) {
@@ -248,22 +253,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 }
                 true
             }
+
             "visibledistance", "visible_distance" -> {
                 visibleDistance = value?.cdouble ?: AdyeshachSettings.visibleDistance
                 true
             }
+
             "visibleafterloaded", "visible_after_loaded" -> {
                 visibleAfterLoaded = value?.cbool ?: true
                 true
             }
+
             "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
                 modelEngineName = value ?: ""
                 true
             }
+
             "freeze", "isfreeze", "is_freeze" -> {
                 isFreeze = value?.cbool ?: false
                 true
             }
+
             else -> false
         }
     }

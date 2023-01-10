@@ -10,6 +10,7 @@ dependencies {
     implementation("io.izzel.taboolib:common-5:$taboolib_version")
     implementation("io.izzel.taboolib:module-chat:$taboolib_version")
     implementation("io.izzel.taboolib:module-configuration:$taboolib_version")
+    implementation("io.izzel.taboolib:module-database:$taboolib_version")
     implementation("io.izzel.taboolib:module-effect:$taboolib_version")
     implementation("io.izzel.taboolib:module-lang:$taboolib_version")
     implementation("io.izzel.taboolib:module-kether:$taboolib_version")
@@ -34,7 +35,8 @@ dependencies {
     implementation(project(":project:module-editor"))
     implementation(project(":project:module-language"))
     implementation(project(":project:module-legacy-api"))
-    implementation(project(":project:api-alkaid-mongodb"))
+    // 暂未使用
+    // implementation(project(":project:api-alkaid-mongodb"))
     implementation(project(":project:api-data-serializer"))
 }
 

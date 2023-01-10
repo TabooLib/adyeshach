@@ -1,12 +1,10 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.entity.EntityFireball
 import ink.ptms.adyeshach.core.entity.EntityThrowable
 import ink.ptms.adyeshach.core.entity.type.AdyMinecart
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
-import org.bukkit.ChatColor
 import org.bukkit.event.player.PlayerRespawnEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
@@ -27,7 +25,7 @@ internal object DefaultEntityFixer {
     @SubscribeEvent
     fun onRespawn(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            Adyeshach.api().getEntityFinder().getVisibleEntities(e.player) { it.isViewer(e.player) }.forEach { it.visible(e.player, true) }
+            Adyeshach.api().getEntityFinder().getVisibleEntities(e.player).forEach { it.visible(e.player, true) }
         }
     }
 
@@ -52,14 +50,31 @@ internal object DefaultEntityFixer {
                 entity.setNoGravity(true)
             }
         }
-
-//        val team = MinecraftScoreboardOperator.Team("adyeshach_public", color = ChatColor.RED)
-//        team.members += e.entity.uniqueId
-//        val operator = Adyeshach.api().getMinecraftAPI().getScoreboardOperator()
-//
-//        operator.updateTeam(e.entity.getVisiblePlayers(), team, MinecraftScoreboardOperator.TeamMethod.ADD)
-//        operator.updateTeam(e.entity.getVisiblePlayers(), team, MinecraftScoreboardOperator.TeamMethod.JOIN)
-//
-//        e.entity.setGlowing(true)
     }
+
+//    @SubscribeEvent
+//    fun e(e: AdyeshachEntityDamageEvent) {
+//        if (e.entity is AdyEntityLiving) {
+//            e.entity.sendAnimation(BukkitAnimation.TAKE_DAMAGE)
+//            val player = e.player
+//            var x = player.location.x - e.entity.x
+//            var z: Double
+//            z = player.location.z - e.entity.z
+//            while (x * x + z * z < 1.0E-4) {
+//                x = (Math.random() - Math.random()) * 0.01
+//                z = (Math.random() - Math.random()) * 0.01
+//            }
+//            e.player.playSound(e.player.location, Sound.ENTITY_VILLAGER_HURT, 1f, 1f)
+//            e.entity.knockback(0.4, x, z)
+//        }
+//    }
+//
+//    fun EntityInstance.knockback(power: Double, x: Double, z: Double) {
+//        if (power > 0.0) {
+//            val v1 = getVelocity()
+//            val v2 = Vector(x, 0.0, z).normalize().multiply(power)
+//            val onGround = getLocation().add(0.0, -0.2, 0.0).block.type.isSolid
+//            this.setVelocity(v1.x / 2.0 - v2.x, if (onGround) Math.min(0.4, v1.y / 2.0 + power) else v1.y, v1.z / 2.0 - v2.z)
+//        }
+//    }
 }

@@ -76,13 +76,14 @@ internal object DefaultPlayerEvents {
                     val action = e.packet.source.getProperty<Any>("b", remap = false)!!
                     // 高版本 EnumEntityUseAction 不再是枚举类型
                     // 通过类名判断点击方式
-                    when (action.javaClass.simpleName) {
+                    val name = action.javaClass.name
+                    when {
                         // 左键
-                        "d" -> {
+                        name.endsWith("PacketPlayInUseEntity\$1") -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
                         // 右键
-                        "e" -> {
+                        name.endsWith("PacketPlayInUseEntity\$e") -> {
                             val location = action.getProperty<Any>("b", remap = false)
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
                             val hand = action.getProperty<Any>("a", remap = false).toString() == "MAIN_HAND"

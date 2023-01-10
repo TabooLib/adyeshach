@@ -1,4 +1,5 @@
 dependencies {
+    compileOnly("org.mongodb:mongo-java-driver:3.12.11")
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly("ink.ptms.core:v11900:11900:universal")
     compileOnly("net.md-5:bungeecord-chat:1.17")

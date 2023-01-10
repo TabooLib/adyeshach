@@ -3,14 +3,6 @@
 #         Powered by TabooLib 6.0         #
 
 
-Database:
-  # LOCAL, MONGODB, DISABLE
-  method: DISABLE
-  url:
-    client: 'mongodb://localhost:3307'
-    database: test
-    collection: adyeshach
-
 Settings:
   debug: false
   # 必须小于 server.properties 中的 "view-distance"
