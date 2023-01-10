@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 /**
@@ -85,4 +86,6 @@ interface AdyeshachHologram {
         /** 移动全息 */
         fun teleport(location: Location)
     }
+
+    class ClickEvent(val player: Player, val isLeftClick: Boolean, val isRightClick: Boolean)
 }
