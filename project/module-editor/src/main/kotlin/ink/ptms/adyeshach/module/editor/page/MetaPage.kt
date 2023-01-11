@@ -29,15 +29,23 @@ abstract class MetaPage(editor: EditPanel) : MultiplePage(editor) {
         // 分组、排序
         val mapSorted = groupBy { it.group }.values.sortedBy { it.sumOf { m -> m.index } }
         // 合并
-        return mapSorted.map {
-            SimpleGroup(it.first().group, autoActionPerLine(), it.map { m ->
-                // 可切换的数据
-                if (m is MetaMasked<*> || m.def is Boolean) {
-                    SimpleAction.MetaBool(m.key, value = entity.getMetadata(m.key))
-                } else {
-                    SimpleAction.Meta(m.key, EditType.AUTO, value = entity.getMetadata(m.key))
+        return mapSorted.mapNotNull {
+            val actions = it.mapNotNull { m ->
+                try {
+                    // 可切换的数据
+                    if (m is MetaMasked<*> || m.def is Boolean) {
+                        SimpleAction.MetaBool(m.key, value = entity.getMetadata(m.key))
+                    } else {
+                        SimpleAction.Meta(m.key, EditType.AUTO, value = entity.getMetadata(m.key))
+                    }
+                } catch (_: IllegalStateException) {
+                    null
                 }
-            })
+            }
+            if (actions.isEmpty()) {
+                return@mapNotNull null
+            }
+            SimpleGroup(it.first().group, autoActionPerLine(), actions)
         }
     }
 }

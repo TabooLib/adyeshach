@@ -61,9 +61,9 @@ ink.ptms.adyeshach.core.entity.type.AdyArrow
         14 -
     piercingLevel b
         &arrow0
-        1709
+        17 9
         16 -
-        1509
+        15 9
     color i -1
         &arrow1
         17 10
@@ -312,7 +312,7 @@ ink.ptms.adyeshach.core.entity.type.AdyFireball
         16 7
 
 ink.ptms.adyeshach.core.entity.type.AdyLlama
-    carpetColor i
+    carpetColor i -1
         &llama0
         17 21
         15 -
@@ -323,17 +323,26 @@ ink.ptms.adyeshach.core.entity.type.AdyLlama
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyMinecart
-    customBlock i
+    shakingPower i
         &minecart0
-        17 11
+        17 8
         14 -
         10 -
         09 -
-    customBlockPosition i 6
+    shakingDirection i
         &minecart0
         ~
-    showCustomBlock z
+    shakingMultiplier i
         &minecart0
+        ~
+    customBlock i
+        &minecart1
+        ~
+    customBlockPosition i 6
+        &minecart1
+        ~
+    showCustomBlock z
+        &minecart1
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyMinecartFurnace
@@ -469,22 +478,28 @@ ink.ptms.adyeshach.core.entity.type.AdySheep
         09 -
 
 ink.ptms.adyeshach.core.entity.type.AdyShulker
-    attachFace i
+#    attachFace i
+#        &shulker0
+#        17 16
+#        15 -
+#        14 -
+#        10 --
+#        09 -
+#    attachPosition !Vector
+#        &shulker0
+#        ~
+#    shieldHeight b
+#        &shulker0
+#        ~
+#    color i 10
+#        &shulker0
+#        17 19
+#        15 -
+#        14 -
+#        10 --
+    color b 16
         &shulker0
-        17 16
-        15 -
-        14 -
-        10 --
-        09 -
-    attachPosition !Vector
-        &shulker0
-        ~
-    shieldHeight b
-        &shulker0
-        ~
-    color i 10
-        &shulker0
-        17 19
+        17 18
         15 -
         14 -
         10 --

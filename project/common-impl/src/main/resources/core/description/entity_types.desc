@@ -11,7 +11,7 @@ ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
     3
     0.5 2.0
     ~
-    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    ink.ptms.adyeshach.impl.entity.type.DefaultAreaEffectCloud
     2
 
 ink.ptms.adyeshach.core.entity.type.AdyArmorStand
@@ -27,7 +27,7 @@ ink.ptms.adyeshach.core.entity.type.AdyArrow
     60
     0.5 0.5 FLYING
     ~
-    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    ink.ptms.adyeshach.impl.entity.type.DefaultArrow
     20
 
 ink.ptms.adyeshach.core.entity.type.AdyAxolotl
@@ -65,6 +65,14 @@ ink.ptms.adyeshach.core.entity.type.AdyBlaze
 ink.ptms.adyeshach.core.entity.type.AdyBoat
     BOAT
     1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyChestBoat
+    CHEST_BOAT
+    -1
     0.5625 1.375
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@

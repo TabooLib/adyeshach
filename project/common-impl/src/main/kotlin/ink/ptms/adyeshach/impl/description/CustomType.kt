@@ -18,8 +18,6 @@ enum class CustomType(val id: String) {
 
     PAINTING("Painting"),
 
-    SHEEP_COLOR("SheepColor"),
-
     VILLAGER_DATA("VillagerData"),
 
     TEXT_COMPONENT("TextComponent"),

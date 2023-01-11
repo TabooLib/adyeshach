@@ -28,6 +28,8 @@ enum class EntityTypes {
 
     BOAT,
 
+    CHEST_BOAT,
+
     CAT,
 
     CAVE_SPIDER,

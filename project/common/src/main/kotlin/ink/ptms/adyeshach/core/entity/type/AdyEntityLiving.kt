@@ -32,24 +32,6 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
         }
 
     /**
-     * 实体身上存在的箭矢，经过测试这个属性只对玩家类型有效
-     */
-    var arrowsInEntity: Int
-        get() = getMetadata("arrowsInEntity")
-        set(value) {
-            setMetadata("arrowsInEntity", value)
-        }
-
-    /**
-     * 实体身上存在的蜂刺，经过测试这个属性只对玩家类型有效
-     */
-    var beeStingersInEntity: Int
-        get() = getMetadata("beeStingersInEntity")
-        set(value) {
-            setMetadata("beeStingersInEntity", value)
-        }
-
-    /**
      * 是否处于死亡状态
      */
     val isDie: Boolean

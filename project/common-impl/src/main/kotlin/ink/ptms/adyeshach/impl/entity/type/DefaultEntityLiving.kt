@@ -9,6 +9,8 @@ import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
+import ink.ptms.adyeshach.impl.util.toColor
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
@@ -16,6 +18,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
+import taboolib.common5.cint
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -88,6 +91,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
         }
     }
 
+    @Suppress("SpellCheckingInspection")
     override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
@@ -118,6 +122,15 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
             "offhand", "off_hand" -> {
                 setItemInOffHand(value?.toItem() ?: ItemStack(Material.AIR))
                 true
+            }
+            "potioneffectcolor", "potion_effect_color" -> {
+                // 对 RGB 写法进行兼容
+                if (value != null && value.contains(',')) {
+                    setPotionEffectColor(value.toColor())
+                    true
+                } else {
+                    false
+                }
             }
             else -> false
         }

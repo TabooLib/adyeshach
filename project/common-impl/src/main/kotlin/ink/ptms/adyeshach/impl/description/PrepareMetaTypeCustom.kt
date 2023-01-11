@@ -41,7 +41,6 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
                 XMaterial.matchXMaterial(args.getOrElse(1) { "AIR" }).orElse(XMaterial.AIR).parseMaterial() ?: Material.AIR
             )
             CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB)
-            CustomType.SHEEP_COLOR -> PrepareMetaNatural(name, 0)
             CustomType.VILLAGER_DATA -> PrepareMetaNatural(name, VillagerData(VillagerData.Type.PLAINS, VillagerData.Profession.NONE))
             CustomType.TEXT_COMPONENT -> PrepareMetaNatural(name, TextComponent(""))
             CustomType.BUKKIT_POSE -> PrepareMetaNatural(name, BukkitPose.STANDING)
