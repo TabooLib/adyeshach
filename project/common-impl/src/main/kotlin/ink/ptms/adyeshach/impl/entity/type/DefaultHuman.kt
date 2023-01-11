@@ -116,7 +116,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 setPing(value?.cint ?: 0)
                 true
             }
-            "ping_bar", "playe_ping_bar", "playerPingBar", "pingbar" -> {
+            "ping_bar", "playe_ping_bar", "playerpingbar", "pingbar" -> {
                 setPingBar(if (value != null) PingBar::class.java.getEnum(value) else PingBar.BAR_5)
                 true
             }
