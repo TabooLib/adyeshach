@@ -12,7 +12,7 @@ ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
     0.5 2.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    20
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyArmorStand
     ARMOR_STAND
@@ -270,7 +270,7 @@ ink.ptms.adyeshach.core.entity.type.AdyGlowItemFrame
     0.75 0.75
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    20
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyGlowSquid
     GLOW_SQUID
@@ -342,7 +342,7 @@ ink.ptms.adyeshach.core.entity.type.AdyItem
     0.25 0.25
     DROPPED_ITEM
     ink.ptms.adyeshach.impl.entity.type.DefaultItem
-    20
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyItemFrame
     ITEM_FRAME
@@ -350,7 +350,7 @@ ink.ptms.adyeshach.core.entity.type.AdyItemFrame
     0.75 0.75
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    20
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyFireball
     FIREBALL
@@ -713,7 +713,7 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
     0.25 0.25 FLYING
     EGG
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    10
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownEnderPearl
     THROWN_ENDER_PEARL
@@ -721,7 +721,7 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownEnderPearl
     0.25 0.25 FLYING
     ENDER_PEARL
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    10
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownExperienceBottle
     THROWN_EXPERIENCE_BOTTLE
@@ -729,7 +729,7 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownExperienceBottle
     0.25 0.25 FLYING
     THROWN_EXP_BOTTLE | EXPERIENCE_BOTTLE
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    10
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownPotion
     THROWN_POTION
@@ -737,7 +737,7 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownPotion
     0.25 0.25 FLYING
     POTION | SPLASH_POTION
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    10
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownTrident
     THROWN_TRIDENT
@@ -745,7 +745,7 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownTrident
     0.5 0.5 FLYING
     TRIDENT
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
-    20
+    2
 
 ink.ptms.adyeshach.core.entity.type.AdyTraderLlama
     TRADER_LLAMA
