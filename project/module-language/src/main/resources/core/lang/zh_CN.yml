@@ -205,6 +205,7 @@ command-passenger-not-found: ' &5&l‹ ›&r &7未找到 &f"{0}" &7。'
 command-passenger-add-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7添加为 &f"{1}" &7的乘客。'
 command-passenger-remove-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7从 &f"{1}" &7的乘客列表中移除。'
 command-passenger-reset-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7的乘客列表重置。'
+command-passenger-add-self: ' &5&l‹ ›&r &7不能将自己添加为乘客。'
 
 command-script-error:
   - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'

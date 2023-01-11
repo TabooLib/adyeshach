@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
 import org.bukkit.entity.Player
+import taboolib.common.platform.function.info
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked

@@ -46,9 +46,9 @@ interface DefaultRideable : Rideable {
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.forEach { target ->
+        entity.filter { it != this }.filterIsInstance<DefaultEntityInstance>().forEach { target ->
             // 避免循环骑乘
-            target.removePassenger(this)
+            target.passengers.remove(uniqueId)
             // 从载具中离开
             target.getVehicle()?.removePassenger(target)
             // 事件
@@ -71,7 +71,7 @@ interface DefaultRideable : Rideable {
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.forEach { target ->
+        entity.filter { it != this }.filterIsInstance<DefaultEntityInstance>().forEach { target ->
             // 进行二次判断是否为乘客
             if (passengers.contains(target.uniqueId)) {
                 // 事件

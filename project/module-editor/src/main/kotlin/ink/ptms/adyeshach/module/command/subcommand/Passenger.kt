@@ -30,6 +30,11 @@ val passengerSubCommand = subCommand {
                         return@execute
                     }
                     multiControl<EntitySource.Empty>(sender, ctx["id"], STANDARD_PASSENGER_ADD_TRACKER, unified = false) {
+                        // 骑自己
+                        if (it == other) {
+                            sender.sendLang("command-passenger-add-self")
+                            return@execute
+                        }
                         // 添加乘客
                         it.addPassenger(*other.toTypedArray())
                         // 打印追踪器

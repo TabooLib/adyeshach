@@ -60,6 +60,6 @@ internal object DefaultManagerHandler {
         DefaultAdyeshachBooster.api.localPublicEntityManager.onDisable()
         DefaultAdyeshachBooster.api.localPublicEntityManager.onSave()
         // 私有管理器
-        onlinePlayers.forEach { Adyeshach.api().releaseEntityManager(it) }
+        onlinePlayers.forEach { Adyeshach.api().releaseEntityManager(it, false) }
     }
 }

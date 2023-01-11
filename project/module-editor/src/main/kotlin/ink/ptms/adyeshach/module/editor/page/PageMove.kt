@@ -53,10 +53,10 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
 
         override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
             return when (type) {
-                Type.X -> "adyeshach tp ${entity.uniqueId} to ~ ~$value ~ ~"
-                Type.Y -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~$value ~"
-                Type.Z -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~$value"
-                Type.YAW -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~$value"
+                Type.X -> "adyeshach tp ${entity.uniqueId} to ~ ~$value ~ ~ ~ ~"
+                Type.Y -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~$value ~ ~ ~"
+                Type.Z -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~$value ~ ~"
+                Type.YAW -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~$value ~"
                 Type.PITCH -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~ ~$value"
             }
         }

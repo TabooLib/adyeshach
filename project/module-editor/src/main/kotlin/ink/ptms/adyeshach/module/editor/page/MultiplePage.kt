@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import taboolib.module.chat.colored
+import taboolib.module.chat.uncolored
 
 /**
  * Adyeshach
@@ -73,7 +74,7 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
             }
             // 点击命令
             if (action.isCustomCommand()) {
-                val clickCommand = action.clickCommand(player, entity, this, index)
+                val clickCommand = action.clickCommand(player, entity, this, index)?.uncolored()
                 if (clickCommand != null) {
                     if (action.isRefreshPage()) {
                         json.runCommand("/adyeshach api ee $clickCommand")

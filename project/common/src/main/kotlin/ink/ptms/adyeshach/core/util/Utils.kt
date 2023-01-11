@@ -3,16 +3,20 @@ package ink.ptms.adyeshach.core.util
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.console
 import taboolib.common5.Demand
 import taboolib.common5.cint
+import taboolib.common5.cshort
 import taboolib.library.xseries.parseToMaterial
+import taboolib.platform.util.buildItem
 import taboolib.platform.util.modifyMeta
 
 /**
@@ -125,16 +129,35 @@ fun Location.modify(yaw: Float = this.yaw, pitch: Float = this.pitch): Location 
 fun String.toItem(): ItemStack {
     val namespace = if (contains(":")) substringBefore(":") else "minecraft"
     val source = substringAfter(":")
-    val itemStack = ItemStack(Material.STONE)
-    if (namespace == "minecraft") {
-        val demand = Demand(source)
-        itemStack.type = demand.namespace.parseToMaterial()
-        itemStack.amount = demand.get("amount")?.cint ?: 1
-        itemStack.modifyMeta<ItemMeta> {
-            demand.get("name")?.let { setDisplayName(it) }
-            demand.get("lore")?.let { lore = it.split("\\n") }
-            demand.get("model")?.let { setCustomModelData(it.cint) }
+    var itemStack = ItemStack(Material.STONE)
+    val demand = Demand(source)
+    itemStack.type = demand.namespace.parseToMaterial()
+    itemStack.amount = demand.get("amount")?.cint ?: 1
+    itemStack = buildItem(itemStack) {
+        // 名称
+        demand.get("name")?.let { name = it }
+        // 描述
+        demand.get("lore")?.let { lore.addAll(it.split("\\n")) }
+        // 耐久
+        demand.get("data")?.let { damage = it.cint }
+        // 模型
+        demand.get("model")?.let { customModelData = it.cint }
+        // 颜色
+        demand.get("color")?.let {
+            val args = it.split(",")
+            color = Color.fromRGB(args.getOrNull(0).cint, args.getOrNull(1).cint, args.getOrNull(2).cint)
         }
+        // 附魔效果
+        if (demand.tags.contains("shiny")) {
+            shiny()
+        }
+        // 无法破坏
+        if (demand.tags.contains("unbreakable")) {
+            isUnbreakable = true
+        }
+    }
+    if (namespace == "minecraft") {
+        return itemStack
     }
     val event = AdyeshachItemHookEvent(namespace, source, itemStack)
     event.call()

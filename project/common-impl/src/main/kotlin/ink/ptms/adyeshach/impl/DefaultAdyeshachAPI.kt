@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.impl.manager.*
 import ink.ptms.adyeshach.impl.storage.EntityStorage
 import org.bukkit.entity.Player
+import taboolib.common.TabooLibCommon
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.PlatformFactory
@@ -84,14 +85,14 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         }
     }
 
-    override fun releaseEntityManager(player: Player) {
+    override fun releaseEntityManager(player: Player, async: Boolean) {
         if (player.hasMetadata("adyeshach_setup")) {
             player.removeMeta("adyeshach_setup")
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.removeViewer(player) }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
             // 异步卸载私有管理器
-            submitAsync {
+            submitAsync(now = !async) {
                 var privateManager = getPrivateEntityManager(player, ManagerType.TEMPORARY)
                 privateManager.onDisable()
                 // 是否启用持久化私有管理器

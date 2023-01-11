@@ -22,7 +22,7 @@ interface AdyeshachAPI {
     /**
      * 释放玩家管理器
      */
-    fun releaseEntityManager(player: Player)
+    fun releaseEntityManager(player: Player, async: Boolean = true)
 
     /**
      * 刷新玩家管理器（重新显示所有单位）

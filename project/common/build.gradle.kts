@@ -15,6 +15,7 @@ tasks {
     withType<ShadowJar> {
         // include
         relocate("com.eatthepath.uuid", "ink.ptms.adyeshach.taboolib.library.uuid")
+        relocate("org.spongepowered.math", "ink.ptms.adyeshach.taboolib.library.math")
     }
     build {
         dependsOn(shadowJar)

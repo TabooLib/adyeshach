@@ -78,3 +78,7 @@ val tpSubCommand = subCommand {
         }
     }
 }
+
+private fun Float.ifZero(def: Float): Float {
+    return if (this == 0f) def else this
+}
