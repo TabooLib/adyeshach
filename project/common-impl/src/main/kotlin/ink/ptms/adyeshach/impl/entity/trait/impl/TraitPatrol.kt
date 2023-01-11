@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Suppress("DuplicatedCode")
 object TraitPatrol : Trait() {
 
-    const val WAIT_TAG = "PATROL_WAITING"
+    const val PATROL_NEXT_MOVE = "PATROL_NEXT_MOVE"
 
     /** 编辑缓存 */
     val editCacheMap = ConcurrentHashMap<String, EntityInstance>()
@@ -55,13 +55,13 @@ object TraitPatrol : Trait() {
                 }
                 // 获取等待时间
                 val waitTime = entity.getTraitPatrolWaitTime()
-                if (waitTime == 0L || entity.hasTag(WAIT_TAG)) {
+                if (waitTime == 0L || entity.hasTag(PATROL_NEXT_MOVE)) {
                     if (waitTime > 0) {
                         // 等待下一个节点
-                        if (entity.getTag(WAIT_TAG).clong > System.currentTimeMillis()) {
+                        if (entity.getTag(PATROL_NEXT_MOVE).clong > System.currentTimeMillis()) {
                             return@forEach
                         }
-                        entity.removeTag(WAIT_TAG)
+                        entity.removeTag(PATROL_NEXT_MOVE)
                     }
                     // 获取节点序号
                     val index = entity.getNodeIndex()
@@ -77,7 +77,7 @@ object TraitPatrol : Trait() {
                         entity.setNodeIndex(0)
                     }
                 } else {
-                    entity.setTag(WAIT_TAG, (System.currentTimeMillis() + waitTime).toString())
+                    entity.setTag(PATROL_NEXT_MOVE, (System.currentTimeMillis() + waitTime).toString())
                 }
             }
         }
