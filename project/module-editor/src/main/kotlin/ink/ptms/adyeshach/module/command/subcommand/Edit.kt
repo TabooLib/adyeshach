@@ -13,6 +13,7 @@ import ink.ptms.adyeshach.module.command.suggestEntityList
 import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.controller.PresetController
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
@@ -36,28 +37,28 @@ val editSubCommand = subCommand {
         suggestEntityList()
         dynamic("action") {
             suggestUncheck { listOf("main", "traits", "public-meta", "private-meta", "move") }
-            execute<Player> { sender, ctx, args ->
-                val npcList = Command.finder.getEntitiesFromIdOrUniqueId(ctx["id"], sender)
+            execute<CommandSender> { sender, ctx, args ->
+                val npcList = Command.finder.getEntitiesFromIdOrUniqueId(ctx["id"], sender as? Player)
                 if (npcList.isEmpty()) {
                     sender.sendLang("command-find-empty")
                     return@execute
                 }
                 val entity = npcList.first()
-                val editPanel = EditPanel(sender, entity)
+                // 类型
+                val type = args.substringBefore(":")
                 // 页码
                 val page = args.substringAfter(":").cint
-                // 类型
-                when (args.substringBefore(":")) {
+                when {
                     // 基础面板
-                    "main" -> editPanel.open(EditPanelType.MAIN, page)
-                    "traits" -> editPanel.open(EditPanelType.TRAITS, page)
-                    "public-meta" -> editPanel.open(EditPanelType.PUBLIC_META, page)
-                    "private-meta" -> editPanel.open(EditPanelType.PRIVATE_META, page)
-                    "move" -> editPanel.open(EditPanelType.MOVE, page)
+                    sender is Player && type == "main" -> EditPanel(sender, entity).open(EditPanelType.MAIN, page)
+                    sender is Player && type == "traits" -> EditPanel(sender, entity).open(EditPanelType.TRAITS, page)
+                    sender is Player && type == "public-meta" -> EditPanel(sender, entity).open(EditPanelType.PUBLIC_META, page)
+                    sender is Player && type == "private-meta" -> EditPanel(sender, entity).open(EditPanelType.PRIVATE_META, page)
+                    sender is Player && type == "move" -> EditPanel(sender, entity).open(EditPanelType.MOVE, page)
                     // 控制器
-                    "controller" -> PresetController.open(sender, entity)
+                    sender is Player && type == "controller" -> PresetController.open(sender, entity)
                     // 可视化修改
-                    "e" -> {
+                    sender is Player && type == "e" -> {
                         // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
                         // 默认值
@@ -87,7 +88,7 @@ val editSubCommand = subCommand {
                         }
                     }
                     // 快速修改
-                    "m" -> {
+                    type == "m" -> {
                         // 获取节点
                         val key = args.substringAfter(":").substringBefore("->")
                         // 获取值
@@ -114,7 +115,7 @@ val editSubCommand = subCommand {
                         }
                     }
                     // 特性
-                    "t" -> {
+                    sender is Player && type == "t" -> {
                         // 获取节点
                         when (val id = args.substringAfter(":")) {
                             // 基础特性
