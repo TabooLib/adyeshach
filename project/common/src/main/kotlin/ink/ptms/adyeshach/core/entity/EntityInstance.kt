@@ -58,6 +58,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 重新生成实体
+     * 如果实体已从管理器中移除则会抛出异常
      */
     fun respawn()
 
