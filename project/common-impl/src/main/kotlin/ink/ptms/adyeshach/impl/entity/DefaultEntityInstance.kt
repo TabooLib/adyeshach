@@ -312,6 +312,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun respawn() {
+        if (isRemoved) {
+            error("Entity has been removed")
+        }
         spawn(position.toLocation())
     }
 
