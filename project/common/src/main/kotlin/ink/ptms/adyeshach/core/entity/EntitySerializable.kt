@@ -30,5 +30,5 @@ interface EntitySerializable {
      *
      * @param transfer 节点名称转换函数
      */
-    fun toYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it })
+    fun toSection(section: ConfigurationSection, transfer: Function<String, String> = Function { it })
 }

@@ -1,10 +1,9 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntitySerializable
-import ink.ptms.adyeshach.core.serializer.Serializer
 import taboolib.library.configuration.ConfigurationSection
-import taboolib.module.configuration.Configuration
-import taboolib.module.configuration.Type
 import java.util.function.Function
 
 /**
@@ -17,21 +16,14 @@ import java.util.function.Function
 interface DefaultSerializable : EntitySerializable {
 
     override fun toJson(): String {
-        return Serializer.gson.toJson(this)
+        return Adyeshach.api().getEntitySerializer().toJson(this as EntityInstance)
     }
 
     override fun toYaml(transfer: Function<String, String>): ConfigurationSection {
-        val conf = Configuration.loadFromString(Serializer.gson.toJson(this), Type.JSON)
-        conf.getValues(true).forEach { (k, v) ->
-            if (v !is ConfigurationSection) {
-                conf[transfer.apply(k)] = v
-            }
-        }
-        conf.changeType(Type.YAML)
-        return conf
+        return Adyeshach.api().getEntitySerializer().toYaml(this as EntityInstance, transfer)
     }
 
-    override fun toYaml(section: ConfigurationSection, transfer: Function<String, String>) {
-        return toYaml(transfer).getValues(false).forEach { (k, v) -> section[k] = v }
+    override fun toSection(section: ConfigurationSection, transfer: Function<String, String>) {
+        Adyeshach.api().getEntitySerializer().toSection(this as EntityInstance, section, transfer)
     }
 }

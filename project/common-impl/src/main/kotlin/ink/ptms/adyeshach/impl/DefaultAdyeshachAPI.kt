@@ -46,7 +46,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     /** 单位控制器管理接口 **/
     var localEntityControllerHandler = PlatformFactory.getAPI<AdyeshachEntityControllerRegistry>()
 
-    /** 全系接口 **/
+    /** 全息接口 **/
     var localHologramHandler = PlatformFactory.getAPI<AdyeshachHologramHandler>()
 
     /** 脚本接口 **/

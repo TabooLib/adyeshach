@@ -24,6 +24,25 @@ import java.util.function.Function
 @Suppress("DuplicatedCode")
 class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
 
+    override fun toJson(entity: EntityInstance): String {
+        return Serializer.gson.toJson(entity)
+    }
+
+    override fun toYaml(entity: EntityInstance, transfer: Function<String, String>): ConfigurationSection {
+        val conf = Configuration.loadFromString(Serializer.gson.toJson(entity), Type.JSON)
+        conf.getValues(true).forEach { (k, v) ->
+            if (v !is ConfigurationSection) {
+                conf[transfer.apply(k)] = v
+            }
+        }
+        conf.changeType(Type.YAML)
+        return conf
+    }
+
+    override fun toSection(entity: EntityInstance, section: ConfigurationSection, transfer: Function<String, String>) {
+        return toYaml(entity, transfer).getValues(false).forEach { (k, v) -> section[k] = v }
+    }
+
     override fun fromYaml(source: String, transfer: Function<String, String>): EntityInstance {
         return fromSection(Configuration.loadFromString(source, Type.YAML), transfer)
     }

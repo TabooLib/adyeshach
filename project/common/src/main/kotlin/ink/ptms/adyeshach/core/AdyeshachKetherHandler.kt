@@ -18,7 +18,7 @@ interface AdyeshachKetherHandler {
     fun invoke(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): CompletableFuture<Any?>
 
     /**
-     * 识别并转换字符串中的 Kether 内敛脚本
+     * 识别并转换字符串中的 Kether 内联脚本
      */
     fun parseInline(source: String, player: Player? = null, vars: Map<String, Any> = emptyMap()): String
 }

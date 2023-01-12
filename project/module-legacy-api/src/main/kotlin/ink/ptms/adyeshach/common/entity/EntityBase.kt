@@ -64,7 +64,7 @@ abstract class EntityBase(val entityType: EntityTypes, val v2: EntityInstance) :
     }
 
     fun toYaml(section: ConfigurationSection, transfer: Function<String, String> = Function { it }) {
-        return v2.toYaml(section, transfer)
+        return v2.toSection(section, transfer)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -56,7 +56,7 @@ class PlayerPersistentManager(owner: Player) : DefaultPlayerManager(owner) {
             if (hash[entity.uniqueId] != jsonHash) {
                 hash[entity.uniqueId] = jsonHash
                 val section = data.getConfigurationSection("AdyeshachNPC.${entity.uniqueId}") ?: data.createSection("AdyeshachNPC.${entity.uniqueId}")
-                entity.toYaml(section) { k -> if (k.startsWith("$")) "_mark_${k.substring(1)}" else k }
+                entity.toSection(section) { k -> if (k.startsWith("$")) "_mark_${k.substring(1)}" else k }
             }
         }
         // 同步数据
