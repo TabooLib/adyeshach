@@ -24,7 +24,13 @@ object PathFinderHandler {
      * @param request 请求方式
      * @param call 回调函数
      */
-    fun request(start: Location, target: Location, pathType: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> (Unit)) {
+    fun request(
+        start: Location,
+        target: Location = start,
+        pathType: PathType = PathType.WALK_2,
+        request: Request = Request.NAVIGATION,
+        call: (Result) -> (Unit)
+    ) {
         // 世界判断
         if (start.world!!.name != target.world!!.name) {
             errorBy("error-different-worlds")
@@ -67,7 +73,7 @@ object PathFinderHandler {
                     }
                 }
                 if (vec != null) {
-                    call(ResultRandomPosition(vec, startTime, scheduleTime))
+                    call(ResultRandomPosition(vec!!, startTime, scheduleTime))
                 }
             }
         }

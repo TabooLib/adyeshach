@@ -76,6 +76,6 @@ public class ControllerRandomLookaround extends Controller {
 
     @Override
     public String toString() {
-        return "RANDOM_LOOKAROUND:" + probability;
+        return id() + ":" + String.format("%.2f", probability);
     }
 }

@@ -128,6 +128,6 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public String toString() {
-        return "LOOK_AT_PLAYER:" + String.format("%.2f", lookDistance) + "," + String.format("%.2f", probability) + "," + onlyHorizontal + "," + baseLookTime;
+        return id() + ":" + String.format("%.2f", lookDistance) + "," + String.format("%.2f", probability) + "," + onlyHorizontal + "," + baseLookTime;
     }
 }
