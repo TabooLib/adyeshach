@@ -95,7 +95,7 @@ interface AdyeshachAPI {
     fun getLanguage(): AdyeshachLanguage
 
     /**
-     * 获取事件总线，可能没有
+     * 获取事件总线
      */
     fun getEventBus(): EventBus
 }
