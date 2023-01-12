@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.Rideable
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleEnterEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleLeaveEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import org.bukkit.entity.Player
 
@@ -75,7 +76,7 @@ interface DefaultRideable : Rideable {
             // 进行二次判断是否为乘客
             if (passengers.contains(target.uniqueId)) {
                 // 事件
-                if (AdyeshachEntityVehicleEnterEvent(target, this).call()) {
+                if (AdyeshachEntityVehicleLeaveEvent(target, this).call()) {
                     passengers.remove(target.uniqueId)
                     // 移除标签
                     target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
