@@ -14,6 +14,7 @@ dependencies {
     implementation("io.izzel.taboolib:module-nms-util:$taboolib_version")
     implementation("io.izzel.taboolib:module-ui:$taboolib_version")
     implementation("io.izzel.taboolib:module-navigation:$taboolib_version")
+    implementation("io.izzel.taboolib:module-metrics:$taboolib_version")
     implementation("io.izzel.taboolib:platform-bukkit:$taboolib_version")
     implementation("io.izzel.taboolib:expansion-command-helper:$taboolib_version")
     implementation(project(":project:common", configuration = "shadow"))

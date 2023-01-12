@@ -39,6 +39,7 @@ subprojects {
         compileOnly("io.izzel.taboolib:module-kether:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-ui:$taboolib_version")
         compileOnly("io.izzel.taboolib:module-navigation:$taboolib_version")
+        compileOnly("io.izzel.taboolib:module-metrics:$taboolib_version")
         compileOnly("io.izzel.taboolib:platform-bukkit:$taboolib_version")
         compileOnly("io.izzel.taboolib:expansion-command-helper:$taboolib_version")
         // server
