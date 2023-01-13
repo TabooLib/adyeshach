@@ -102,7 +102,7 @@ fun DefaultEntityInstance.handleTracker() {
 /** 处理移动 */
 fun DefaultEntityInstance.handleMove() {
     // 乘坐实体 || 冻结
-    if (persistentTag.contains(StandardTags.IS_IN_VEHICLE) || tag.contains(StandardTags.IS_FROZEN)) {
+    if (hasTag(StandardTags.IS_IN_VEHICLE) || hasTag(StandardTags.IS_FROZEN)) {
         deltaMovement = Vector(0.0, 0.0, 0.0)
         return
     }
