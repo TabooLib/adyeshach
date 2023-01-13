@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 dependencies {
+    compileOnly("net.citizensnpcs:Citizens:2.0.18")
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-impl"))
 }

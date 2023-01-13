@@ -79,6 +79,23 @@ object CommandAPI {
         }
     }
 
+    /**
+     * 迁移
+     */
+    @CommandBody
+    val migrate = subCommand {
+        dynamic("plugin") {
+            suggest { listOf("citizens") }
+            execute<Player> { sender, _, args ->
+                when (args) {
+                    "citizens" -> {
+                        MigrateCitizens.migrate(sender)
+                    }
+                }
+            }
+        }
+    }
+
     @CommandBody
     val uploadSkin = subCommand {
         dynamic("file") {

@@ -122,6 +122,10 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
         return descriptionEntityMap.values.firstOrNull { it.adyeshachInterface == clazz }?.adyeshachType
     }
 
+    override fun getEntityTypeFromBukkit(entityType: EntityType): EntityTypes {
+        return descriptionEntityMap.values.firstOrNull { it.bukkitType == entityType }?.adyeshachType ?: errorBy("error-entity-type-not-supported", entityType.name)
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun getAdyClassFromEntityType(entityType: EntityTypes): Class<out AdyEntity> {
         return descriptionEntityMap.values.first { it.adyeshachType == entityType }.adyeshachInterface as Class<out AdyEntity>

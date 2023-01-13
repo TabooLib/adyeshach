@@ -73,6 +73,11 @@ interface AdyeshachEntityTypeRegistry {
     fun getEntityTypeFromAdyClass(clazz: Class<*>): EntityTypes?
 
     /**
+     * 从 Bukkit 实体类型获取对应 Adyeshach 实体类型
+     */
+    fun getEntityTypeFromBukkit(entityType: EntityType): EntityTypes
+
+    /**
      * 通过实体类型获取与 AdyEntity 类似的接口类
      */
     fun getAdyClassFromEntityType(entityType: EntityTypes): Class<*>
