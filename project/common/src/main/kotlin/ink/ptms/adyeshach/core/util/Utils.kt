@@ -2,22 +2,23 @@ package ink.ptms.adyeshach.core.util
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
+import net.minecraft.core.EnumDirection
+import net.minecraft.util.MathHelper
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.command.CommandSender
-import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.console
 import taboolib.common5.Demand
 import taboolib.common5.cint
-import taboolib.common5.cshort
 import taboolib.library.xseries.parseToMaterial
 import taboolib.platform.util.buildItem
-import taboolib.platform.util.modifyMeta
+import java.lang.Math.abs
 
 /**
  * 使用 AdyeshachLanguage 发送语言文件
@@ -97,13 +98,14 @@ fun encodePos(d: Double): Long {
     return lfloor(d * 4096.0)
 }
 
+fun ifloor(value: Double): Int {
+    val i = value.toInt()
+    return if (value < i.toDouble()) i - 1 else i
+}
+
 fun lfloor(value: Double): Long {
     val i = value.toLong()
     return if (value < i.toDouble()) i - 1L else i
-}
-
-fun ifloor(x: Double): Int {
-    return NumberConversions.floor(x)
 }
 
 fun Location.plus(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): Location {

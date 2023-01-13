@@ -92,7 +92,7 @@ interface Controllable {
     /**
      * 按照规定的路径移动
      */
-    fun controllerMoveBy(locations: List<Location>, speed: Double = moveSpeed)
+    fun controllerMoveBy(locations: List<Location>, speed: Double = moveSpeed, fixHeight: Boolean = true)
 
     /**
      * 停止移动

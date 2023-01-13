@@ -47,38 +47,35 @@ object TraitPatrol : Trait() {
         data.getKeys(false).forEach {
             val entity = Adyeshach.api().getEntityFinder().getEntityFromUniqueId(it)
             // 触发巡逻的前提 —— 不在编辑模式、不在移动、存在观察者
-            if (entity != null && !entity.isEditing() && !entity.hasTag(StandardTags.IS_MOVING) && entity.hasViewer()) {
+            if (entity != null && !entity.isEditing() && !entity.hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START) && entity.hasViewer()) {
                 // 获取所有节点
                 val nodes = entity.getTraitPatrolNodes()
                 if (nodes.isEmpty()) {
                     return@forEach
                 }
-                // 获取等待时间
-                val waitTime = entity.getTraitPatrolWaitTime()
-                if (waitTime == 0L || entity.hasTag(PATROL_NEXT_MOVE)) {
-                    if (waitTime > 0) {
-                        // 等待下一个节点
-                        if (entity.getTag(PATROL_NEXT_MOVE).clong > System.currentTimeMillis()) {
-                            return@forEach
-                        }
-                        entity.removeTag(PATROL_NEXT_MOVE)
-                    }
-                    // 获取节点序号
-                    val index = entity.getNodeIndex()
-                    if (index < nodes.size) {
-                        try {
-                            nodes[index].index = 0
-                            entity.moveFrames = nodes[index]
-                            entity.setNodeIndex(index + 1)
-                        } catch (e: Exception) {
-                            warning("Patrol Error: $e")
-                        }
-                    } else {
-                        entity.setNodeIndex(0)
+                // 设置等待
+                if (entity.getTag(PATROL_NEXT_MOVE) == null) {
+                    entity.setTag(PATROL_NEXT_MOVE, System.currentTimeMillis() + entity.getTraitPatrolWaitTime())
+                    return@forEach
+                }
+                // 等待移动
+                if (entity.getTag(PATROL_NEXT_MOVE).clong > System.currentTimeMillis()) {
+                    return@forEach
+                }
+                // 获取节点序号
+                val index = entity.getNodeIndex()
+                if (index < nodes.size) {
+                    try {
+                        entity.moveFrames = nodes[index].reset()
+                        entity.setNodeIndex(index + 1)
+                    } catch (e: Exception) {
+                        warning("Patrol Error: $e")
                     }
                 } else {
-                    entity.setTag(PATROL_NEXT_MOVE, (System.currentTimeMillis() + waitTime).toString())
+                    entity.setNodeIndex(0)
                 }
+                // 移除等待时间
+                entity.removeTag(PATROL_NEXT_MOVE)
             }
         }
     }
@@ -94,7 +91,7 @@ object TraitPatrol : Trait() {
                 val nodes = entity.getTraitPatrolNodes()
                 nodes.forEachIndexed { i, node ->
                     // 播放轨迹
-                    node.index = 0
+                    node.reset()
                     while (node.index < node.length) {
                         val next = node.next()
                         if (next != null) {
@@ -224,7 +221,7 @@ fun EntityInstance.setTraitPatrolWaitTime(value: Long) {
  * 获取巡逻等待时间
  */
 fun EntityInstance.getTraitPatrolWaitTime(): Long {
-    return TraitPatrol.data.getLong("$uniqueId.wait", 1000)
+    return TraitPatrol.data.getLong("$uniqueId.wait", 1000).coerceAtLeast(100)
 }
 
 /**

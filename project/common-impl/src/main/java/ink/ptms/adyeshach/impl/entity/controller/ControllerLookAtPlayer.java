@@ -2,12 +2,17 @@ package ink.ptms.adyeshach.impl.entity.controller;
 
 import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
+import ink.ptms.adyeshach.core.entity.StandardTags;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
+import ink.ptms.adyeshach.core.entity.manager.Manager;
+import ink.ptms.adyeshach.core.entity.manager.PlayerManager;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import taboolib.library.xseries.XMaterial;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -78,20 +83,36 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public boolean shouldExecute() {
-        if (Objects.requireNonNull(getEntity()).random().nextFloat() >= this.probability) {
+        if (getEntity() == null || getEntity().random().nextFloat() >= this.probability) {
             return false;
-        } else {
-            getEntity().getWorld().getPlayers().stream()
-                    .filter(player -> player.getLocation().distanceSquared(getEntity().getLocation()) <= lookDistance * lookDistance)
-                    .min((o1, o2) -> {
-                        double d1 = o1.getLocation().distanceSquared(getEntity().getLocation());
-                        double d2 = o2.getLocation().distanceSquared(getEntity().getLocation());
-                        return Double.compare(d1, d2);
-                    }).ifPresent(player -> {
-                        this.lookAt = player;
-                    });
-            return this.lookAt != null;
         }
+        Player owner;
+        // 优先看向管理器持有者
+        Manager manager = getEntity().getManager();
+        if (manager != null && !manager.isPublic()) {
+            owner = ((PlayerManager) manager).getOwner();
+        } else {
+            owner = null;
+        }
+        Player lookAt = null;
+        double distance = 0;
+        for (Player player : getEntity().getWorld().getPlayers()) {
+            // 有效玩家
+            if (owner == null || owner == player) {
+                // 获取距离
+                double d = player.getLocation().distanceSquared(getEntity().getLocation());
+                // 判定距离并选择最近的玩家
+                if (d <= lookDistance * lookDistance && (lookAt == null || d < distance)) {
+                    lookAt = player;
+                    distance = d;
+                }
+            }
+        }
+        if (lookAt != null) {
+            this.lookAt = lookAt;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -118,8 +139,10 @@ public class ControllerLookAtPlayer extends Controller {
 
     @Override
     public void tick() {
+        if (getEntity() == null || getEntity().hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START, StandardTags.IS_PATHFINDING)) {
+            return;
+        }
         if (this.lookAt != null && this.lookAt.isValid()) {
-            Objects.requireNonNull(getEntity());
             double y = this.onlyHorizontal ? getEntity().getEyeLocation().getY() : this.lookAt.getEyeLocation().getY();
             getEntity().controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
             this.lookTime--;

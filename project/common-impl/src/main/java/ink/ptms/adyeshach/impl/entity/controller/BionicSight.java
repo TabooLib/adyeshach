@@ -1,6 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.controller;
 
-import ink.ptms.adyeshach.core.entity.EntityInstance;
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public class BionicSight {
 
-    protected final EntityInstance entity;
+    protected final DefaultEntityInstance entity;
     protected float yMaxRotSpeed;
     protected float xMaxRotAngle;
     protected int lookAtCooldown;
@@ -26,7 +26,7 @@ public class BionicSight {
     protected float xRot;
     protected float yHeadRot;
 
-    public BionicSight(EntityInstance entity) {
+    public BionicSight(DefaultEntityInstance entity) {
         this.entity = entity;
     }
 
@@ -96,13 +96,13 @@ public class BionicSight {
         return !(Math.abs(z) > 10E-6) && !(Math.abs(x) > 10E-6) ? Optional.empty() : Optional.of((float) (atan2(z, x) * 58) - 90.0F);
     }
 
-    private static float rotateTowards(float currentAngle, float targetAngle, float step) {
+    public static float rotateTowards(float currentAngle, float targetAngle, float step) {
         float diff = wrapDegrees(targetAngle - currentAngle);
         float resultAngle = clamp(diff, -step, step);
         return currentAngle + resultAngle;
     }
 
-    private static float wrapDegrees(float angle) {
+    public static float wrapDegrees(float angle) {
         float resultAngle = angle % 360.0F;
         if (resultAngle >= 180.0F) {
             resultAngle -= 360.0F;
@@ -113,7 +113,7 @@ public class BionicSight {
         return resultAngle;
     }
 
-    private static float clamp(float value, float min, float max) {
+    public static float clamp(float value, float min, float max) {
         if (value < min) {
             return min;
         } else {
@@ -121,11 +121,11 @@ public class BionicSight {
         }
     }
 
-    private static double atan2(double y, double x) {
+    public static double atan2(double y, double x) {
         return Math.atan2(y, x);
     }
 
-    private static double getWantedY(Entity entity) {
+    public static double getWantedY(Entity entity) {
         return entity instanceof LivingEntity ? ((LivingEntity) entity).getEyeLocation().getY() : entity.getLocation().getY() + 1.0;
     }
 }

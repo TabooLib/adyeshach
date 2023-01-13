@@ -63,6 +63,13 @@ object StandardTags {
     const val IS_MOVING = "IS_MOVING"
 
     /**
+     * 移动准备状态
+     * 持有该标签的单位正在移动
+     */
+    @NoEvent
+    const val IS_MOVING_START = "IS_MOVING_START"
+
+    /**
      * 位于载具中
      * 持有该标签的单位正在载具中
      */

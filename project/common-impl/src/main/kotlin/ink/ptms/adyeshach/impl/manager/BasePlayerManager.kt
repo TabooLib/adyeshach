@@ -12,6 +12,10 @@ import org.bukkit.entity.Player
  */
 open class BasePlayerManager(override val owner: Player) : BaseManager(), PlayerManager {
 
+    override fun isPublic(): Boolean {
+        return false
+    }
+
     override fun getPlayers(): List<Player> {
         return listOf(owner)
     }

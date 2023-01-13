@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity.controller;
 
 import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
+import ink.ptms.adyeshach.core.entity.StandardTags;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,8 +71,11 @@ public class ControllerRandomLookaround extends Controller {
 
     @Override
     public void tick() {
+        if (getEntity() == null || getEntity().hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START, StandardTags.IS_PATHFINDING)) {
+            return;
+        }
+        getEntity().controllerLookAt(getEntity().getX() + this.relX, getEntity().getEyeLocation().getY(), getEntity().getZ() + this.relZ);
         this.lookTime--;
-        Objects.requireNonNull(getEntity()).controllerLookAt(getEntity().getX() + this.relX, getEntity().getEyeLocation().getY(), getEntity().getZ() + this.relZ);
     }
 
     @Override

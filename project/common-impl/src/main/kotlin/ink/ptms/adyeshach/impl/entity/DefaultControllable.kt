@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.event.AdyeshachControllerAddEvent
 import ink.ptms.adyeshach.core.event.AdyeshachControllerRemoveEvent
+import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import java.util.*
@@ -106,12 +107,19 @@ interface DefaultControllable : Controllable {
         moveTarget = location
     }
 
-    override fun controllerMoveBy(locations: List<Location>, speed: Double) {
+    override fun controllerMoveBy(locations: List<Location>, speed: Double, fixHeight: Boolean) {
         if (locations.isEmpty()) {
             return
         }
         this as DefaultEntityInstance
-        moveFrames = ResultNavigation(locations.map { it.toVector() }.toMutableList(), 0, 0).toInterpolated(locations[0].world, speed, locations.last())
+        // 克隆坐标列表
+        val newList = locations.map { it.clone() }
+        // 修正路径高度
+        if (fixHeight) {
+            newList.forEach { p -> p.y = ChunkAccess.getChunkAccess(world).getBlockHighest(p.x, p.y, p.z) }
+        }
+        // 设置移动路径
+        moveFrames = ResultNavigation(newList.map { it.toVector() }.toMutableList()).toInterpolated(world, speed)
     }
 
     override fun controllerStopMove() {

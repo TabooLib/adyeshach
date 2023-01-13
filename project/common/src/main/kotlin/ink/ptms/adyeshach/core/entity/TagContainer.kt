@@ -26,6 +26,11 @@ interface TagContainer {
     fun hasTag(key: String): Boolean
 
     /**
+     * 是否持有标签
+     */
+    fun hasTag(vararg key: String): Boolean = key.any { hasTag(it) }
+
+    /**
      * 设置标签
      */
     fun setTag(key: String, value: Any?)

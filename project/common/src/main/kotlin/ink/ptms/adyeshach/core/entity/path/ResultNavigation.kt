@@ -4,12 +4,13 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.util.Vector
+import kotlin.math.abs
 
 /**
  * @author sky
  * @since 2020-08-13 16:34
  */
-class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, scheduleTime: Long) : Result(beginTime, scheduleTime) {
+class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long = 0, scheduleTime: Long = 0) : Result(beginTime, scheduleTime) {
 
     /**
      * 将寻路结果转换为插值坐标
@@ -18,7 +19,7 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, sche
      * @param moveSpeed 移动速度
      * @return 插值坐标
      */
-    fun toInterpolated(world: World, moveSpeed: Double, moveTarget: Location): InterpolatedLocation {
+    fun toInterpolated(world: World, moveSpeed: Double, moveTarget: Location = pointList.last().toLocation(world)): InterpolatedLocation {
         val interpolatedLocation = InterpolatedLocation(world, moveTarget)
         var prevPoint: Vector? = null
         var tick = 0
@@ -35,9 +36,13 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long, sche
             for (point in pointList) {
                 world.spawnParticle(org.bukkit.Particle.END_ROD, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
             }
-            (0..interpolatedLocation.length).forEach {
-                val next = interpolatedLocation.get(it)
-                world.spawnParticle(org.bukkit.Particle.FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+            var i = 0
+            while (i < interpolatedLocation.length) {
+                val next = interpolatedLocation.get(i)
+                if (next != null) {
+                    world.spawnParticle(org.bukkit.Particle.FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+                    i++
+                }
             }
         }
         return interpolatedLocation

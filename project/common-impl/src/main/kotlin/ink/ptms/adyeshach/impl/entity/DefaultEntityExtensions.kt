@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.TickService
@@ -9,9 +10,13 @@ import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
+import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.util.ChunkAccess
+import org.bukkit.Bukkit
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.submit
+import taboolib.common5.clong
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.floor
@@ -65,15 +70,8 @@ fun DefaultEntityInstance.updateMoveFrames() {
         it as ResultNavigation
         // 移除标签
         removeTag(StandardTags.IS_PATHFINDING)
-        // 如果路径无效
-        if (it.pointList.isEmpty()) {
-            return@request
-        }
-        // 修正路径高度
-        val chunkAccess = ChunkAccess.getChunkAccess(world)
-        it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighest(p.x, p.y, p.z) }
-        // 设置移动路径
-        moveFrames = it.toInterpolated(world, moveSpeed, moveTarget!!)
+        // 按照路径移动
+        controllerMoveBy(it.pointList.map { v -> v.toLocation(world) })
     }
 }
 
@@ -108,19 +106,40 @@ fun DefaultEntityInstance.handleMove() {
     }
     // 行走
     if (moveFrames != null) {
+        // 是否已抵达目的地
+        if (moveFrames!!.isArrived()) {
+            moveTarget = null
+            return
+        }
+        // 首次移动
+        // 在单位首次移动之前，会有 0.25 秒的时间用于调整视角
+        // 在这期间，单位会保持原地不动，并持有 "IS_MOVING_START" 标签
+        if (!tag.containsKey(StandardTags.IS_MOVING)) {
+            val next = moveFrames!!.peek()
+            if (next != null && (tag[StandardTags.IS_MOVING_START] == null || tag[StandardTags.IS_MOVING_START].clong > System.currentTimeMillis())) {
+                // 初始化等待时间
+                if (tag[StandardTags.IS_MOVING_START] == null) {
+                    tag[StandardTags.IS_MOVING_START] = System.currentTimeMillis() + 250
+                }
+                // 调整视角
+                controllerLookAt(next.x, getEyeLocation().y, next.z, 35f, 40f)
+                return
+            }
+        }
+        tag.remove(StandardTags.IS_MOVING_START)
+        // 获取下一个移动点
         val next = moveFrames!!.next()
         if (next != null) {
             // 设置移动标签
             tag[StandardTags.IS_MOVING] = true
             // 默认会看向移动方向
-            val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
-            val temp = clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0)
+            val eyeLocation = clientPosition.toLocation().plus(y =  entitySize.height * 0.9)
             // 设置方向
-            temp.direction = Vector(next.x, temp.y, next.z).subtract(temp.toVector())
+            eyeLocation.direction = Vector(next.x, eyeLocation.y, next.z).subtract(eyeLocation.toVector())
             // 不会看向脚下
-            if (temp.pitch < 90f) {
-                next.yaw = EntityPosition.normalizeYaw(temp.yaw)
-                next.pitch = EntityPosition.normalizePitch(temp.pitch)
+            if (eyeLocation.pitch < 90f) {
+                next.yaw = EntityPosition.normalizeYaw(eyeLocation.yaw)
+                next.pitch = EntityPosition.normalizePitch(eyeLocation.pitch)
             }
             // 更新位置
             teleport(EntityPosition.fromLocation(next))
@@ -128,8 +147,6 @@ fun DefaultEntityInstance.handleMove() {
             if (AdyeshachSettings.debug) {
                 world.spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
             }
-        } else {
-            moveTarget = null
         }
     }
     // 移动力
@@ -168,13 +185,13 @@ fun DefaultEntityInstance.allowSyncPosition(): Boolean {
 
 /** 同步位置 */
 fun DefaultEntityInstance.syncPosition() {
-    val updateRotation = (clientPosition.yaw - position.yaw).absoluteValue >= 1 || (clientPosition.pitch - position.pitch).absoluteValue >= 1
+    val updateRotation = (yaw - position.yaw).absoluteValue >= 1 || (pitch - position.pitch).absoluteValue >= 1 || taboolib.common.util.random(0.2)
     val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
     // 乘坐实体
     if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
         // 是否需要更新视角
         if (updateRotation) {
-            operator.updateEntityLook(getVisiblePlayers(), index, clientPosition.yaw, clientPosition.pitch, true)
+            operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
         }
         // 是否需要同步到载具位置
         if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
@@ -193,8 +210,6 @@ fun DefaultEntityInstance.syncPosition() {
             val x = encodePos(offset.x)
             val y = encodePos(offset.y)
             val z = encodePos(offset.z)
-            val yaw = clientPosition.yaw
-            val pitch = clientPosition.pitch
             val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
             if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
                 clientPositionFixed = System.currentTimeMillis()
