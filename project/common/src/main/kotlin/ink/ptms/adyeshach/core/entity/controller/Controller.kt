@@ -10,13 +10,9 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
  * @since 2022/6/15 23:38
  */
 @Suppress("SpellCheckingInspection")
-abstract class Controller(var entity: EntityInstance? = null): Comparable<Controller> {
+abstract class Controller(var entity: EntityInstance? = null) : Comparable<Controller> {
 
     var error = false
-
-    override fun compareTo(other: Controller): Int {
-        return priority().compareTo(other.priority())
-    }
 
     /**
      * 控制器唯一序号
@@ -70,7 +66,15 @@ abstract class Controller(var entity: EntityInstance? = null): Comparable<Contro
      */
     open fun isInterruptable() = true
 
-    fun adjustedTickDelay(tick: Int): Int {
+    override fun compareTo(other: Controller): Int {
+        return priority().compareTo(other.priority())
+    }
+
+    override fun toString(): String {
+        return id()
+    }
+
+    protected fun adjustedTickDelay(tick: Int): Int {
         return -Math.floorDiv(-tick, 2);
     }
 }

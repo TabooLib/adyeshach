@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.core.entity.path.ResultRandomPosition
 
 class ControllerRandomStrollLand(entity: EntityInstance, @Expose val probability: Double) : Controller(entity) {
 
-    constructor(entity: EntityInstance) : this(entity, 0.001)
+    constructor(entity: EntityInstance) : this(entity, 0.01)
 
     override fun id(): String {
         return "RANDOM_STROLL_LAND"
