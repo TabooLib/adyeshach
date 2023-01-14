@@ -2,11 +2,16 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.Manager
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.warning
+import taboolib.common.util.resettableLazy
 import taboolib.common.util.unsafeLazy
 import taboolib.library.kether.LocalizedException
 import taboolib.module.kether.ScriptContext
 import taboolib.module.kether.Workspace
+import taboolib.module.kether.printKetherErrorMessage
 import java.io.File
 
 /**
@@ -18,7 +23,23 @@ import java.io.File
  */
 object DefaultScriptManager {
 
+    /** 脚本工作空间 */
     val workspace by unsafeLazy { Workspace(File(getDataFolder(), "npc/script"), ".ady", listOf("adyeshach")) }
+
+    /** 脚本加载器 */
+    val workspaceLoader by resettableLazy {
+        try {
+            workspace.loadAll()
+        } catch (e: Exception) {
+            warning("An error occurred while loading the script")
+            e.printKetherErrorMessage()
+        }
+    }
+
+    @Awake(LifeCycle.ACTIVE)
+    private fun active() {
+        workspaceLoader
+    }
 }
 
 fun ScriptContext.getManager(): Manager? {
