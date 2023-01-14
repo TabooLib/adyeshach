@@ -135,7 +135,7 @@ interface DefaultControllable : Controllable {
 
     override fun random(): Random {
         this as DefaultEntityInstance
-        return this.brain.random
+        return this.brain.getRandom()
     }
 
     private fun unregister(controller: Controller): Boolean {
@@ -144,8 +144,8 @@ interface DefaultControllable : Controllable {
         if (AdyeshachControllerRemoveEvent(this, controller).call()) {
             this.controller.remove(controller)
             // 从执行容器中移除
-            if (this.brain.hold[controller.group()] == controller) {
-                this.brain.hold.remove(controller.group())
+            if (this.brain.getRunningControllers()[controller.group()] == controller) {
+                this.brain.getRunningControllers().remove(controller.group())
             }
             return true
         }

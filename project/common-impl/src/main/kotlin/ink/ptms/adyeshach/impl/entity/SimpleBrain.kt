@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.core.entity.Brain
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.controller.PrepareController
 import java.util.*
@@ -14,12 +15,12 @@ import java.util.concurrent.TimeUnit
  * @author 坏黑
  * @since 2022/12/13 20:33
  */
-open class SimpleBrain(val entity: DefaultEntityInstance) {
+open class SimpleBrain(val entity: DefaultEntityInstance) : Brain {
 
     /** 执行容器 */
-    val hold = ConcurrentHashMap<String, Controller>()
+    protected val hold = ConcurrentHashMap<String, Controller>()
     /** 随机生成器 */
-    val random = Random()
+    protected val rand = Random()
 
     /** 打断 */
     protected val interrupt = hashMapOf<String, Controller>()
@@ -28,7 +29,7 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
     /** 每 30 秒检查一次 hold 内的无效控制器 */
     protected var checker = System.currentTimeMillis()
 
-    fun tick() {
+    override fun tick() {
         interrupt.clear()
         postponeAdd.clear()
         // 检查所有控制器
@@ -93,6 +94,14 @@ open class SimpleBrain(val entity: DefaultEntityInstance) {
             entity.controller.addAll(postponeAdd)
             entity.controller.sort()
         }
+    }
+
+    override fun getRandom(): Random {
+        return rand
+    }
+
+    override fun getRunningControllers(): MutableMap<String, Controller> {
+        return hold
     }
 
     companion object {

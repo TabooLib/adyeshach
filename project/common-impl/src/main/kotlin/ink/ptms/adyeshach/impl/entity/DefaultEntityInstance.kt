@@ -29,6 +29,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.warning
 import taboolib.common5.Baffle
 import taboolib.common5.cbool
 import taboolib.common5.cdouble
@@ -153,7 +154,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     var controller = CopyOnWriteArrayList<Controller>()
 
     /** Ady 的小脑 */
-    var brain = SimpleBrain(this)
+    override var brain: Brain = SimpleBrain(this)
 
     /** 仿生视线 */
     var bionicSight = BionicSight(this)
@@ -173,10 +174,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         }
 
     /** 客户端位置修正 */
-    var clientPositionFixed = System.currentTimeMillis()
+    override var clientPositionFixed = System.currentTimeMillis()
 
     /** 客户端更新间隔 */
-    var clientUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
+    override var clientPositionUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
+
+    /** 是否启用客户端更新间隔 **/
+    override var isIgnoredClientPositionUpdateInterval = true
 
     /** 单位移动量 */
     var deltaMovement = Vector(0.0, 0.0, 0.0)
@@ -185,7 +189,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         }
 
     /** 载具位置同步 */
-    var vehicleSync = System.currentTimeMillis()
+    override var vehicleSync = System.currentTimeMillis()
 
     /** 插值定位 */
     override var moveFrames: InterpolatedLocation? = null
@@ -316,7 +320,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (isRemoved) {
             error("Entity has been removed")
         }
-        spawn(position.toLocation())
+        spawn(clientPosition.toLocation())
     }
 
     override fun despawn(destroyPacket: Boolean, removeFromManager: Boolean) {
@@ -339,10 +343,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun teleport(x: Double, y: Double, z: Double) {
-        teleport(position.toLocation().modify(x, y, z))
+        teleport(clientPosition.toLocation().modify(x, y, z))
     }
 
     override fun teleport(location: Location) {
+        // 异常角度警告
+        if (location.yaw.isNaN() || location.pitch.isNaN()) {
+            IllegalStateException("Invalid head rotation (yaw=${location.yaw}, pitch=${location.pitch})").printStackTrace()
+        }
         // 处理事件
         val eventBus = DefaultAdyeshachAPI.localEventBus
         if (!eventBus.callTeleport(this, location)) {

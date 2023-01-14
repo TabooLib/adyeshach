@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.impl.entity.controller;
 
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition;
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -66,7 +68,7 @@ public class BionicSight {
             this.getXRotD().ifPresent((var0) -> {
                 xRot = rotateTowards(xRot, var0, this.xMaxRotAngle);
             });
-            this.entity.setHeadRotation(yHeadRot, xRot, false);
+            this.entity.setHeadRotation(EntityPosition.Companion.normalizeYaw(yHeadRot), EntityPosition.Companion.normalizePitch(xRot), false);
         }
     }
 
@@ -80,6 +82,10 @@ public class BionicSight {
 
     public double getWantedZ() {
         return this.wantedZ;
+    }
+
+    public boolean isLooking() {
+        return this.lookAtCooldown > 0;
     }
 
     protected Optional<Float> getXRotD() {

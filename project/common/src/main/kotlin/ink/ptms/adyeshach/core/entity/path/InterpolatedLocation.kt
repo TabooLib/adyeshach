@@ -44,8 +44,8 @@ open class InterpolatedLocation(val world: World, val target: Location, frames: 
     }
 
     /** 获取下一个位置，但不会改变进度 */
-    open fun peek(): Location? {
-        return if (isArrived()) null else get(index)
+    open fun peek(idx: Int = index): Location? {
+        return if (isArrived()) null else get(idx)
     }
 
     /** 获取下一个位置，并且改变进度 */

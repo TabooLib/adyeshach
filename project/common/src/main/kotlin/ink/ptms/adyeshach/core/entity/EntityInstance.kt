@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
 import org.bukkit.Location
+import taboolib.common5.Baffle
 
 /**
  * Adyeshach
@@ -32,6 +33,26 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var isNitwit: Boolean
 
     /**
+     * 控制器调度器
+     */
+    var brain: Brain
+
+    /**
+     * 客户端位置修正时间
+     */
+    var clientPositionFixed: Long
+
+    /**
+     * 客户端位置更新间隔
+     */
+    var clientPositionUpdateInterval: Baffle
+
+    /**
+     * 是否忽略客户端位置更新间隔
+     */
+    var isIgnoredClientPositionUpdateInterval: Boolean
+
+    /**
      * 移动定位
      */
     var moveFrames: InterpolatedLocation?
@@ -40,6 +61,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * 移动目标
      */
     var moveTarget: Location?
+
+    /**
+     * 载具位置同步
+     */
+    var vehicleSync: Long
 
     /**
      * 取决于是否被公开的单位管理器管理
