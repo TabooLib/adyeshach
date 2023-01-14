@@ -97,6 +97,12 @@ interface DefaultControllable : Controllable {
         this.bionicSight.setLookAt(wantedX, wantedY, wantedZ)
     }
 
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float) {
+        this as DefaultEntityInstance
+        this.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, 40f)
+    }
+
+
     override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
         this as DefaultEntityInstance
         this.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
@@ -137,6 +143,10 @@ interface DefaultControllable : Controllable {
         // 移除事件
         if (AdyeshachControllerRemoveEvent(this, controller).call()) {
             this.controller.remove(controller)
+            // 从执行容器中移除
+            if (this.brain.hold[controller.group()] == controller) {
+                this.brain.hold.remove(controller.group())
+            }
             return true
         }
         return false

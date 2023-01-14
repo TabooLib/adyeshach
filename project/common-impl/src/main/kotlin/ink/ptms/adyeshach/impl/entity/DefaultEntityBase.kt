@@ -74,15 +74,4 @@ abstract class DefaultEntityBase(
      * 是否为无效类型
      */
     override val isInvalid = Adyeshach.api().getEntityTypeRegistry().getEntityFlags(entityType).contains("INVALID")
-
-    /**
-     * 转换为 Bukkit 坐标
-     */
-    override fun getLocation(): Location {
-        return position.toLocation()
-    }
-
-    override fun getEyeLocation(): Location {
-        return position.toLocation().plus(y = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType).height)
-    }
 }

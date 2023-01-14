@@ -32,7 +32,7 @@ val lookSubCommand = subCommand {
                         sender.sendLang("command-world-different", ctx["id"])
                         return@multiControl
                     }
-                    it.setHeadRotation(sender.eyeLocation, forceUpdate = true)
+                    it.setHeadRotation(sender.eyeLocation)
                     if (!sender.isIgnoreNotice()) {
                         sender.sendLang("command-look-to-here", it.id)
                     }
@@ -47,7 +47,7 @@ val lookSubCommand = subCommand {
                         sender.sendLang("command-world-different", ctx["id"])
                         return@multiControl
                     }
-                    it.setHeadRotation(sender.location.yaw, sender.location.pitch, forceUpdate = true)
+                    it.setHeadRotation(sender.location.yaw, sender.location.pitch)
                     if (!sender.isIgnoreNotice()) {
                         sender.sendLang("command-look-with", it.id, format(sender.location.yaw), format(sender.location.pitch))
                     }
@@ -61,7 +61,7 @@ val lookSubCommand = subCommand {
                     val origin = it.getLocation().toProxyLocation()
                     val y = ctx.yaw("yaw", origin)
                     val p = ctx.pitch("pitch", origin)
-                    it.setHeadRotation(y, p, forceUpdate = true)
+                    it.setHeadRotation(y, p)
                     if (!sender.isIgnoreNotice()) {
                         sender.sendLang("command-look-with", it.id, format(y), format(p))
                     }
@@ -73,7 +73,7 @@ val lookSubCommand = subCommand {
             execute<CommandSender> { sender, ctx, _ ->
                 multiControl<EntitySource.Empty>(sender, ctx["id"], STANDARD_LOOK_TRACKER, unified = false) {
                     val loc = ctx.locationWithoutWorld(origin = it.getLocation().toProxyLocation())
-                    it.setHeadRotation(loc.toBukkitLocation(), forceUpdate = true)
+                    it.setHeadRotation(loc.toBukkitLocation())
                     if (!sender.isIgnoreNotice()) {
                         sender.sendLang("command-look-to-location", it.id, format(loc.x), format(loc.y), format(loc.z))
                     }

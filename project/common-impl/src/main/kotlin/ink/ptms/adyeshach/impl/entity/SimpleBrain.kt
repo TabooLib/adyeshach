@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.entity
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.controller.PrepareController
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -15,16 +16,17 @@ import java.util.concurrent.TimeUnit
  */
 open class SimpleBrain(val entity: DefaultEntityInstance) {
 
-    /** 执行 */
-    val hold = hashMapOf<String, Controller>()
-    /** 打断 */
-    val interrupt = hashMapOf<String, Controller>()
-    /** 预加载控制器 */
-    val postponeAdd = arrayListOf<Controller>()
-    /** 每 30 秒检查一次 hold 内的无效控制器 */
-    var checker = System.currentTimeMillis()
+    /** 执行容器 */
+    val hold = ConcurrentHashMap<String, Controller>()
     /** 随机生成器 */
     val random = Random()
+
+    /** 打断 */
+    protected val interrupt = hashMapOf<String, Controller>()
+    /** 预加载控制器 */
+    protected val postponeAdd = arrayListOf<Controller>()
+    /** 每 30 秒检查一次 hold 内的无效控制器 */
+    protected var checker = System.currentTimeMillis()
 
     fun tick() {
         interrupt.clear()

@@ -18,6 +18,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.modify
+import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
@@ -454,5 +455,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Deprecated("请使用 setVelocity(vector)", replaceWith = ReplaceWith("setVelocity(vector)"))
     override fun sendVelocity(vector: Vector) {
         Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
+    }
+
+    override fun getLocation(): Location {
+        return clientPosition.toLocation()
+    }
+
+    override fun getEyeLocation(): Location {
+        return clientPosition.toLocation().plus(y = entitySize.height)
     }
 }

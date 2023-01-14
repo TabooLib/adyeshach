@@ -65,22 +65,27 @@ interface Controllable {
     fun resetController()
 
     /**
-     * 看向某个实体
+     * 看向某个实体（不会立刻看向目标，类似原版的阶段性视角移动）
      */
     fun controllerLookAt(entity: Entity)
 
     /**
-     * 看向某个实体
+     * 看向某个实体（不会立刻看向目标，类似原版的阶段性视角移动）
      */
     fun controllerLookAt(entity: Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float)
 
     /**
-     * 看向某个位置
+     * 看向某个位置（不会立刻看向目标，类似原版的阶段性视角移动）
      */
     fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double)
 
     /**
-     * 看向某个位置
+     * 看向某个位置（不会立刻看向目标，类似原版的阶段性视角移动）
+     */
+    fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float)
+
+    /**
+     * 看向某个位置（不会立刻看向目标，类似原版的阶段性视角移动）
      */
     fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float)
 
@@ -99,5 +104,8 @@ interface Controllable {
      */
     fun controllerStopMove()
 
+    /**
+     * 获取随机数生成器
+     */
     fun random(): Random
 }

@@ -1,15 +1,18 @@
 package ink.ptms.adyeshach.module.command
 
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.impl.DefaultScriptManager
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
 import taboolib.expansion.createHelper
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.kether.Kether
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptContext
@@ -106,11 +109,26 @@ object CommandScript {
     val invoke = subCommand {
         dynamic(comment = "script") {
             execute<CommandSender> { sender, _, argument ->
+                val nearestEntity = if (sender is Player) {
+                    val entity = Adyeshach.api().getEntityFinder().getNearestEntity(sender)
+                    if (entity != null) listOf(entity) else null
+                } else null
                 try {
-                    KetherShell.eval(argument, namespace = listOf("adyeshach"), sender = adaptCommandSender(sender)).thenApply { v ->
-                        sender.sendMessage(" §5§l‹ ›§r §7Result: $v")
+                    KetherShell.eval(
+                        argument,
+                        namespace = listOf("adyeshach"),
+                        sender = adaptCommandSender(sender),
+                        vars = KetherShell.VariableMap("@entities" to nearestEntity, "@manager" to nearestEntity?.firstOrNull()?.manager)
+                    ).thenApply { v ->
+                        try {
+                            Class.forName(v.toString().substringBefore('$'))
+                            sender.sendMessage(" §5§l‹ ›§r §7Result: §f${v!!.javaClass.simpleName} §7(Java Object)")
+                        } catch (_: Throwable) {
+                            sender.sendMessage(" §5§l‹ ›§r §7Result: §f$v")
+                        }
                     }
                 } catch (ex: Throwable) {
+                    sender.sendMessage(" §5§l‹ ›§r §7Error: ${ex.message}")
                     ex.printKetherErrorMessage()
                 }
             }

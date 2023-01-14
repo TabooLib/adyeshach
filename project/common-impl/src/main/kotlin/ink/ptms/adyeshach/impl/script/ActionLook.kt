@@ -4,70 +4,40 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
-import taboolib.common5.cdouble
-import taboolib.library.kether.ArgTypes
-import taboolib.library.kether.ParsedAction
+import org.bukkit.Location
+import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.kether.*
-import java.util.concurrent.CompletableFuture
 
-/**
- * @author IzzelAliz
- */
-class ActionLook(val x: ParsedAction<*>, val y: ParsedAction<*>, val z: ParsedAction<*>): ScriptAction<Void>() {
-
-    override fun run(frame: ScriptFrame): CompletableFuture<Void> {
-        val script = frame.script()
-        if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
-        }
-        frame.newFrame(x).run<Any>().thenAccept { x ->
-            frame.newFrame(y).run<Any>().thenAccept { y ->
-                frame.newFrame(z).run<Any>().thenAccept { z ->
-                    script.getEntities().forEach {
-                        it.controllerLookAt(x.cdouble, y.cdouble, z.cdouble)
+@KetherParser(["look"], namespace = "adyeshach", shared = true)
+private fun actionLook() = combinationParser {
+    it.group(
+        expects("smooth", "delayed", "waiting"),
+        command("to", then = any()).option(),
+        command("x", then = command("to", then = double())).option(),
+        command("y", then = command("to", then = double())).option(),
+        command("z", then = command("to", then = double())).option(),
+    ).apply(it) { smooth, to, x, y, z ->
+        now {
+            val script = script()
+            if (script.getManager() == null || !script.isEntitySelected()) {
+                errorBy("error-no-manager-or-entity-selected")
+            }
+            if (smooth != null) {
+                var i = 0
+                submit(period = 1) {
+                    if (i++ < 5) {
+                        script.getEntities().forEach { e ->
+                            val lookAt = to as? Location ?: Location(e.world, x ?: e.x, y ?: e.y, z ?: e.z)
+                            e.controllerLookAt(lookAt.x, lookAt.y, lookAt.z, 35f, 40f)
+                        }
+                    } else {
+                        cancel()
                     }
                 }
-            }
-        }
-        return CompletableFuture.completedFuture(null)
-    }
-
-    companion object {
-
-        @KetherParser(["look"], namespace = "adyeshach", shared = true)
-        fun parser() = scriptParser {
-            var smooth = false
-            it.mark()
-            if (it.nextToken() == "smooth") {
-                smooth = true
             } else {
-                it.reset()
+                script.getEntities().forEach { e -> e.setHeadRotation(to as? Location ?: Location(e.world, x ?: e.x, y ?: e.y, z ?: e.z)) }
             }
-            var x = literalAction(0)
-            var y = literalAction(0)
-            var z = literalAction(0)
-            while (it.hasNext()) {
-                it.mark()
-                when (it.nextToken()) {
-                    "x" -> {
-                        it.expect("to")
-                        x = it.next(ArgTypes.ACTION)
-                    }
-                    "y" -> {
-                        it.expect("to")
-                        y = it.next(ArgTypes.ACTION)
-                    }
-                    "z" -> {
-                        it.expect("to")
-                        z = it.next(ArgTypes.ACTION)
-                    }
-                    else -> {
-                        it.reset()
-                        break
-                    }
-                }
-            }
-            ActionLook(x, y, z)
         }
     }
 }
