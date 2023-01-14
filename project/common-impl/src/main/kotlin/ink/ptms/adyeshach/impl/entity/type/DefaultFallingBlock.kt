@@ -58,10 +58,8 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityFallingBlock(viewer, index, normalizeUniqueId, getLocation(), material, data)
                 // 修正向量
-                submit(delay = 1) {
-                    setNoGravity(true)
-                    sendVelocity(Vector(0, 0, 0))
-                }
+                setNoGravity(true)
+                sendVelocity(Vector(0, 0, 0))
             }
         } else {
             super.visible(viewer, false)

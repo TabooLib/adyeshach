@@ -27,10 +27,10 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 registerClientEntity(viewer)
                 // 修正掉落物信息
                 setMetadata("item", getItem())
-                setNoGravity(true)
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 修正向量
+                setNoGravity(true)
                 sendVelocity(Vector(0, 0, 0))
             }
         } else {
