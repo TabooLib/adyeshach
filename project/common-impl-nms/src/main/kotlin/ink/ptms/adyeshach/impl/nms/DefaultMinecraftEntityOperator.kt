@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.MinecraftEntityOperator
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftPacketHandler
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
+import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -134,13 +135,13 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
-                writeByte(NMSMathHelper.floor(yf * 256.0f / 360.0f).toByte())
+                writeByte(ifloor(yf * 256.0 / 360.0).toByte())
             }.toNMS() as NMSPacketDataSerializer))
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(NMS16MathHelper.d(yf * 256.0f / 360.0f).toByte())
+                    writeByte(ifloor(yf * 256.0 / 360.0).toByte())
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }
