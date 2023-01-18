@@ -51,12 +51,13 @@ abstract class DefaultEntityBase(
      * 将实体唯一 ID 转换为 UUID 类型
      * 历史遗留问题
      */
-    final override val normalizeUniqueId: UUID = if (uniqueId.contains('-')) {
-        FastUUID.parseUUID(uniqueId)
-    } else {
-        val id = uniqueId
-        FastUUID.parseUUID("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
-    }
+    final override val normalizeUniqueId: UUID
+        get() = if (uniqueId.contains('-')) {
+            FastUUID.parseUUID(uniqueId)
+        } else {
+            val id = uniqueId
+            FastUUID.parseUUID("${id.substring(0, 8)}-${id.substring(8, 12)}-${id.substring(12, 16)}-${id.substring(16, 20)}-${id.substring(20)}")
+        }
 
     /**
      * 实体在服务端中的确定位置

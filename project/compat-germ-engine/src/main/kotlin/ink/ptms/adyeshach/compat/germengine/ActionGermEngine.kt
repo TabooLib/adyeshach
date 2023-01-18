@@ -32,12 +32,8 @@ class ActionGermEngine(val state: String, val remove: Boolean) : ScriptAction<Vo
             it.switch {
                 case("animation") {
                     when (it.expects("send", "stop")) {
-                        "send" -> {
-                            ActionGermEngine(it.nextToken(), false)
-                        }
-                        "stop" -> {
-                            ActionGermEngine(it.nextToken(), true)
-                        }
+                        "send" -> ActionGermEngine(it.nextToken(), false)
+                        "stop" -> ActionGermEngine(it.nextToken(), true)
                         else -> error("out of case")
                     }
                 }
