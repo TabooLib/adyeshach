@@ -126,23 +126,23 @@ class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean =
         }
 
         fun DyeColor.toWool(): XMaterial {
-            return when (this) {
-                DyeColor.WHITE -> XMaterial.WHITE_WOOL
-                DyeColor.ORANGE -> XMaterial.ORANGE_WOOL
-                DyeColor.MAGENTA -> XMaterial.MAGENTA_WOOL
-                DyeColor.LIGHT_BLUE -> XMaterial.LIGHT_BLUE_WOOL
-                DyeColor.YELLOW -> XMaterial.YELLOW_WOOL
-                DyeColor.LIME -> XMaterial.LIME_WOOL
-                DyeColor.PINK -> XMaterial.PINK_WOOL
-                DyeColor.GRAY -> XMaterial.GRAY_WOOL
-                DyeColor.LIGHT_GRAY -> XMaterial.LIGHT_GRAY_WOOL
-                DyeColor.CYAN -> XMaterial.CYAN_WOOL
-                DyeColor.PURPLE -> XMaterial.PURPLE_WOOL
-                DyeColor.BLUE -> XMaterial.BLUE_WOOL
-                DyeColor.BROWN -> XMaterial.BROWN_WOOL
-                DyeColor.GREEN -> XMaterial.GREEN_WOOL
-                DyeColor.RED -> XMaterial.RED_WOOL
-                DyeColor.BLACK -> XMaterial.BLACK_WOOL
+            return when (name) {
+                "WHITE" -> XMaterial.WHITE_WOOL
+                "ORANGE" -> XMaterial.ORANGE_WOOL
+                "MAGENTA" -> XMaterial.MAGENTA_WOOL
+                "LIGHT_BLUE" -> XMaterial.LIGHT_BLUE_WOOL
+                "YELLOW" -> XMaterial.YELLOW_WOOL
+                "LIME" -> XMaterial.LIME_WOOL
+                "PINK" -> XMaterial.PINK_WOOL
+                "GRAY" -> XMaterial.GRAY_WOOL
+                "SILVER", "LIGHT_GRAY" -> XMaterial.LIGHT_GRAY_WOOL
+                "CYAN" -> XMaterial.CYAN_WOOL
+                "PURPLE" -> XMaterial.PURPLE_WOOL
+                "BLUE" -> XMaterial.BLUE_WOOL
+                "BROWN" -> XMaterial.BROWN_WOOL
+                "GREEN" -> XMaterial.GREEN_WOOL
+                "RED" -> XMaterial.RED_WOOL
+                else -> XMaterial.BLACK_WOOL
             }
         }
     }
