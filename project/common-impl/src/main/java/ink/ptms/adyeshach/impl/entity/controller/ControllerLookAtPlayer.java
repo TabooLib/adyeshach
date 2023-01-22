@@ -89,7 +89,7 @@ public class ControllerLookAtPlayer extends Controller {
         Player owner;
         // 优先看向管理器持有者
         Manager manager = getEntity().getManager();
-        if (manager != null && !manager.isPublic()) {
+        if (manager instanceof PlayerManager) {
             owner = ((PlayerManager) manager).getOwner();
         } else {
             owner = null;
