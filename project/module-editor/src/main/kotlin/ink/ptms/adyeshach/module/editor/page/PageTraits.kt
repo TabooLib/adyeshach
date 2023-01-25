@@ -70,6 +70,7 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
             "traits3", 999, listOf(
                 SimpleAction.MetaTraitBool("sit", entity.isTraitSit()),
                 SimpleAction.MetaTrait("title", entity.getTraitTitle().joinToString("\n")),
+                SimpleAction.MetaTrait("title-height", entity.getTraitTitleHeight()),
                 SimpleAction.MetaTrait("command", entity.getTraitCommands().joinToString("\n")),
                 SimpleAction.MetaTrait("view-condition", entity.getTraitViewCondition().joinToString("\n")),
             )

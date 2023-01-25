@@ -3,9 +3,7 @@ package ink.ptms.adyeshach.module.command.subcommand
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.impl.entity.trait.TraitFactory
-import ink.ptms.adyeshach.impl.entity.trait.impl.getTraitPatrolWaitTime
-import ink.ptms.adyeshach.impl.entity.trait.impl.refreshTraitPatrolNodes
-import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitPatrolWaitTime
+import ink.ptms.adyeshach.impl.entity.trait.impl.*
 import ink.ptms.adyeshach.module.command.Command
 import ink.ptms.adyeshach.module.command.EntitySource
 import ink.ptms.adyeshach.module.command.multiControl
@@ -18,6 +16,7 @@ import org.bukkit.entity.Player
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestUncheck
 import taboolib.common5.cbool
+import taboolib.common5.cdouble
 import taboolib.common5.cint
 import taboolib.common5.clong
 import taboolib.module.chat.colored
@@ -121,6 +120,14 @@ val editSubCommand = subCommand {
                             // 基础特性
                             "sit", "title", "command", "view-condition" -> {
                                 TraitFactory.getTraitById(id)?.edit(sender, entity)?.thenRun { ChatEditor.refresh(sender) }
+                            }
+                            // 头衔高度
+                            "title-height" -> {
+                                // 牌子输入
+                                sender.inputSign(arrayOf("${entity.getTraitTitleHeight()}", "", sender.lang("input-title-height"), "")) {
+                                    entity.setTraitTitleHeight(it[0].cdouble)
+                                    ChatEditor.refresh(sender)
+                                }
                             }
                             // 巡逻
                             "patrols" -> {

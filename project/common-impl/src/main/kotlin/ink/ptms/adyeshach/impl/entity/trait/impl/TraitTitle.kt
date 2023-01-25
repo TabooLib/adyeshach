@@ -35,7 +35,7 @@ object TraitTitle : Trait() {
         Adyeshach.api().getEventBus().prepareTeleport { e ->
             if (entityLookup.containsKey(e.entity.uniqueId) && !e.entity.isDerived()) {
                 entityLookup[e.entity.uniqueId]!!.forEach {
-                    it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height + 0.25, 0.0))
+                    it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height + e.entity.getTraitTitleHeight(), 0.0))
                 }
             }
             true
@@ -91,7 +91,7 @@ object TraitTitle : Trait() {
             // 先移除
             remove(viewer, entity)
             // 再创建
-            val loc = entity.getLocation().add(0.0, entity.entitySize.height + 0.25, 0.0)
+            val loc = entity.getLocation().add(0.0, entity.entitySize.height + entity.getTraitTitleHeight(), 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
                 runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
             }
@@ -181,6 +181,7 @@ object TraitTitle : Trait() {
     }
 }
 
+/** 设置实体头衔 */
 fun EntityInstance.setTraitTitle(title: List<String>?) {
     TraitTitle.remove(this)
     if (title == null || title.all { line -> line.isBlank() }) {
@@ -191,6 +192,20 @@ fun EntityInstance.setTraitTitle(title: List<String>?) {
     }
 }
 
+/** 获取实体头衔 */
 fun EntityInstance.getTraitTitle(): List<String> {
     return TraitTitle.data.getStringList(uniqueId)
+}
+
+/** 设置实体头衔高度 */
+fun EntityInstance.setTraitTitleHeight(height: Double) {
+    TraitTitle.data["height.$uniqueId"] = height
+    TraitTitle.entityLookup[uniqueId]?.forEach {
+        it.value.teleport(getLocation().add(0.0, entitySize.height + getTraitTitleHeight(), 0.0))
+    }
+}
+
+/** 获取实体头衔高度 */
+fun EntityInstance.getTraitTitleHeight(): Double {
+    return TraitTitle.data.getDouble("height.$uniqueId", 0.25)
 }

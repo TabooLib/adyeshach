@@ -1,10 +1,7 @@
 package ink.ptms.adyeshach.impl.script
 
 import ink.ptms.adyeshach.core.util.errorBy
-import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitCommands
-import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitSit
-import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitTitle
-import ink.ptms.adyeshach.impl.entity.trait.impl.setTraitViewCondition
+import ink.ptms.adyeshach.impl.entity.trait.impl.*
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
@@ -56,6 +53,16 @@ class ActionTrait(val type: Int, val source: List<ParsedAction<*>>) : ScriptActi
                 case("title") {
                     expect("to")
                     ActionTrait(1, it.next(ArgTypes.listOf(ArgTypes.ACTION)))
+                }
+                case("title-height") {
+                    expect("to")
+                    val bool = it.nextParsedAction()
+                    actionNow {
+                        if (script().getManager() == null || !script().isEntitySelected()) {
+                            errorBy("error-no-manager-or-entity-selected")
+                        }
+                        run(bool).double { height -> script().getEntities().forEach { e -> e.setTraitTitleHeight(height) } }
+                    }
                 }
                 case("view-condition") {
                     expect("to")
