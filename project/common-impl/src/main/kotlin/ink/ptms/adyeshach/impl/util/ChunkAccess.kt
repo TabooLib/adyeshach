@@ -58,10 +58,10 @@ class ChunkAccess(val world: World) {
 
     companion object {
 
-        private val chunkAccess = ConcurrentHashMap<String, ChunkAccess>()
+        private val chunkAccess: MutableMap<String, ChunkAccess> = ConcurrentHashMap()
 
         fun getChunkAccess(world: World): ChunkAccess {
-            return if (chunkAccess.contains(world.name)) {
+            return if (chunkAccess.containsKey(world.name)) {
                 chunkAccess[world.name]!!
             } else {
                 val access = ChunkAccess(world)
