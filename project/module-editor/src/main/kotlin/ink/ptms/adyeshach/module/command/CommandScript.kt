@@ -110,7 +110,7 @@ object CommandScript {
         dynamic(comment = "script") {
             execute<CommandSender> { sender, _, argument ->
                 val nearestEntity = if (sender is Player) {
-                    val entity = Adyeshach.api().getEntityFinder().getNearestEntity(sender)
+                    val entity = Adyeshach.api().getEntityFinder().getNearestEntity(sender) { !it.isDerived() }
                     if (entity != null) listOf(entity) else null
                 } else null
                 try {

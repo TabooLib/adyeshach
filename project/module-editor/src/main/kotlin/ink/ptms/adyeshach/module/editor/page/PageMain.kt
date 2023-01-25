@@ -38,7 +38,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
                 } else {
                     derivedId
                 }
-                json.append("  ").appendLang("entity-is-derived", id, derivedId)
+                json.append("  ").appendLang("editor-entity-is-derived", id, derivedId)
                 // 发送半屏消息
                 player.sendNativeHalfMessage(json)
             }

@@ -237,11 +237,7 @@ editor-link-vehicle: '&f这个单位的载具:'
 editor-link-passengers: '&f这个单位的乘客:'
 editor-entity-is-invalid: '&c这个实体类型暂不支持, 无法编辑。'
 editor-entity-is-testing: '&c这个实体类型处于测试阶段，可能会出现问题。'
-editor-entity-is-derived:
-  - ==: JSON
-    text: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'
-    args:
-      - hover: '{1}'
+editor-entity-is-derived: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'
 editor-entity-public-traits: '&6[公共特性]'
 editor-entity-public-traits-help: |-
   &6基于 Adyeshach 的插件机制
