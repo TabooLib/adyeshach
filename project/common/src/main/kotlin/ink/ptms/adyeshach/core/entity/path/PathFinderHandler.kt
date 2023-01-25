@@ -43,16 +43,18 @@ object PathFinderHandler {
             errorBy("error-different-worlds")
         }
         // 记录请求信息
-        val traceString = PathfinderRequestTracker().getStackTraceString()
-        submitAsync {
-            val traceStringCode = traceString.digest("sha-1")
-            tracker[traceStringCode] = tracker.computeIfAbsent(traceStringCode) { 0 } + 1
-            var str = ""
-            str += "Request times: ${tracker[traceStringCode]}, Path: $path, Request: $request\n"
-            str += "World: ${start.world!!.name}, Start: ${start.toVector()}, End: ${target.toVector()}\n"
-            str += "Trace:\n"
-            str += traceString
-            newFile(getDataFolder(), "logs/pathfinder/${traceStringCode}.log").writeText(str)
+        if (AdyeshachSettings.debug) {
+            val traceString = PathfinderRequestTracker().getStackTraceString()
+            submitAsync {
+                val traceStringCode = traceString.digest("sha-1")
+                tracker[traceStringCode] = tracker.computeIfAbsent(traceStringCode) { 0 } + 1
+                var str = ""
+                str += "Request times: ${tracker[traceStringCode]}, Path: $path, Request: $request\n"
+                str += "World: ${start.world!!.name}, Start: ${start.toVector()}, End: ${target.toVector()}\n"
+                str += "Trace:\n"
+                str += traceString
+                newFile(getDataFolder(), "logs/pathfinder/${traceStringCode}.log").writeText(str)
+            }
         }
         // 请求发起时间
         val startTime = System.currentTimeMillis()
