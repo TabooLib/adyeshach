@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.description
 
+import com.eatthepath.uuid.FastUUID
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
@@ -20,6 +21,10 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
 
     override fun parse(name: String, args: List<String>): PrepareMeta {
         return when (type) {
+            CustomType.UUID -> PrepareMetaNatural(
+                name,
+                FastUUID.parseUUID(args[1])
+            )
             CustomType.PARTICLE -> PrepareMetaNatural(
                 name,
                 BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.HAPPY_VILLAGER

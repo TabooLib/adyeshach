@@ -1,10 +1,21 @@
 package ink.ptms.adyeshach.core.entity.type
 
+import java.util.*
+
 /**
  * @author sky
  * @since 2020-08-04 18:28
  */
 interface AdyHorseBase : AdyEntityAgeable {
+
+    fun setOwner(uuid: UUID?) {
+        setMetadata("owner", uuid ?: UUID(0, 0))
+    }
+
+    fun getOwner(): UUID? {
+        val uuid = getMetadata<UUID>("owner")
+        return if (uuid.mostSignificantBits == 0L && uuid.leastSignificantBits == 0L) null else uuid
+    }
 
     fun setTamed(value: Boolean) {
         setMetadata("isTamed", value)

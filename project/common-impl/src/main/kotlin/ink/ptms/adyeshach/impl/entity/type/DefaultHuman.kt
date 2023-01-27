@@ -155,6 +155,24 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         return gameProfile.ping
     }
 
+    override fun setSpectator(value: Boolean) {
+        gameProfile.spectator = value
+        refreshPlayer()
+    }
+
+    override fun isSpectator(): Boolean {
+        return gameProfile.spectator
+    }
+
+    override fun setListed(value: Boolean) {
+        gameProfile.listed = value
+        refreshPlayer(false)
+    }
+
+    override fun isListed(): Boolean {
+        return gameProfile.listed
+    }
+
     override fun setTexture(name: String) {
         gameProfile.textureName = name
         // 无皮肤

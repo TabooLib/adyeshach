@@ -827,6 +827,9 @@ ink.ptms.adyeshach.core.entity.type.AdyHorseBase
         @13-
         11 13
         09 -
+    owner !UUID 00000000-0000-0000-0000-000000000000
+        &horse1
+        ~
 
 ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
      isHandActive 1b | activeHand 2b | isInRiptideSpinAttack 4b

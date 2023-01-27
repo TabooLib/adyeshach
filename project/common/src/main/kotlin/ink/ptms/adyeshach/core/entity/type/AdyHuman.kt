@@ -41,6 +41,14 @@ interface AdyHuman : AdyEntityLiving {
 
     fun getPing(): Int
 
+    fun setSpectator(value: Boolean)
+
+    fun isSpectator(): Boolean
+
+    fun setListed(value: Boolean)
+
+    fun isListed(): Boolean
+
     fun setTexture(name: String)
 
     fun setTexture(texture: String, signature: String)

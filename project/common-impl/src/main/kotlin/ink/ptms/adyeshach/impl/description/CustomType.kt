@@ -6,6 +6,8 @@ package ink.ptms.adyeshach.impl.description
  */
 enum class CustomType(val id: String) {
 
+    UUID("UUID"),
+
     PARTICLE("Particle"),
 
     EULER_ANGLE("EulerAngle"),

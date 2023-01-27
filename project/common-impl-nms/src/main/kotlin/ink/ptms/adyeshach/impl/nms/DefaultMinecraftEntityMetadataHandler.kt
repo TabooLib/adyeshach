@@ -40,6 +40,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         get() = Adyeshach.api().getMinecraftAPI().getHelper()
 
     init {
+        addParser(UUID::class.java, UUIDParser())
         addParser(String::class.java, StringParser())
         addParser(Vector::class.java, BlockPosParser())
         addParser(ItemStack::class.java, ItemStackParser())
@@ -439,6 +440,22 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.PAINTING_VARIANT),
                 CraftArt19.BukkitToNotch(type as Art)
             )
+        )
+    }
+
+    override fun createUUIDMeta(index: Int, value: UUID): MinecraftMeta {
+        return DefaultMeta(
+            when {
+                majorLegacy >= 11900 -> {
+                    NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.OPTIONAL_UUID), Optional.of(value))
+                }
+                majorLegacy >= 11300 -> {
+                    NMS13DataWatcherItem(NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.o), Optional.of(value))
+                }
+                else -> {
+                    NMS11DataWatcherItem(NMS11DataWatcherObject(index, NMS11DataWatcherRegistry.m), com.google.common.base.Optional.of(value))
+                }
+            }
         )
     }
 

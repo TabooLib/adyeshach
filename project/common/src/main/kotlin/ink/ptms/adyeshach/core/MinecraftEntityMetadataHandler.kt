@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
+import java.util.UUID
 
 /**
  * Adyeshach
@@ -88,6 +89,11 @@ interface MinecraftEntityMetadataHandler {
      * 生成 Vector3f 类型的元数据，对应 ROTATIONS 字段
      */
     fun createEulerAngleMeta(index: Int, value: EulerAngle): MinecraftMeta
+
+    /**
+     * 生成 UUID 类型的元数据，对应 UUID 字段
+     */
+    fun createUUIDMeta(index: Int, value: UUID): MinecraftMeta
 
     /**
      * 生成 VillagerData 类型的元数据，对应 VILLAGER_DATA 字段
