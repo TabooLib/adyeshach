@@ -18,4 +18,20 @@ interface MinecraftPacketHandler {
     fun sendPacket(player: Player, packet: Any) {
         sendPacket(listOf(player), packet)
     }
+
+    /**
+     * 将数据包存入缓冲区
+     */
+    fun bufferPacket(player: List<Player>, packet: Any)
+    fun bufferPacket(player: Player, packet: Any) {
+        bufferPacket(listOf(player), packet)
+    }
+
+    /**
+     * 释放缓冲区
+     */
+    fun flush(player: List<Player>)
+    fun flush(player: Player) {
+        flush(listOf(player))
+    }
 }

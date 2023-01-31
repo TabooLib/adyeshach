@@ -16,4 +16,12 @@ class DefaultMinecraftPacketHandler : MinecraftPacketHandler {
     override fun sendPacket(player: List<Player>, packet: Any) {
         player.forEach { it.sendPacket(packet) }
     }
+
+    override fun bufferPacket(player: List<Player>, packet: Any) {
+        TODO("Not yet implemented")
+    }
+
+    override fun flush(player: List<Player>) {
+        TODO("Not yet implemented")
+    }
 }

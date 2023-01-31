@@ -403,6 +403,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
         // 强制更新
         if (forceUpdate) {
+            position.yaw = yaw
+            position.pitch = pitch
+            clientPosition.yaw = yaw
+            clientPosition.pitch = pitch
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !entityPathType.isFly())
         } else {
             teleport(clientPosition.toLocation().modify(yaw, pitch))
