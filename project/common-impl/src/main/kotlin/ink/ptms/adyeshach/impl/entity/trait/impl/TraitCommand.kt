@@ -4,10 +4,12 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
+import ink.ptms.adyeshach.impl.script.OperatorCommandSender
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
 import org.bukkit.entity.Player
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptCommandSender
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.console
 import taboolib.module.kether.KetherShell
@@ -31,22 +33,20 @@ object TraitCommand : Trait() {
         if (e.isMainHand && e.entity.uniqueId in data) {
             data.getStringList(e.entity.uniqueId).forEach {
                 when {
+                    // 管理员权限执行
                     it.startsWith("op:") -> {
-                        val isOp = e.player.isOp
-                        e.player.isOp = true
-                        try {
-                            adaptPlayer(e.player).performCommand(it.substringAfter("op:").trim().replace("@player", e.player.name).replacePlaceholder(e.player))
-                        } catch (ex: Throwable) {
-                            ex.printStackTrace()
-                        }
-                        e.player.isOp = isOp
+                        val sender = adaptCommandSender(OperatorCommandSender(e.player))
+                        sender.performCommand(it.substringAfter("op:").trim().replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
+                    // 服务器控制台执行
                     it.startsWith("server:") -> {
                         console().performCommand(it.substringAfter("server:").trim().replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
+                    // 服务器控制台执行
                     it.startsWith("console:") -> {
                         console().performCommand(it.substringAfter("console:").trim().replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
+                    // Kether 脚本执行
                     it.startsWith("kether:") -> {
                         runKether {
                             KetherShell.eval(it.substringAfter("kether:").trim(), namespace = listOf("adyeshach"), sender = adaptPlayer(e.player)) {
@@ -55,6 +55,7 @@ object TraitCommand : Trait() {
                             }
                         }
                     }
+                    // 普通命令执行
                     else -> {
                         adaptPlayer(e.player).performCommand(it.replace("@player", e.player.name).replacePlaceholder(e.player))
                     }
