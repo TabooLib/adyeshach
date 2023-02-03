@@ -26,13 +26,13 @@ class MetaPrimitive(val key: String) : MetaEditor {
     override fun open(entity: EntityInstance, player: Player, def: String) {
         when (getPreferenceInputType(player)) {
             InputType.SIGN -> {
-                player.inputSign(arrayOf(def.uncolored(), "", "", player.lang("input-sign"))) {
+                player.inputSign(arrayOf(def.replace('§', '&'), "", "", player.lang("input-sign"))) {
                     player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it[0] + it[1] + it[2]}")
                 }
             }
             InputType.CHAT -> {
                 player.clearScreen()
-                player.sendLang("editor-input-chat", def.uncolored())
+                player.sendLang("editor-input-chat", def.replace('§', '&'))
                 player.nextChat {
                     submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
                 }

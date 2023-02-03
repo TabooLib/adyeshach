@@ -56,7 +56,7 @@ interface MinecraftEntityMetadataHandler {
     /**
      * 生成 Optional<IChatBaseComponent\> 类型的元数据，对应 OPTIONAL_COMPONENT 字段。
      */
-    fun createOptionalComponentMeta(index: Int, text: String?): MinecraftMeta
+    fun createOptionalComponentMeta(index: Int, rawMessage: String?): MinecraftMeta
 
     /**
      * 生成 ItemStack 类型的元数据，对应 ITEM_STACK 字段。

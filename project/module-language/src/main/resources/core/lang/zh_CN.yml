@@ -293,6 +293,16 @@ editor-input-chat:
     args:
       - suggest: '{0}'
         hover: '点击复制'
+editor-input-chat-component:
+  - ==: JSON
+    args:
+      - hover: 点击复制
+        suggest: '{1}'
+      - hover: 点击复制
+        suggest: '{2}'
+    text: ' &5&l‹ ›&r &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}] &6\[[&6源]&6\]'
+  - ' &5&l‹ ›&r &7对于常规的复合文本, 可以直接使用原始字符串: &c(Minecraft 1.13+)'
+  - ' &5&l‹ ›&r &7例如 "&f&&ra你好&7" 而非 "&f{"text":"你好","color":"green"}&7"。'
 editor-input-book-name: '&f打开并输入内容'
 editor-input-book-description: '&7单位编辑器'
 editor-input-patrols-wait-time0: '请在第一行输入等待时间'

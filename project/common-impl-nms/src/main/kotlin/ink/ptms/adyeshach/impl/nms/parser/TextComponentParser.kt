@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
-import net.md_5.bungee.api.chat.TextComponent
+import ink.ptms.adyeshach.core.util.Components
 
 /**
  * Adyeshach
@@ -14,10 +14,10 @@ import net.md_5.bungee.api.chat.TextComponent
 class TextComponentParser : MinecraftMetadataParser<String>() {
 
     override fun parse(value: Any): String {
-        return if (value is TextComponent) value.text else value.toString()
+        return Components.toRawMessage(value)
     }
 
     override fun createMeta(index: Int, value: String): MinecraftMeta {
-        return metadataHandler().createOptionalComponentMeta(index, value.ifEmpty { null })
+         return metadataHandler().createOptionalComponentMeta(index, value.ifEmpty { null })
     }
 }

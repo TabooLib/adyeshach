@@ -42,7 +42,7 @@ object Inputs {
         if (e.previousBookMeta.displayName == Adyeshach.api().getLanguage().getLang(e.player, "editor-input-book-name")) {
             val listen = bookData.remove(e.player.name) ?: return
             val lines = e.newBookMeta.pages.flatMap {
-                TextComponent(it).toPlainText().replace("§0", "").split("\n")
+                TextComponent(it).toLegacyText().replace("§0", "").split("\n")
             }
             listen.accept(lines)
             submit(delay = 1) {

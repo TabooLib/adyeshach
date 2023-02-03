@@ -122,23 +122,23 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
-    override fun createOptionalComponentMeta(index: Int, text: String?): MinecraftMeta {
+    override fun createOptionalComponentMeta(index: Int, rawMessage: String?): MinecraftMeta {
         return DefaultMeta(
             when {
                 majorLegacy >= 11900 -> {
                     NMSDataWatcherItem(
                         NMSDataWatcherObject(index, NMSDataWatcherRegistry.OPTIONAL_COMPONENT),
-                        Optional.ofNullable(if (text == null) null else craftChatMessageFromString(text) as NMSIChatBaseComponent)
+                        Optional.ofNullable(if (rawMessage == null) null else craftChatMessageFromString(rawMessage) as NMSIChatBaseComponent)
                     )
                 }
-                majorLegacy >= 11400 -> {
+                majorLegacy >= 11300 -> {
                     NMS16DataWatcherItem(
                         NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.f),
-                        Optional.ofNullable(if (text == null) null else craftChatMessageFromString(text) as NMS16IChatBaseComponent)
+                        Optional.ofNullable(if (rawMessage == null) null else craftChatMessageFromString(rawMessage) as NMS16IChatBaseComponent)
                     )
                 }
                 else -> {
-                    NMS12DataWatcherItem(NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.d), text ?: "")
+                    NMS12DataWatcherItem(NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.d), rawMessage ?: "")
                 }
             }
         )
@@ -460,6 +460,6 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     fun craftChatMessageFromString(message: String): Any? {
-        return CraftChatMessage19.fromString(message)[0]
+        return CraftChatMessage19.fromJSON(message)
     }
 }

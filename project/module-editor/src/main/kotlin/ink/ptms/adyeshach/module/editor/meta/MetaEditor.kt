@@ -46,7 +46,9 @@ interface MetaEditor {
         fun getMetaEditor(meta: Meta<*>): MetaEditor? {
             return when (meta.def) {
                 // 基础类型
-                is Int, is Byte, is Float, is String, is TextComponent -> MetaPrimitive(meta.key)
+                is Int, is Byte, is Float, is String -> MetaPrimitive(meta.key)
+                // 文本类型
+                is TextComponent -> MetaText(meta.key)
                 // 材质相关
                 is ItemStack -> MetaItem(meta.key)
                 is MaterialData -> MetaItem.Mat(meta.key)
