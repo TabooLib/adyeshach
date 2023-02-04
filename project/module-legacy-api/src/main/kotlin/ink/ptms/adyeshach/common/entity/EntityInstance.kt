@@ -20,6 +20,7 @@ import ink.ptms.adyeshach.common.util.serializer.UnknownWorldException
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.ModelEngine
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.util.Components
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -401,7 +402,7 @@ abstract class EntityInstance(entityTypes: EntityTypes, v2: ink.ptms.adyeshach.c
     }
 
     fun getCustomName(): String {
-        return getMetadata("customName")
+        return Components.toLegacyText(getMetadata("customName"))
     }
 
     fun setPose(pose: BukkitPose) {

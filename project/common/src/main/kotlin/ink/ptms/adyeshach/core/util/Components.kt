@@ -14,7 +14,7 @@ import taboolib.module.nms.MinecraftVersion
  */
 object Components {
 
-    fun toPlainMessage(value: String): String {
+    fun toLegacyText(value: String): String {
         return if (value.startsWith('{') && value.endsWith('}')) {
             TextComponent(*ComponentSerializer.parse(value)).toLegacyText()
         } else {

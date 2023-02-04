@@ -139,6 +139,11 @@ interface GenericEntity {
     fun getCustomName(): String
 
     /**
+     * 获取自定义名称（原始信息）
+     */
+    fun getCustomNameRaw(): String
+
+    /**
      * 设置实体形态
      */
     fun setPose(pose: BukkitPose)
