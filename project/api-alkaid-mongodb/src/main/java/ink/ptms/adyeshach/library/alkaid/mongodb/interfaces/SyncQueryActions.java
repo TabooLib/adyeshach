@@ -18,8 +18,11 @@ package ink.ptms.adyeshach.library.alkaid.mongodb.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface SyncQueryActions {
+
+    boolean find(String collection, Map<String, Object> index);
 
     /**
      * 查询数据集合 符合的结果将进入 List 列表返回 需要提供泛型数据实体类类型

@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 
 public interface AsyncQueryActions {
 
+    void find(String collection, Map<String, Object> index, Consumer<Boolean> consumer);
+
     /**
      * 查询数据集合 符合的结果将进入 List 列表返回 需要提供泛型数据实体类类型
      *

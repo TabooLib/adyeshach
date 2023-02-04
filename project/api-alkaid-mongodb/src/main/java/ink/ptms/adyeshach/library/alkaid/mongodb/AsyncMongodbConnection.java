@@ -43,6 +43,13 @@ public class AsyncMongodbConnection implements WriteableActions, AsyncQueryActio
     }
 
     @Override
+    public void find(String collection, Map<String, Object> index, Consumer<Boolean> consumer) {
+        pool.submit(() -> consumer.accept(database.getCollection(collection)
+                .find(Document.parse(gson.toJsonTree(index, Map.class).toString()))
+                .first() != null));
+    }
+
+    @Override
     public void create(String collection, Object data) {
         database.getCollection(collection)
                 .insertOne(Document.parse(gson.toJson(data)));

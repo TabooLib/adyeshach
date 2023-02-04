@@ -39,6 +39,13 @@ public class SyncMongodbConnection implements WriteableActions, SyncQueryActions
     }
 
     @Override
+    public boolean find(String collection, Map<String, Object> index) {
+        return database.getCollection(collection)
+                .find(Document.parse(gson.toJsonTree(index, Map.class).toString()))
+                .first() != null;
+    }
+
+    @Override
     public void create(String collection, Object data) {
         database.getCollection(collection)
                 .insertOne(Document.parse(gson.toJson(data)));
