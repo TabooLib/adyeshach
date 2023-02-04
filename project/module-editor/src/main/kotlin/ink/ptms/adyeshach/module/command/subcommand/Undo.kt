@@ -3,10 +3,7 @@ package ink.ptms.adyeshach.module.command.subcommand
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
-import ink.ptms.adyeshach.core.util.asLang
-import ink.ptms.adyeshach.core.util.asLangList
-import ink.ptms.adyeshach.core.util.getEnum
-import ink.ptms.adyeshach.core.util.sendLang
+import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.module.command.EntityTracker
 import ink.ptms.adyeshach.module.command.toEgg
 import ink.ptms.adyeshach.module.editor.lang
@@ -81,7 +78,7 @@ private fun Player.openTrashMenu(search: String? = null) {
             // 类型
             val type = EntityTypes::class.java.getEnum(conf["entityType"].toString())
             // 展示名称
-            val customName = conf["gameProfile.name"] ?: conf["metadata.customName"] ?: type.name
+            val customName = conf["gameProfile.name"] ?: conf.getString("metadata.customName")?.let { Components.toLegacyText(it) } ?: type.name
             // 删除时间
             val time = System.currentTimeMillis() - element.lastModified()
             val timeString = buildString {
