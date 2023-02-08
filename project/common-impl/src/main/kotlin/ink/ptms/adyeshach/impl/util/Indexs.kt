@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.util
 
 import taboolib.common.util.random
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author sky
@@ -9,7 +10,7 @@ import taboolib.common.util.random
 @Suppress("SpellCheckingInspection", "GrazieInspection")
 object Indexs {
 
-    var index = 449599 + random(0, 702)
+    var index = AtomicInteger(449599 + random(0, 702))
 
     /**
      * int 最大值           2,147,483,647
@@ -18,6 +19,6 @@ object Indexs {
      * adyeshach npc             449,599 + (0~702)
      */
     fun nextIndex(): Int {
-        return index++
+        return index.getAndIncrement()
     }
 }

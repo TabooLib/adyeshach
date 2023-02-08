@@ -66,7 +66,7 @@ object PathFinderHandler {
             if (request == Request.NAVIGATION) {
                 val pathFinder = createPathfinder(NodeEntity(start, path.height, path.width))
                 // 最大 32 格的寻路请求
-                val findPath = pathFinder.findPath(target, distance = 32f)
+                val findPath = pathFinder.findPath(target, distance = 64f)
                 // 调试模式下将显示路径节点
                 if (AdyeshachSettings.debug) {
                     findPath?.nodes?.forEach { it.display(target.world!!) }
