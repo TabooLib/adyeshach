@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachHologram
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
@@ -63,6 +64,12 @@ object TraitTitle : Trait() {
                 remove(e.viewer, e.entity)
             }
         }
+    }
+
+    @SubscribeEvent
+    private fun onDelete(e: AdyeshachEntityRemoveEvent) {
+        e.entity.setTraitTitle(null)
+        e.entity.setTraitTitleHeight(null)
     }
 
     @SubscribeEvent
@@ -198,10 +205,14 @@ fun EntityInstance.getTraitTitle(): List<String> {
 }
 
 /** 设置实体头衔高度 */
-fun EntityInstance.setTraitTitleHeight(height: Double) {
-    TraitTitle.data["height.$uniqueId"] = height
-    TraitTitle.entityLookup[uniqueId]?.forEach {
-        it.value.teleport(getLocation().add(0.0, entitySize.height + getTraitTitleHeight(), 0.0))
+fun EntityInstance.setTraitTitleHeight(height: Double?) {
+    if (height == null) {
+        TraitTitle.data["height.$uniqueId"] = null
+    } else {
+        TraitTitle.data["height.$uniqueId"] = height
+        TraitTitle.entityLookup[uniqueId]?.forEach {
+            it.value.teleport(getLocation().add(0.0, entitySize.height + getTraitTitleHeight(), 0.0))
+        }
     }
 }
 
