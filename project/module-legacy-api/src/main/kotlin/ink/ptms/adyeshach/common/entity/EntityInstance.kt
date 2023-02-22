@@ -450,7 +450,7 @@ abstract class EntityInstance(entityTypes: EntityTypes, v2: ink.ptms.adyeshach.c
 
     @Throws(UnknownWorldException::class)
     open fun clone(newId: String, location: Location, manager: Manager? = null): EntityInstance? {
-        val clone = v2.clone(newId, getLocation(), manager?.v2()) ?: return null
+        val clone = v2.clone(newId, location, manager?.v2()) ?: return null
         return manager?.getEntityByUniqueId(clone.uniqueId)
     }
 
