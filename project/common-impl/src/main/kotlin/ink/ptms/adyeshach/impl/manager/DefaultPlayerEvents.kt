@@ -7,9 +7,12 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.core.util.safeDistance
+import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.util.Vector
+import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.library.reflex.Reflex.Companion.getProperty
@@ -59,6 +62,24 @@ internal object DefaultPlayerEvents {
     }
 
     /**
+     * 传送时更新管理器
+     */
+    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun onTeleport(e: PlayerTeleportEvent) {
+        if (e.from.world == e.to.world && e.from.distance(e.to) > AdyeshachSettings.visibleDistance) {
+            submit { Adyeshach.api().refreshEntityManager(e.player) }
+        }
+    }
+
+    /**
+     * 切换世界时更新管理器
+     */
+    @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    fun onTeleport(e: PlayerChangedWorldEvent) {
+        submit { Adyeshach.api().refreshEntityManager(e.player) }
+    }
+
+    /**
      * 延迟进入检查器
      * 交互判断
      */
@@ -97,6 +118,7 @@ internal object DefaultPlayerEvents {
                         "ATTACK" -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
+
                         "INTERACT_AT" -> {
                             val location = e.packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)

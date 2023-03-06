@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.type.errorBy
 import org.apache.commons.lang.time.DateFormatUtils
 import org.bukkit.Location
+import org.bukkit.util.Consumer
 import org.bukkit.util.Vector
 import taboolib.common.io.digest
 import taboolib.common.io.newFile
@@ -34,10 +35,34 @@ object PathFinderHandler {
      * @param start 起点
      * @param target 终点
      * @param path 路径类型
+     * @param call 回调函数
+     */
+    fun requestNavigation(start: Location, target: Location = start, path: PathType = PathType.WALK_2, call: Consumer<ResultNavigation>) {
+        return request(start, target, path, Request.NAVIGATION) { call.accept(it as ResultNavigation) }
+    }
+
+    /**
+     * 请求寻路路径
+     *
+     * @param start 起点
+     * @param target 终点
+     * @param path 路径类型
+     * @param call 回调函数
+     */
+    fun requestRandomPosition(start: Location, target: Location = start, path: PathType = PathType.WALK_2, call: Consumer<ResultRandomPosition>) {
+        return request(start, target, path, Request.RANDOM_POSITION) { call.accept(it as ResultRandomPosition) }
+    }
+
+    /**
+     * 请求寻路路径
+     *
+     * @param start 起点
+     * @param target 终点
+     * @param path 路径类型
      * @param request 请求方式
      * @param call 回调函数
      */
-    fun request(start: Location, target: Location = start, path: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: (Result) -> Unit) {
+    fun request(start: Location, target: Location = start, path: PathType = PathType.WALK_2, request: Request = Request.NAVIGATION, call: Consumer<Result>) {
         // 世界判断
         if (start.world!!.name != target.world!!.name) {
             errorBy("error-different-worlds")
@@ -84,7 +109,7 @@ object PathFinderHandler {
                     }
                 }
                 // 调用回调函数
-                call(ResultNavigation(pointList, startTime, scheduleTime))
+                call.accept(ResultNavigation(pointList, startTime, scheduleTime))
             } else {
                 var vec: Vector? = null
                 // 重复最多 10 次的游荡请求
@@ -94,7 +119,7 @@ object PathFinderHandler {
                     }
                 }
                 if (vec != null) {
-                    call(ResultRandomPosition(vec!!, startTime, scheduleTime))
+                    call.accept(ResultRandomPosition(vec!!, startTime, scheduleTime))
                 }
             }
         }
