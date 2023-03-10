@@ -98,7 +98,7 @@ public class ControllerLookAtPlayer extends Controller {
         double distance = 0;
         for (Player player : getEntity().getWorld().getPlayers()) {
             // 有效玩家
-            if (owner == null || owner == player) {
+            if (owner == null || owner.getName().equals(player.getName())) {
                 // 获取距离
                 double d = player.getLocation().distanceSquared(getEntity().getLocation());
                 // 判定距离并选择最近的玩家
@@ -146,6 +146,16 @@ public class ControllerLookAtPlayer extends Controller {
             double y = this.onlyHorizontal ? getEntity().getEyeLocation().getY() : this.lookAt.getEyeLocation().getY();
             getEntity().controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
             this.lookTime--;
+        }
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public String status() {
+        if (lookAt != null) {
+            return lookAt.getName() + " (" + lookTime + ")";
+        } else {
+            return null;
         }
     }
 

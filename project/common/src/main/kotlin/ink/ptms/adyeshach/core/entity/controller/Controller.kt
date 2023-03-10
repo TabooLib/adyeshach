@@ -57,6 +57,11 @@ abstract class Controller(var entity: EntityInstance? = null) : Comparable<Contr
     open fun tick() = Unit
 
     /**
+     * 调试数据
+     */
+    open fun status(): String? = null
+
+    /**
      * 是否异步运行
      */
     open fun isAsync() = false

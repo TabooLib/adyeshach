@@ -6,11 +6,11 @@ import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.impl.manager.*
 import ink.ptms.adyeshach.impl.storage.EntityStorage
 import org.bukkit.entity.Player
-import taboolib.common.TabooLibCommon
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.submitAsync
+import taboolib.common.platform.function.warning
 import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
 import java.util.concurrent.ConcurrentHashMap
@@ -82,6 +82,9 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
                 // 异步加载私有管理器
                 submitAsync { getPrivateEntityManager(player, ManagerType.PERSISTENT).onEnable() }
             }
+        } else {
+            // 重复执行警告
+            warning("Player ${player.name} has been setup entity manager.")
         }
     }
 
@@ -105,6 +108,9 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 移除管理器
             playerEntityManagerMap.remove(player.name)
             playerEntityTemporaryManagerMap.remove(player.name)
+        } else {
+            // 重复执行警告
+            warning("Player ${player.name} has been release entity manager.")
         }
     }
 

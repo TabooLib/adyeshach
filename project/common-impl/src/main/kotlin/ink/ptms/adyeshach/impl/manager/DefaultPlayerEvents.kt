@@ -67,7 +67,7 @@ internal object DefaultPlayerEvents {
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerTeleportEvent) {
         if (e.from.world == e.to.world && e.from.distance(e.to) > AdyeshachSettings.visibleDistance) {
-            submit { Adyeshach.api().refreshEntityManager(e.player) }
+            submit(delay = 20) { Adyeshach.api().refreshEntityManager(e.player) }
         }
     }
 
@@ -76,7 +76,7 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerChangedWorldEvent) {
-        submit { Adyeshach.api().refreshEntityManager(e.player) }
+        submit(delay = 20) { Adyeshach.api().refreshEntityManager(e.player) }
     }
 
     /**
