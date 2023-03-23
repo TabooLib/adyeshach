@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture
 class ActionCreate(val id: ParsedAction<*>, val type: String, val location: ParsedAction<*>) : ScriptAction<Void>() {
 
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
+        val future = CompletableFuture<Void>()
         val manager = frame.script().getManager() ?: errorBy("error-no-manager-selected")
         frame.newFrame(id).run<String>().thenAccept { id ->
             frame.newFrame(location).run<Location>().thenAccept { location ->
@@ -30,9 +31,10 @@ class ActionCreate(val id: ParsedAction<*>, val type: String, val location: Pars
                 val npc = manager.create(type, location)
                 npc.id = id
                 frame.script().setEntities(listOf(npc))
+                future.complete(null)
             }
         }
-        return CompletableFuture.completedFuture(null)
+        return future
     }
 
     companion object {

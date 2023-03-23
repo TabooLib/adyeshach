@@ -9,7 +9,7 @@ import ink.ptms.adyeshach.core.entity.controller.CustomSerializable
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
-import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.console
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.info
 import taboolib.common.util.asList
@@ -106,7 +106,7 @@ class KetherController(entity: EntityInstance, val root: ConfigurationSection) :
             script,
             ScriptOptions.builder()
                 .namespace(listOf("adyeshach", "adyeshach-inner", "chemdah"))
-                .sender(if (sender != null) adaptPlayer(sender) else null)
+                .sender(sender ?: console())
                 .vars(vars)
                 .build()
         )

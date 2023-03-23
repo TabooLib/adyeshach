@@ -18,7 +18,8 @@ import taboolib.common.util.resettableLazy
  */
 @RuntimeDependency(
     value = "!org.mongodb:mongo-java-driver:3.12.11",
-    test = "!com.mongodb_3_12_11.client.MongoDatabase"
+    test = "!com.mongodb_3_12_11.client.MongoDatabase",
+    relocate = ["com.mongodb", "com.mongodb_3_12_11"]
 )
 @Deprecated("1.0 保留功能")
 object EntityStorage {
