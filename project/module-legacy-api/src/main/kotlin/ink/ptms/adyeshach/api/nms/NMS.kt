@@ -80,11 +80,11 @@ abstract class NMS {
 
     abstract fun getMetaEntityEulerAngle(index: Int, value: EulerAngle): Any
 
-    abstract fun getMetaEntityVector(index: Int, value: Vector?): Any
+    abstract fun getMetaEntityOptVector(index: Int, value: Vector?): Any
 
-    abstract fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any
+    abstract fun getMetaEntityOptBlockData(index: Int, value: MaterialData?): Any
 
-    abstract fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any
+    abstract fun getMetaEntityOptChatBaseComponent(index: Int, name: String?): Any
 
     abstract fun getMetaItem(index: Int, itemStack: ItemStack): Any
 
@@ -237,16 +237,16 @@ abstract class NMS {
                 return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createEulerAngleMeta(index, value).source()
             }
 
-            override fun getMetaEntityVector(index: Int, value: Vector?): Any {
-                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createBlockPosMeta(index, value).source()
+            override fun getMetaEntityOptVector(index: Int, value: Vector?): Any {
+                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createOptBlockPosMeta(index, value).source()
             }
 
-            override fun getMetaEntityBlockData(index: Int, value: MaterialData?): Any {
-                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createBlockStateMeta(index, value).source()
+            override fun getMetaEntityOptBlockData(index: Int, value: MaterialData?): Any {
+                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createOptBlockStateMeta(index, value).source()
             }
 
-            override fun getMetaEntityChatBaseComponent(index: Int, name: String?): Any {
-                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createOptionalComponentMeta(index, name).source()
+            override fun getMetaEntityOptChatBaseComponent(index: Int, name: String?): Any {
+                return Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createOptChatMeta(index, name).source()
             }
 
             override fun getMetaItem(index: Int, itemStack: ItemStack): Any {

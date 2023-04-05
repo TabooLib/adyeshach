@@ -20,7 +20,7 @@ import taboolib.common.util.unsafeLazy
 @Suppress("UNCHECKED_CAST")
 class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: String, mask: Byte, def: Boolean) : MetaMasked<T>(index, key, group, mask, def) {
 
-    val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser(Byte.MIN_VALUE) as MinecraftMetadataParser<Any> }
+    val parser by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().getParser("Byte") as MinecraftMetadataParser<Any> }
 
     override fun getMetadataParser(): MinecraftMetadataParser<Any> {
         return parser

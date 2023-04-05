@@ -529,6 +529,11 @@ editor-meta-variant: '变体'
 editor-meta-name-tag-visible: '是否显示名称'
 editor-meta-collision: '是否启用碰撞箱'
 editor-meta-glowing-color: '发光颜色'
+editor-meta-frog-variant: '青蛙变体'
+editor-meta-tongue-target: '舌头目标'
+editor-meta-height: '高度'
+editor-meta-width: '宽度'
+editor-meta-responsive: '是否响应玩家'
 
 trait-patrol:
   - type: TITLE
@@ -675,3 +680,5 @@ group-experience_bottle0: '经验瓶 0'
 group-potion0: '药水 0'
 group-trident0: '三叉戟 0'
 group-tropical_fish0: '热带鱼 0'
+group-frog0: '青蛙 0'
+group-interaction0: '交互实体 0'

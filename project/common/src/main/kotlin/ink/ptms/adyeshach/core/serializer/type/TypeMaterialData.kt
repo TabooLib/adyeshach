@@ -16,7 +16,7 @@ class TypeMaterialData : JsonSerializer<MaterialData>, JsonDeserializer<Material
 
     override fun serialize(a: MaterialData, p1: Type, p2: JsonSerializationContext): JsonElement {
         return JsonObject().run {
-            addProperty("type", XMaterial.matchXMaterial(a.itemType).name)
+            addProperty("type", a.itemType.name)
             addProperty("data", a.data)
             this
         }

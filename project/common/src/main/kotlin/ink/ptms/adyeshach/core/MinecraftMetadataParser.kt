@@ -21,11 +21,5 @@ abstract class MinecraftMetadataParser<T> {
      */
     abstract fun createMeta(index: Int, value: T): MinecraftMeta
 
-    protected fun Any.toInt() = Coerce.toInteger(this)
-
-    protected fun Any.toByte() = Coerce.toByte(this)
-
-    protected fun Any.toDouble() = Coerce.toDouble(this)
-
     protected fun metadataHandler() = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
 }

@@ -238,5 +238,16 @@ enum class EntityTypes {
 
     PLAYER,
 
-    FISHING_HOOK;
+    FISHING_HOOK,
+
+    /**
+     * 1.19.4 新增
+     */
+    FROG,
+
+    TADPOLE,
+
+    INTERACTION,
+
+    ;
 }

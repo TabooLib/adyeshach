@@ -38,8 +38,8 @@ class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
         registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaMasked<EntityInstance>(index, key, group, mask, def)
     }
 
-    override fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any) {
-        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaNatural<Any, EntityInstance>(index, key, group, def)
+    override fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any, parserId: String) {
+        registeredEntityMeta.computeIfAbsent(type) { ArrayList() } += DefaultMetaNatural<Any, EntityInstance>(index, key, group, def, parserId)
     }
 
     override fun getEntityMeta(type: Class<*>): List<Meta<*>> {

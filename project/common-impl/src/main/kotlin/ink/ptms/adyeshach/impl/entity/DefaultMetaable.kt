@@ -49,12 +49,12 @@ interface DefaultMetaable : Metaable {
         }
         this as DefaultEntityInstance
         val eventBus = DefaultAdyeshachAPI.localEventBus
-        val event = MetaUpdateEvent(this, meta, key, value)
+        val event = MetaUpdateEvent(this, meta, key, meta.getMetadataParser().parse(value))
         if (eventBus.callMetaUpdate(event)) {
             if (meta is MetaMasked) {
                 metadataMask.computeIfAbsent(getByteMaskKey(meta.index)) { ConcurrentHashMap() }[key] = event.value as Boolean
             } else {
-                metadata[key] = event.value
+                metadata[key] = meta.getMetadataParser().parse(event.value)
             }
             meta.updateEntityMetadata(this)
             return true

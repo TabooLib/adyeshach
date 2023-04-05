@@ -23,7 +23,12 @@ import java.util.concurrent.ConcurrentHashMap
  * @since 2022/12/27 04:04
  */
 @Suppress("DuplicatedCode")
-class MetaEnum(val key: String, val enumClass: Class<*>, val useIndex: Boolean = true, val lowercase: Boolean = false) : MetaEditor {
+class MetaEnum(val key: String, val enumClass: Class<*>, var useIndex: Boolean = true, val lowercase: Boolean = false) : MetaEditor {
+
+    fun nameToKey(): MetaEnum {
+        useIndex = false
+        return this
+    }
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
         var enums = enumClass.enums().toList()

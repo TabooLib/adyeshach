@@ -7,7 +7,7 @@ import taboolib.library.xseries.XMaterial
  * @author sky
  * @since 2020-08-19 17:24
  */
-data class VillagerData(val type: Type, val profession: Profession) {
+data class VillagerData(val type: Type = Type.PLAINS, val profession: Profession = Profession.NONE) {
 
     override fun toString(): String {
         return "$type $profession"

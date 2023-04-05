@@ -12,17 +12,35 @@ enum class CustomType(val id: String) {
 
     EULER_ANGLE("EulerAngle"),
 
-    VECTOR("Vector"),
-
     ITEM_STACK("ItemStack"),
 
-    MATERIAL("Material"),
+    OPT_BLOCK_POS("OptBlockPos"),
+
+    OPT_BLOCK_ID("OptBlockID"),
+
+    BLOCK_ID("BlockID"),
+
+    OPT_CHAT("OptChat"),
+
+    CHAT("Chat"),
 
     PAINTING("Painting"),
 
     VILLAGER_DATA("VillagerData"),
 
-    TEXT_COMPONENT("TextComponent"),
-
     BUKKIT_POSE("BukkitPose"),
+
+    /**
+     * 1.19.4 新增
+     */
+
+    CAT_TYPE("Cat.Type"),
+
+    FROG_VARIANT("Frog.Variant"),
+
+    VECTOR3("Vector3"),
+
+    QUATERNION("Quaternion"),
+
+    ;
 }

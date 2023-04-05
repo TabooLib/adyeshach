@@ -12,6 +12,7 @@ import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
+import taboolib.common.platform.function.warning
 import taboolib.common5.format
 import java.util.concurrent.ConcurrentHashMap
 
@@ -39,7 +40,13 @@ class PagePrivateMeta(editor: EditPanel) : MetaPage(editor) {
                 // 获取有效的元数据
                 val meta = Adyeshach.api().getEntityMetadataRegistry().getEntityMeta(cla)
                     .filter { it in availableMeta }
-                    .filter { it.isBool() || MetaEditor.getMetaEditor(it) != null || MetaEditor.getCustomMetaEditor(entity, it.key) != null }
+                    .filter {
+                        val check = it.isBool() || MetaEditor.getMetaEditor(it) != null || MetaEditor.getCustomMetaEditor(entity, it.key) != null
+                        if (!check) {
+                            warning("Meta ${it.key} of ${entity.entityType} is not supported by editor. (${it.def.javaClass.simpleName})")
+                        }
+                        check
+                    }
                 if (meta.isNotEmpty()) {
                     activeMeta += meta
                 }

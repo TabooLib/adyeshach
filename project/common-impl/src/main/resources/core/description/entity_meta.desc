@@ -134,7 +134,7 @@ ink.ptms.adyeshach.core.entity.type.AdyBoat
         13 -
 
 ink.ptms.adyeshach.core.entity.type.AdyCat
-    type i
+    type !Cat.Type
         &cat1
         17 19
         15 -
@@ -176,7 +176,7 @@ ink.ptms.adyeshach.core.entity.type.AdyDolphin
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyEndCrystal
-    beamTarget !Vector
+    beamTarget !OptBlockPos
         &end_crystal0
         17 8
         14 -
@@ -196,7 +196,7 @@ ink.ptms.adyeshach.core.entity.type.AdyEndDragon
         09 -
 
 ink.ptms.adyeshach.core.entity.type.AdyEnderman
-    carriedBlock !Material
+    carriedBlock !OptBlockID
         &enderman0
         17 16
         15 -
@@ -240,6 +240,15 @@ ink.ptms.adyeshach.core.entity.type.AdyFox
         17 17
         15 -
         14 -
+
+# Frog
+ink.ptms.adyeshach.core.entity.type.AdyFrog
+    frogVariant !Frog.Variant
+        &frog0
+        19 17
+    tongueTarget i
+        &frog0
+        ~
 
 ink.ptms.adyeshach.core.entity.type.AdyGhast
     isAttacking z
@@ -286,6 +295,17 @@ ink.ptms.adyeshach.core.entity.type.AdyHorse
         14 -
         10 --
         09 -
+
+ink.ptms.adyeshach.core.entity.type.AdyInteraction
+    width f 0.5
+        &interaction0
+        19 8
+    height f 0.5
+        &interaction0
+        ~
+    responsive z true
+        &interaction0
+        ~
 
 ink.ptms.adyeshach.core.entity.type.AdyItem
     item !ItemStack APPLE
@@ -850,7 +870,7 @@ ink.ptms.adyeshach.core.entity.EntityInstance
     onFire 1b | isCrouched 2b | unUsedRiding 4b | isSprinting 8b | isSwimming 16b | isInvisible 32b | isGlowing 64b | isFlyingElytra 128b
         &base0
         0
-    customName !TextComponent
+    customName !OptChat
         &base1
         2
     isCustomNameVisible z

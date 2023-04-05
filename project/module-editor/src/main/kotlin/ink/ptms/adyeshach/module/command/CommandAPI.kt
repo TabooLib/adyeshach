@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
 import ink.ptms.adyeshach.module.editor.ChatEditor
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import taboolib.common.io.newFile
 import taboolib.common.platform.command.*
@@ -96,6 +97,9 @@ object CommandAPI {
         }
     }
 
+    /**
+     * 皮肤上传
+     */
     @CommandBody
     val uploadSkin = subCommand {
         dynamic("file") {
@@ -109,6 +113,34 @@ object CommandAPI {
             execute<CommandSender> { sender, ctx, _ ->
                 uploadSkin(sender, ctx["file"], AdyeshachNetworkAPI.SkinModel.DEFAULT)
             }
+        }
+    }
+
+    /**
+     * 检查
+     */
+    @CommandBody
+    val verify = subCommand {
+        execute<CommandSender> { sender, _, args ->
+            EntityType.values().forEach { type ->
+                try {
+                    Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromBukkit(type)
+                    sender.sendMessage("${ADYESHACH_PREFIX}Entity type §f\"${type.name}\"§7 is§a SUPPORTED")
+                } catch (ex: Throwable) {
+                    sender.sendMessage("${ADYESHACH_PREFIX}Entity type §f\"${type.name}\"§7 is§c UNSUPPORTED")
+                }
+            }
+        }
+    }
+
+    /**
+     * 刷新
+     */
+    @CommandBody
+    val refresh = subCommand {
+        execute<Player> { sender, _, _ ->
+            Adyeshach.api().refreshEntityManager(sender)
+            sender.sendMessage("${ADYESHACH_PREFIX}Refreshed.")
         }
     }
 

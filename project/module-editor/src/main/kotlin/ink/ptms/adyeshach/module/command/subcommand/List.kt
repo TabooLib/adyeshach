@@ -45,7 +45,7 @@ private fun Player.openListMenu(search: String? = null) {
             // 构建物品
             buildItem(element.entityType.toEgg()) {
                 name = asLang("command-list-item-name", element.id, element.getLocation().safeDistance(location).format())
-                lore += asLangList("command-list-item-description", type.name, element.getDisplayName())
+                lore += asLangList("command-list-item-description", element.entityType, element.getDisplayName())
             }
         }
         onClick { e, element ->

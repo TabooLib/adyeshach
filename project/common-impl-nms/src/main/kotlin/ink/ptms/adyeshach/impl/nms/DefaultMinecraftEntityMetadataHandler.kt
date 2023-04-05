@@ -7,15 +7,14 @@ import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
-import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.entity.Cat
-import org.bukkit.entity.Frog
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.warning
+import taboolib.common5.Quat
 import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
@@ -29,53 +28,47 @@ import java.util.*
 class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     val majorLegacy = MinecraftVersion.majorLegacy
-
-    val intParser = IntParser()
-    val byteParser = ByteParser()
-    val floatParser = FloatParser()
-    val booleanParser = BooleanParser()
-    val registeredParser = LinkedHashMap<Class<*>, MinecraftMetadataParser<*>>()
+    val registeredParser = LinkedHashMap<String, MinecraftMetadataParser<*>>()
 
     val helper: MinecraftHelper
         get() = Adyeshach.api().getMinecraftAPI().getHelper()
 
     init {
-        addParser(UUID::class.java, UUIDParser())
-        addParser(String::class.java, StringParser())
-        addParser(Vector::class.java, BlockPosParser())
-        addParser(ItemStack::class.java, ItemStackParser())
-        addParser(EulerAngle::class.java, EulerAngleParser())
-        addParser(MaterialData::class.java, BlockStateParser())
-        addParser(VillagerData::class.java, VillagerDataParser())
-        addParser(TextComponent::class.java, TextComponentParser())
-        addParser(BukkitParticles::class.java, BukkitParticleParser())
-        addParser(BukkitPose::class.java, BukkitPoseParser())
+        addParser("Int", IntParser())
+        addParser("Byte", ByteParser())
+        addParser("Float", FloatParser())
+        addParser("Boolean", BooleanParser())
+        addParser("UUID", UUIDParser())
+        addParser("String", StringParser())
+        addParser("Chat", ChatParser())
+        addParser("OptChat", OptChatParser())
+        addParser("BlockID", BlockStateParser())
+        addParser("OptBlockID", OptBlockStateParser())
+        addParser("OptBlockPos", OptBlockPosParser())
+        addParser("ItemStack", ItemStackParser())
+        addParser("EulerAngle", EulerAngleParser())
+        addParser("VillagerData", VillagerDataParser())
+        addParser("Particle", BukkitParticleParser())
+        addParser("BukkitPose", BukkitPoseParser())
         // 1.19+
         if (MinecraftVersion.majorLegacy >= 11900) {
-            addParser(Cat.Type::class.java, CatVariantParser())
-            addParser(Frog.Variant::class.java, FrogVariantParser())
-            addParser(Art::class.java, PaintingVariantParser())
+            addParser("Cat.Type", CatVariantParser())
+            addParser("Frog.Variant", FrogVariantParser())
+            addParser("Art", PaintingVariantParser())
+        }
+        // 1.19.4+
+        if (MinecraftVersion.majorLegacy >= 11904) {
+            addParser("Vector3", Vector3Parser())
+            addParser("Quaternion", QuaternionParser())
         }
     }
 
-    override fun addParser(type: Class<*>, metadataParser: MinecraftMetadataParser<*>) {
-        registeredParser[type] = metadataParser
+    override fun addParser(id: String, metadataParser: MinecraftMetadataParser<*>) {
+        registeredParser[id] = metadataParser
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> getParser(data: T): MinecraftMetadataParser<T>? {
-        when (data) {
-            is Int -> return intParser as MinecraftMetadataParser<T>
-            is Byte -> return byteParser as MinecraftMetadataParser<T>
-            is Float -> return floatParser as MinecraftMetadataParser<T>
-            is Boolean -> return booleanParser as MinecraftMetadataParser<T>
-        }
-        registeredParser.entries.forEach { (k, v) ->
-            if (k.isAssignableFrom((data as Any).javaClass)) {
-                return v as MinecraftMetadataParser<T>
-            }
-        }
-        return null
+    override fun getParser(id: String): MinecraftMetadataParser<*>? {
+        return registeredParser[id]
     }
 
     override fun getParsers(): List<MinecraftMetadataParser<*>> {
@@ -122,7 +115,22 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
-    override fun createOptionalComponentMeta(index: Int, rawMessage: String?): MinecraftMeta {
+    override fun createChatMeta(index: Int, rawMessage: String): MinecraftMeta {
+        return DefaultMeta(
+            when {
+                majorLegacy >= 11900 -> {
+                    NMSDataWatcherItem(
+                        NMSDataWatcherObject(index, NMSDataWatcherRegistry.COMPONENT),
+                        craftChatMessageFromString(rawMessage) as NMSIChatBaseComponent
+                    )
+                }
+                // 因只在 1.19.4 有应用, 因此不做低版本兼容
+                else -> error("Unsupported version.")
+            }
+        )
+    }
+
+    override fun createOptChatMeta(index: Int, rawMessage: String?): MinecraftMeta {
         return DefaultMeta(
             when {
                 majorLegacy >= 11900 -> {
@@ -175,9 +183,21 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
-    override fun createBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta {
+    override fun createBlockStateMeta(index: Int, blockData: MaterialData): MinecraftMeta {
         return DefaultMeta(
             when {
+                majorLegacy >= 11904 -> NMSJ17.instance.createBlockStateMeta(index, blockData)
+                else -> error("Unsupported version: $majorLegacy")
+            }
+        )
+    }
+
+    override fun createOptBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta {
+        return DefaultMeta(
+            when {
+                // 在 1.19.4 版本中，BLOCK_STATE 表示 IBlockData ———— 由 OPTIONAL_BLOCK_STATE 代替 Optional<IBlockData>
+                majorLegacy >= 11904 -> NMSJ17.instance.createOptBlockStateMeta(index, blockData)
+                // 在 1.19.3 版本中，BLOCK_STATE 表示 Optional<IBlockData>
                 majorLegacy >= 11900 -> {
                     NMSDataWatcherItem(
                         NMSDataWatcherObject(index, NMSDataWatcherRegistry.BLOCK_STATE),
@@ -240,7 +260,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         }
     }
 
-    override fun createBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta {
+    override fun createOptBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta {
         return DefaultMeta(
             when {
                 majorLegacy >= 11900 -> {
@@ -396,7 +416,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta {
         return if (majorLegacy >= 11903) {
-            NMSJ17.instance.createCatVariantMeta(index, type as Cat.Type)
+            DefaultMeta(NMSJ17.instance.createCatVariantMeta(index, type as Cat.Type))
         } else {
             DefaultMeta(
                 NMSDataWatcherItem(
@@ -457,6 +477,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 }
             }
         )
+    }
+
+    override fun createVector3Meta(index: Int, value: Vector): MinecraftMeta {
+        return DefaultMeta(NMSJ17.instance.createVector3Meta(index, value))
+    }
+
+    override fun createQuaternionMeta(index: Int, value: Quat): MinecraftMeta {
+        return DefaultMeta(NMSJ17.instance.createQuaternionMeta(index, value))
     }
 
     fun craftChatMessageFromString(message: String): Any? {

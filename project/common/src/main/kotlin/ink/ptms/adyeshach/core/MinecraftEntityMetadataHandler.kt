@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
+import taboolib.common5.Quat
 import java.util.UUID
 
 /**
@@ -21,12 +22,12 @@ interface MinecraftEntityMetadataHandler {
     /**
      * 注册元数据鉴别器
      */
-    fun addParser(type: Class<*>, metadataParser: MinecraftMetadataParser<*>)
+    fun addParser(id: String, metadataParser: MinecraftMetadataParser<*>)
 
     /**
      * 获取对应元数据鉴别器
      */
-    fun <T> getParser(data: T): MinecraftMetadataParser<T>?
+    fun  getParser(id: String): MinecraftMetadataParser<*>?
 
     /**
      * 获取所有元数据鉴别器
@@ -54,9 +55,14 @@ interface MinecraftEntityMetadataHandler {
     fun createStringMeta(index: Int, value: String): MinecraftMeta
 
     /**
+     * 生成 IChatBaseComponent 类型的元数据，对应 COMPONENT 字段。
+     */
+    fun createChatMeta(index: Int, rawMessage: String): MinecraftMeta
+
+    /**
      * 生成 Optional<IChatBaseComponent\> 类型的元数据，对应 OPTIONAL_COMPONENT 字段。
      */
-    fun createOptionalComponentMeta(index: Int, rawMessage: String?): MinecraftMeta
+    fun createOptChatMeta(index: Int, rawMessage: String?): MinecraftMeta
 
     /**
      * 生成 ItemStack 类型的元数据，对应 ITEM_STACK 字段。
@@ -64,9 +70,14 @@ interface MinecraftEntityMetadataHandler {
     fun createItemStackMeta(index: Int, itemStack: ItemStack): MinecraftMeta
 
     /**
-     * 生成 Optional<IBlockData> 类型的元数据，对应 BLOCK_DATA 字段
+     * 生成 IBlockData 类型的元数据，对应 BLOCK_DATA 字段 (1.19.4 以下没有此字段)
      */
-    fun createBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta
+    fun createBlockStateMeta(index: Int, blockData: MaterialData): MinecraftMeta
+
+    /**
+     * 生成 Optional<IBlockData> 类型的元数据，对应 OPTIONAL_BLOCK_DATA (1.19.4 以下为 BLOCK_DATA) 字段
+     */
+    fun createOptBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta
     
     /**
      * 生成 Boolean 类型的元数据
@@ -83,7 +94,7 @@ interface MinecraftEntityMetadataHandler {
     /**
      * 生成 Vector3f 类型的元数据，对应 OPTIONAL_BLOCK_POS 字段
      */
-    fun createBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta
+    fun createOptBlockPosMeta(index: Int, vector: Vector?): MinecraftMeta
 
     /**
      * 生成 Vector3f 类型的元数据，对应 ROTATIONS 字段
@@ -124,9 +135,19 @@ interface MinecraftEntityMetadataHandler {
     fun createFrogVariantMeta(index: Int, type: Any): MinecraftMeta
 
     /**
-     * 生成 Holder<PaintingVariant> 类型的元数据，对应 PAINTING_VARIANT 字段
+     * 生成 Holder<PaintingVariant\> 类型的元数据，对应 PAINTING_VARIANT 字段
      *
      * 1.19+
      */
     fun createPaintingVariantMeta(index: Int, type: Any): MinecraftMeta
+
+    /**
+     * 生成 Vector3 类型的元数据，对应 VECTOR3 字段 (1.19.4 以下没有此字段)
+     */
+    fun createVector3Meta(index: Int, value: Vector): MinecraftMeta
+
+    /**
+     * 生成 Quaternion 类型的元数据，对应 QUATERNION 字段 (1.19.4 以下没有此字段)
+     */
+    fun createQuaternionMeta(index: Int, value: Quat): MinecraftMeta
 }

@@ -20,7 +20,7 @@ interface AdyeshachEntityMetadataRegistry {
     /**
      * 注册元数据模型（专业类型）
      */
-    fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any)
+    fun registerEntityMetaNatural(type: Class<*>, index: Int, group: String, key: String, def: Any, parserId: String)
 
     /**
      * 获取实体的元数据

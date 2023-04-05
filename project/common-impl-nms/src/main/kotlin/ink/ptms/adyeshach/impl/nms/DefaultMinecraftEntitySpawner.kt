@@ -11,7 +11,9 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
+import taboolib.common.platform.function.info
 import taboolib.common.util.unsafeLazy
+import taboolib.common5.cshort
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.UnsafeAccess
@@ -124,6 +126,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             9, 10, 11 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
+                // 类型
                 when (major) {
                     // 1.17, 1.18 写法相同
                     // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
@@ -134,9 +137,11 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                         when (minor) {
                             // 1.19, 1.19.1, 1.19.2 -> this.type = (EntityTypes)var0.readById(IRegistry.ENTITY_TYPE);
                             0, 1, 2 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
-                            // 1.19.3               -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
+                            // 1.19.3, 1.19.4       -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
                             // 注意从该版本开始 RegistryBlocks 的类型发生变化，无法在同一个模块内向下兼容
-                            3 -> writeVarInt(NMSJ17.instance.entityTypeGetId(helper.adapt(entityType)))
+                            3, 4 -> writeVarInt(NMSJ17.instance.entityTypeGetId(helper.adapt(entityType)))
+                            // 其他版本 -> error
+                            else -> error("Unsupported version.")
                         }
                     }
                 }
@@ -149,7 +154,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeByte(yaw)
                 // yHeadRot -> yaw -> 横向视角
                 // 1.19 才有这个
-                if (major == 11) {
+                if (major >= 11) {
                     writeByte(yaw)
                     writeVarInt(data)
                 } else {
@@ -404,5 +409,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             BukkitDirection.EAST -> 3
             else -> error("Unsupported direction.")
         }
+    }
+
+    fun clamp(value: Double, min: Double, max: Double): Double {
+        return if (value < min) min else if (value > max) max else value
     }
 }

@@ -6,18 +6,18 @@ import ink.ptms.adyeshach.core.util.Components
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.nms.parser.TextComponentParser
+ * ink.ptms.adyeshach.impl.nms.parser.ChatParser
  *
  * @author 坏黑
  * @since 2022/6/28 18:38
  */
-class TextComponentParser : MinecraftMetadataParser<String>() {
+class ChatParser : MinecraftMetadataParser<String>() {
 
     override fun parse(value: Any): String {
         return Components.toRawMessage(value)
     }
 
     override fun createMeta(index: Int, value: String): MinecraftMeta {
-         return metadataHandler().createOptionalComponentMeta(index, value.ifEmpty { null })
+         return metadataHandler().createOptChatMeta(index, value.ifEmpty { null })
     }
 }

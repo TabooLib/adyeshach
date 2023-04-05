@@ -11,7 +11,7 @@ import java.lang.reflect.Type
  * @since 2020-08-20 20:10
  */
 @SerializerType(baseClass = Vector::class)
-class TypePosition : JsonSerializer<Vector>, JsonDeserializer<Vector> {
+class TypeVector : JsonSerializer<Vector>, JsonDeserializer<Vector> {
 
     override fun serialize(a: Vector, p1: Type, p2: JsonSerializationContext): JsonElement {
         return JsonObject().run {

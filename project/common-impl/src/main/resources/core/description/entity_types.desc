@@ -925,3 +925,36 @@ ink.ptms.adyeshach.core.entity.type.AdyFishingHook
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
     5
     TESTING INVALID
+
+#################################
+#                               #
+#      UPDATE IN 1.19.4         #
+#                               #
+#################################
+
+# Frog
+ink.ptms.adyeshach.core.entity.type.AdyFrog
+    FROG
+    -1
+    0.5 0.5
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+# Tadpole
+ink.ptms.adyeshach.core.entity.type.AdyTadpole
+    TADPOLE
+    -1
+    0.3 0.4
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+# Interaction
+ink.ptms.adyeshach.core.entity.type.AdyInteraction
+    INTERACTION
+    -1
+    0.0 0.0
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2

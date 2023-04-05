@@ -79,7 +79,7 @@ inline fun <reified T : EntitySource> multiControl(
         npcList.size > 1 -> {
             // 控制台执行
             if (sender !is Player) {
-                sender.sendLang("command-find-more-in-console")
+                sender.sendLang("command-find-more-in-console", id)
                 return
             }
             EntityTracker.trackerMap.put(sender.name, EntityTracker(sender, action, T::class.java.invokeConstructor(npcList)).printById(id))

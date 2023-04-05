@@ -4,7 +4,10 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import org.bukkit.entity.Cat
+import org.bukkit.material.MaterialData
+import org.bukkit.util.Vector
 import taboolib.common.util.unsafeLazy
+import taboolib.common5.Quat
 import taboolib.module.nms.nmsProxy
 import java.util.*
 
@@ -20,7 +23,15 @@ abstract class NMSJ17 {
 
     abstract fun entityTypeGetId(any: Any): Int
 
-    abstract fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta
+    abstract fun createVector3Meta(index: Int, value: Vector): Any
+
+    abstract fun createQuaternionMeta(index: Int, quat: Quat): Any
+
+    abstract fun createBlockStateMeta(index: Int, materialData: MaterialData): Any
+
+    abstract fun createOptBlockStateMeta(index: Int, materialData: MaterialData?): Any
+
+    abstract fun createCatVariantMeta(index: Int, type: Cat.Type): Any
 
     abstract fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any
 

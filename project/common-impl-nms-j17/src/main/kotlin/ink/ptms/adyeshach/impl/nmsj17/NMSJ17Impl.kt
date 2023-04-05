@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
+import ink.ptms.adyeshach.impl.nms.*
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.PacketDataSerializer
@@ -19,6 +20,12 @@ import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
 import org.bukkit.entity.Cat
+import org.bukkit.material.MaterialData
+import org.bukkit.util.Vector
+import org.joml.Quaternionf
+import org.joml.Vector3f
+import taboolib.common5.Quat
+import taboolib.common5.cfloat
 import java.util.*
 
 /**
@@ -51,23 +58,39 @@ class NMSJ17Impl : NMSJ17() {
         return ir.getId(any as EntityTypes<*>)
     }
 
-    override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
-        val item = DataWatcher.Item(
-            DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT),
-            CatVariant(when (type) {
-                Cat.Type.TABBY -> CatVariant.TABBY
-                Cat.Type.BLACK -> CatVariant.BLACK
-                Cat.Type.RED -> CatVariant.RED
-                Cat.Type.SIAMESE -> CatVariant.SIAMESE
-                Cat.Type.BRITISH_SHORTHAIR -> CatVariant.BRITISH_SHORTHAIR
-                Cat.Type.CALICO -> CatVariant.CALICO
-                Cat.Type.PERSIAN -> CatVariant.PERSIAN
-                Cat.Type.RAGDOLL -> CatVariant.RAGDOLL
-                Cat.Type.WHITE -> CatVariant.WHITE
-                Cat.Type.JELLIE -> CatVariant.JELLIE
-                Cat.Type.ALL_BLACK -> CatVariant.ALL_BLACK
-            }.location())
+    override fun createVector3Meta(index: Int, value: Vector): Any {
+        return NMSDataWatcherItem(
+            NMSDataWatcherObject(index, DataWatcherRegistry.VECTOR3),
+            Vector3f(value.x.cfloat, value.y.cfloat, value.z.cfloat)
         )
+    }
+
+    override fun createQuaternionMeta(index: Int, quat: Quat): Any {
+        return NMSDataWatcherItem(
+            NMSDataWatcherObject(index, DataWatcherRegistry.QUATERNION),
+            Quaternionf(quat.x(), quat.y(), quat.z(), quat.w())
+        )
+    }
+
+    override fun createBlockStateMeta(index: Int, materialData: MaterialData): Any {
+        return NMSDataWatcherItem(
+            NMSDataWatcherObject(index, DataWatcherRegistry.BLOCK_STATE),
+            CraftMagicNumbers19.getBlock(materialData)
+        )
+    }
+
+    override fun createOptBlockStateMeta(index: Int, materialData: MaterialData?): Any {
+        return NMSDataWatcherItem(
+            NMSDataWatcherObject(index, DataWatcherRegistry.OPTIONAL_BLOCK_STATE),
+            Optional.ofNullable(if (materialData == null) null else CraftMagicNumbers19.getBlock(materialData))
+        )
+    }
+
+    override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
+        val ir = BuiltInRegistries.CAT_VARIANT as IRegistry<CatVariant>
+        val texture = "textures/entity/cat/${type.name.lowercase()}.png"
+        val variant = ir.first { it.texture.path == texture }
+        val item = DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
         return object : MinecraftMeta {
 
             override fun source() = item

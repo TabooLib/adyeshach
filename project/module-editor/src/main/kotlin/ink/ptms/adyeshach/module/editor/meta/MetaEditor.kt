@@ -10,6 +10,7 @@ import ink.ptms.adyeshach.module.editor.meta.impl.*
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
+import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -35,7 +36,7 @@ interface MetaEditor {
                 EditType.SIGN -> MetaPrimitive(key)
                 EditType.EQUIPMENT -> MetaEquipment()
                 EditType.FALLING_BLOCK -> MetaItem.FallingBlock()
-                EditType.CHAT_COLOR -> MetaEnum(key, ChatColor::class.java, useIndex = false)
+                EditType.CHAT_COLOR -> MetaEnum(key, ChatColor::class.java).nameToKey()
                 else -> error("Unsupported type: $type")
             }
         }
@@ -80,7 +81,7 @@ interface MetaEditor {
                 entity is AdyLlama && key == "carpetColor" -> MetaEnum(key, DyeColor::class.java)
                 entity is AdyLlama && key == "color" -> MetaEnum(key, Llama.Color::class.java)
                 // 猫
-                entity is AdyCat && key == "type" -> MetaEnum(key, Cat.Type::class.java)
+                entity is AdyCat && key == "type" -> MetaEnum(key, Cat.Type::class.java).nameToKey()
                 entity is AdyCat && key == "color" -> MetaEnum(key, DyeColor::class.java)
                 // 船
                 entity is AdyBoat && key == "type" -> MetaEnum(key, BukkitBoat::class.java)
@@ -89,28 +90,28 @@ interface MetaEditor {
                 entity is AdyShulker && key == "attachFace" -> MetaEnum(key, BukkitDirection::class.java)
                 entity is AdyShulker && key == "color" -> MetaEnum(key, DyeColor::class.java)
                 // 羊
-                entity is AdySheep && key == "dyeColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)
+                entity is AdySheep && key == "dyeColor" -> MetaEnum(key, DyeColor::class.java).nameToKey()
                 // 豹猫
                 entity is AdyOcelot && key == "type" -> MetaEnum(key, BukkitOcelotType::class.java)
                 // 狐狸
                 entity is AdyFox && key == "type" -> MetaEnum(key, Fox.Type::class.java)
                 // 蘑菇
-                entity is AdyMushroom && key == "type" -> MetaEnum(key, MushroomCow.Variant::class.java, useIndex = false, lowercase = true)
+                entity is AdyMushroom && key == "type" -> MetaEnum(key, MushroomCow.Variant::class.java, lowercase = true).nameToKey()
                 // 热带鱼
-                entity is AdyTropicalFish && key == "bodyColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)
-                entity is AdyTropicalFish && key == "patternColor" -> MetaEnum(key, DyeColor::class.java, useIndex = false)
-                entity is AdyTropicalFish && key == "pattern" -> MetaEnum(key, TropicalFish.Pattern::class.java, useIndex = false)
+                entity is AdyTropicalFish && key == "bodyColor" -> MetaEnum(key, DyeColor::class.java).nameToKey()
+                entity is AdyTropicalFish && key == "patternColor" -> MetaEnum(key, DyeColor::class.java).nameToKey()
+                entity is AdyTropicalFish && key == "pattern" -> MetaEnum(key, TropicalFish.Pattern::class.java).nameToKey()
                 // 村民
-                entity is AdyVillager && key == "profession" -> MetaEnum(key, BukkitProfession::class.java, useIndex = false)
+                entity is AdyVillager && key == "profession" -> MetaEnum(key, BukkitProfession::class.java).nameToKey()
                 // 药水云
-                entity is AdyAreaEffectCloud && key == "particle" -> MetaEnum(key, BukkitParticles::class.java, useIndex = false)
+                entity is AdyAreaEffectCloud && key == "particle" -> MetaEnum(key, BukkitParticles::class.java).nameToKey()
                 entity is AdyAreaEffectCloud && key == "color" -> MetaColor(key)
                 // 画
-                entity is AdyPainting && key == "painting" -> MetaEnum(key, BukkitPaintings::class.java, useIndex = false)
-                entity is AdyPainting && key == "direction" -> MetaEnum(key, BukkitDirection::class.java, useIndex = false)
+                entity is AdyPainting && key == "painting" -> MetaEnum(key, BukkitPaintings::class.java).nameToKey()
+                entity is AdyPainting && key == "direction" -> MetaEnum(key, BukkitDirection::class.java).nameToKey()
                 // 马
-                entity is AdyHorse && key == "color" -> MetaEnum(key, Horse.Color::class.java, useIndex = false)
-                entity is AdyHorse && key == "style" -> MetaEnum(key, Horse.Style::class.java, useIndex = false)
+                entity is AdyHorse && key == "color" -> MetaEnum(key, Horse.Color::class.java).nameToKey()
+                entity is AdyHorse && key == "style" -> MetaEnum(key, Horse.Style::class.java).nameToKey()
                 // 箭
                 entity is AdyArrow && key == "color" -> MetaColor(key)
                 // 生物
@@ -119,8 +120,10 @@ interface MetaEditor {
                 entity is AdyMinecart && key == "customBlock" -> MetaItem.Minecart()
                 // 水晶
                 entity is AdyEndCrystal && key == "beamTarget" -> MetaVector(key)
+                // 青蛙
+                entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, Frog.Variant::class.java).nameToKey()
                 // 实体
-                key == "pose" -> MetaEnum(key, BukkitPose::class.java, useIndex = false)
+                key == "pose" -> MetaEnum(key, BukkitPose::class.java).nameToKey()
                 // 不支持
                 else -> null
             }

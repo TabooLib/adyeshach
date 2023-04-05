@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import org.bukkit.entity.Frog
+import taboolib.common.platform.function.info
 
 /**
  * Adyeshach

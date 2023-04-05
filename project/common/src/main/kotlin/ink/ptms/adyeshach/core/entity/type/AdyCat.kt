@@ -27,7 +27,7 @@ interface AdyCat : AdyEntityTameable {
     }
 
     fun getType(): Cat.Type {
-        return Cat.Type.values()[getMetadata("type")]
+        return getMetadata("type")
     }
 
     fun setCollarColor(value: DyeColor) {
