@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.core.util
 
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.chat.ComponentSerializer
+import taboolib.module.chat.ComponentText
 import taboolib.module.chat.RawMessage
 import taboolib.module.nms.MinecraftVersion
 
@@ -26,6 +27,7 @@ object Components {
         return if (MinecraftVersion.majorLegacy >= 11300) {
             when (value) {
                 is TextComponent -> RawMessage().append(value.text).toRawMessage()
+                is ComponentText -> value.toRawMessage()
                 is RawMessage -> value.toRawMessage()
                 else -> {
                     val str = value.toString()
@@ -39,6 +41,7 @@ object Components {
         } else {
             when (value) {
                 is TextComponent -> value.text
+                is ComponentText -> value.toLegacyText()
                 is RawMessage -> value.toLegacyText()
                 else -> {
                     val str = value.toString()

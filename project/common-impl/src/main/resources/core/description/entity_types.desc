@@ -958,3 +958,12 @@ ink.ptms.adyeshach.core.entity.type.AdyInteraction
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
     2
+
+# Text Display
+ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
+    TEXT_DISPLAY
+    -1
+    0.0 0.0
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultTextDisplay
+    2

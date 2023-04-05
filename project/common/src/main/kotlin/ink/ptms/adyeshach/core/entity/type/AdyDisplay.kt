@@ -67,8 +67,8 @@ interface AdyDisplay : AdyEntity {
         return getMetadata("billboardConstraints")
     }
 
-    fun setBrightnessOverride(value: Brightness) {
-        setMetadata("brightnessOverride", value.blockLight shl 4 or (value.skyLight shl 20))
+    fun setBrightnessOverride(value: Brightness?) {
+        setMetadata("brightnessOverride", if (value != null) value.blockLight shl 4 or (value.skyLight shl 20) else -1)
     }
 
     fun getBrightnessOverride(): Int {

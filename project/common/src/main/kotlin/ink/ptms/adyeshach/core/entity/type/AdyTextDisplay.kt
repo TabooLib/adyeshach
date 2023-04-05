@@ -37,17 +37,29 @@ interface AdyTextDisplay : AdyDisplay {
         return getMetadata("textOpacity")
     }
 
-    fun setShadow(value: Boolean)
+    fun setShadow(value: Boolean) {
+        setMetadata("shadow", value)
+    }
 
-    fun isShadow(): Boolean
+    fun isShadow(): Boolean {
+        return getMetadata("shadow")
+    }
 
-    fun setSeeThrough(value: Boolean)
+    fun setSeeThrough(value: Boolean) {
+        setMetadata("seeThrough", value)
+    }
 
-    fun isSeeThrough(): Boolean
+    fun isSeeThrough(): Boolean {
+        return getMetadata("seeThrough")
+    }
 
-    fun setUseDefaultBackgroundColor(value: Boolean)
+    fun setUseDefaultBackgroundColor(value: Boolean) {
+        setMetadata("useDefaultBackgroundColor", value)
+    }
 
-    fun isUseDefaultBackgroundColor(): Boolean
+    fun isUseDefaultBackgroundColor(): Boolean {
+        return getMetadata("useDefaultBackgroundColor")
+    }
 
     fun setAlignment(value: TextDisplay.TextAligment)
 

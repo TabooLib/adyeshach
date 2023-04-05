@@ -29,7 +29,7 @@ ink.ptms.adyeshach.core.entity.type.AdyArmorStand
         &armor_stand1
         17 16
         15 -
-        14 -
+        14 -1
         10 --
         09 -
     angleBody !EulerAngle
@@ -571,6 +571,23 @@ ink.ptms.adyeshach.core.entity.type.AdyStrider
         &strider0
         ~
 
+ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
+    text !Chat
+        &text_display0
+        19 22
+    lineWidth i 200
+        &text_display0
+        ~
+    backgroundColor i 1073741824
+        &text_display0
+        ~
+    textOpacity i -1
+        &text_display0
+        ~
+    shadow 1b | seeThrough 2b | useDefaultBackgroundColor 4b | alignmentLeft 8b | alignmentRight 16b
+        &text_display1
+        ~
+
 ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
     item !ItemStack EGG
         &egg0
@@ -885,3 +902,47 @@ ink.ptms.adyeshach.core.entity.EntityInstance
     ticksFrozenInPowderedSnow i
         &base2
         17 7
+
+ink.ptms.adyeshach.core.entity.type.AdyDisplay
+     interpolationDelay i
+        &display0
+        19 8
+     interpolationDuration i
+        &display0
+        ~
+     translation !Vector3
+        &display1
+        ~
+     scale !Vector3 1 1 1
+        &display1
+        ~
+     rotationLeft !Quaternion 0 0 0 1
+        &display1
+        ~
+     rotationRight !Quaternion 0 0 0 1
+        &display1
+        ~
+     billboardConstraints b
+        &display2
+        ~
+     brightnessOverride i -1
+        &display2
+        ~
+     viewRange f 1.0
+        &display3
+        ~
+     shadowRadius f
+        &display3
+        ~
+     shadowStrength f 1.0
+        &display3
+        ~
+     width f
+        &display3
+        ~
+     height f
+        &display3
+        ~
+     glowColorOverride i -1
+        &display3
+        ~
