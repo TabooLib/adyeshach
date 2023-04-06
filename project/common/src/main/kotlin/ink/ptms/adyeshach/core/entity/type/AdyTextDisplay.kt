@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.core.entity.type
 
+import org.bukkit.Color
 import org.bukkit.entity.TextDisplay
 import taboolib.module.chat.ComponentText
 
@@ -21,12 +22,12 @@ interface AdyTextDisplay : AdyDisplay {
         return getMetadata("lineWidth")
     }
 
-    fun setBackgroundColor(value: Int) {
-        setMetadata("backgroundColor", value)
+    fun setBackgroundColor(value: Color) {
+        setMetadata("backgroundColor", value.asRGB())
     }
 
-    fun getBackgroundColor(): Int {
-        return getMetadata("backgroundColor")
+    fun getBackgroundColor(): Color {
+        return Color.fromRGB(getMetadata<Int>("backgroundColor").let { if (it == -1) 0 else it })
     }
 
     fun setTextOpacity(value: Byte) {

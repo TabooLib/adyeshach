@@ -2,7 +2,11 @@ package ink.ptms.adyeshach.impl.entity.type
 
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
+import ink.ptms.adyeshach.impl.util.ifTrue
+import ink.ptms.adyeshach.impl.util.toColor
+import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
+import taboolib.common5.cint
 import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 
@@ -51,6 +55,22 @@ abstract class DefaultTextDisplay(entityTypes: EntityTypes) : DefaultDisplay(ent
             left -> TextDisplay.TextAligment.LEFT
             right -> TextDisplay.TextAligment.RIGHT
             else -> TextDisplay.TextAligment.CENTER
+        }
+    }
+
+    override fun setCustomMeta(key: String, value: String?): Boolean {
+        super.setCustomMeta(key, value).ifTrue { return true }
+        return when (key) {
+            "backgroundcolor", "background_color" -> {
+                // 对 RGB 写法进行兼容
+                if (value != null && value.contains(',')) {
+                    setBackgroundColor(value.toColor())
+                    true
+                } else {
+                    false
+                }
+            }
+            else -> false
         }
     }
 }

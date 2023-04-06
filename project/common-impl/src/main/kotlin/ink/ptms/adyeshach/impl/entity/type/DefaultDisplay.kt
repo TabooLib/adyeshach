@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.entity.type.AdySheep
 import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.impl.util.ifTrue
+import ink.ptms.adyeshach.impl.util.toColor
 import org.bukkit.DyeColor
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
@@ -29,6 +30,15 @@ abstract class DefaultDisplay(entityTypes: EntityTypes) : DefaultEntity(entityTy
     override fun setCustomMeta(key: String, value: String?): Boolean {
         super.setCustomMeta(key, value).ifTrue { return true }
         return when (key) {
+            "glowcoloroverride", "glow_color_override" -> {
+                // 对 RGB 写法进行兼容
+                if (value != null && value.contains(',')) {
+                    setGlowColorOverride(value.toColor())
+                    true
+                } else {
+                    false
+                }
+            }
             "brightnessoverride", "brightness_override" -> {
                 if (value != null) {
                     val args = value.split(',')

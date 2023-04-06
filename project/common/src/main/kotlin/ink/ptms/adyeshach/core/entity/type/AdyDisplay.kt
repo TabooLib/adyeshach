@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.core.entity.type
 
+import org.bukkit.Color
 import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.Display.Brightness
 import org.bukkit.util.Vector
@@ -107,7 +108,19 @@ interface AdyDisplay : AdyEntity {
         return getMetadata("width")
     }
 
-    fun setGlowColorOverride(value: Int) {
-        setMetadata("glowColorOverride", value)
+    fun setHeight(value: Float) {
+        setMetadata("height", value)
+    }
+
+    fun getHeight(): Float {
+        return getMetadata("height")
+    }
+
+    fun setGlowColorOverride(value: Color) {
+        setMetadata("glowColorOverride", value.asRGB())
+    }
+
+    fun getGlowColorOverride(): Color {
+        return Color.fromRGB(getMetadata<Int>("glowColorOverride").let { if (it == -1) 0 else it })
     }
 }
