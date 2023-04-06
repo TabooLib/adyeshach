@@ -46,9 +46,9 @@ class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, group: 
     }
 
     override fun updateEntityMetadata(entityInstance: EntityInstance) {
-        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+        val handler = Adyeshach.api().getMinecraftAPI().getPacketHandler()
         entityInstance.forViewers {
-            operator.updateEntityMetadata(it, entityInstance.index, generateMetadata(it, entityInstance) ?: return@forViewers)
+            handler.bufferMetadataPacket(it, entityInstance.index, generateMetadata(it, entityInstance) ?: return@forViewers)
         }
     }
 }

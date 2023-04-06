@@ -10,15 +10,12 @@ import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEnti
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
 import ink.ptms.adyeshach.impl.util.toColor
-import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import org.bukkit.util.NumberConversions
 import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
-import taboolib.common5.cint
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -82,9 +79,9 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
             val healthMeta = getAvailableEntityMeta().firstOrNull { it.key == "health" }!!
             val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
             val metadataHandler = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
-            operator.updateEntityMetadata(viewer, index, metadataHandler.createFloatMeta(healthMeta.index, NumberConversions.toFloat(-1)))
+            operator.updateEntityMetadata(viewer, index, listOf(metadataHandler.createFloatMeta(healthMeta.index, -1f)))
             submit(delay = 15) {
-                operator.updateEntityMetadata(viewer, index, metadataHandler.createFloatMeta(healthMeta.index, NumberConversions.toFloat(1)))
+                operator.updateEntityMetadata(viewer, index, listOf(metadataHandler.createFloatMeta(healthMeta.index, -1f)))
             }
         } else {
             visible(viewer, true)

@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.RIGHT_ARROW
 import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.lang
-import taboolib.module.chat.TellrawJson
+import taboolib.module.chat.RawMessage
 import taboolib.platform.util.setMeta
 
 /**
@@ -20,13 +20,13 @@ abstract class Page(val editor: EditPanel) {
     val player = editor.player
     val entity = editor.entity
 
-    var json = TellrawJson().newLine()
+    var json = RawMessage().newLine()
     var index = 0
 
     open fun subpage(): String? = null
 
     open fun open(index: Int = 0) {
-        this.json = TellrawJson().newLine()
+        this.json = RawMessage().newLine()
         this.index = index
         player.setMeta("adyeshach_last_open", this)
         player.setMeta("adyeshach_last_open_index", index)
@@ -36,7 +36,7 @@ abstract class Page(val editor: EditPanel) {
         appendTitle().newLine()
     }
 
-    fun appendTitle(): TellrawJson {
+    fun appendTitle(): RawMessage {
         json.append("  ")
         // 管理器类型
         val manager = entity.manager
@@ -73,11 +73,11 @@ abstract class Page(val editor: EditPanel) {
         return json
     }
 
-    fun TellrawJson.appendLang(node: String, vararg args: Any): TellrawJson {
+    fun RawMessage.appendLang(node: String, vararg args: Any): RawMessage {
         return append(player.lang(node, *args))
     }
 
-    fun TellrawJson.hoverLang(node: String, vararg args: Any): TellrawJson {
+    fun RawMessage.hoverLang(node: String, vararg args: Any): RawMessage {
         return hoverText(player.lang(node, *args))
     }
 }

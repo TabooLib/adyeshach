@@ -1,19 +1,18 @@
 package ink.ptms.adyeshach.module.editor.page
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitRotation
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.type.*
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.EditType
-import ink.ptms.adyeshach.module.editor.action.Action
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
-import org.bukkit.entity.Player
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
-import taboolib.common5.format
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -42,8 +41,8 @@ class PagePrivateMeta(editor: EditPanel) : MetaPage(editor) {
                     .filter { it in availableMeta }
                     .filter {
                         val check = it.isBool() || MetaEditor.getMetaEditor(it) != null || MetaEditor.getCustomMetaEditor(entity, it.key) != null
-                        if (!check) {
-                            warning("Meta ${it.key} of ${entity.entityType} is not supported by editor. (${it.def.javaClass.simpleName})")
+                        if (AdyeshachSettings.debug && !check) {
+                            warning("Meta \"${it.key}\" of ${entity.entityType} is not supported by editor. (${it.def.javaClass.simpleName})")
                         }
                         check
                     }
@@ -57,11 +56,14 @@ class PagePrivateMeta(editor: EditPanel) : MetaPage(editor) {
             activeMeta
         }.toGroups().toMutableList()
         // 附加数据
-        extras(groups)
+        applyExtras(groups)
         return groups
     }
 
-    fun extras(groups: MutableList<SimpleGroup>) {
+    /**
+     * 额外编辑器
+     */
+    fun applyExtras(groups: MutableList<SimpleGroup>) {
         // 热带鱼
         if (entity is AdyTropicalFish) {
             groups ah extras0(
@@ -124,35 +126,12 @@ class PagePrivateMeta(editor: EditPanel) : MetaPage(editor) {
             groups += SimpleGroup("angle-left-leg", 8, BukkitRotation.LEFT_LEG.toActions())
             groups += SimpleGroup("angle-right-leg", 8, BukkitRotation.RIGHT_LEG.toActions())
         }
-    }
-
-    fun BukkitRotation.toActions(): List<Action> {
-        return listOf(Angle.Type.X.actions(this), Angle.Type.Y.actions(this), Angle.Type.Z.actions(this)).flatten()
-    }
-
-    class Angle(val value: Double, val type: Type, val rotation: BukkitRotation) : SimpleAction.Literal(if (value > 0) "&a+${value.format()}" else "&c${value.format()}", null) {
-
-        enum class Type {
-
-            X, Y, Z;
-
-            fun actions(rotation: BukkitRotation): List<Action> {
-                return listOf(10.0, 1.0, 0.5, 0.1, -10.0, -1.0, -0.5, -0.1).map { Angle(it, this, rotation) }
-            }
-        }
-
-        override fun isCustomCommand(): Boolean {
-            return true
-        }
-
-        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
-            entity as AdyArmorStand
-            val eulerAngle = entity.getRotation(rotation)
-            return when (type) {
-                Type.X -> "adyeshach edit ${entity.uniqueId} m:${rotation.metaName}->${eulerAngle.x + value},${eulerAngle.y},${eulerAngle.z}"
-                Type.Y -> "adyeshach edit ${entity.uniqueId} m:${rotation.metaName}->${eulerAngle.x},${eulerAngle.y + value},${eulerAngle.z}"
-                Type.Z -> "adyeshach edit ${entity.uniqueId} m:${rotation.metaName}->${eulerAngle.x},${eulerAngle.y},${eulerAngle.z + value}"
-            }
+        // 展示实体
+        if (entity is AdyDisplay) {
+            groups += SimpleGroup("display-translation", 8, Vector3.Meta.TRANSLATION.toActions(entity))
+            groups += SimpleGroup("display-scale", 8, Vector3.Meta.SCALE.toActions(entity))
+            groups += SimpleGroup("display-rotation-left", 8, Quat.Meta.ROTATION_LEFT.toActions(entity))
+            groups += SimpleGroup("display-rotation-right", 8, Quat.Meta.ROTATION_RIGHT.toActions(entity))
         }
     }
 

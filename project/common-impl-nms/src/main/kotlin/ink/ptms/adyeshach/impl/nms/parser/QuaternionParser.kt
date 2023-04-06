@@ -25,8 +25,8 @@ class QuaternionParser : MinecraftMetadataParser<Quat>() {
             // 从字符串中识别
             is String -> {
                 val split = value.split(",")
-                if (split.size != 3) {
-                    throw IllegalArgumentException("Invalid Vector: $value")
+                if (split.size != 4) {
+                    throw IllegalArgumentException("Invalid Quaternion: $value")
                 } else {
                     Quat(split[0].cdouble, split[1].cdouble, split[2].cdouble, split[3].cdouble)
                 }

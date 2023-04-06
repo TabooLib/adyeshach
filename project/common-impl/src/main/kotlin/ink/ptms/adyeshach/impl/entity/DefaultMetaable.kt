@@ -75,7 +75,7 @@ interface DefaultMetaable : Metaable {
         this as EntityInstance
         val metadata = generateEntityMetadata(viewer)
         if (metadata.isNotEmpty()) {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(viewer, index, *metadata)
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(viewer, index, metadata.toList())
         }
     }
 

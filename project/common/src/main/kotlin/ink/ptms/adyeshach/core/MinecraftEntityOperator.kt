@@ -156,9 +156,9 @@ interface MinecraftEntityOperator {
      * @param entityId 实体序号
      * @param metadata 元数据包信息
      */
-    fun updateEntityMetadata(player: List<Player>, entityId: Int, vararg metadata: MinecraftMeta)
-    fun updateEntityMetadata(player: Player, entityId: Int, vararg metadata: MinecraftMeta) {
-        updateEntityMetadata(listOf(player), entityId, *metadata)
+    fun updateEntityMetadata(player: List<Player>, entityId: Int, metadata: List<MinecraftMeta>)
+    fun updateEntityMetadata(player: Player, entityId: Int, metadata: List<MinecraftMeta>) {
+        updateEntityMetadata(listOf(player), entityId, metadata)
     }
 
     /**

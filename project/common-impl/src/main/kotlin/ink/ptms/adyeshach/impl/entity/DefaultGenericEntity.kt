@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.GenericEntity
 import ink.ptms.adyeshach.core.entity.Metaable
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
+import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
 import ink.ptms.adyeshach.core.util.Components
 import ink.ptms.adyeshach.core.util.toReadable
 
@@ -30,6 +31,7 @@ interface DefaultGenericEntity : GenericEntity {
     override fun getDisplayName(): String {
         return when (this) {
             is AdyHuman -> getName()
+            is AdyTextDisplay -> getText().toPlainText()
             is EntityBase -> getCustomName().ifEmpty { entityType.name.lowercase().toReadable() }
             else -> error("Unknown entity type.")
         }

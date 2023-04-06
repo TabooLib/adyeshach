@@ -7,17 +7,22 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.core.util.safeDistance
+import org.bukkit.Bukkit
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.util.Vector
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
+import taboolib.platform.util.bukkitPlugin
+import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.CopyOnWriteArraySet
 
 /**
@@ -30,6 +35,17 @@ import java.util.concurrent.CopyOnWriteArraySet
 internal object DefaultPlayerEvents {
 
     val onlinePlayerSet = CopyOnWriteArraySet<String>()
+
+    @Awake(LifeCycle.ACTIVE)
+    fun onActive() {
+        // 释放玩家的数据包缓冲区
+        val packetHandler = Adyeshach.api().getMinecraftAPI().getPacketHandler()
+        Bukkit.getScheduler().runTaskTimerAsynchronously(bukkitPlugin, Runnable {
+            onlinePlayers.forEach {
+                packetHandler.flush(it)
+            }
+        }, 1, 1)
+    }
 
     /**
      * 进入游戏初始化管理器
@@ -118,7 +134,6 @@ internal object DefaultPlayerEvents {
                         "ATTACK" -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
-
                         "INTERACT_AT" -> {
                             val location = e.packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)

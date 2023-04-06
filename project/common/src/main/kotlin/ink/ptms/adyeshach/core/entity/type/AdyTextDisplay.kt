@@ -5,7 +5,7 @@ import taboolib.module.chat.ComponentText
 
 /**
  * @author sky
- * @date 2020/8/4 22:18
+ * @date 2023/4/5 22:18
  */
 interface AdyTextDisplay : AdyDisplay {
 

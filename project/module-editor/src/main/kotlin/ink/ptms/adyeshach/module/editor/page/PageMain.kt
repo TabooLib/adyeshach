@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.sendNativeFullMessage
 import ink.ptms.adyeshach.module.editor.sendNativeHalfMessage
-import taboolib.module.chat.TellrawJson
+import taboolib.module.chat.RawMessage
 import taboolib.module.chat.colored
 
 /**
@@ -166,7 +166,7 @@ class PageMain(editor: EditPanel) : Page(editor) {
         return list.colored().joinToString("\n")
     }
 
-    fun appendId(): TellrawJson {
+    fun appendId(): RawMessage {
         json.append("  ")
         json.append("§8§n${entity.uniqueId}").hoverText(player.lang("copy")).suggestCommand(entity.uniqueId)
         json.append(" §7(${entity.index})")

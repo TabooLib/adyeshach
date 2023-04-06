@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.module.command
 import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.module.editor.ChatEditor
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import org.bukkit.command.CommandSender
@@ -130,6 +131,17 @@ object CommandAPI {
                     sender.sendMessage("${ADYESHACH_PREFIX}Entity type §f\"${type.name}\"§7 is§c UNSUPPORTED")
                 }
             }
+        }
+    }
+
+    /**
+     * 调试模式
+     */
+    @CommandBody
+    val debug = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            AdyeshachSettings.debug = !AdyeshachSettings.debug
+            sender.sendMessage("${ADYESHACH_PREFIX}Debug mode is now ${if (AdyeshachSettings.debug) "§aENABLED" else "§cDISABLED"}")
         }
     }
 

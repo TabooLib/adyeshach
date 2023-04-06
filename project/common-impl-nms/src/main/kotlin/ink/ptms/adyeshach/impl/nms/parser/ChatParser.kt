@@ -18,6 +18,6 @@ class ChatParser : MinecraftMetadataParser<String>() {
     }
 
     override fun createMeta(index: Int, value: String): MinecraftMeta {
-         return metadataHandler().createOptChatMeta(index, value.ifEmpty { null })
+         return metadataHandler().createChatMeta(index, value)
     }
 }

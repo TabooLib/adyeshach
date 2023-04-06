@@ -198,14 +198,14 @@ abstract class NMS {
             }
 
             override fun updateEntityMetadata(player: Player, entityId: Int, vararg objects: Any) {
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(player, entityId, *objects.map {
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(player, entityId, objects.map {
                     object : MinecraftMeta {
 
                         override fun source(): Any {
                             return it
                         }
                     }
-                }.toTypedArray())
+                })
             }
 
             override fun getMetaEntityInt(index: Int, value: Int): Any {

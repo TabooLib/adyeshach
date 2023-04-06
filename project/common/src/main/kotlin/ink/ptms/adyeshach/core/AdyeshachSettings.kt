@@ -36,21 +36,18 @@ object AdyeshachSettings {
      */
     @ConfigNode("Settings.debug", "core/config.yml")
     var debug = false
-        private set
 
     /**
      * 单位可视距离
      */
     @ConfigNode("Settings.visible-distance", "core/config.yml")
     var visibleDistance = 64.0
-        private set
 
     /**
      * 主线程寻路
      */
     @ConfigNode("Settings.pathfinder-sync", "core/config.yml")
     var pathfinderSync = true
-        private set
 
     /**
      * 在未知世界下删除单位

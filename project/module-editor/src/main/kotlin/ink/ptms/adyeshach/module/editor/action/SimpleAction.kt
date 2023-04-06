@@ -24,7 +24,10 @@ abstract class SimpleAction(val id: String) : Action {
 
     object None : Literal("none")
 
-    open class Literal(val display: String, val description: String? = null) : SimpleAction(UUID.randomUUID().toString()) {
+    open class Literal(
+        private val display: String = "",
+        private val description: String? = null
+    ) : SimpleAction(UUID.randomUUID().toString()) {
 
         override fun display(player: Player): String {
             return display.colored()

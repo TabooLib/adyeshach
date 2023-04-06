@@ -249,7 +249,11 @@ enum class EntityTypes {
 
     INTERACTION,
 
-    TEXT_DISPLAY
+    TEXT_DISPLAY,
+
+    ITEM_DISPLAY,
+
+    BLOCK_DISPLAY,
 
     ;
 }

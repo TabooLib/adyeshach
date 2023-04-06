@@ -122,6 +122,8 @@ interface MetaEditor {
                 entity is AdyEndCrystal && key == "beamTarget" -> MetaVector(key)
                 // 青蛙
                 entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, Frog.Variant::class.java).nameToKey()
+                // 展示实体
+                entity is AdyDisplay && key == "glowColorOverride" -> MetaColor(key)
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java).nameToKey()
                 // 不支持

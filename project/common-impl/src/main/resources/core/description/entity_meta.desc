@@ -1,16 +1,24 @@
+# 接口类全名
 ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
+    # 属性名 类型 默认值
     radius f 0.5
+        # 分组
         &area_effect_cloud0
+        # 版本 属性序号
         17 8
+        # 表示为：16 7
         16 -
     color i
         &area_effect_cloud0
+        # 继承上，表示为：17 7
         ~
     ignoreRadius z
         &area_effect_cloud0
+        # 继承上，表示为：17 6
         ~
     particle !Particle EFFECT
         &area_effect_cloud0
+        # 继承上，表示为：17 5
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyArmorStand
@@ -581,12 +589,25 @@ ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
     backgroundColor i 1073741824
         &text_display0
         ~
-    textOpacity i -1
+    textOpacity b -1
         &text_display0
         ~
     shadow 1b | seeThrough 2b | useDefaultBackgroundColor 4b | alignmentLeft 8b | alignmentRight 16b
         &text_display1
         ~
+
+ink.ptms.adyeshach.core.entity.type.AdyItemDisplay
+    displayedItem !ItemStack
+        &item_display0
+        19 22
+    displayType b
+        &item_display0
+        ~
+
+ink.ptms.adyeshach.core.entity.type.AdyBlockDisplay
+    displayedBlockState !BlockID
+        &block_display0
+        19 22
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
     item !ItemStack EGG

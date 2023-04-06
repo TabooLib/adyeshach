@@ -183,20 +183,20 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
-    override fun updateEntityMetadata(player: List<Player>, entityId: Int, vararg metadata: MinecraftMeta) {
+    override fun updateEntityMetadata(player: List<Player>, entityId: Int, metadata: List<MinecraftMeta>) {
         // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
         if (majorLegacy >= 11903) {
-            packetHandler.sendPacket(player, NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metadata.toList()))
+            packetHandler.sendPacket(player, NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metadata))
         } else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityMetadata(createDataSerializer {
                 writeVarInt(entityId)
-                writeMetadata(metadata.toList())
+                writeMetadata(metadata)
             }.toNMS() as NMSPacketDataSerializer))
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityMetadata().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeMetadata(metadata.toList())
+                    writeMetadata(metadata)
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }

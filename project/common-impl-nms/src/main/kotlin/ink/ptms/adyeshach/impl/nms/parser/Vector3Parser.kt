@@ -39,7 +39,7 @@ class Vector3Parser : MinecraftMetadataParser<Vector>() {
                 }
                 // 从字符串中识别
                 is String -> {
-                    val split = value.split(",")
+                    val split = value.split(',')
                     if (split.size != 3) {
                         throw IllegalArgumentException("Invalid Vector: $value")
                     } else {

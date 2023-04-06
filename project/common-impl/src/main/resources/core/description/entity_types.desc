@@ -1,9 +1,16 @@
+# 接口类全名
 ink.ptms.adyeshach.core.entity.type.AdyAllay
+    # 类型
     ALLAY
+    # 旧版本实体 ID
     -1
+    # 实体高度 宽度 特殊寻路类型
     0.35 0.6 FLYING
+    # 别名
     ~
+    # 基类（以 @ 结尾表示通用基类，会做特殊处理）
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    # 更新间隔
     2
 
 ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
@@ -966,4 +973,22 @@ ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
     0.0 0.0
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultTextDisplay
+    2
+
+# Item Display
+ink.ptms.adyeshach.core.entity.type.AdyItemDisplay
+    ITEM_DISPLAY
+    -1
+    0.0 0.0
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultDisplay@
+    2
+
+# Block Display
+ink.ptms.adyeshach.core.entity.type.AdyBlockDisplay
+    BLOCK_DISPLAY
+    -1
+    0.0 0.0
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultDisplay@
     2

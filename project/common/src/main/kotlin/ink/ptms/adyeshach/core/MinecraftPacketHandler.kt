@@ -22,9 +22,9 @@ interface MinecraftPacketHandler {
     /**
      * 将数据包存入缓冲区
      */
-    fun bufferPacket(player: List<Player>, packet: Any)
-    fun bufferPacket(player: Player, packet: Any) {
-        bufferPacket(listOf(player), packet)
+    fun bufferMetadataPacket(player: List<Player>, id: Int, packet: MinecraftMeta)
+    fun bufferMetadataPacket(player: Player, id: Int, packet: MinecraftMeta) {
+        bufferMetadataPacket(listOf(player), id, packet)
     }
 
     /**
