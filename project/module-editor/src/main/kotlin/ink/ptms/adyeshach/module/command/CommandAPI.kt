@@ -33,7 +33,7 @@ object CommandAPI {
     /**
      * 静默输入
      */
-    @CommandBody
+    @CommandBody(hidden = true)
     val se = subCommand {
         dynamic("command") {
             execute<Player> { sender, _, args ->
@@ -51,7 +51,7 @@ object CommandAPI {
     /**
      * 静默输入并刷新页面
      */
-    @CommandBody
+    @CommandBody(hidden = true)
     val ee = subCommand {
         dynamic("command") {
             execute<Player> { sender, _, args ->
@@ -70,7 +70,7 @@ object CommandAPI {
     /**
      * 输入设置
      */
-    @CommandBody
+    @CommandBody(hidden = true)
     val pi = subCommand {
         dynamic("input-type") {
             suggest { listOf("SIGN", "CHAT") }
@@ -120,7 +120,7 @@ object CommandAPI {
     /**
      * 检查
      */
-    @CommandBody
+    @CommandBody(hidden = true)
     val verify = subCommand {
         execute<CommandSender> { sender, _, args ->
             EntityType.values().forEach { type ->

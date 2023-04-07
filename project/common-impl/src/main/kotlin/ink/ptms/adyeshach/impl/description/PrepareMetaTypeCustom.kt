@@ -17,12 +17,15 @@ import org.bukkit.util.Vector
 import taboolib.common5.Quat
 import taboolib.common5.cdouble
 import taboolib.library.xseries.XMaterial
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * @author 坏黑
  * @since 2022/6/19 18:07
  */
 class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
+
+    val majorLegacy = MinecraftVersion.majorLegacy
 
     /**
      * 识别自定义类型的参数
@@ -44,13 +47,14 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.BLOCK_ID -> PrepareMetaNatural(name, MaterialData(Material.AIR), "BlockID")
             CustomType.OPT_CHAT -> PrepareMetaNatural(name, TextComponent(""), "OptChat")
             CustomType.CHAT -> PrepareMetaNatural(name, TextComponent(""), "Chat")
-            CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB, "Art")
             CustomType.VILLAGER_DATA -> PrepareMetaNatural(name, VillagerData(), "VillagerData")
             CustomType.BUKKIT_POSE -> PrepareMetaNatural(name, BukkitPose.STANDING, "BukkitPose")
-            CustomType.CAT_TYPE -> PrepareMetaNatural(name, Cat.Type.TABBY, "Cat.Type")
-            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
             CustomType.VECTOR3 -> PrepareMetaNatural(name, parseVector(args), "Vector3")
             CustomType.QUATERNION -> PrepareMetaNatural(name, parseQuat(args), "Quaternion")
+            // 特殊版本约定
+            CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB, "Art")
+            CustomType.CAT_TYPE -> PrepareMetaNatural(name, Cat.Type.TABBY, "Cat.Type")
+            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
         }
     }
 

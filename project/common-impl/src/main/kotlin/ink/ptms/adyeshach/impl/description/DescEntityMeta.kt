@@ -101,7 +101,15 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                     if (currentMeta.isNotEmpty()) {
                         apply()
                     }
-                    currentMeta += line.trim().split("|").map { parseMeta(it.trim()) }
+                    currentMeta += line.trim().split("|").mapNotNull {
+                        // 在低版本解析特殊类型 Meta 会出现异常，例如：Cat.Type, Frog.Variant
+                        // 在这里直接过滤掉
+                        try {
+                            parseMeta(it.trim())
+                        } catch (_: NoClassDefFoundError) {
+                            null
+                        }
+                    }
                 }
             }
         }
@@ -136,6 +144,7 @@ class DescEntityMeta(input: InputStream) : Description(input) {
             value.startsWith('!') -> {
                 PrepareMetaTypeCustom(CustomType.values().firstOrNull { it.id == value.substring(1) } ?: errorBy("error-unknown-meta-type", value))
             }
+
             else -> errorBy("error-unknown-meta-type", value)
         }
     }
