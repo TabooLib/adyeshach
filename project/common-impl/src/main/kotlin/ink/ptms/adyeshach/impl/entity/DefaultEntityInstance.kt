@@ -29,6 +29,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
 import taboolib.common5.Baffle
 import taboolib.common5.cbool

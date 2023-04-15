@@ -14,6 +14,7 @@ import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Bukkit
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.submitAsync
 import taboolib.common.util.random
 import taboolib.common5.clong
 import java.util.concurrent.TimeUnit
@@ -79,18 +80,21 @@ fun DefaultEntityInstance.updateMoveFrames() {
  * 确保客户端显示实体正常
  */
 fun DefaultEntityInstance.handleTracker() {
-    // 每 2 秒检查一次
+    // 每 5 秒检查一次
     if (viewPlayers.visibleRefreshLocker.hasNext()) {
-        // 复活在可视范围内的实体
-        viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
-            if (visible(player, true)) {
-                viewPlayers.visible += player.name
+        // 丢到线程池里去跑
+        submitAsync {
+            // 复活在可视范围内的实体
+            viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
+                if (visible(player, true)) {
+                    viewPlayers.visible += player.name
+                }
             }
-        }
-        // 销毁不在可视范围内的实体
-        viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-            if (visible(player, false) && !ServerTours.isRoutePlaying(player)) {
-                viewPlayers.visible -= player.name
+            // 销毁不在可视范围内的实体
+            viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
+                if (visible(player, false) && !ServerTours.isRoutePlaying(player)) {
+                    viewPlayers.visible -= player.name
+                }
             }
         }
     }
