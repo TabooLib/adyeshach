@@ -95,14 +95,14 @@ interface MetaEditor {
                 entity is AdyOcelot && key == "type" -> MetaEnum(key, BukkitOcelotType::class.java)
                 // 狐狸
                 entity is AdyFox && key == "type" -> MetaEnum(key, Fox.Type::class.java)
+                // 村民
+                entity is AdyVillager && key == "profession" -> MetaEnum(key, BukkitProfession::class.java)
                 // 蘑菇
                 entity is AdyMushroom && key == "type" -> MetaEnum(key, MushroomCow.Variant::class.java, lowercase = true).nameToKey()
                 // 热带鱼
                 entity is AdyTropicalFish && key == "bodyColor" -> MetaEnum(key, DyeColor::class.java).nameToKey()
                 entity is AdyTropicalFish && key == "patternColor" -> MetaEnum(key, DyeColor::class.java).nameToKey()
                 entity is AdyTropicalFish && key == "pattern" -> MetaEnum(key, TropicalFish.Pattern::class.java).nameToKey()
-                // 村民
-                entity is AdyVillager && key == "profession" -> MetaEnum(key, BukkitProfession::class.java).nameToKey()
                 // 药水云
                 entity is AdyAreaEffectCloud && key == "particle" -> MetaEnum(key, BukkitParticles::class.java).nameToKey()
                 entity is AdyAreaEffectCloud && key == "color" -> MetaColor(key)

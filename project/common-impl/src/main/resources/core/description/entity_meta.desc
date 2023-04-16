@@ -685,11 +685,11 @@ ink.ptms.adyeshach.core.entity.type.AdyVillager
         17 18
         15 -
         14 -
-    profession i
-        &villager0
-        @14-
-        13 13
-        09 -
+#    profession i
+#        &villager0
+#        @14-
+#        13 13
+#        09 -
 
 ink.ptms.adyeshach.core.entity.type.AdyWitch
     isDrinkingPotion z
@@ -791,11 +791,11 @@ ink.ptms.adyeshach.core.entity.type.AdyZombieVillager
         17 20
         15 -
         14 -
-    profession i
-        &zombie_villager0
-        @14-
-        13 17
-        11 -
+#    profession i
+#        &zombie_villager0
+#        @14-
+#        13 17
+#        11 -
 
 ink.ptms.adyeshach.core.entity.type.AdyHuman
     skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
