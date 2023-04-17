@@ -55,6 +55,11 @@ class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
         val output = Configuration.empty(Type.JSON)
         // 对节点进行转换
         section.getValues(true).forEach { (k, v) ->
+            // 移除村民职业数据，会崩溃客户端
+            // TODO 2023/4/17
+            if (k == "metadata.profession") {
+                return@forEach
+            }
             if (v !is ConfigurationSection) {
                 output[transfer.apply(k)] = v
             }
