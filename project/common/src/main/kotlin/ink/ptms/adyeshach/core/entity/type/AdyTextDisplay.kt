@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.core.entity.type
 
+import ink.ptms.adyeshach.core.bukkit.data.BukkitTextAlignment
 import org.bukkit.Color
-import org.bukkit.entity.TextDisplay
 import taboolib.module.chat.ComponentText
 
 /**
@@ -62,7 +62,7 @@ interface AdyTextDisplay : AdyDisplay {
         return getMetadata("useDefaultBackgroundColor")
     }
 
-    fun setAlignment(value: TextDisplay.TextAligment)
+    fun setAlignment(value: BukkitTextAlignment)
 
-    fun getAlignment(): TextDisplay.TextAligment
+    fun getAlignment(): BukkitTextAlignment
 }

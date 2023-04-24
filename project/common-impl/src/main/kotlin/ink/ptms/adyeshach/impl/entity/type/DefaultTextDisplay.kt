@@ -1,12 +1,10 @@
 package ink.ptms.adyeshach.impl.entity.type
 
+import ink.ptms.adyeshach.core.bukkit.data.BukkitTextAlignment
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
 import ink.ptms.adyeshach.impl.util.ifTrue
 import ink.ptms.adyeshach.impl.util.toColor
-import org.bukkit.entity.Display
-import org.bukkit.entity.TextDisplay
-import taboolib.common5.cint
 import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 
@@ -29,32 +27,32 @@ abstract class DefaultTextDisplay(entityTypes: EntityTypes) : DefaultDisplay(ent
         return runCatching { Components.parseRaw(value) }.getOrElse { Components.text(value) }
     }
 
-    override fun setAlignment(value: TextDisplay.TextAligment) {
+    override fun setAlignment(value: BukkitTextAlignment) {
         // 不知道 mojang 哪个小天才想出来这个设计，属实是真牛逼 👍
         when (value) {
-            TextDisplay.TextAligment.CENTER -> {
+            BukkitTextAlignment.CENTER -> {
                 setMetadata("alignmentLeft", false)
                 setMetadata("alignmentRight", false)
             }
-            TextDisplay.TextAligment.LEFT -> {
+            BukkitTextAlignment.LEFT -> {
                 setMetadata("alignmentLeft", true)
                 setMetadata("alignmentRight", false)
             }
-            TextDisplay.TextAligment.RIGHT -> {
+            BukkitTextAlignment.RIGHT -> {
                 setMetadata("alignmentLeft", false)
                 setMetadata("alignmentRight", true)
             }
         }
     }
 
-    override fun getAlignment(): TextDisplay.TextAligment {
+    override fun getAlignment(): BukkitTextAlignment {
         val left = getMetadata<Boolean>("alignmentLeft")
         val right = getMetadata<Boolean>("alignmentRight")
         return when {
-            left && right -> TextDisplay.TextAligment.CENTER
-            left -> TextDisplay.TextAligment.LEFT
-            right -> TextDisplay.TextAligment.RIGHT
-            else -> TextDisplay.TextAligment.CENTER
+            left && right -> BukkitTextAlignment.CENTER
+            left -> BukkitTextAlignment.LEFT
+            right -> BukkitTextAlignment.RIGHT
+            else -> BukkitTextAlignment.CENTER
         }
     }
 
