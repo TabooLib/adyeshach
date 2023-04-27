@@ -108,7 +108,7 @@ typealias NMSMaterial = net.minecraft.world.level.material.Material
 
 typealias CraftArt19 = org.bukkit.craftbukkit.v1_19_R2.CraftArt
 
-typealias CraftChunk19 = org.bukkit.craftbukkit.v1_19_R2.CraftChunk
+typealias CraftChunk19 = org.bukkit.craftbukkit.v1_19_R3.CraftChunk
 
 typealias CraftEntity19 = org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
 

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.nms
 
 import ink.ptms.adyeshach.core.MinecraftWorldAccess
 import ink.ptms.adyeshach.impl.DefaultAdyeshachMinecraftAPI
+import net.minecraft.world.level.chunk.ChunkStatus
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -22,7 +23,13 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
 
     val major = MinecraftVersion.major
     val obcChunk = world?.getChunkAt(x, z) as? CraftChunk19
-    val nmsChunk = obcChunk?.handle
+
+    // 1.19.4 (最新版有改动)
+    val nmsChunk = try {
+        obcChunk?.getHandle(ChunkStatus.FULL)
+    } catch (_: NoSuchMethodError) {
+        (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle
+    }
 
     override fun getBlockType(x: Int, y: Int, z: Int): Material {
         val block: Any = when (major) {
