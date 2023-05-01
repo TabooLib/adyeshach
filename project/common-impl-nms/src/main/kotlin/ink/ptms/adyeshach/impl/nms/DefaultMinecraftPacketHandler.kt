@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 import taboolib.module.nms.sendPacket
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Adyeshach
@@ -25,7 +26,7 @@ class DefaultMinecraftPacketHandler : MinecraftPacketHandler {
     }
 
     override fun bufferMetadataPacket(player: List<Player>, id: Int, packet: MinecraftMeta) {
-        player.forEach { buffer.computeIfAbsent(it) { mutableListOf() }.add(BufferPacket(id, packet)) }
+        player.forEach { buffer.computeIfAbsent(it) { CopyOnWriteArrayList() }.add(BufferPacket(id, packet)) }
     }
 
     override fun flush(player: List<Player>) {
