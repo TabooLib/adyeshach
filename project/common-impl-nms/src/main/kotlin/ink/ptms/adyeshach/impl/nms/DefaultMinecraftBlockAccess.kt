@@ -27,7 +27,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
     // 1.19.4 (最新版有改动)
     val nmsChunk = try {
         obcChunk?.getHandle(ChunkStatus.FULL)
-    } catch (_: NoSuchMethodError) {
+    } catch (_: Throwable) {
         (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle
     }
 
