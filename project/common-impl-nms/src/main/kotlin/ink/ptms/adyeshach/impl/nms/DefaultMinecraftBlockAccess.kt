@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.nms
 
 import ink.ptms.adyeshach.core.MinecraftWorldAccess
 import ink.ptms.adyeshach.impl.DefaultAdyeshachMinecraftAPI
+import net.minecraft.world.level.chunk.Chunk
 import net.minecraft.world.level.chunk.ChunkStatus
 import org.bukkit.Material
 import org.bukkit.World
@@ -25,7 +26,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
     val obcChunk = world?.getChunkAt(x, z) as? CraftChunk19
 
     // 1.19.4 (最新版有改动)
-    val nmsChunk = try {
+    val nmsChunk: Any? = try {
         obcChunk?.getHandle(ChunkStatus.FULL)
     } catch (_: Throwable) {
         (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle
