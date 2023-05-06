@@ -6,7 +6,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionTag(val persistent: Boolean, val key: String, val symbol: Symbol, val value: String?) : ScriptAction<Any?>() {
 

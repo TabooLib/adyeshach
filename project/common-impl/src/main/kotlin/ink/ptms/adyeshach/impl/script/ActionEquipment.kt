@@ -13,7 +13,7 @@ import taboolib.type.BukkitEquipment
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionEquipment(val equipment: BukkitEquipment, val item: ParsedAction<*>) : ScriptAction<Void>() {
 

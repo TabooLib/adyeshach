@@ -12,7 +12,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : ScriptAction<Void>() {
 

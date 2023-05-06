@@ -10,7 +10,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionController(val symbol: Symbol, val controller: String?) : ScriptAction<Void>() {
 

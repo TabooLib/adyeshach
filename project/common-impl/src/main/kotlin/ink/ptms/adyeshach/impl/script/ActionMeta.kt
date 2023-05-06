@@ -11,7 +11,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionMeta(val key: String, val symbol: Symbol, val value: ParsedAction<*>?) : ScriptAction<Void>() {
 
@@ -20,7 +20,6 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: ParsedAction<*>
         SET, RESET
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {

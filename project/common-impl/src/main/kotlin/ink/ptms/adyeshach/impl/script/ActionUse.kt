@@ -9,7 +9,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>() {
 

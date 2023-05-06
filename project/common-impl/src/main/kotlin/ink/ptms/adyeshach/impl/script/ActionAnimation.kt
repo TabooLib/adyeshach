@@ -10,7 +10,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionAnimation(val animation: BukkitAnimation) : ScriptAction<Void>() {
 

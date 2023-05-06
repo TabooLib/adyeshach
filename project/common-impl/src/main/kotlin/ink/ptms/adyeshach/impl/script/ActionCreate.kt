@@ -13,7 +13,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionCreate(val id: ParsedAction<*>, val type: String, val location: ParsedAction<*>) : ScriptAction<Void>() {
 

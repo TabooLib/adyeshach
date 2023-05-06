@@ -11,7 +11,7 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * @author sky
  */
 class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
 

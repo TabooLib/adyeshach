@@ -8,30 +8,19 @@ import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
 /**
- * @author IzzelAliz
+ * npc position
  */
-class ActionPosition : ScriptAction<Any>() {
-
-    override fun run(frame: ScriptFrame): CompletableFuture<Any> {
-        val script = frame.script()
-        if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
-        }
-        val e = script.getEntities()
-        return CompletableFuture.completedFuture(if (e.size > 1) e.map { it.getLocation() } else e.first().getLocation())
-    }
-
-    companion object {
-
-        /**
-         * npc position
-         */
-        @KetherParser(["npc"], namespace = "adyeshach", shared = true)
-        fun parser() = scriptParser {
-            it.switch {
-                case("position", "location") {
-                    ActionPosition()
+@KetherParser(["npc"], namespace = "adyeshach", shared = true)
+private fun actionNPC() = scriptParser {
+    it.switch {
+        case("position", "location") {
+            actionNow {
+                val script = script()
+                if (script.getManager() == null || !script.isEntitySelected()) {
+                    errorBy("error-no-manager-or-entity-selected")
                 }
+                val entities = script.getEntities()
+                if (entities.size > 1) entities.map { e -> e.getLocation() } else entities.first().getLocation()
             }
         }
     }
