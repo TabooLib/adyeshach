@@ -25,11 +25,15 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
     val major = MinecraftVersion.major
     val obcChunk = world?.getChunkAt(x, z) as? CraftChunk19
 
-    // 1.19.4 (最新版有改动)
-    val nmsChunk: Any? = try {
-        obcChunk?.getHandle(ChunkStatus.FULL)
-    } catch (_: Throwable) {
-        (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle
+    @Suppress("USELESS_CAST")
+    val nmsChunk = try {
+        // 如果不进行一次强转，Kotlin 会编译为：
+        // var4 = (IChunkAccess)(var9 != null ? var9.getHandle() : null);
+        // 导致 1.9 版本无法运行
+        (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle as Any?
+    } catch (_: NoSuchMethodError) {
+        // 1.19.4 (最新版改动)
+        obcChunk?.getHandle(ChunkStatus.FULL) as Any?
     }
 
     override fun getBlockType(x: Int, y: Int, z: Int): Material {
