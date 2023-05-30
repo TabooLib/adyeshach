@@ -6,12 +6,12 @@ import org.bukkit.entity.Player
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.manager.DefaultPlayerManager
+ * ink.ptms.adyeshach.impl.manager.IsolatedPlayerManager
  *
  * @author 坏黑
  * @since 2022/6/28 15:10
  */
-open class DefaultPlayerManager(owner: Player) : DefaultManager(), PlayerManager {
+open class IsolatedPlayerManager(owner: Player) : BaseManager(), PlayerManager {
 
     override var owner = owner
         get() {

@@ -130,7 +130,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     override fun getPrivateEntityManager(player: Player, type: ManagerType): BaseManager {
         return when (type) {
             ManagerType.ISOLATED -> {
-                BasePlayerManager(player)
+                IsolatedPlayerManager(player)
             }
             ManagerType.TEMPORARY -> {
                 playerEntityTemporaryManagerMap.computeIfAbsent(player.name) { DefaultPlayerManager(player) }

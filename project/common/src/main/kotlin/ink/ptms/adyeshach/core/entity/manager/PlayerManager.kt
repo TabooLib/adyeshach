@@ -12,5 +12,5 @@ import org.bukkit.entity.Player
 interface PlayerManager {
 
     /** 持有者 */
-    val owner: Player
+    var owner: Player
 }

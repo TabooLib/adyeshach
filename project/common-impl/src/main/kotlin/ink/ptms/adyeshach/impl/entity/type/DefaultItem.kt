@@ -30,8 +30,10 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 修正向量
-                setNoGravity(true)
-                sendVelocity(Vector(0, 0, 0))
+                submit(delay = 1) {
+                    setNoGravity(true)
+                    sendVelocity(Vector(0, 0, 0))
+                }
             }
         } else {
             super.visible(viewer, false)
