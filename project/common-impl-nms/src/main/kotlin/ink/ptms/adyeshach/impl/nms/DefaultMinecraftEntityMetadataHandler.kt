@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Art
@@ -60,6 +61,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         if (MinecraftVersion.majorLegacy >= 11904) {
             addParser("Vector3", Vector3Parser())
             addParser("Quaternion", QuaternionParser())
+        }
+        // 1.20+
+        if (MinecraftVersion.majorLegacy >= 12000) {
+            addParser("SnifferState", SnifferStateParser())
         }
     }
 
@@ -485,6 +490,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createQuaternionMeta(index: Int, value: Quat): MinecraftMeta {
         return DefaultMeta(NMSJ17.instance.createQuaternionMeta(index, value))
+    }
+
+    override fun createSnifferStateMeta(index: Int, state: AdySniffer.State): MinecraftMeta {
+        return DefaultMeta(NMSJ17.instance.createSnifferStateMeta(index, state))
     }
 
     fun craftChatMessageFromString(message: String): Any? {

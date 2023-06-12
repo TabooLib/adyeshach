@@ -122,8 +122,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                 }.toNMS() as NMS16PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19
-            9, 10, 11 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
+            // 1.17, 1.18, 1.19, 1.12
+            9, 10, 11, 12 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
                 // 类型
@@ -144,6 +144,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                             else -> error("Unsupported version.")
                         }
                     }
+                    // 1.12
+                    12 -> writeVarInt(NMSJ17.instance.entityTypeGetId(helper.adapt(entityType)))
                 }
                 writeDouble(location.x)
                 writeDouble(location.y)
@@ -312,9 +314,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeByte(pitch)
                 }.toNMS() as NMS16PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19
+            // 1.17, 1.18, 1.19, 1.20
             // 使用带有 DataSerializer 的构造函数生成数据包
-            9, 10, 11 -> NMSPacketPlayOutSpawnEntityPlayer(createDataSerializer {
+            9, 10, 11, 12 -> NMSPacketPlayOutSpawnEntityPlayer(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
                 writeDouble(location.x)

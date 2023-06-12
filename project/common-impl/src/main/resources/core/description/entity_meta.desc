@@ -141,6 +141,14 @@ ink.ptms.adyeshach.core.entity.type.AdyBoat
         16 -
         13 -
 
+ink.ptms.adyeshach.core.entity.type.AdyCamel
+    isDashing z
+        &camel0
+        20 18
+    lastPoseChangeTick i
+        &camel0
+        ~
+
 ink.ptms.adyeshach.core.entity.type.AdyCat
     type !Cat.Type
         &cat1
@@ -546,6 +554,14 @@ ink.ptms.adyeshach.core.entity.type.AdySmallFireball
         &small_fireball0
         17 8
         16 -
+
+ink.ptms.adyeshach.core.entity.type.AdySniffer
+    snifferState !SnifferState IDLING
+        &sniffer0
+        20 17
+    dropSeedAtTick i
+        &sniffer0
+        ~
 
 ink.ptms.adyeshach.core.entity.type.AdySnowGolem
     hasPumpkinHat 16b true | hasNoPumpkinHat 0b

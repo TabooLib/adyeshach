@@ -15,7 +15,12 @@ import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 import taboolib.expansion.createHelper
+import taboolib.library.xseries.XBlock
+import taboolib.library.xseries.XMaterial
+import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.Type
 import taboolib.platform.util.hasMeta
+import taboolib.platform.util.isAir
 import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
 import java.io.File
@@ -131,6 +136,29 @@ object CommandAPI {
                     sender.sendMessage("${ADYESHACH_PREFIX}Entity type §f\"${type.name}\"§7 is§c UNSUPPORTED")
                 }
             }
+        }
+    }
+
+    /**
+     * 生成 block_height.json
+     */
+    @CommandBody(hidden = true)
+    val generateBlockHeightJson = subCommand {
+        execute<Player> { sender, _, args ->
+            val time = System.currentTimeMillis()
+            val json = Configuration.empty(Type.JSON)
+            val block = sender.location.add(0.0, -1.0, 0.0).block
+            XMaterial.values().forEach { mat ->
+                val bukkitMat = mat.parseMaterial()
+                if (bukkitMat != null && bukkitMat.isBlock) {
+                    block.type = bukkitMat
+                    val height = block.boundingBox.height
+                    json[mat.name] = height
+                    mat.legacy.forEach { json[it] = height }
+                }
+            }
+            newFile(getDataFolder(), "generated_block_height.json").writeText(json.toString())
+            sender.sendMessage("${ADYESHACH_PREFIX}Generated in ${System.currentTimeMillis() - time}ms.")
         }
     }
 

@@ -42,5 +42,10 @@ enum class CustomType(val id: String) {
 
     QUATERNION("Quaternion"),
 
+    /**
+     * 1.20 新增
+     */
+    SNIFFER_STATE("SnifferState"),
+
     ;
 }

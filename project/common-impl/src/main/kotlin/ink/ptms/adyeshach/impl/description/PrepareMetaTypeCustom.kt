@@ -4,6 +4,7 @@ import com.eatthepath.uuid.FastUUID
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
@@ -55,6 +56,8 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB, "Art")
             CustomType.CAT_TYPE -> PrepareMetaNatural(name, Cat.Type.TABBY, "Cat.Type")
             CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
+            // 1.20 新增
+            CustomType.SNIFFER_STATE -> PrepareMetaNatural(name, AdySniffer.State.IDLING, "SnifferState")
         }
     }
 

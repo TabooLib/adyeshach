@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.core
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -133,6 +134,13 @@ interface MinecraftEntityMetadataHandler {
      * 1.19+
      */
     fun createFrogVariantMeta(index: Int, type: Any): MinecraftMeta
+
+    /**
+     * 生成 Sniffer.State 类型的元数据，对应 SNIFFER_STATE 字段
+     *
+     * 1.20+
+     */
+    fun createSnifferStateMeta(index: Int, state: AdySniffer.State): MinecraftMeta
 
     /**
      * 生成 Holder<PaintingVariant\> 类型的元数据，对应 PAINTING_VARIANT 字段

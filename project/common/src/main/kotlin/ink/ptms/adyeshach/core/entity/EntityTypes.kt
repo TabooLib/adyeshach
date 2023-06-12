@@ -255,5 +255,12 @@ enum class EntityTypes {
 
     BLOCK_DISPLAY,
 
+    /**
+     * 1.20 新增
+     */
+    SNIFFER,
+
+    CAMEL,
+
     ;
 }

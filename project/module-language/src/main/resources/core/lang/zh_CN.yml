@@ -559,6 +559,10 @@ editor-meta-alignment-right: '右对齐'
 editor-meta-displayed-block-state: '显示的方块状态'
 editor-meta-displayed-item: '显示的物品'
 editor-meta-display-type: '显示类型'
+editor-meta-sniffer-state: '状态'
+editor-meta-drop-seed-at-tick: '掉落种子的时间'
+editor-meta-is-dashing: '是否冲刺'
+editor-meta-last-pose-change-tick: '最后姿势改变的时间'
 
 trait-patrol:
   - type: TITLE
@@ -719,3 +723,5 @@ group-display-translation: '位移'
 group-display-scale: '缩放'
 group-display-rotation-left: '左旋转'
 group-display-rotation-right: '右旋转'
+group-camel0: '骆驼 0'
+group-sniffer0: '嗅探兽 0'

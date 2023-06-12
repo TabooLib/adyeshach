@@ -57,9 +57,9 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     writeBoolean(onGround)
                 }.toNMS() as NMS9PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19
+            // 1.17, 1.18, 1.19, 1.12
             // 使用带有 DataSerializer 的构造函数生成数据包
-            9, 10, 11 -> NMSPacketPlayOutEntityTeleport(createDataSerializer {
+            9, 10, 11, 12 -> NMSPacketPlayOutEntityTeleport(createDataSerializer {
                 writeVarInt(entityId)
                 writeDouble(location.x)
                 writeDouble(location.y)

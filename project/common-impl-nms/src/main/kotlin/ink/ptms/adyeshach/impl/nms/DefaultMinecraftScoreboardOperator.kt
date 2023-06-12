@@ -72,8 +72,8 @@ class DefaultMinecraftScoreboardOperator : MinecraftScoreboardOperator {
                     }
                 }.toNMS() as NMS13PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19
-            9, 10, 11 -> NMSPacketPlayOutScoreboardTeam(createDataSerializer {
+            // 1.17, 1.18, 1.19, 1.20
+            9, 10, 11, 12 -> NMSPacketPlayOutScoreboardTeam(createDataSerializer {
                 writeUtf(team.name, 16)
                 writeByte(method.ordinal.toByte())
                 // ADD or CHANGE

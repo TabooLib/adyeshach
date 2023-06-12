@@ -992,3 +992,27 @@ ink.ptms.adyeshach.core.entity.type.AdyBlockDisplay
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultDisplay@
     2
+
+#################################
+#                               #
+#       UPDATE IN 1.20          #
+#                               #
+#################################
+
+# Sniffer
+ink.ptms.adyeshach.core.entity.type.AdySniffer
+    SNIFFER
+    -1
+    1.75 1.9
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+# Camel
+ink.ptms.adyeshach.core.entity.type.AdyCamel
+    CAMEL
+    -1
+    2.375 1.7
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2

@@ -42,7 +42,7 @@ class GameProfile {
     var spectator = false
 
     @Expose
-    var listed = true
+    var listed = false // 从 2.0.0-snapshot-27 版本开始，默认不在列表中显示
 
     fun setPingBar(pingBar: PingBar) {
         ping = pingBar.value

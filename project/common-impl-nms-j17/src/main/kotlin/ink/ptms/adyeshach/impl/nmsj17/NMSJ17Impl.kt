@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
+import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.impl.nms.*
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
 import org.bukkit.entity.Cat
+import org.bukkit.entity.Sniffer
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import org.joml.Quaternionf
@@ -35,7 +37,6 @@ import java.util.*
  * @author 坏黑
  * @since 2022/12/13 02:59
  */
-@Suppress("UNCHECKED_CAST")
 class NMSJ17Impl : NMSJ17() {
 
     override fun entityTypeGetId(any: Any): Int {
@@ -86,15 +87,18 @@ class NMSJ17Impl : NMSJ17() {
         )
     }
 
-    override fun createCatVariantMeta(index: Int, type: Cat.Type): MinecraftMeta {
+    override fun createCatVariantMeta(index: Int, type: Cat.Type): Any {
         val ir = BuiltInRegistries.CAT_VARIANT as IRegistry<CatVariant>
         val texture = "textures/entity/cat/${type.name.lowercase()}.png"
         val variant = ir.first { it.texture.path == texture }
-        val item = DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
-        return object : MinecraftMeta {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
+    }
 
-            override fun source() = item
-        }
+    override fun createSnifferStateMeta(index: Int, type: AdySniffer.State): Any {
+        return NMSDataWatcherItem(
+            NMSDataWatcherObject(index, DataWatcherRegistry.SNIFFER_STATE),
+            net.minecraft.world.entity.animal.sniffer.Sniffer.State.values()[type.ordinal]
+        )
     }
 
     override fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
