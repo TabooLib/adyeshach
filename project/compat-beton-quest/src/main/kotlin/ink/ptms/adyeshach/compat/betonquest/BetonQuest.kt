@@ -28,6 +28,10 @@ object BetonQuest {
         if (entity.hasTag(StandardTags.IS_MOVING) || entity.hasTag(StandardTags.IS_PATHFINDING)) {
             return
         }
+        // 冷却
+        if (!limit.hasNext(player.name)) {
+            return
+        }
         try {
             // 1.12.5
             val playerID = PlayerConverter.getID(player)
