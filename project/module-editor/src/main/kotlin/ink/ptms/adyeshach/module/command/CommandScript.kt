@@ -63,6 +63,9 @@ object CommandScript {
                 workspace.scripts.map { it.value.id }
             }
             execute<CommandSender> { sender, _, argument ->
+                if (!sender.isOp) {
+                    sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+                }
                 val script = workspace.getRunningScript().filter { it.quest.id == argument }
                 if (script.isNotEmpty()) {
                     script.forEach { workspace.terminateScript(it) }
@@ -71,7 +74,10 @@ object CommandScript {
                 }
             }
         }
-        execute<CommandSender> { _, _, _ ->
+        execute<CommandSender> { sender, _, _ ->
+            if (!sender.isOp) {
+                sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+            }
             workspace.getRunningScript().forEach { workspace.terminateScript(it) }
         }
     }
@@ -79,6 +85,9 @@ object CommandScript {
     @CommandBody
     val list = subCommand {
         execute<CommandSender> { sender, _, _ ->
+            if (!sender.isOp) {
+                sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+            }
             sender.sendLang("command-script-list-all",
                 workspace.scripts.map { it.value.id }.joinToString(", "),
                 workspace.getRunningScript().joinToString(", ") { it.id }
@@ -89,6 +98,9 @@ object CommandScript {
     @CommandBody
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
+            if (!sender.isOp) {
+                sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+            }
             workspace.cancelAll()
             workspace.loadAll()
             sender.sendLang("command-script-reload-all")
@@ -98,6 +110,9 @@ object CommandScript {
     @CommandBody
     val debug = subCommand {
         execute<CommandSender> { sender, _, _ ->
+            if (!sender.isOp) {
+                sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+            }
             sender.sendMessage(" §5§l‹ ›§r §7RegisteredActions:")
             Kether.scriptRegistry.registeredNamespace.forEach {
                 sender.sendMessage(" §5§l‹ ›§r §7  ${it}: §r${Kether.scriptRegistry.getRegisteredActions(it)}")
@@ -109,10 +124,16 @@ object CommandScript {
     val invoke = subCommand {
         dynamic(comment = "script") {
             execute<CommandSender> { sender, _, argument ->
+                if (!sender.isOp) {
+                    sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+                }
+                // 获取附近的 NPC
                 val nearestEntity = if (sender is Player) {
                     val entity = Adyeshach.api().getEntityFinder().getNearestEntity(sender) { !it.isDerived() }
                     if (entity != null) listOf(entity) else null
-                } else null
+                } else {
+                    null
+                }
                 try {
                     KetherShell.eval(
                         argument,
@@ -136,6 +157,9 @@ object CommandScript {
     }
 
     fun commandRun(sender: CommandSender, file: String, viewer: String? = null, args: Array<String> = emptyArray()) {
+        if (!sender.isOp) {
+            sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+        }
         val script = workspace.scripts[file]
         if (script != null) {
             val context = ScriptContext.create(script) {
