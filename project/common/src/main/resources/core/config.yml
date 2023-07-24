@@ -20,3 +20,5 @@ Settings:
     - 'custom?'
   # 可视条件的刷新周期
   view-condition-interval: 40
+  # 积分板队伍的ID
+  team-id: "ady_{id}"

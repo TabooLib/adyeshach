@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.concurrent.ConcurrentHashMap
+import ink.ptms.adyeshach.core.AdyeshachSettings
 
 /**
  * Adyeshach
@@ -70,7 +71,8 @@ object VisualTeam {
             leaveAll(entity)
             // 获取队伍（或创建）
             val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color)) {
-                MinecraftScoreboardOperator.Team("ady_$it", hashSetOf(), nameTagVisible, collision, color)
+                val id = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}",it)
+                MinecraftScoreboardOperator.Team(id, hashSetOf(), nameTagVisible, collision, color)
             }
             // 新的队伍
             if (team.members.isEmpty()) {
