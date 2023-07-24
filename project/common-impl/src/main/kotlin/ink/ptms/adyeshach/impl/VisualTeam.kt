@@ -71,7 +71,7 @@ object VisualTeam {
             leaveAll(entity)
             // 获取队伍（或创建）
             val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color)) {
-                val id = AdyeshachSettings.conf.getString("Team.id","ady_{id}")!!.replace("{id}",it)
+                val id = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}",it)
                 MinecraftScoreboardOperator.Team(id, hashSetOf(), nameTagVisible, collision, color)
             }
             // 新的队伍
