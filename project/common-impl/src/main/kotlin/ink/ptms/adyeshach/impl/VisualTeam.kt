@@ -30,6 +30,9 @@ object VisualTeam {
      * 更新单位的队伍信息
      */
     fun updateTeam(entity: EntityInstance) {
+        if (AdyeshachSettings.conf.getString("Settings.team-id", "DISABLED").toString().equals("DISABLED", true)) {
+            return
+        }
         entity.forViewers { p ->
             val playerTeam = playerTeams.computeIfAbsent(p.name) { PlayerTeam(p) }
             if (entity.needVisualTeam()) {

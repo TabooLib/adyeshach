@@ -21,4 +21,5 @@ Settings:
   # 可视条件的刷新周期
   view-condition-interval: 40
   # 积分板队伍的ID
-  team-id: "ady_{id}"
+  # 启用时可改为："ady_{id}"
+  team-id: DISABLED

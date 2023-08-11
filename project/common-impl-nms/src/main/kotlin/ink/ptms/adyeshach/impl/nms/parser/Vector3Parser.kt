@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import org.bukkit.util.Vector
 import taboolib.common5.cbool
+import taboolib.common5.cdouble
 import taboolib.common5.cfloat
 import taboolib.common5.cint
 
@@ -34,7 +35,7 @@ class Vector3Parser : MinecraftMetadataParser<Vector>() {
                     if (value["empty"].cbool) {
                         EmptyVector()
                     } else {
-                        Vector(value["x"]!!.cint, value["y"]!!.cint, value["z"]!!.cint)
+                        Vector(value["x"]!!.cdouble, value["y"]!!.cdouble, value["z"]!!.cdouble)
                     }
                 }
                 // 从字符串中识别
@@ -43,7 +44,7 @@ class Vector3Parser : MinecraftMetadataParser<Vector>() {
                     if (split.size != 3) {
                         throw IllegalArgumentException("Invalid Vector: $value")
                     } else {
-                        Vector(split[0].cint, split[1].cint, split[2].cint)
+                        Vector(split[0].cdouble, split[1].cdouble, split[2].cdouble)
                     }
                 }
                 // 其他
