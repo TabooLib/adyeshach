@@ -284,6 +284,10 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
+        // 1.20.2 开始，玩家实体使用 PacketPlayOutSpawnEntity 数据包生成
+        if (majorLegacy >= 12002) {
+            return spawnEntity(player, EntityTypes.PLAYER, entityId, uuid, location)
+        }
         // 计算视角
         val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
         val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()

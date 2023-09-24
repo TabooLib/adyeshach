@@ -4,6 +4,7 @@ import com.google.common.base.Charsets
 import com.mojang.authlib.properties.PropertyMap
 import ink.ptms.adyeshach.core.MinecraftMeta
 import io.netty.handler.codec.EncoderException
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import java.util.*
 
 /**
@@ -119,11 +120,11 @@ interface DataSerializer {
     fun writeGameProfileProperties(map: PropertyMap): DataSerializer {
         writeVarInt(map.size())
         map.values().forEach { property ->
-            writeUtf(property.name)
-            writeUtf(property.value)
+            writeUtf(property.getProperty<String>("name")!!)
+            writeUtf(property.getProperty<String>("value")!!)
             if (property.hasSignature()) {
                 writeBoolean(true)
-                writeUtf(property.signature)
+                writeUtf(property.getProperty<String>("signature")!!)
             } else {
                 writeBoolean(false)
             }

@@ -41,6 +41,8 @@ tasks {
         exclude("META-INF/maven/**")
         exclude("META-INF/tf/**")
         exclude("module-info.java")
+        // 移除测试单元
+        exclude("**/test/**")
         // taboolib
         relocate("taboolib", "ink.ptms.adyeshach.taboolib")
         // kotlin
