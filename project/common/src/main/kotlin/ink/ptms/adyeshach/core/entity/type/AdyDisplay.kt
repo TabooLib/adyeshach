@@ -28,6 +28,14 @@ interface AdyDisplay : AdyEntity {
         return getMetadata("interpolationDuration")
     }
 
+    fun setTeleportInterpolationDuration(value: Int) {
+        setMetadata("teleportInterpolationDuration", value)
+    }
+
+    fun getTeleportInterpolationDuration(): Int {
+        return getMetadata("teleportInterpolationDuration")
+    }
+
     fun setTranslation(value: Vector) {
         setMetadata("translation", value)
     }

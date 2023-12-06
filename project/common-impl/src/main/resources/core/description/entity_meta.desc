@@ -10,15 +10,15 @@ ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
         16 -
     color i
         &area_effect_cloud0
-        # 继承上，表示为：17 7
+        # 继承上，表示为：17 9
         ~
     ignoreRadius z
         &area_effect_cloud0
-        # 继承上，表示为：17 6
+        # 继承上，表示为：17 10
         ~
     particle !Particle EFFECT
         &area_effect_cloud0
-        # 继承上，表示为：17 5
+        # 继承上，表示为：17 11
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyArmorStand
@@ -598,7 +598,8 @@ ink.ptms.adyeshach.core.entity.type.AdyStrider
 ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
     text !Chat
         &text_display0
-        19 22
+        12002 23
+        19 -
     lineWidth i 200
         &text_display0
         ~
@@ -615,7 +616,8 @@ ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
 ink.ptms.adyeshach.core.entity.type.AdyItemDisplay
     displayedItem !ItemStack
         &item_display0
-        19 22
+        12002 23
+        19 -
     displayType b
         &item_display0
         ~
@@ -623,7 +625,8 @@ ink.ptms.adyeshach.core.entity.type.AdyItemDisplay
 ink.ptms.adyeshach.core.entity.type.AdyBlockDisplay
     displayedBlockState !BlockID
         &block_display0
-        19 22
+        12002 23
+        19 -
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
     item !ItemStack EGG
@@ -946,6 +949,10 @@ ink.ptms.adyeshach.core.entity.type.AdyDisplay
         19 8
      interpolationDuration i
         &display0
+        ~
+     teleportInterpolationDuration i
+        &display0
+        @!12002+
         ~
      translation !Vector3
         &display1
