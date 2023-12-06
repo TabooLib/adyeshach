@@ -19,6 +19,7 @@ class DescEntityMeta(input: InputStream) : Description(input) {
 
     var count = 0
     val major = MinecraftVersion.major
+    val majorLegacy = MinecraftVersion.majorLegacy
 
     @Suppress("UNCHECKED_CAST")
     override fun load(part: DescriptionBlock) {
@@ -36,7 +37,9 @@ class DescEntityMeta(input: InputStream) : Description(input) {
             if (support) {
                 currentMeta.forEach { meta ->
                     count++
-                    meta.register(adyeshachInterface, index.firstOrNull { major >= toMajor(it.first) }?.second ?: -1, group)
+                    meta.register(adyeshachInterface, index.firstOrNull { (version, _) ->
+                        if (version > 1_0000) majorLegacy >= version else major >= toMajor(version)
+                    }?.second ?: -1, group)
                 }
             }
             support = true
@@ -59,10 +62,15 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                     }
                     // 版本限制
                     else if (idx.startsWith('@')) {
-                        val major = toMajor(idx.substring(1, idx.length - 1).toInt())
+                        // 是否细分版本
+                        val checkMajorLegacy = idx.startsWith("@!")
+
+                        val version = if (checkMajorLegacy) majorLegacy else major
+                        val check = if (checkMajorLegacy) idx.substring(2, idx.length - 1).toInt() else toMajor(idx.substring(1, idx.length - 1).toInt())
+
                         when {
-                            idx.endsWith('+') -> support = MinecraftVersion.major >= major
-                            idx.endsWith('-') -> support = MinecraftVersion.major < major
+                            idx.endsWith('+') -> support = version >= check
+                            idx.endsWith('-') -> support = version < check
                         }
                     } else {
                         val args = idx.split(" ")
