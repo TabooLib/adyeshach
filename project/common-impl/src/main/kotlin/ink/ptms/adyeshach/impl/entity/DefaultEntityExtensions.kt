@@ -12,9 +12,7 @@ import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.util.ChunkAccess
-import org.bukkit.Bukkit
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.submitAsync
 import taboolib.common.util.random
 import taboolib.common5.clong
 import java.util.concurrent.TimeUnit
@@ -78,23 +76,33 @@ fun DefaultEntityInstance.updateMoveFrames() {
 /**
  * 处理玩家可见
  * 确保客户端显示实体正常
+ *
+ * 大量用户反馈的 NPC 概率性不可见问题，根本原因在于这个逻辑写垃圾
+ * 尝试性修复 - 2023/12/29：玩家在可见范围内呆上一个检查周期后才会显示实体，并缩短检查周期 (5s -> 2s)
  */
 fun DefaultEntityInstance.handleTracker() {
-    // 每 5 秒检查一次
+    // 每 2 秒检查一次
     if (viewPlayers.visibleRefreshLocker.hasNext()) {
-        // 丢到线程池里去跑
-        submitAsync {
-            // 复活在可视范围内的实体
-            viewPlayers.getOutsidePlayers { isInVisibleDistance(it) }.forEach { player ->
-                if (visible(player, true)) {
-                    viewPlayers.visible += player.name
+        // 获取不可视的玩家
+        viewPlayers.getOutsidePlayers().forEach { player ->
+            // 属否在可视范围内
+            if (isInVisibleDistance(player)) {
+                if (tag.containsKey("PREPARE_VIEW:${player.name}")) {
+                    if (visible(player, true)) {
+                        viewPlayers.visible += player.name
+                        tag.remove("PREPARE_VIEW:${player.name}")
+                    }
+                } else {
+                    tag["PREPARE_VIEW:${player.name}"] = true
                 }
+            } else if (tag.containsKey("PREPARE_VIEW:${player.name}")) {
+                tag.remove("PREPARE_VIEW:${player.name}")
             }
-            // 销毁不在可视范围内的实体
-            viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-                if (visible(player, false) && !ServerTours.isRoutePlaying(player)) {
-                    viewPlayers.visible -= player.name
-                }
+        }
+        // 销毁不在可视范围内的实体
+        viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
+            if (!ServerTours.isRoutePlaying(player) && visible(player, false)) {
+                viewPlayers.visible -= player.name
             }
         }
     }
@@ -235,7 +243,7 @@ fun DefaultEntityInstance.syncPosition() {
                 val updatePosition = offset.lengthSquared() > 1E-6
                 if (updatePosition) {
                     // 更新间隔
-                     if (isIgnoredClientPositionUpdateInterval || clientPositionUpdateInterval.hasNext()) {
+                    if (isIgnoredClientPositionUpdateInterval || clientPositionUpdateInterval.hasNext()) {
                         if (updateRotation) {
                             operator.updateRelEntityMoveLook(getVisiblePlayers(), index, x.toShort(), y.toShort(), z.toShort(), yaw, pitch, !entityPathType.isFly())
                         } else {

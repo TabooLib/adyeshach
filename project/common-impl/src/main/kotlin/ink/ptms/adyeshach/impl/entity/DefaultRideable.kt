@@ -80,9 +80,8 @@ interface DefaultRideable : Rideable {
                     passengers.remove(target.uniqueId)
                     // 移除标签
                     target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
-                    // 将实体传送到正确的位置
-                    val en = manager?.getEntityByUniqueId(target.uniqueId)
-                    en?.teleport(en.getLocation())
+                    // 校准位置
+                    manager?.getEntityByUniqueId(target.uniqueId)?.refreshPosition()
                 }
             }
         }

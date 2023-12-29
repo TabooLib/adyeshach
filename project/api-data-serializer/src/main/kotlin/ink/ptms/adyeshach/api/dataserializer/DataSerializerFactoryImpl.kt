@@ -2,9 +2,12 @@ package ink.ptms.adyeshach.api.dataserializer
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
 import net.minecraft.server.v1_9_R2.DataWatcher
 import net.minecraft.server.v1_9_R2.PacketDataSerializer
+import java.io.DataOutput
+import java.io.DataOutputStream
 
 /**
  * Adyeshach
@@ -56,6 +59,10 @@ class DataSerializerFactoryImpl(val buf: ByteBuf) : DataSerializerFactory, DataS
 
     override fun toNMS(): Any {
         return buf
+    }
+
+    override fun dataOutput(): DataOutput {
+        return ByteBufOutputStream(buf)
     }
 
     override fun newSerializer(): DataSerializer {

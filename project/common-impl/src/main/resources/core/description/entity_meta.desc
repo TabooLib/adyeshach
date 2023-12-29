@@ -497,7 +497,7 @@ ink.ptms.adyeshach.core.entity.type.AdyPufferfish
 
 ink.ptms.adyeshach.core.entity.type.AdyRabbit
     type i 2
-        &rabbit0
+        &fabbit0
         17 17
         15 -
         14 -
@@ -848,7 +848,7 @@ ink.ptms.adyeshach.core.entity.type.AdyFish
 
 ink.ptms.adyeshach.core.entity.type.AdyRaider
     isCelebrating z
-        &raider0
+        &faider0
         17 16
         15 -
         14 -

@@ -46,19 +46,19 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
         // 1.19.3
         // PacketPlayOutPlayerInfo 变更为 ClientboundPlayerInfoPacket
         if (majorLegacy >= 11903) {
-            packetHandler.sendPacket(player, NMSJ17.instance.createClientboundPlayerInfoUpdatePacket(uuid, gameProfile, GameProfileAction.addAction11903()))
+            packetHandler.sendPacket(player, NMSJ17.instance.createClientboundPlayerInfoUpdatePacket(uuid, gameProfile, GameProfileAction.initActions()))
         }
         // 1.17, 1.18, 1.19
         else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutPlayerInfo(createDataSerializer {
-                writeAddProfile(uuid, gameProfile, majorLegacy >= 11900)
+                writeAddProfileLegacy(uuid, gameProfile, majorLegacy >= 11900)
             }.toNMS() as NMSPacketDataSerializer))
         }
         // 1.9 ~ 1.16
         else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutPlayerInfo().also {
                 it.a(createDataSerializer {
-                    writeAddProfile(uuid, gameProfile)
+                    writeAddProfileLegacy(uuid, gameProfile)
                 }.toNMS() as NMS16PacketDataSerializer)
             })
         }
@@ -86,7 +86,7 @@ class DefaultMinecraftEntityPlayerHandler : MinecraftEntityPlayerHandler {
         }
     }
 
-    private fun DataSerializer.writeAddProfile(uuid: UUID, gameProfile: GameProfile, profilePublicKey: Boolean = false) {
+    private fun DataSerializer.writeAddProfileLegacy(uuid: UUID, gameProfile: GameProfile, profilePublicKey: Boolean = false) {
         // ADD_PLAYER
         writeVarInt(0)
         // Count

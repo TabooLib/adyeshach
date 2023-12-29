@@ -28,9 +28,8 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
-import taboolib.common.platform.function.submitAsync
-import taboolib.common.platform.function.warning
 import taboolib.common5.Baffle
 import taboolib.common5.cbool
 import taboolib.common5.cdouble
@@ -226,22 +225,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 setPose(if (value != null) BukkitPose::class.java.getEnum(value) else BukkitPose.STANDING)
                 true
             }
+
             "nitwit" -> {
                 isNitwit = value?.cbool ?: false
                 true
             }
+
             "movespeed", "move_speed" -> {
                 moveSpeed = value?.cdouble ?: 0.2
                 true
             }
+
             "nametagvisible", "name_tag_visible" -> {
                 isNameTagVisible = value?.cbool ?: true
                 true
             }
+
             "collision", "is_collision" -> {
                 isCollision = value?.cbool ?: true
                 true
             }
+
             "glowingcolor", "glowing_color" -> {
                 glowingColor = if (value != null) {
                     if (value.startsWith('§')) {
@@ -254,22 +258,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 }
                 true
             }
+
             "visibledistance", "visible_distance" -> {
                 visibleDistance = value?.cdouble ?: AdyeshachSettings.visibleDistance
                 true
             }
+
             "visibleafterloaded", "visible_after_loaded" -> {
                 visibleAfterLoaded = value?.cbool ?: true
                 true
             }
+
             "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
                 modelEngineName = value ?: ""
                 true
             }
+
             "freeze", "isfreeze", "is_freeze" -> {
                 isFreeze = value?.cbool ?: false
                 true
             }
+
             else -> false
         }
     }
@@ -358,8 +367,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             return
         }
         val newPosition = EntityPosition.fromLocation(location)
+        // 强制传送
+        if (tag.containsKey(StandardTags.FORCE_TELEPORT)) {
+            tag.remove(StandardTags.FORCE_TELEPORT)
+        }
         // 是否发生位置变更
-        if (newPosition == position) {
+        else if (newPosition == position) {
             return
         }
         // 切换世界
@@ -468,6 +481,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Deprecated("请使用 setVelocity(vector)", replaceWith = ReplaceWith("setVelocity(vector)"))
     override fun sendVelocity(vector: Vector) {
         Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
+    }
+
+    override fun refreshPosition() {
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, getLocation())
     }
 
     override fun getLocation(): Location {

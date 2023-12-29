@@ -81,4 +81,9 @@ object StandardTags {
      * 持有该标签的单位正在寻路
      */
     const val IS_PATHFINDING = "IS_PATHFINDING"
+
+    /**
+     * 下一次的传送将不会检查位置变更
+     */
+    const val FORCE_TELEPORT = "FORCE_TELEPORT"
 }

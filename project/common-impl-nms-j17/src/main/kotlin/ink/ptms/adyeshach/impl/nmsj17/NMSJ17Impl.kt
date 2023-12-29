@@ -6,10 +6,18 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
-import ink.ptms.adyeshach.impl.nms.*
+import ink.ptms.adyeshach.impl.nms.CraftMagicNumbers19
+import ink.ptms.adyeshach.impl.nms.NMSDataWatcherItem
+import ink.ptms.adyeshach.impl.nms.NMSDataWatcherObject
+import io.netty.handler.codec.EncoderException
+import net.minecraft.SystemUtils
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.nbt.DynamicOpsNBT
+import net.minecraft.nbt.NBTBase
+import net.minecraft.nbt.NBTCompressedStreamTools
 import net.minecraft.network.PacketDataSerializer
+import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
@@ -21,13 +29,14 @@ import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
 import org.bukkit.entity.Cat
-import org.bukkit.entity.Sniffer
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import org.joml.Quaternionf
 import org.joml.Vector3f
+import taboolib.common.platform.function.info
 import taboolib.common5.Quat
 import taboolib.common5.cfloat
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
 /**
@@ -106,7 +115,7 @@ class NMSJ17Impl : NMSJ17() {
     }
 
     override fun createClientboundPlayerInfoAddPacket(uuid: UUID, gameProfile: GameProfile): Any {
-        return createClientboundPlayerInfoUpdatePacket(uuid, gameProfile, GameProfileAction.addAction11903())
+        return createClientboundPlayerInfoUpdatePacket(uuid, gameProfile, GameProfileAction.initActions())
     }
 
     override fun createClientboundPlayerInfoUpdatePacket(uuid: UUID, gameProfile: GameProfile, actions: List<GameProfileAction>): Any {
@@ -119,27 +128,45 @@ class NMSJ17Impl : NMSJ17() {
             writeUUID(uuid)
             a.forEach { action ->
                 when (action!!) {
+                    // 添加玩家
                     ClientboundPlayerInfoUpdatePacket.a.ADD_PLAYER -> {
                         writeUtf(gameProfile.name, 16)
                         writeGameProfileProperties(gameProfile.toMojang(uuid).properties)
                     }
-                    ClientboundPlayerInfoUpdatePacket.a.INITIALIZE_CHAT -> {}
+                    // 游戏模式
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_GAME_MODE -> {
                         writeVarInt(if (gameProfile.spectator) 3 else 1)
                     }
+                    // 是否显示在列表
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_LISTED -> {
                         writeBoolean(gameProfile.listed)
                     }
+                    // 延迟
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_LATENCY -> {
                         writeVarInt(gameProfile.ping)
                     }
+                    // 玩家名称
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_DISPLAY_NAME -> {
                         writeNullable(gameProfile.name) {
-                            val component = Adyeshach.api().getMinecraftAPI().getHelper().craftChatMessageFromString(it)
-                            val json = Adyeshach.api().getMinecraftAPI().getHelper().craftChatSerializerToJson(component)
-                            writeUtf(json, 262144)
+                            // 1.20.4+
+                            // writeWithCodec(DynamicOpsNBT.INSTANCE, ComponentSerialization.CODEC, var0);
+                            if (MinecraftVersion.majorLegacy >= 12004) {
+                                val component = Adyeshach.api().getMinecraftAPI().getHelper().craftChatMessageFromString(it)
+                                val nbt = SystemUtils.getOrThrow(ComponentSerialization.CODEC.encodeStart(DynamicOpsNBT.INSTANCE, component as IChatBaseComponent)) {
+                                    EncoderException("Failed to encode: $it")
+                                }
+                                NBTCompressedStreamTools.writeAnyTag(nbt, dataOutput())
+                            }
+                            // 1.20.4-
+                            // writeUtf(ChatSerializer.toJson(var0), 262144);
+                            else {
+                                val component = Adyeshach.api().getMinecraftAPI().getHelper().craftChatMessageFromString(it)
+                                val json = Adyeshach.api().getMinecraftAPI().getHelper().craftChatSerializerToJson(component)
+                                writeUtf(json, 262144)
+                            }
                         }
                     }
+                    else -> error("Unsupported action: $action")
                 }
             }
         }.toNMS() as PacketDataSerializer)

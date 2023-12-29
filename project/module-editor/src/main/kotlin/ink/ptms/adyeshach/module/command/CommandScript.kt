@@ -113,9 +113,9 @@ object CommandScript {
             if (!sender.isOp) {
                 sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
             }
-            sender.sendMessage(" §5§l‹ ›§r §7RegisteredActions:")
+            sender.sendMessage(" §5§l‹ ›§f §7RegisteredActions:")
             Kether.scriptRegistry.registeredNamespace.forEach {
-                sender.sendMessage(" §5§l‹ ›§r §7  ${it}: §r${Kether.scriptRegistry.getRegisteredActions(it)}")
+                sender.sendMessage(" §5§l‹ ›§f §7  ${it}: §f${Kether.scriptRegistry.getRegisteredActions(it)}")
             }
         }
     }
@@ -143,13 +143,13 @@ object CommandScript {
                     ).thenApply { v ->
                         try {
                             Class.forName(v.toString().substringBefore('$'))
-                            sender.sendMessage(" §5§l‹ ›§r §7Result: §f${v!!.javaClass.simpleName} §7(Java Object)")
+                            sender.sendMessage(" §5§l‹ ›§f §7Result: §f${v!!.javaClass.simpleName} §7(Java Object)")
                         } catch (_: Throwable) {
-                            sender.sendMessage(" §5§l‹ ›§r §7Result: §f$v")
+                            sender.sendMessage(" §5§l‹ ›§f §7Result: §f$v")
                         }
                     }
                 } catch (ex: Throwable) {
-                    sender.sendMessage(" §5§l‹ ›§r §7Error: ${ex.message}")
+                    sender.sendMessage(" §5§l‹ ›§f §7Error: ${ex.message}")
                     ex.printKetherErrorMessage()
                 }
             }

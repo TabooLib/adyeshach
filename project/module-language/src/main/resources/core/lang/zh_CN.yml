@@ -24,25 +24,25 @@ error-no-manager-selected: '未选择单位管理器'
 error-no-manager-or-entity-selected: '未选择单位管理器或实体'
 error-private-manager-require-player: '访问私有单位管理器需要以玩家为视角执行'
 
-command-create-success-0: ' &5&l‹ ›&r &7已创建新的单位。'
+command-create-success-0: ' &5&l‹ ›&f &7已创建新的单位。'
 command-create-success-1:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7已创建新的单位, 你可以直接 [&6[点击编辑&6\]]&7。'
+    text: ' &5&l‹ ›&f &7已创建新的单位, 你可以直接 [&6[点击编辑&6\]]&7。'
     args:
       - command: '/adyeshach edit {0}'
         hover: '点击编辑'
-command-find-empty: ' &5&l‹ ›&r &7没有找到符合要求的单位。'
-command-find-near: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下:'
-command-find-near-update: ' &5&l‹ ›&r &7附近可以进行快速操作的单位如下: &c(列表变更)'
-command-find-more: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个:'
-command-find-more-update: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个: &c(列表变更)'
-command-find-more-in-console: ' &5&l‹ ›&r &7有关 &f"{0}" &7的单位存在多个，在控制台请使用 UUID 进行操作。'
+command-find-empty: ' &5&l‹ ›&f &7没有找到符合要求的单位。'
+command-find-near: ' &5&l‹ ›&f &7附近可以进行快速操作的单位如下:'
+command-find-near-update: ' &5&l‹ ›&f &7附近可以进行快速操作的单位如下: &c(列表变更)'
+command-find-more: ' &5&l‹ ›&f &7有关 &f"{0}" &7的单位存在多个:'
+command-find-more-update: ' &5&l‹ ›&f &7有关 &f"{0}" &7的单位存在多个: &c(列表变更)'
+command-find-more-in-console: ' &5&l‹ ›&f &7有关 &f"{0}" &7的单位存在多个，在控制台请使用 UUID 进行操作。'
 
 # 以下为 EntityTracker 的控制输出，因变量体系复杂故采用别名形式，而非下标形式。
 
 command-find-more-remove:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&c[ &l|||&r &c\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&c[ &l|||&f &c\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - command: '/adyeshach remove {uuid} c'
         hover: '点击删除'
@@ -50,13 +50,13 @@ command-find-more-remove:
         hover: '点击传送'
 command-find-more-remove-update:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - &m\[ &l|||&r&8&m ] \[ &l››&r&8&m ] | {type} ({name})&8 | [&6[ &l‹‹&r ]&6]'
+    text: ' &5&l‹ ›&f &8 - &m\[ &l|||&f&8&m ] \[ &l››&f&8&m ] | {type} ({name})&8 | [&6[ &l‹‹&f ]&6]'
     args:
       - command: '/adyeshach undo {uuid}'
         hover: '点击恢复'
 command-find-more-rename:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach rename {uuid} '
         hover: '点击更名为...'
@@ -64,7 +64,7 @@ command-find-more-rename:
         hover: '点击传送'
 command-find-more-rename-update:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance} &8&l››&r [&6{new_id}]'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance} &8&l››&f [&6{new_id}]'
     args:
       - suggest: '/adyeshach rename {uuid} '
         hover: '点击更名为...'
@@ -74,7 +74,7 @@ command-find-more-rename-update:
         hover: '点击恢复'
 command-find-more-teleport:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach tp {uuid} '
         hover: '点击传送到...'
@@ -82,7 +82,7 @@ command-find-more-teleport:
         hover: '点击传送'
 command-find-more-move:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach move {uuid} '
         hover: '点击移动到...'
@@ -90,7 +90,7 @@ command-find-more-move:
         hover: '点击传送'
 command-find-more-look:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach look {uuid} '
         hover: '点击看向...'
@@ -98,7 +98,7 @@ command-find-more-look:
         hover: '点击传送'
 command-find-more-edit:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - command: '/adyeshach edit {uuid}'
         hover: '点击编辑'
@@ -106,7 +106,7 @@ command-find-more-edit:
         hover: '点击传送'
 command-find-more-clone:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach clone {uuid} '
         hover: '点击克隆为...'
@@ -114,7 +114,7 @@ command-find-more-clone:
         hover: '点击传送'
 command-find-more-passenger-add:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach passenger {uuid} add '
         hover: '点击添加骑乘...'
@@ -122,7 +122,7 @@ command-find-more-passenger-add:
         hover: '点击传送'
 command-find-more-passenger-remove:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - suggest: '/adyeshach passenger {uuid} remove '
         hover: '点击移除骑乘...'
@@ -130,7 +130,7 @@ command-find-more-passenger-remove:
         hover: '点击传送'
 command-find-more-passenger-reset:
   - ==: JSON
-    text: ' &5&l‹ ›&r &8 - [&e[ &l|||&r &e\]] [&6[ &6&l››&r &6\]] &8| &f{type} &7(&r{name}&7) &8&l›&r &a{distance}'
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
     args:
       - command: '/adyeshach passenger {uuid} reset'
         hover: '点击重制骑乘'
@@ -141,45 +141,45 @@ command-find-more-passenger-reset:
 
 command-find-more-remove-all:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部&c\]]&7。'
+    text: ' &5&l‹ ›&f &7可输入 &f"/npc remove {0} all" &7删除全部或直接 [&c[删除全部&c\]]&7。'
     args:
       - command: '/adyeshach remove {0} a'
         hover: '点击删除全部'
 command-remove-success:
   - ==: JSON
     text:
-      - ' &5&l‹ ›&r &7已将 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
+      - ' &5&l‹ ›&f &7已将 &f"{0}" &7移送至回收站。'
+      - ' &5&l‹ ›&f &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
 command-remove-success-all:
   - ==: JSON
     text:
-      - ' &5&l‹ ›&r &7已将所有 &f"{0}" &7移送至回收站。'
-      - ' &5&l‹ ›&r &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
+      - ' &5&l‹ ›&f &7已将所有 &f"{0}" &7移送至回收站。'
+      - ' &5&l‹ ›&f &7公共单位可输入 &f"/npc undo" &7撤销本次操作或直接 [&6[点击恢复&6\]]&7。'
     args:
       - command: '/adyeshach undo {1}'
         hover: '点击恢复'
-command-clone-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7克隆为 &f"{1}" &7。'
-command-rename-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7更名为 &f"{1}" &7。'
-command-rename-success-all: ' &5&l‹ ›&r &7已将所有 &f"{0}" &7更名为 &f"{1}" &7。'
-command-teleport-to-entity: ' &5&l‹ ›&r &7已将你传送至 &f"{0}" &7。'
-command-teleport-to-here: ' &5&l‹ ›&r &7已将 &f"{0}" &7传送至你所在的位置。'
-command-teleport-to-location: ' &5&l‹ ›&r &7已将 &f"{0}" &7传送至 &f"{1} {2},{3},{4} {5},{6}" &7。'
-command-move-to-here: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往你所在的位置。'
-command-move-to-location: ' &5&l‹ ›&r &7正在派遣 &f"{0}" &7前往 &f"{1},{2},{3}" &7。'
-command-move-has-vehicle: ' &5&l‹ ›&r &7无法派遣 &f"{0}"&7, 因为此时此刻它正骑在 &f"{1}" &7上。'
-command-look-with: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2}" &7。'
-command-look-to-here: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向你所在的位置。'
-command-look-to-location: ' &5&l‹ ›&r &7已使 &f"{0}" &7看向 &f"{1},{2},{3}" &7。'
-command-world-different: ' &5&l‹ ›&r &7你与 &f"{0}" &7不在同一世界。'
-command-world-not-found: ' &5&l‹ ›&r &7世界 &f"{0}" &7不存在。'
-command-meta-not-found: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不存在。'
-command-meta-not-support-editor: ' &5&l‹ ›&r &7元数据 &f"{0}" &7不支持编辑器修改。'
-command-undo-not-found: ' &5&l‹ ›&r &7回收站没有找到符合要求的单位。'
-command-undo-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7从回收站恢复。'
-command-undo-failed: ' &5&l‹ ›&r &7无法恢复 &f"{0}" &7: &8{1}'
+command-clone-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7克隆为 &f"{1}" &7。'
+command-rename-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7更名为 &f"{1}" &7。'
+command-rename-success-all: ' &5&l‹ ›&f &7已将所有 &f"{0}" &7更名为 &f"{1}" &7。'
+command-teleport-to-entity: ' &5&l‹ ›&f &7已将你传送至 &f"{0}" &7。'
+command-teleport-to-here: ' &5&l‹ ›&f &7已将 &f"{0}" &7传送至你所在的位置。'
+command-teleport-to-location: ' &5&l‹ ›&f &7已将 &f"{0}" &7传送至 &f"{1} {2},{3},{4} {5},{6}" &7。'
+command-move-to-here: ' &5&l‹ ›&f &7正在派遣 &f"{0}" &7前往你所在的位置。'
+command-move-to-location: ' &5&l‹ ›&f &7正在派遣 &f"{0}" &7前往 &f"{1},{2},{3}" &7。'
+command-move-has-vehicle: ' &5&l‹ ›&f &7无法派遣 &f"{0}"&7, 因为此时此刻它正骑在 &f"{1}" &7上。'
+command-look-with: ' &5&l‹ ›&f &7已使 &f"{0}" &7看向 &f"{1},{2}" &7。'
+command-look-to-here: ' &5&l‹ ›&f &7已使 &f"{0}" &7看向你所在的位置。'
+command-look-to-location: ' &5&l‹ ›&f &7已使 &f"{0}" &7看向 &f"{1},{2},{3}" &7。'
+command-world-different: ' &5&l‹ ›&f &7你与 &f"{0}" &7不在同一世界。'
+command-world-not-found: ' &5&l‹ ›&f &7世界 &f"{0}" &7不存在。'
+command-meta-not-found: ' &5&l‹ ›&f &7元数据 &f"{0}" &7不存在。'
+command-meta-not-support-editor: ' &5&l‹ ›&f &7元数据 &f"{0}" &7不支持编辑器修改。'
+command-undo-not-found: ' &5&l‹ ›&f &7回收站没有找到符合要求的单位。'
+command-undo-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7从回收站恢复。'
+command-undo-failed: ' &5&l‹ ›&f &7无法恢复 &f"{0}" &7: &8{1}'
 command-undo-list-title: '回收站列表'
 command-undo-list-title-with-search: '回收站列表 : {0}'
 command-undo-list-search-name: '&7搜索'
@@ -201,22 +201,22 @@ command-list-item-name: '&7{0} ({1}m)'
 command-list-item-description:
   - '&8{0} &8({1}&8)'
   - '&c左键传送, 右键编辑'
-command-passenger-not-found: ' &5&l‹ ›&r &7未找到 &f"{0}" &7。'
-command-passenger-add-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7添加为 &f"{1}" &7的乘客。'
-command-passenger-remove-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7从 &f"{1}" &7的乘客列表中移除。'
-command-passenger-reset-success: ' &5&l‹ ›&r &7已将 &f"{0}" &7的乘客列表重置。'
-command-passenger-add-self: ' &5&l‹ ›&r &7不能将自己添加为乘客。'
+command-passenger-not-found: ' &5&l‹ ›&f &7未找到 &f"{0}" &7。'
+command-passenger-add-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7添加为 &f"{1}" &7的乘客。'
+command-passenger-remove-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7从 &f"{1}" &7的乘客列表中移除。'
+command-passenger-reset-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7的乘客列表重置。'
+command-passenger-add-self: ' &5&l‹ ›&f &7不能将自己添加为乘客。'
 
 command-script-error:
-  - ' &5&l‹ ›&r &7在运行脚本时发生了错误:'
-  - ' &5&l‹ ›&r &7{0}'
-command-script-not-found: ' &5&l‹ ›&r &7脚本不存在。'
-command-script-not-running: ' &5&l‹ ›&r &7脚本未在运行。'
+  - ' &5&l‹ ›&f &7在运行脚本时发生了错误:'
+  - ' &5&l‹ ›&f &7{0}'
+command-script-not-found: ' &5&l‹ ›&f &7脚本不存在。'
+command-script-not-running: ' &5&l‹ ›&f &7脚本未在运行。'
 command-script-list-all:
-  - ' &5&l‹ ›&r &7所有脚本: &f{0}'
-  - ' &5&l‹ ›&r &7运行脚本: &f{1}'
+  - ' &5&l‹ ›&f &7所有脚本: &f{0}'
+  - ' &5&l‹ ›&f &7运行脚本: &f{1}'
 command-script-reload-all:
-  - ' &5&l‹ ›&r &7重载完成。'
+  - ' &5&l‹ ›&f &7重载完成。'
 
 editor-copy: '复制'
 editor-manager-public: '&6公有单位'
@@ -289,7 +289,7 @@ editor-input-primitive-type-sign: '&8[&7牌子输入&8]'
 editor-input-primitive-type-sign-warn: '&c首次使用会出现短暂的卡顿'
 editor-input-chat:
   - ==: JSON
-    text: ' &5&l‹ ›&r &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}]'
+    text: ' &5&l‹ ›&f &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}]'
     args:
       - suggest: '{0}'
         hover: '点击复制'
@@ -300,9 +300,9 @@ editor-input-chat-component:
         suggest: '{1}'
       - hover: 点击复制
         suggest: '{2}'
-    text: ' &5&l‹ ›&r &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}] &6\[[&6源]&6\]'
-  - ' &5&l‹ ›&r &7对于常规的复合文本, 可以直接使用原始字符串: &c(Minecraft 1.13+)'
-  - ' &5&l‹ ›&r &7例如 "&f&&ra你好&7" 而非 "&f{"text":"你好","color":"green"}&7"。'
+    text: ' &5&l‹ ›&f &7请在聊天框中输入你要设置的值, 当前值为: &f&n[{0}] &6\[[&6源]&6\]'
+  - ' &5&l‹ ›&f &7对于常规的复合文本, 可以直接使用原始字符串: &c(Minecraft 1.13+)'
+  - ' &5&l‹ ›&f &7例如 "&f&&fa你好&7" 而非 "&f{"text":"你好","color":"green"}&7"。'
 editor-input-book-name: '&f打开并输入内容'
 editor-input-book-description: '&7单位编辑器'
 editor-input-patrols-wait-time0: '请在第一行输入等待时间'
@@ -316,7 +316,7 @@ editor-controller-for-kether-description:
   - '&8名称: &f{0}'
 
 editor-meta-unused: |-
-  &r
+  &f
   &c根据实验环境下的测试结果
   &c这个元数据的修改可能不会产生具体的效果
 editor-meta-nitwit: '傻子'
@@ -346,7 +346,7 @@ editor-meta-patrols-update: '更新巡逻路径'
 editor-meta-patrols-update-description: |-
   &6巡逻节点保存后将会立刻计算出移动路径, 以提高性能
   &6因此在修改地形或移动速度后需要重新计算路径
-  &r
+  &f
   &c点一次就行, 没有提示。
 editor-meta-view-condition: '可视条件'
 editor-meta-is-dancing: '跳舞'
@@ -604,7 +604,7 @@ trait-view-condition:
     fadein: 10
     stay: 40
     fadeout: 10
-trait-data-error: ' &5&l‹ ›&r &7文件 {0} 加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
+trait-data-error: ' &5&l‹ ›&f &7文件 {0} 加载失败，使用 {1} 作为临时数据文件，请尽快修复或在服务器关闭时删除错误文件。'
 
 group-move-position: '当前位置'
 group-move-xyz: 'X & Y & Z'

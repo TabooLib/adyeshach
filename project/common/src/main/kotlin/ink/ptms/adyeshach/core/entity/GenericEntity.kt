@@ -10,7 +10,6 @@ import org.bukkit.ChatColor
  * @author 坏黑
  * @since 2022/6/16 00:09
  */
-@Suppress("SpellCheckingInspection")
 interface GenericEntity {
 
     /**

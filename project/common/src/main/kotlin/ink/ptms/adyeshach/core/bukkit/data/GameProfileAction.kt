@@ -13,8 +13,6 @@ enum class GameProfileAction {
 
     companion object {
 
-        fun addAction11903() = listOf(ADD_PLAYER, UPDATE_GAME_MODE, UPDATE_LATENCY, UPDATE_DISPLAY_NAME, UPDATE_LISTED)
-
-        fun addAction11900() = listOf(ADD_PLAYER, UPDATE_GAME_MODE, UPDATE_LATENCY, UPDATE_DISPLAY_NAME)
+        fun initActions() = listOf(ADD_PLAYER, UPDATE_GAME_MODE, UPDATE_LATENCY, UPDATE_DISPLAY_NAME, UPDATE_LISTED)
     }
 }

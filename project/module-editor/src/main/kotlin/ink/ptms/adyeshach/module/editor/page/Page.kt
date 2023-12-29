@@ -54,20 +54,20 @@ abstract class Page(val editor: EditPanel) {
             json.appendLang("manager-temporary")
         }
         // 分页
-        json.append(" §8§l${RIGHT_ARROW}§r ")
+        json.append(" §8§l${RIGHT_ARROW}§f ")
         // 类型
         json.append("§e${entity.entityType.name}")
         // 分页
-        json.append(" §8§l${RIGHT_ARROW}§r ")
+        json.append(" §8§l${RIGHT_ARROW}§f ")
         // 测试阶段
         if (entity.isTesting) {
-            json.append("§c§n${entity.id}§r §c(?)§r").hoverText(player.lang("entity-is-testing"))
+            json.append("§c§n${entity.id}§f §c(?)§f").hoverText(player.lang("entity-is-testing"))
         } else {
             json.append("§f${entity.id}")
         }
         // 下级页面标题
         if (subpage() != null) {
-            json.append(" §8§l${RIGHT_ARROW}§r ")
+            json.append(" §8§l${RIGHT_ARROW}§f ")
             json.appendLang("editor-page-${subpage()}")
         }
         return json

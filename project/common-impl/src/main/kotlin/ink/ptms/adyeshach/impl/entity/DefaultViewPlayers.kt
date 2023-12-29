@@ -21,7 +21,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
 
     override val visible = CopyOnWriteArraySet<String>()
 
-    override val visibleRefreshLocker = Baffle.of(100)
+    override val visibleRefreshLocker = Baffle.of(40)
 
     override fun getPlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers }

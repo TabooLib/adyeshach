@@ -166,4 +166,9 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      */
     @Deprecated("请使用 setVelocity(vector)", ReplaceWith("setVelocity(vector)"))
     fun sendVelocity(vector: org.bukkit.util.Vector)
+
+    /**
+     * 重新校准位置
+     */
+    fun refreshPosition()
 }
