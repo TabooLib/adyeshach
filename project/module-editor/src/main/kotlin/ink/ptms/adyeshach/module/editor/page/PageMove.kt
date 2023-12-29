@@ -41,7 +41,7 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
         X, Y, Z, YAW, PITCH;
 
         fun actions(): List<Action> {
-            return listOf(1.00, 0.5, 0.1, 0.01, -1.00, -0.50, -0.10, -0.01).map { Move(it, this) }
+            return listOf(1.0, 0.5, 0.1, 0.01, -1.00, -0.50, -0.10, -0.01).map { Move(it, this) }
         }
     }
 
