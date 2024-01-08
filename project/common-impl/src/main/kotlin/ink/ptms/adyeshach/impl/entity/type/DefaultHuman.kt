@@ -108,26 +108,32 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 isHideFromTabList = value?.cbool ?: true
                 true
             }
+
             "name", "player_name", "playername" -> {
                 setName(value ?: "Adyeshach")
                 true
             }
+
             "ping", "player_ping", "playerping" -> {
                 setPing(value?.cint ?: 0)
                 true
             }
+
             "ping_bar", "playe_ping_bar", "playerpingbar", "pingbar" -> {
                 setPingBar(if (value != null) PingBar::class.java.getEnum(value) else PingBar.BAR_5)
                 true
             }
+
             "texture", "player_texture", "playertexture" -> {
                 setTexture(value ?: "")
                 true
             }
+
             "sleeping", "is_sleeping", "issleeping" -> {
                 setSleeping(value?.cbool ?: false)
                 true
             }
+
             else -> false
         }
     }
@@ -179,8 +185,15 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         if (name.isBlank()) {
             return
         }
-        // 加载皮肤
-        Adyeshach.api().getNetworkAPI().getSkin().getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
+        val skin = Adyeshach.api().getNetworkAPI().getSkin()
+        // 自动下载的玩家皮肤，会被分类到 ashcon 目录下
+        if (skin.hasTexture("ashcon/$name") || !skin.hasTexture(name)) {
+            skin.getTexture("ashcon/$name").thenAccept { setTexture(it.value(), it.signature()) }
+        }
+        // 主动上传
+        else {
+            skin.getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
+        }
     }
 
     override fun setTexture(texture: String, signature: String) {

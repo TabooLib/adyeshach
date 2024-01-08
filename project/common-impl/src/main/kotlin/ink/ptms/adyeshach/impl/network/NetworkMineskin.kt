@@ -31,6 +31,11 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
     val crlf: String
         get() = "\r\n"
 
+    override fun hasTexture(name: String): Boolean {
+        val file = File(getDataFolder(), "skin/$name")
+        return file.exists() && file.length() > 1
+    }
+
     override fun getTexture(name: String): CompletableFuture<AdyeshachNetworkAPI.SkinTexture> {
         val future = CompletableFuture<AdyeshachNetworkAPI.SkinTexture>()
         val file = File(getDataFolder(), "skin/$name")
@@ -57,7 +62,7 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                 }
             })
         } else {
-            Adyeshach.api().getNetworkAPI().getAshcon().getTexture(name).thenAccept {
+            Adyeshach.api().getNetworkAPI().getAshcon().getTexture(name.substringAfterLast('/')).thenAccept {
                 future.complete(it)
                 submitAsync { newFile(file).writeText(Serializer.gson.toJson(it)) }
             }

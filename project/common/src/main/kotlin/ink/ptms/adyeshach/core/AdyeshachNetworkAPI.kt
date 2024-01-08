@@ -51,6 +51,11 @@ interface AdyeshachNetworkAPI {
         fun uploadTexture(file: File, model: SkinModel, sender: CommandSender): ConfigurationSection?
 
         /**
+         * 本次是否存在皮肤缓存文件
+         */
+        fun hasTexture(name: String): Boolean
+
+        /**
          * 获取皮肤
          */
         fun getTexture(name: String): CompletableFuture<SkinTexture>

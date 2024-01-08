@@ -197,7 +197,7 @@ object CommandAPI {
                 try {
                     val uploadTexture = Adyeshach.api().getNetworkAPI().getSkin().uploadTexture(file, model, sender)
                     if (uploadTexture != null) {
-                        newFile(getDataFolder(), "skin/${file.nameWithoutExtension}").writeText(uploadTexture.toString())
+                        newFile(getDataFolder(), "skin/${name.substringBeforeLast('.')}").writeText(uploadTexture.toString())
                         sender.sendMessage("${ADYESHACH_PREFIX}Skin §f\"${file.nameWithoutExtension} (DEFAULT)\"§7 has been uploaded.")
                     }
                 } catch (ex: Throwable) {
