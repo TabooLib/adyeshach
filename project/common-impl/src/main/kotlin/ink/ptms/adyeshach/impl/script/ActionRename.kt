@@ -8,7 +8,7 @@ import taboolib.module.kether.KetherParser
 import taboolib.module.kether.combinationParser
 import taboolib.module.kether.script
 
-@KetherParser(["animation"], namespace = "adyeshach", shared = true)
+@KetherParser(["rename"], namespace = "adyeshach", shared = true)
 private fun actionName() = combinationParser {
     it.group(text()).apply(it) { newId ->
         now {
