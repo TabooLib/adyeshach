@@ -11,8 +11,8 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.adaptCommandSender
+import taboolib.common.platform.function.getOpenContainers
 import taboolib.expansion.createHelper
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.kether.Kether
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.ScriptContext
@@ -116,6 +116,19 @@ object CommandScript {
             sender.sendMessage(" §5§l‹ ›§f §7RegisteredActions:")
             Kether.scriptRegistry.registeredNamespace.forEach {
                 sender.sendMessage(" §5§l‹ ›§f §7  ${it}: §f${Kether.scriptRegistry.getRegisteredActions(it)}")
+            }
+        }
+    }
+
+    @CommandBody
+    val containers = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            if (!sender.isOp) {
+                sender.sendMessage("§c§l[Adyeshach] §7You do not have permission.")
+            }
+            getOpenContainers().forEach { it ->
+                sender.sendMessage(" §5§l‹ ›§f §7${it.name} §8${it.javaClass.simpleName}")
+                it.call("test", emptyArray());
             }
         }
     }

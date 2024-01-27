@@ -1,8 +1,6 @@
-package ink.ptms.adyeshach.compat.modelengine3
+package ink.ptms.adyeshach.compat.modelengine4
 
-import com.ticxo.modelengine.api.ModelEngineAPI
-import com.ticxo.modelengine.api.animation.state.ModelState
-import ink.ptms.adyeshach.compat.modelengine3.DefaultModelEngine.Companion.isModelEngineHooked
+import ink.ptms.adyeshach.compat.modelengine4.DefaultModelEngine.Companion.isModelEngineHooked
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.ModelEngine
@@ -42,7 +40,7 @@ object ModelEngineEvents {
             Adyeshach.api().getEventBus().prepareMove { e ->
                 val entity = e.entity as? ModelEngine ?: return@prepareMove
                 if (entity.modelEngineUniqueId != null) {
-                    ModelEngineAPI.getModeledEntity(entity.modelEngineUniqueId)?.state = if (e.isMoving) ModelState.WALK else ModelState.IDLE
+                    // ModelEngineAPI.getModeledEntity(entity.modelEngineUniqueId)?.state = if (e.isMoving) ModelState.WALK else ModelState.IDLE
                 }
             }
         }
@@ -57,19 +55,19 @@ object ModelEngineEvents {
                     return@forEach
                 }
                 if (it.modelEngineUniqueId != null) {
-                    val modeledEntity = ModelEngineAPI.getModeledEntity(it.modelEngineUniqueId) ?: return@forEach
-                    val blueprint = modeledEntity.getModel(it.modelEngineName).blueprint ?: return@forEach
-                    val boundingBoxHeight = blueprint.mainHitbox.height
-                    val boundingBoxWidth = blueprint.mainHitbox.width / 2
-                    val location = it.getLocation()
-                    entities += it to BoundingBox(
-                        location.x - boundingBoxWidth,
-                        location.y,
-                        location.z - boundingBoxWidth,
-                        location.x + boundingBoxWidth,
-                        location.y + boundingBoxHeight,
-                        location.z + boundingBoxWidth,
-                    )
+//                    val modeledEntity = ModelEngineAPI.getModeledEntity(it.modelEngineUniqueId) ?: return@forEach
+//                    val blueprint = modeledEntity.getModel(it.modelEngineName).blueprint ?: return@forEach
+//                    val boundingBoxHeight = blueprint.mainHitbox.height
+//                    val boundingBoxWidth = blueprint.mainHitbox.width / 2
+//                    val location = it.getLocation()
+//                    entities += it to BoundingBox(
+//                        location.x - boundingBoxWidth,
+//                        location.y,
+//                        location.z - boundingBoxWidth,
+//                        location.x + boundingBoxWidth,
+//                        location.y + boundingBoxHeight,
+//                        location.z + boundingBoxWidth,
+//                    )
                 }
             }
             RayTrace(e.player).traces(5.0, 0.2).forEach { vec ->

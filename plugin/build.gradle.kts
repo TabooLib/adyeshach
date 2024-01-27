@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":project:compat-beton-quest"))
     implementation(project(":project:compat-germ-engine"))
     implementation(project(":project:compat-model-engine-v2"))
+//    implementation(project(":project:compat-model-engine-v4"))
     // 谁能兼容谁来兼容，我不会
     // implementation(project(":project:compat-model-engine-v3"))
     implementation(project(":project:module-bukkit"))

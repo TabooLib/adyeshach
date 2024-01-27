@@ -126,7 +126,12 @@ interface MinecraftScoreboardOperator {
         var nameTagVisible: Boolean = true,
         var collision: Boolean = true,
         var color: ChatColor = ChatColor.WHITE
-    )
+    ) {
+
+        override fun toString(): String {
+            return "Team(name='$name', members=$members, nameTagVisible=$nameTagVisible, collision=$collision, color=&${color.char})"
+        }
+    }
 
     /**
      * 队伍控制方法

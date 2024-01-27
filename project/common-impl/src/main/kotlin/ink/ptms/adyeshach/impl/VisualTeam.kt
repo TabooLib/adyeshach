@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
 import java.util.concurrent.ConcurrentHashMap
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import taboolib.common.platform.function.info
 
 /**
  * Adyeshach
