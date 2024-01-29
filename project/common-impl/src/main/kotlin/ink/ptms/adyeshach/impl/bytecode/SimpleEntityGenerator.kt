@@ -2,8 +2,8 @@ package ink.ptms.adyeshach.impl.bytecode
 
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.EntityTypes
-import taboolib.library.asm.ClassWriter
-import taboolib.library.asm.Opcodes
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
 
 /**
  * Adyeshach

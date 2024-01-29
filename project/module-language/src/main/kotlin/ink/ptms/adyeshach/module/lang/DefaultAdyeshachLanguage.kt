@@ -34,13 +34,11 @@ class DefaultAdyeshachLanguage : AdyeshachLanguage {
     companion object {
 
         @Awake(LifeCycle.CONST)
-        fun const() {
-            Language.path = "core/lang"
-        }
-
-        @Awake(LifeCycle.INIT)
         fun init() {
+            // 注册服务
             PlatformFactory.registerAPI<AdyeshachLanguage>(DefaultAdyeshachLanguage())
+            // 设置语言文件路径
+            Language.path = "core/lang"
         }
     }
 }

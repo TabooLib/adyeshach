@@ -117,7 +117,7 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
             clientEntityMap.remove(e.player.name)
         }
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntityFinder>(DefaultAdyeshachEntityFinder())
         }

@@ -9,10 +9,11 @@ import ink.ptms.adyeshach.impl.description.DescEntityUnusedMeta
 import ink.ptms.adyeshach.impl.entity.DefaultMetaMasked
 import ink.ptms.adyeshach.impl.entity.DefaultMetaNatural
 import taboolib.common.LifeCycle
-import taboolib.common.TabooLibCommon
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.releaseResourceFile
+import taboolib.common.util.unsafeLazy
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -24,11 +25,16 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
 
-    val descriptionMeta = DescEntityMeta(releaseResourceFile("core/description/entity_meta.desc", true).readBytes().inputStream())
-    val descriptionUnusedMeta = DescEntityUnusedMeta(releaseResourceFile("core/description/entity_meta_unused.desc", true).readBytes().inputStream())
+    val descriptionMeta by unsafeLazy {
+        DescEntityMeta(releaseResourceFile("core/description/entity_meta.desc", true).readBytes().inputStream())
+    }
+
+    val descriptionUnusedMeta by unsafeLazy {
+        DescEntityUnusedMeta(releaseResourceFile("core/description/entity_meta_unused.desc", true).readBytes().inputStream())
+    }
 
     init {
-        TabooLibCommon.postpone(LifeCycle.ENABLE) {
+        registerLifeCycleTask(LifeCycle.ENABLE) {
             descriptionMeta.init()
             descriptionUnusedMeta.init()
         }
@@ -64,7 +70,7 @@ class DefaultAdyeshachEntityMetadataRegistry : AdyeshachEntityMetadataRegistry {
         val metaTypeLookup = ConcurrentHashMap<Class<*>, List<Meta<*>>>()
         val metaKeyLookup = ConcurrentHashMap<Class<*>, String>()
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntityMetadataRegistry>(DefaultAdyeshachEntityMetadataRegistry())
         }

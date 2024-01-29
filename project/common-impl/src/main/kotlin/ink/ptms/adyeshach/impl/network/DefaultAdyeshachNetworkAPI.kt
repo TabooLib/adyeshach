@@ -30,7 +30,7 @@ class DefaultAdyeshachNetworkAPI : AdyeshachNetworkAPI {
 
     companion object {
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachNetworkAPI>(DefaultAdyeshachNetworkAPI())
         }

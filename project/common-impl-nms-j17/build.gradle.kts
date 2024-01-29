@@ -16,3 +16,5 @@ configure<JavaPluginConvention> {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+
+taboolib { subproject = true }

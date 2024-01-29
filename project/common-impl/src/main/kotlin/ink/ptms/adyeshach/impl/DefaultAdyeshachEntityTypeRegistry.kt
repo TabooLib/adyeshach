@@ -15,11 +15,12 @@ import ink.ptms.adyeshach.impl.description.Entity
 import ink.ptms.adyeshach.impl.entity.DefaultEditable
 import org.bukkit.entity.EntityType
 import taboolib.common.LifeCycle
-import taboolib.common.TabooLibCommon
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.function.info
+import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.releaseResourceFile
+import taboolib.common.util.unsafeLazy
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.AsmClassLoader
 
@@ -39,7 +40,9 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
     val callback = ArrayList<AdyeshachEntityTypeRegistry.GenerateCallback>()
 
     /** 实体类型描述文件 */
-    val description = DescEntityTypes(releaseResourceFile("core/description/entity_types.desc", true).readBytes().inputStream())
+    val description by unsafeLazy {
+        DescEntityTypes(releaseResourceFile("core/description/entity_types.desc", true).readBytes().inputStream())
+    }
 
     /** 描述文件中的实体数据 */
     val descriptionEntityMap = HashMap<EntityTypes, Entity>()
@@ -63,7 +66,7 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
         }
 
     init {
-        TabooLibCommon.postpone(LifeCycle.ENABLE) { originEntityBaseMap }
+        registerLifeCycleTask(LifeCycle.ENABLE, 999) { originEntityBaseMap }
         // 注册生成回调
         prepareGenerate(object : AdyeshachEntityTypeRegistry.GenerateCallback {
 
@@ -152,7 +155,7 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
 
     companion object {
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachEntityTypeRegistry>(DefaultAdyeshachEntityTypeRegistry())
         }

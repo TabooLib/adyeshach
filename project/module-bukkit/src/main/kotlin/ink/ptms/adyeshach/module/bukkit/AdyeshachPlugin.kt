@@ -2,9 +2,9 @@ package ink.ptms.adyeshach.module.bukkit
 
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import taboolib.common.LifeCycle
-import taboolib.common.TabooLibCommon
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.disablePlugin
+import taboolib.common.platform.function.registerLifeCycleTask
 
 /**
  * Adyeshach
@@ -16,7 +16,7 @@ import taboolib.common.platform.function.disablePlugin
 object AdyeshachPlugin : Plugin() {
 
     init {
-        TabooLibCommon.postpone(LifeCycle.LOAD) {
+        registerLifeCycleTask(LifeCycle.INIT) {
             try {
                 DefaultAdyeshachBooster.startup()
             } catch (ex: Throwable) {

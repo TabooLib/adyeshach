@@ -73,7 +73,7 @@ class DefaultAdyeshachHologramHandler : AdyeshachHologramHandler {
 
     companion object {
 
-        @Awake(LifeCycle.INIT)
+        @Awake(LifeCycle.CONST)
         fun init() {
             PlatformFactory.registerAPI<AdyeshachHologramHandler>(DefaultAdyeshachHologramHandler())
         }
