@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.serializer.Serializer
 import org.bukkit.command.CommandSender
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.getProxyPlayer
 import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
@@ -62,7 +63,11 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                 }
             })
         } else {
-            Adyeshach.api().getNetworkAPI().getAshcon().getTexture(name.substringAfterLast('/')).thenAccept {
+            var playerName = name.substringAfterLast('/')
+            if (getProxyPlayer(playerName) != null) {
+                playerName = getProxyPlayer(playerName)!!.uniqueId.toString()
+            }
+            Adyeshach.api().getNetworkAPI().getAshcon().getTexture(playerName).thenAccept {
                 future.complete(it)
                 submitAsync { newFile(file).writeText(Serializer.gson.toJson(it)) }
             }
