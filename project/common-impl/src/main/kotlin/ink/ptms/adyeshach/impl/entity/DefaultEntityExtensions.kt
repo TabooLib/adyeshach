@@ -119,6 +119,8 @@ fun DefaultEntityInstance.handleMove() {
     if (moveFrames != null) {
         // 是否已抵达目的地
         if (moveFrames!!.isArrived()) {
+            // 同步朝向
+            moveTarget?.let { setHeadRotation(it.yaw, it.pitch, true) }
             moveTarget = null
             return
         }
