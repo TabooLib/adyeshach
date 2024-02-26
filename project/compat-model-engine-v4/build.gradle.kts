@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly("public:ModelEngine:4.0.4")
+    compileOnly(fileTree("libs"))
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-impl"))
 }

@@ -56,6 +56,7 @@ interface DefaultMetaable : Metaable {
             } else {
                 metadata[key] = meta.getMetadataParser().parse(event.value)
             }
+            eventBus.postMetaUpdate(event)
             meta.updateEntityMetadata(this)
             return true
         }

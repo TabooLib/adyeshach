@@ -220,6 +220,12 @@ typealias NMS16ChatSerializer = net.minecraft.server.v1_16_R3.IChatBaseComponent
 
 typealias NMS16ChunkCoordIntPair = net.minecraft.server.v1_16_R3.ChunkCoordIntPair
 
+typealias NMS16WorldServer = net.minecraft.server.v1_16_R3.WorldServer
+
+typealias NMS16EntityPlayer = net.minecraft.server.v1_16_R3.EntityPlayer
+
+typealias CraftPlayer16 = org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
+
 typealias CraftWorld16 = org.bukkit.craftbukkit.v1_16_R3.CraftWorld
 
 typealias CraftEntity16 = org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity

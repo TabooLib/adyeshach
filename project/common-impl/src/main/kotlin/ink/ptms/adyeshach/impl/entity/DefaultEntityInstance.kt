@@ -28,7 +28,6 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
 import taboolib.common5.cbool
@@ -36,8 +35,6 @@ import taboolib.common5.cdouble
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -371,7 +368,9 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         }
         // 处理事件
         val eventBus = DefaultAdyeshachAPI.localEventBus
-        if (!eventBus.callTeleport(this, location)) {
+        if (eventBus.callTeleport(this, location)) {
+            eventBus.postTeleport(this, location)
+        } else {
             return
         }
         val newPosition = EntityPosition.fromLocation(location)

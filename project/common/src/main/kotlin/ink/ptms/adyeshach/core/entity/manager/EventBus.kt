@@ -58,4 +58,14 @@ interface EventBus {
      * 在 MetaNatural 生之前后插入一段回调函数
      */
     fun prepareNaturalMetaGenerate(callback: Predicate<MetaNaturalGenerateEvent>)
+
+    /**
+     * 在 Meta 更新之后插入一段回调函数
+     */
+    fun postMetaUpdate(callback: Consumer<MetaUpdateEvent>)
+
+    /**
+     * 在 teleport 之后插入一段回调函数
+     */
+    fun postTeleport(callback: Consumer<TeleportEvent>)
 }
