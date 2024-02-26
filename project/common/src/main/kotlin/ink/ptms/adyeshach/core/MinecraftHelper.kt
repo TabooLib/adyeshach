@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
@@ -78,4 +79,9 @@ interface MinecraftHelper {
      * 使用 CraftChatMessage 将字符串转换为 IChatBaseComponent 类型
      */
     fun craftChatMessageFromString(message: String): Any
+
+    /**
+     * 玩家是否正在观察某区块
+     */
+    fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean
 }

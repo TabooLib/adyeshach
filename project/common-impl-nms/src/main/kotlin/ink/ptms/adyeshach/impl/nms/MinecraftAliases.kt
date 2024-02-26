@@ -120,6 +120,8 @@ typealias CraftTropicalFishPattern19 = org.bukkit.craftbukkit.v1_19_R2.entity.Cr
 
 typealias CraftChatMessage19 = org.bukkit.craftbukkit.v1_19_R2.util.CraftChatMessage
 
+typealias CraftWorld19 = org.bukkit.craftbukkit.v1_19_R2.CraftWorld
+
 // 1.16
 
 typealias NMS16PacketPlayOutSpawnEntity = net.minecraft.server.v1_16_R3.PacketPlayOutSpawnEntity
@@ -215,6 +217,8 @@ typealias NMS16VillagerData = net.minecraft.server.v1_16_R3.VillagerData
 typealias NMS16MathHelper = net.minecraft.server.v1_16_R3.MathHelper
 
 typealias NMS16ChatSerializer = net.minecraft.server.v1_16_R3.IChatBaseComponent.ChatSerializer
+
+typealias NMS16ChunkCoordIntPair = net.minecraft.server.v1_16_R3.ChunkCoordIntPair
 
 typealias CraftWorld16 = org.bukkit.craftbukkit.v1_16_R3.CraftWorld
 

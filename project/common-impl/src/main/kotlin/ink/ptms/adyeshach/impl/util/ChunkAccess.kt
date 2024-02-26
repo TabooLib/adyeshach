@@ -8,8 +8,6 @@ import ink.ptms.adyeshach.minecraft.ChunkPos
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.event.world.WorldUnloadEvent
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
 import java.util.concurrent.ConcurrentHashMap

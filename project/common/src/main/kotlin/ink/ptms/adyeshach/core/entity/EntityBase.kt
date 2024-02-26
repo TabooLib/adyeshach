@@ -81,6 +81,16 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     val z: Double
 
     /**
+     * 区块 X
+     */
+    val chunkX: Int
+
+    /**
+     * 区块 Z
+     */
+    val chunkZ: Int
+
+    /**
      * 实体详细坐标信息: yaw
      */
     val yaw: Float

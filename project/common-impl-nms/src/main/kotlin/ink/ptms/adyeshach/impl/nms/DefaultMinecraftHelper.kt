@@ -8,9 +8,11 @@ import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.minecraft.ChunkPos
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
@@ -85,6 +87,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
                 majorLegacy >= 11400 -> {
                     NMS16Particles::class.java.getProperty<Any>(particles.name, isStatic = true) ?: NMS16Particles.FLAME
                 }
+
                 majorLegacy >= 11300 -> {
                     val particle = nms13ParticleRegistryBlocks.get(NMS13MinecraftKey(particles.name.lowercase()))
                     if (particle is NMS13Particle<*>) {
@@ -93,6 +96,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
                         particle
                     }
                 }
+
                 else -> 0
             }
         }!!
@@ -145,5 +149,24 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun craftChatMessageFromString(message: String): Any {
         return CraftChatMessage19.fromString(message)[0]
+    }
+
+    override fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean {
+        // 从 1.18 开始 getVisibleChunk  -> getVisibleChunkIfPresent
+        //             getChunkProvider -> getChunkSource
+        return if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18)) {
+            val craftWorld = player.world as CraftWorld19
+            craftWorld.handle.chunkSource.chunkMap.visibleChunkMap.get(ChunkPos.asLong(chunkX, chunkZ)) != null
+        }
+        // 从 1.14 开始，PlayerChunkMap 改版
+        else if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_14)) {
+            val craftWorld = player.world as CraftWorld16
+            craftWorld.handle.chunkProvider.playerChunkMap.getVisibleChunk(ChunkPos.asLong(chunkX, chunkZ)) != null
+        }
+        // 早期版本
+        else {
+            val craftWorld = player.world as CraftWorld12
+            craftWorld.handle.playerChunkMap.getChunk(chunkX, chunkZ) != null
+        }
     }
 }

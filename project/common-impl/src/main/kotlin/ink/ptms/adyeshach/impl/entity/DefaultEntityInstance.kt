@@ -36,6 +36,8 @@ import taboolib.common5.cdouble
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CopyOnWriteArraySet
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * Adyeshach
@@ -56,6 +58,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override val z: Double
         get() = clientPosition.z
+
+    override val chunkX: Int
+        get() = (x / 16).toInt()
+
+    override val chunkZ: Int
+        get() = (z / 16).toInt()
 
     override val yaw: Float
         get() = clientPosition.yaw
