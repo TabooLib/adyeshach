@@ -106,6 +106,8 @@ class DefaultAdyeshachMinecraftAPI : AdyeshachMinecraftAPI {
 
     init {
         CompletableFuture.runAsync {
+            // Forge Support
+            Thread.currentThread().contextClassLoader = Adyeshach::class.java.classLoader
             nmsHelper
             nmsEntitySpawner
             nmsEntityOperator
