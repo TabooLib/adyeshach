@@ -25,6 +25,8 @@ class HoloEntityItemStack(itemStack: ItemStack, space: Double) : HoloEntity<AdyI
 
     override fun prepareSpawn(entity: AdyItem) {
         entity.setItem(itemStack)
+        entity.setNoGravity(true)
+        entity.setVelocity(0.0, 0.0, 0.0)
     }
 
     override fun merge(item: Any): Boolean {
