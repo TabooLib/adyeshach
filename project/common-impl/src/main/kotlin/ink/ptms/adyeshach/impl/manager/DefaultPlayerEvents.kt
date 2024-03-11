@@ -137,7 +137,7 @@ internal object DefaultPlayerEvents {
                         "INTERACT_AT" -> {
                             val location = e.packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = e.packet.read<Any>("d").toString() == "w"
+                            val hand = e.packet.read<Any>("d").toString() == "MAIN_HAND"
                             submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
                         }
                     }
