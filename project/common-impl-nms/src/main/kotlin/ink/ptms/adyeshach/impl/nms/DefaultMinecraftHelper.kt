@@ -10,6 +10,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.nmspaper.NMSPaper
 import ink.ptms.adyeshach.minecraft.ChunkPos
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
@@ -153,6 +154,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean {
+        // Bukkit.broadcastMessage("isChunkVisible ${player.name} $chunkX, $chunkZ")
         // 你改你妈个蛋，我爱说实话
         return try {
             NMSPaper.instance.isChunkSent(player, chunkX, chunkZ)
@@ -171,7 +173,9 @@ class DefaultMinecraftHelper : MinecraftHelper {
             // 早期版本
             else {
                 val craftWorld = player.world as CraftWorld12
-                craftWorld.handle.playerChunkMap.getChunk(chunkX, chunkZ) != null
+                val r = craftWorld.handle.playerChunkMap.isChunkInUse(chunkX, chunkZ)
+                // Bukkit.broadcastMessage(" -> $r")
+                r
             }
         }
     }

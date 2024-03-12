@@ -9,7 +9,7 @@ Settings:
   visible-distance: 64
   # JOIN: 当玩家加入服务器时
   # KEEP_ALIVE: 当玩家发送第一个位置数据包时
-  spawn-event: KEEP_ALIVE
+  spawn-event: JOIN
   # 是否在主线程上进行路径计算
   # 异步计算会带来延迟
   pathfinder-sync: true

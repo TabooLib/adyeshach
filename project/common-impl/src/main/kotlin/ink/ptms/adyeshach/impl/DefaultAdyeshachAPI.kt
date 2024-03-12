@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.impl.manager.*
 import ink.ptms.adyeshach.impl.storage.EntityStorage
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -74,6 +75,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         if (!player.hasMetadata("adyeshach_setup")) {
             // 设置标签避免重复执行
             player.setMeta("adyeshach_setup", true)
+            // Bukkit.broadcastMessage("setupEntityManager ${player.name}")
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
