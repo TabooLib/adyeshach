@@ -12,7 +12,6 @@ import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.util.ChunkAccess
-import org.bukkit.Bukkit
 import org.bukkit.util.Vector
 import taboolib.common.util.random
 import taboolib.common5.clong
@@ -81,12 +80,10 @@ fun DefaultEntityInstance.updateMoveFrames() {
  * 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
  */
 fun DefaultEntityInstance.handleTracker() {
-    // 每 2 秒检查一次
+    // 检查间隔
     if (viewPlayers.visibleRefreshLocker.hasNext()) {
-        // Bukkit.broadcastMessage("handleTracker $id")
         // 获取不可视的玩家
         viewPlayers.getOutsidePlayers().forEach { player ->
-            // Bukkit.broadcastMessage("OutsidePlayer ${player.name} (${id})")
             // 属否在可视范围内 && 所在区块是否可见 && 显示实体
             if (isInVisibleDistance(player) && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ) && visible(player, true)) {
                 viewPlayers.visible += player.name

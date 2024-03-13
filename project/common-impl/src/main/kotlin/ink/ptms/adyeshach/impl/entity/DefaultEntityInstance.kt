@@ -226,31 +226,32 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun setCustomMeta(key: String, value: String?): Boolean {
         return when (key) {
+            // 实体姿态
             "pose" -> {
                 setPose(if (value != null) BukkitPose::class.java.getEnum(value) else BukkitPose.STANDING)
                 true
             }
-
+            // 是否傻逼
             "nitwit" -> {
                 isNitwit = value?.cbool ?: false
                 true
             }
-
+            // 移动速度
             "movespeed", "move_speed" -> {
                 moveSpeed = value?.cdouble ?: 0.2
                 true
             }
-
+            // 是否可见名称
             "nametagvisible", "name_tag_visible" -> {
                 isNameTagVisible = value?.cbool ?: true
                 true
             }
-
+            // 是否存在碰撞体积
             "collision", "is_collision" -> {
                 isCollision = value?.cbool ?: true
                 true
             }
-
+            // 发光颜色
             "glowingcolor", "glowing_color" -> {
                 glowingColor = if (value != null) {
                     if (value.startsWith('§')) {
@@ -263,27 +264,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 }
                 true
             }
-
+            // 可见距离
             "visibledistance", "visible_distance" -> {
                 visibleDistance = value?.cdouble ?: AdyeshachSettings.visibleDistance
                 true
             }
-
+            // 加载后自动显示
             "visibleafterloaded", "visible_after_loaded" -> {
                 visibleAfterLoaded = value?.cbool ?: true
                 true
             }
-
+            // 模型引擎
             "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
                 modelEngineName = value ?: ""
                 true
             }
-
+            // 冻结
             "freeze", "isfreeze", "is_freeze" -> {
                 isFreeze = value?.cbool ?: false
                 true
             }
-
+            // 其他
             else -> false
         }
     }

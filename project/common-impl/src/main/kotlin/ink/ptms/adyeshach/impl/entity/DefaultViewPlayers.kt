@@ -1,11 +1,13 @@
 package ink.ptms.adyeshach.impl.entity
 
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.ViewPlayers
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common5.Baffle
-import taboolib.platform.util.onlinePlayers
+import taboolib.common5.clong
 import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 /**
@@ -21,7 +23,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
 
     override val visible = CopyOnWriteArraySet<String>()
 
-    override val visibleRefreshLocker = Baffle.of(40)
+    override val visibleRefreshLocker = Baffle.of(AdyeshachSettings.visibleRefreshInterval.clong, TimeUnit.MILLISECONDS)
 
     override fun getPlayers(): List<Player> {
         return Bukkit.getOnlinePlayers().filter { it.name in viewers }

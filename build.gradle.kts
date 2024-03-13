@@ -16,7 +16,7 @@ subprojects {
         env {
             install(UNIVERSAL, DATABASE, EFFECT, NMS_UTIL, KETHER, UI, NAVIGATION, METRICS, BUKKIT_ALL)
         }
-        version { taboolib = "6.1.1-beta9" }
+        version { taboolib = "6.1.1-beta10" }
     }
     repositories {
         maven { url = uri("https://repo.spongepowered.org/maven") }

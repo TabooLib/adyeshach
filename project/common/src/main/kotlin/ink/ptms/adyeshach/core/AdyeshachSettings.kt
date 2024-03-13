@@ -16,6 +16,7 @@ import java.io.File
  * @author 坏黑
  * @since 2022/6/16 16:29
  */
+@ConfigNode(bind = "core/config.yml")
 object AdyeshachSettings {
 
     @Awake(LifeCycle.ENABLE)
@@ -34,33 +35,40 @@ object AdyeshachSettings {
     /**
      * 调试模式
      */
-    @ConfigNode("Settings.debug", "core/config.yml")
+    @ConfigNode("Settings.debug")
     var debug = false
 
     /**
      * 单位可视距离
      */
-    @ConfigNode("Settings.visible-distance", "core/config.yml")
+    @ConfigNode("Settings.visible-distance")
     var visibleDistance = 64.0
 
     /**
      * 主线程寻路
      */
-    @ConfigNode("Settings.pathfinder-sync", "core/config.yml")
+    @ConfigNode("Settings.pathfinder-sync")
     var pathfinderSync = true
 
     /**
      * 在未知世界下删除单位
      */
-    @ConfigNode("Settings.delete-file-in-unknown-world", "core/config.yml")
+    @ConfigNode("Settings.delete-file-in-unknown-world")
     var deleteFileInUnknownWorld = emptyList<String>()
 
     /**
      * 可视条件检查间隔
      */
-    @ConfigNode("Settings.view-condition-interval", "core/config.yml")
+    @ConfigNode("Settings.view-condition-interval")
     var viewConditionInterval = 40
         get() = if (field == 0) 40 else field
+
+    /**
+     * 可见范围的刷新周期
+     */
+    @ConfigNode("Settings.visible-refresh-interval")
+    var visibleRefreshInterval = 10
+        get() = if (field == 0) 10 else field
 
     /**
      * 单位生成时机
