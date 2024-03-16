@@ -8,9 +8,9 @@ import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
-import ink.ptms.adyeshach.impl.nmspaper.NMSPaper
+import ink.ptms.adyeshach.impl.nmspaper.NMSPaper11904
+import ink.ptms.adyeshach.impl.nmspaper.NMSPaper12000
 import ink.ptms.adyeshach.minecraft.ChunkPos
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
@@ -18,6 +18,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
+import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
 
@@ -53,6 +54,8 @@ class DefaultMinecraftHelper : MinecraftHelper {
     val blockIdCache = Caffeine.newBuilder()
         .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
         .build<MaterialData, Int>()
+
+    var isChunkCheckError = false
 
     override fun adapt(type: EntityTypes): Any {
         return entityTypeCache.get(type) {
@@ -154,11 +157,21 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean {
-        // Bukkit.broadcastMessage("isChunkVisible ${player.name} $chunkX, $chunkZ")
-        // 你改你妈个蛋，我爱说实话
+        if (isChunkCheckError) {
+            return false
+        }
+        // 你改你妈个🥚，我爱说实话
+        try {
+            return NMSPaper12000.instance.isChunkSent(player, chunkX, chunkZ)
+        } catch (_: Throwable) {
+        }
+        // 你改你妈个🥚，我爱说实话
+        try {
+            val craftWorld = player.world as CraftWorld19
+            return NMSPaper11904.instance.isChunkSent(player, craftWorld.handle.chunkSource.chunkMap, chunkX, chunkZ)
+        } catch (_: Throwable) {
+        }
         return try {
-            NMSPaper.instance.isChunkSent(player, chunkX, chunkZ)
-        } catch (ex: Throwable) {
             // 从 1.18 开始 getVisibleChunk  -> getVisibleChunkIfPresent
             //             getChunkProvider -> getChunkSource
             if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18)) {
@@ -173,10 +186,13 @@ class DefaultMinecraftHelper : MinecraftHelper {
             // 早期版本
             else {
                 val craftWorld = player.world as CraftWorld12
-                val r = craftWorld.handle.playerChunkMap.isChunkInUse(chunkX, chunkZ)
-                // Bukkit.broadcastMessage(" -> $r")
-                r
+                craftWorld.handle.playerChunkMap.isChunkInUse(chunkX, chunkZ)
             }
+        } catch (ex: Throwable) {
+            isChunkCheckError = true
+            warning("Unable to check chunk visibility. Please report this issue to the developer.")
+            ex.printStackTrace()
+            false
         }
     }
 }

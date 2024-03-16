@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
  * @author 坏黑
  * @since 2024/2/27 01:45
  */
-class NMSPaperImpl : NMSPaper() {
+class NMSPaper12000Impl : NMSPaper12000() {
 
     override fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean {
         val playerChunkLoader = (player.world as CraftWorld).handle.playerChunkLoader
