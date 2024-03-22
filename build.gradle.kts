@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     java
-    id("io.izzel.taboolib") version "2.0.9"
+    id("io.izzel.taboolib") version "2.0.11"
     id("org.jetbrains.kotlin.jvm") version "1.8.22"
 }
 
@@ -16,7 +16,7 @@ subprojects {
         env {
             install(UNIVERSAL, DATABASE, EFFECT, NMS_UTIL, KETHER, UI, NAVIGATION, METRICS, BUKKIT_ALL)
         }
-        version { taboolib = "6.1.1-beta12" }
+        version { taboolib = "6.1.1-beta15" }
     }
     repositories {
         maven { url = uri("https://repo.spongepowered.org/maven") }
