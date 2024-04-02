@@ -37,7 +37,7 @@ open class PresetController(val root: ConfigurationSection) {
     open val cg = Adyeshach.api().getEntityControllerRegistry().getControllerGenerator(root.getString("instance").toString().substringBefore(':'))
 
     /** 控制器参数 */
-    open val args = root.getString("instance")?.substringAfter(':', "")?.split(',')?.map { it.toPrimitive() }?.toTypedArray() ?: emptyArray()
+    open val args = root.getString("instance")?.substringAfter(':', "")?.split(',')?.filter { it.isNotBlank() }?.map { it.toPrimitive() }?.toTypedArray() ?: emptyArray()
 
     /** 异常 */
     open var error = false
