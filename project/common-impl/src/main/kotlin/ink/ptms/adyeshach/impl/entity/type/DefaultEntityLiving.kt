@@ -14,6 +14,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
 import java.util.concurrent.ConcurrentHashMap

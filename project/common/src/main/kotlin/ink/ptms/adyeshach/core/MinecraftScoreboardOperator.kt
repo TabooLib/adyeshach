@@ -40,9 +40,10 @@ interface MinecraftScoreboardOperator {
         members: Set<String>,
         nameTagVisible: Boolean = true,
         collision: Boolean = true,
-        color: ChatColor = ChatColor.WHITE
+        color: ChatColor = ChatColor.WHITE,
+        canSeeInvisible: Boolean = false
     ) {
-        updateTeam(player, Team(name, members.toMutableSet(), nameTagVisible, collision, color), TeamMethod.ADD)
+        updateTeam(player, Team(name, members.toMutableSet(), nameTagVisible, collision, color, canSeeInvisible), TeamMethod.ADD)
     }
 
     fun createTeam(
@@ -51,9 +52,10 @@ interface MinecraftScoreboardOperator {
         members: Set<String>,
         nameTagVisible: Boolean = true,
         collision: Boolean = true,
-        color: ChatColor = ChatColor.WHITE
+        color: ChatColor = ChatColor.WHITE,
+        canSeeInvisible: Boolean = false
     ) {
-        updateTeam(listOf(player), Team(name, members.toMutableSet(), nameTagVisible, collision, color), TeamMethod.ADD)
+        updateTeam(listOf(player), Team(name, members.toMutableSet(), nameTagVisible, collision, color, canSeeInvisible), TeamMethod.ADD)
     }
 
     /**
@@ -109,12 +111,26 @@ interface MinecraftScoreboardOperator {
      * @param collision 是否碰撞
      * @param color 队伍颜色
      */
-    fun modifyTeam(player: Player, name: String, nameTagVisible: Boolean = true, collision: Boolean = true, color: ChatColor = ChatColor.WHITE) {
-        updateTeam(listOf(player), Team(name, nameTagVisible = nameTagVisible, collision = collision, color = color), TeamMethod.CHANGE)
+    fun modifyTeam(
+        player: Player,
+        name: String,
+        nameTagVisible: Boolean = true,
+        collision: Boolean = true,
+        color: ChatColor = ChatColor.WHITE,
+        canSeeInvisible: Boolean = false
+    ) {
+        updateTeam(listOf(player), Team(name, nameTagVisible = nameTagVisible, collision = collision, color = color, canSeeInvisible = canSeeInvisible), TeamMethod.CHANGE)
     }
 
-    fun modifyTeam(player: List<Player>, name: String, nameTagVisible: Boolean = true, collision: Boolean = true, color: ChatColor = ChatColor.WHITE) {
-        updateTeam(player, Team(name, nameTagVisible = nameTagVisible, collision = collision, color = color), TeamMethod.CHANGE)
+    fun modifyTeam(
+        player: List<Player>,
+        name: String,
+        nameTagVisible: Boolean = true,
+        collision: Boolean = true,
+        color: ChatColor = ChatColor.WHITE,
+        canSeeInvisible: Boolean = false
+    ) {
+        updateTeam(player, Team(name, nameTagVisible = nameTagVisible, collision = collision, color = color, canSeeInvisible = canSeeInvisible), TeamMethod.CHANGE)
     }
 
     /**
@@ -125,11 +141,12 @@ interface MinecraftScoreboardOperator {
         var members: MutableSet<String> = hashSetOf(),
         var nameTagVisible: Boolean = true,
         var collision: Boolean = true,
-        var color: ChatColor = ChatColor.WHITE
+        var color: ChatColor = ChatColor.WHITE,
+        var canSeeInvisible: Boolean = false
     ) {
 
         override fun toString(): String {
-            return "Team(name='$name', members=$members, nameTagVisible=$nameTagVisible, collision=$collision, color=&${color.char})"
+            return "Team(name='$name', members=$members, nameTagVisible=$nameTagVisible, collision=$collision, color=&${color.char}, canSeeInvisible=$canSeeInvisible)"
         }
     }
 

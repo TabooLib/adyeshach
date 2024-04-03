@@ -4,10 +4,15 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufOutputStream
 import io.netty.buffer.Unpooled
+import io.netty.handler.codec.EncoderException
+import net.minecraft.SystemUtils
+import net.minecraft.nbt.DynamicOpsNBT
+import net.minecraft.nbt.NBTCompressedStreamTools
+import net.minecraft.network.chat.ComponentSerialization
+import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.server.v1_9_R2.DataWatcher
 import net.minecraft.server.v1_9_R2.PacketDataSerializer
 import java.io.DataOutput
-import java.io.DataOutputStream
 
 /**
  * Adyeshach
@@ -55,6 +60,12 @@ class DataSerializerFactoryImpl(val buf: ByteBuf) : DataSerializerFactory, DataS
 
     override fun writeMetadata(meta: List<MinecraftMeta>): DataSerializer {
         return DataWatcher.a(meta.map { it.source() } as List<DataWatcher.Item<*>>, buf as PacketDataSerializer).let { this }
+    }
+
+    override fun writeComponent(json: String) {
+        val component = IChatBaseComponent.ChatSerializer.fromJson(json)
+        val nbt = SystemUtils.getOrThrow(ComponentSerialization.CODEC.encodeStart(DynamicOpsNBT.INSTANCE, component)) { err -> EncoderException("Failed to encode: $err $component") }
+        NBTCompressedStreamTools.writeAnyTag(nbt, ByteBufOutputStream(buf))
     }
 
     override fun toNMS(): Any {

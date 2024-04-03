@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
@@ -9,9 +10,8 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
-import java.util.concurrent.ConcurrentHashMap
-import ink.ptms.adyeshach.core.AdyeshachSettings
 import taboolib.common.platform.function.info
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -37,9 +37,9 @@ object VisualTeam {
         entity.forViewers { p ->
             val playerTeam = playerTeams.computeIfAbsent(p.name) { PlayerTeam(p) }
             if (entity.needVisualTeam()) {
-                playerTeam.join(entity, entity.isNameTagVisible, entity.isCollision, entity.glowingColor)
+                playerTeam.join(entity, entity.isNameTagVisible, entity.isCollision, entity.glowingColor, entity.canSeeInvisible)
             } else {
-                playerTeam.leaveAll(entity)
+                playerTeam.leave(entity)
             }
         }
     }
@@ -49,11 +49,10 @@ object VisualTeam {
         if (e.visible) {
             val playerTeam = playerTeams.computeIfAbsent(e.viewer.name) { PlayerTeam(e.viewer) }
             if (e.entity.needVisualTeam()) {
-                playerTeam.join(e.entity, e.entity.isNameTagVisible, e.entity.isCollision, e.entity.glowingColor)
+                playerTeam.join(e.entity, e.entity.isNameTagVisible, e.entity.isCollision, e.entity.glowingColor, e.entity.canSeeInvisible)
+            } else {
+                playerTeam.leave(e.entity)
             }
-        } else {
-            // 不管怎么样都会从队伍中移除
-            playerTeams[e.viewer.name]?.leaveAll(e.entity)
         }
     }
 
@@ -62,45 +61,59 @@ object VisualTeam {
         playerTeams.remove(e.player.name)
     }
 
+    /**
+     * 是否需要虚拟队伍
+     */
     private fun EntityInstance.needVisualTeam(): Boolean {
-        return !isNameTagVisible || !isCollision || glowingColor != ChatColor.WHITE
+        return !isNameTagVisible || !isCollision || glowingColor != ChatColor.WHITE || canSeeInvisible
     }
 
     class PlayerTeam(val player: Player) {
 
+        /**
+         * 玩家的所有队伍
+         */
         val teams = ConcurrentHashMap<String, MinecraftScoreboardOperator.Team>()
 
-        fun join(entity: EntityInstance, nameTagVisible: Boolean = true, collision: Boolean = true, color: ChatColor = ChatColor.WHITE) {
+        /**
+         * 使实体加入玩家的虚拟队伍
+         */
+        fun join(entity: EntityInstance, nameTagVisible: Boolean, collision: Boolean, color: ChatColor, canSeeInvisible: Boolean) {
             // 离开队伍
-            leaveAll(entity)
+            leave(entity)
             // 获取队伍（或创建）
-            val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color)) {
-                val id = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}",it)
-                MinecraftScoreboardOperator.Team(id, hashSetOf(), nameTagVisible, collision, color)
-            }
-            // 新的队伍
-            if (team.members.isEmpty()) {
+            val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color, canSeeInvisible)) { key ->
+                // 生成队伍名称
+                val teamId = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}", key)
+                // 生成队伍
+                val team = MinecraftScoreboardOperator.Team(teamId, hashSetOf(), nameTagVisible, collision, color, canSeeInvisible)
+                // 发送队伍数据包
                 operator.updateTeam(player, team, MinecraftScoreboardOperator.TeamMethod.ADD)
+                team
             }
             // 加入队伍
             val name = if (entity is AdyHuman) entity.getName() else entity.normalizeUniqueId.toString()
             team.members += name
             operator.joinTeam(player, team.name, setOf(name))
+            // 如果这个队伍启用了隐形可见
+            if (canSeeInvisible) {
+                // 把玩家也扔进去
+                operator.joinTeam(player, team.name, setOf(player.name))
+            }
         }
 
-        fun leaveAll(entity: EntityInstance) {
+        /**
+         * 使实体离开玩家的虚拟队伍
+         */
+        fun leave(entity: EntityInstance) {
             val name = if (entity is AdyHuman) entity.getName() else entity.normalizeUniqueId.toString()
             val team = teams.values.firstOrNull { it.members.remove(name) } ?: return
             // 同步数据包
-            if (team.members.isNotEmpty()) {
-                operator.leaveTeam(player, team.name, setOf(name))
-            } else {
-                operator.removeTeam(player, team.name)
-            }
+            operator.leaveTeam(player, team.name, setOf(name))
         }
     }
 
-    fun getKey(nameTagVisible: Boolean, collision: Boolean, color: ChatColor): String {
-        return "${if (nameTagVisible) "1" else "0"}${if (collision) "1" else "0"}${color.ordinal}"
+    fun getKey(nameTagVisible: Boolean, collision: Boolean, color: ChatColor, canSeeInvisible: Boolean): String {
+        return "${if (nameTagVisible) "T" else "F"}${if (collision) "T" else "F"}${if (canSeeInvisible) "T" else "F"}_${color.ordinal}"
     }
 }

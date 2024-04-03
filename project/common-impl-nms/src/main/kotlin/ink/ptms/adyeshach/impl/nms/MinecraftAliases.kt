@@ -48,6 +48,8 @@ typealias NMSPacketPlayOutAttachEntity = net.minecraft.network.protocol.game.Pac
 
 typealias NMSPacketPlayOutScoreboardTeam = net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam
 
+typealias NMSPacketPlayOutEntityEffect = net.minecraft.network.protocol.game.PacketPlayOutEntityEffect
+
 typealias NMSPacketDataSerializer = net.minecraft.network.PacketDataSerializer
 
 typealias NMSIRegistry<T> = net.minecraft.core.IRegistry<T>

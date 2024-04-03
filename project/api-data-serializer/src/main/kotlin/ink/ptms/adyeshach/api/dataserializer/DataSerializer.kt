@@ -133,6 +133,8 @@ interface DataSerializer {
         return this
     }
 
+    fun writeComponent(json: String)
+
     fun toNMS(): Any
 
     fun dataOutput(): DataOutput

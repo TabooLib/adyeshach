@@ -28,6 +28,11 @@ interface GenericEntity {
     var glowingColor: ChatColor
 
     /**
+     * 是否可以看见隐形单位
+     */
+    var canSeeInvisible: Boolean
+
+    /**
      * 实体在细雪中的停留的时间（应该是）
      */
     var ticksFrozenInPowderedSnow: Int

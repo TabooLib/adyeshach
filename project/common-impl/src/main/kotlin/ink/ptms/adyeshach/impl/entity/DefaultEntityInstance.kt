@@ -98,6 +98,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Expose
     override var isNameTagVisible = true
         set(value) {
+            // 与 canSeeInvisible 冲突
+            if (!value) {
+                canSeeInvisible = false
+            }
             field = value
             VisualTeam.updateTeam(this)
         }
@@ -106,6 +110,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Expose
     override var isCollision = true
         set(value) {
+            // 与 canSeeInvisible 冲突
+            if (!value) {
+                canSeeInvisible = false
+            }
             field = value
             VisualTeam.updateTeam(this)
         }
@@ -114,6 +122,22 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Expose
     override var glowingColor = ChatColor.WHITE
         set(value) {
+            // 与 canSeeInvisible 冲突
+            if (value != ChatColor.WHITE) {
+                canSeeInvisible = true
+            }
+            field = value
+            VisualTeam.updateTeam(this)
+        }
+
+    /** 是否可见隐形单位 */
+    @Expose
+    override var canSeeInvisible = false
+        set(value) {
+            // 与其他其他记分板功能冲突
+            if (!isNameTagVisible || !isCollision || glowingColor != ChatColor.WHITE) {
+                return
+            }
             field = value
             VisualTeam.updateTeam(this)
         }
@@ -262,6 +286,11 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 } else {
                     ChatColor.WHITE
                 }
+                true
+            }
+            // 是否可见隐形单位
+            "canseeinvisible", "can_see_invisible" -> {
+                canSeeInvisible = value?.cbool ?: false
                 true
             }
             // 可见距离

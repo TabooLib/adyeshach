@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.module.editor.EditType
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
+import org.bukkit.ChatColor
 
 /**
  * Adyeshach
@@ -57,12 +58,13 @@ class PageTraits(editor: EditPanel) : MultiplePage(editor) {
             "traits2", 999, listOf(
                 SimpleAction.MetaBool("name-tag-visible", entity.isNameTagVisible),
                 SimpleAction.MetaBool("collision", entity.isCollision),
-                // 发光
-                if (entity.isGlowing()) {
-                    SimpleAction.Meta("glowing-color", EditType.CHAT_COLOR, "${entity.glowingColor}${entity.glowingColor.name}")
+                SimpleAction.Meta("glowing-color", EditType.CHAT_COLOR, "${entity.glowingColor}${entity.glowingColor.name}"),
+                // 需要其他记分板选项处于默认值
+                if (entity.isNameTagVisible && entity.isCollision && entity.glowingColor == ChatColor.WHITE) {
+                    SimpleAction.MetaBool("can-see-invisible", entity.canSeeInvisible, true)
                 } else {
                     SimpleAction.None
-                },
+                }
             )
         )
         // 附加特性 1

@@ -530,6 +530,10 @@ editor-meta-variant: '变体'
 editor-meta-name-tag-visible: '是否显示名称'
 editor-meta-collision: '是否启用碰撞箱'
 editor-meta-glowing-color: '发光颜色'
+editor-meta-can-see-invisible: '是否可见隐形'
+editor-meta-can-see-invisible-description: |-
+  &c如果你启用了这个选项，那么玩家将无法在服务器中加入任何记分板队伍。
+  &c同时，需要左边所有选项处于默认值。
 editor-meta-frog-variant: '青蛙变体'
 editor-meta-tongue-target: '舌头目标'
 editor-meta-height: '高度'
