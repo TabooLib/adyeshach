@@ -76,9 +76,16 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
             if (action.isCustomCommand()) {
                 val clickCommand = action.clickCommand(player, entity, this, index)?.uncolored()
                 if (clickCommand != null) {
+                    // 执行命令并刷新页面
                     if (action.isRefreshPage()) {
                         json.runCommand("/adyeshach api ee $clickCommand")
-                    } else {
+                    }
+                    // 复制文本
+                    else if (clickCommand.startsWith('>')) {
+                        json.copyToClipboard(clickCommand.substring(1))
+                    }
+                    // 执行命令
+                    else {
                         json.runCommand("/$clickCommand")
                     }
                 }
@@ -99,7 +106,7 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
         }
         json.newLine()
     }
-    
+
     fun appendPage(maxPage: Int) {
         json.append("  ")
         json.appendLang("back").hoverText(player.lang("back-help")).runCommand("/adyeshach edit ${entity.uniqueId}")
@@ -130,6 +137,7 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
                     .hoverLang("input-primitive-type-sign-warn")
                     .runCommand("/adyeshach api pi CHAT")
             }
+
             MetaPrimitive.InputType.CHAT -> {
                 json.appendLang("input-primitive-type-chat")
                     .runCommand("/adyeshach api pi SIGN")

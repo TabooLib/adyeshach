@@ -32,8 +32,7 @@ import java.util.*
 abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(entityTypes), AdyHuman {
 
     /** 玩家 UUID */
-    internal val pid: UUID
-        get() = normalizeUniqueId
+    var pid = normalizeUniqueId
 
     /** 是否已经生成 */
     internal var spawned = false

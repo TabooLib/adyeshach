@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachEntityTypeRegistry
 import ink.ptms.adyeshach.core.MinecraftHelper
@@ -21,6 +20,7 @@ import org.bukkit.util.Vector
 import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -39,31 +39,23 @@ class DefaultMinecraftHelper : MinecraftHelper {
     val nms13ParticleRegistryBlocks: NMS13IRegistry<NMS13Particle<out NMS13ParticleParam>>
         get() = NMS13IRegistry::class.java.getProperty("PARTICLE_TYPE", isStatic = true)!!
 
-    val entityTypeCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
-        .build<EntityTypes, Any>()
+    val entityTypeCache = ConcurrentHashMap<EntityTypes, Any>()
 
-    val paintingCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
-        .build<BukkitPaintings, Any>()
+    val paintingCache =ConcurrentHashMap<BukkitPaintings, Any>()
 
-    val particleCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
-        .build<BukkitParticles, Any>()
+    val particleCache = ConcurrentHashMap<BukkitParticles, Any>()
 
-    val blockIdCache = Caffeine.newBuilder()
-        .expireAfterAccess(30, java.util.concurrent.TimeUnit.MINUTES)
-        .build<MaterialData, Int>()
+    val blockIdCache = ConcurrentHashMap<MaterialData, Int>()
 
     var isChunkCheckError = false
 
     override fun adapt(type: EntityTypes): Any {
-        return entityTypeCache.get(type) {
+        return entityTypeCache.getOrPut(type) {
             if (majorLegacy >= 11400) {
                 val names = ArrayList<String>()
                 names += type.name
                 names += typeHandler.getBukkitEntityAliases(type)
-                names.forEach { kotlin.runCatching { return@get NMS16EntityTypes::class.java.getProperty<Any>(it, isStatic = true)!! } }
+                names.forEach { kotlin.runCatching { return@getOrPut NMS16EntityTypes::class.java.getProperty<Any>(it, isStatic = true)!! } }
                 errorBy("error-entity-type-not-supported", "$type $names")
             } else {
                 typeHandler.getBukkitEntityId(type)
@@ -76,7 +68,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun adapt(paintings: BukkitPaintings): Any {
-        return paintingCache.get(paintings) {
+        return paintingCache.getOrPut(paintings) {
             if (MinecraftVersion.major >= 5) {
                 NMS16Paintings::class.java.getProperty<Any>(paintings.index.toString(), isStatic = true)!!
             } else {
@@ -87,7 +79,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     @Suppress("KotlinConstantConditions")
     override fun adapt(particles: BukkitParticles): Any {
-        return particleCache.get(particles) {
+        return particleCache.getOrPut(particles) {
             when {
                 majorLegacy >= 11400 -> {
                     NMS16Particles::class.java.getProperty<Any>(particles.name, isStatic = true) ?: NMS16Particles.FLAME
@@ -129,7 +121,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun getBlockId(materialData: MaterialData): Int {
-        return blockIdCache.get(materialData) {
+        return blockIdCache.getOrPut(materialData) {
             if (MinecraftVersion.major >= 10) {
                 NMSBlock.getId(CraftMagicNumbers19.getBlock(materialData))
             } else if (MinecraftVersion.major >= 5) {

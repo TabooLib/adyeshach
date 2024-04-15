@@ -24,11 +24,20 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
         return listOf(
             SimpleGroup(
                 "move-position", 8, listOf(
-                    SimpleAction.Literal("&7X: &a${entity.x.format()}"),
-                    SimpleAction.Literal("&7Y: &a${entity.y.format()}"),
-                    SimpleAction.Literal("&7Z: &a${entity.z.format()}"),
-                    SimpleAction.Literal("&7YAW: &a${entity.yaw.format()}"),
-                    SimpleAction.Literal("&7PITCH: &a${entity.pitch.format()}"),
+                    SimpleAction.Literal("&a${entity.x.format()}"),
+                    SimpleAction.Literal("&a${entity.y.format()}"),
+                    SimpleAction.Literal("&a${entity.z.format()}"),
+                    SimpleAction.Literal("&a${entity.yaw.format()}&7, &a${entity.pitch.format()}"),
+                    object : SimpleAction.Literal("&7COPY") {
+
+                        override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
+                            return ">${entity.world.name} ${entity.x.format()} ${entity.y.format()} ${entity.z.format()} ${entity.yaw.format()} ${entity.pitch.format()}"
+                        }
+
+                        override fun isRefreshPage(): Boolean {
+                            return false
+                        }
+                    }
                 )
             ),
             SimpleGroup("move-xyz", 8, listOf(Type.X.actions(), Type.Y.actions(), Type.Z.actions()).flatten()),
