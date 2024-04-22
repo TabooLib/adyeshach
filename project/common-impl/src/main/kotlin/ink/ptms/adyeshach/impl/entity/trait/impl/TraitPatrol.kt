@@ -12,6 +12,8 @@ import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.*
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
@@ -122,9 +124,21 @@ object TraitPatrol : Trait() {
     }
 
     @SubscribeEvent
-    private fun onSwap(e: PlayerSwapHandItemsEvent) {
-        if (editCacheMap.containsKey(e.player.name)) {
+    private fun onSwap(e: PlayerDropItemEvent) {
+        if (handle(e)) {
             e.isCancelled = true
+        }
+    }
+
+    @SubscribeEvent
+    private fun onSwap(e: PlayerSwapHandItemsEvent) {
+        if (handle(e)) {
+            e.isCancelled = true
+        }
+    }
+
+    private fun handle(e: PlayerEvent): Boolean {
+        if (editCacheMap.containsKey(e.player.name)) {
             e.player.playSound(e.player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             if (e.player.isSneaking) {
                 editCacheMap[e.player.name]?.setTraitPatrolNodes(emptyList())
@@ -136,7 +150,9 @@ object TraitPatrol : Trait() {
                 adaptPlayer(e.player).sendTitle("", "", 0, 40, 0)
                 e.player.inventory.takeItem(999) { it.hasName(language.getLang(e.player, "trait-patrol-tool-name")) }
             }
+            return true
         }
+        return false
     }
 
     @SubscribeEvent
