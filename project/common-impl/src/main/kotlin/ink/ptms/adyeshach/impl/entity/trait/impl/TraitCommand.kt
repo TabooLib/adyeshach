@@ -104,7 +104,7 @@ object TraitCommand : Trait() {
         val future = CompletableFuture<Void>()
         language.sendLang(player, "trait-command")
         player.inputBook(data.getStringList(entityInstance.uniqueId)) {
-            entityInstance.setTraitCommands(it)
+            entityInstance.setTraitCommands(it.map { it.replace("§0", "") })
             future.complete(null)
         }
         return future
