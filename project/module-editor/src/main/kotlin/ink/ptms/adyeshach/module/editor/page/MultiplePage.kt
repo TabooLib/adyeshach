@@ -82,7 +82,7 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
                     }
                     // 复制文本
                     else if (clickCommand.startsWith('>')) {
-                        json.copyToClipboard(clickCommand.substring(1))
+                        json.suggestCommand(clickCommand.substring(1))
                     }
                     // 执行命令
                     else {
