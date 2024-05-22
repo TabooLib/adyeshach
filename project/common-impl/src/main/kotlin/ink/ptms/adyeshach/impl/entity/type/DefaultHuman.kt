@@ -32,7 +32,8 @@ import java.util.*
 abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(entityTypes), AdyHuman {
 
     /** 玩家 UUID */
-    var pid = normalizeUniqueId
+    val pid: UUID
+        get() = normalizeUniqueId
 
     /** 是否已经生成 */
     internal var spawned = false
@@ -287,5 +288,45 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 }
             }
         }
+//
+//        var blocked = false
+//        var index = -99999
+//        val intercept = arrayListOf<Any>()
+//
+//        @Awake(LifeCycle.ENABLE)
+//        fun init() {
+//            simpleCommand("ady-test-npc") { sender, args ->
+//                blocked = true
+//                Adyeshach.api().getPublicEntityManager(ManagerType.TEMPORARY)
+//                    .create(EntityTypes.PLAYER, sender.cast<Player>().location) {
+//                        index = it.index
+//                    }
+//                submit(delay = 20) {
+//                    blocked = false
+//                }
+//            }
+//        }
+//
+//        @SubscribeEvent
+//        fun onSend(e: PacketSendEvent) {
+//            if (e.packet.name == "PacketPlayOutNamedEntitySpawn") {
+//                info("监测到 ${e.packet.name}, UUID: ${e.packet.read<UUID>("b")}")
+//                val dataWatcher = e.packet.read<Any>("h")
+//                info("dataWatcher: $dataWatcher")
+//                info("dataWatcher.entity: ${dataWatcher?.getProperty<Any>("c")}")
+//            }
+//            try {
+//                if (blocked || e.packet.read<Any>("a") == index) {
+//                    if (e.packet.name == "PacketPlayOutNamedEntitySpawn") {
+//                        info("放行 ${e.packet.name}")
+//                        // e.isCancelled = true
+//                    } else {
+//                        info("拦截 ${e.packet.name}")
+//                        e.isCancelled = true
+//                    }
+//                }
+//            } catch (_: Throwable) {
+//            }
+//        }
     }
 }

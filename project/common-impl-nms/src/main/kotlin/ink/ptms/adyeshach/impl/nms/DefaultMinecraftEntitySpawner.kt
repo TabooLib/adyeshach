@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitDirection
@@ -11,9 +10,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
-import taboolib.common.platform.function.info
 import taboolib.common.util.unsafeLazy
-import taboolib.common5.cshort
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.UnsafeAccess

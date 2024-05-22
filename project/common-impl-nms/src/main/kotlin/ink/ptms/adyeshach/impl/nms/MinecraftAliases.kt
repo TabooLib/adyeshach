@@ -390,4 +390,6 @@ typealias CraftItemStack9 = org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemSt
 
 typealias CraftWorld9 = org.bukkit.craftbukkit.v1_9_R2.CraftWorld
 
+typealias CraftEntity9 = org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity
+
 fun <T> nullable(value: T?): Optional<T> = Optional.fromNullable(value)
