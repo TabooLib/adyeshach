@@ -49,6 +49,11 @@ interface DefaultModelEngine : ModelEngine {
             if (modelEngineName.isNotBlank()) {
                 modelEngineUniqueId = normalizeUniqueId
 
+                ModelEngineAPI.getModeledEntity(normalizeUniqueId)?.destroy()
+
+                // 先销毁原版实体，再创建模型
+                despawn()
+
                 // 创建代理实体
                 val entity = EntityModeled(this)
                 entity.syncLocation(getLocation())
@@ -56,9 +61,6 @@ interface DefaultModelEngine : ModelEngine {
                 // 创建模型
                 val model = ModelEngineAPI.getOrCreateModeledEntity(normalizeUniqueId) { entity }
                 model.isBaseEntityVisible = false
-
-                // 销毁原版实体
-                despawn()
 
                 // 没有模型
                 val useStateMachine = false
