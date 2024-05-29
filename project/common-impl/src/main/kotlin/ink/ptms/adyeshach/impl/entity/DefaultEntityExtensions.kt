@@ -199,6 +199,19 @@ fun DefaultEntityInstance.allowSyncPosition(): Boolean {
     return !isNitwit && viewPlayers.hasVisiblePlayer() && isChunkLoaded()
 }
 
+/** 同步到载具位置 */
+fun DefaultEntityInstance.syncToVehicle() {
+    // 是否需要同步到载具位置
+    if (vehicleSync + TimeUnit.SECONDS.toMillis(1) < System.currentTimeMillis()) {
+        vehicleSync = System.currentTimeMillis()
+        // 获取载具
+        val vehicle = getVehicle()
+        if (vehicle != null) {
+            position = vehicle.position
+        }
+    }
+}
+
 /** 同步位置 */
 fun DefaultEntityInstance.syncPosition() {
     val updateRotation = (yaw - position.yaw).absoluteValue >= 1 || (pitch - position.pitch).absoluteValue >= 1 || random(0.2)
@@ -208,15 +221,6 @@ fun DefaultEntityInstance.syncPosition() {
         // 是否需要更新视角
         if (updateRotation) {
             operator.updateEntityLook(getVisiblePlayers(), index, yaw, pitch, true)
-        }
-        // 是否需要同步到载具位置
-        if (vehicleSync + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
-            vehicleSync = System.currentTimeMillis()
-            // 获取载具
-            val vehicle = getVehicle()
-            if (vehicle != null) {
-                position = vehicle.position
-            }
         }
     } else {
         // 是否需要更新位置
