@@ -430,6 +430,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         } else {
             clientPosition = newPosition
         }
+        // 同步 passengers 位置
+        getPassengers().forEach { it.teleport(location) }
     }
 
     override fun setVelocity(vector: Vector) {

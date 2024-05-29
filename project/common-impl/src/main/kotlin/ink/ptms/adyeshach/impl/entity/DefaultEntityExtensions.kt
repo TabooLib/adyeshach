@@ -207,7 +207,7 @@ fun DefaultEntityInstance.syncToVehicle() {
         // 获取载具
         val vehicle = getVehicle()
         if (vehicle != null) {
-            position = vehicle.position
+            teleport(vehicle.position)
         }
     }
 }
