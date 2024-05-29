@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
 import org.bukkit.Location
+import org.bukkit.util.Vector
 import taboolib.common5.Baffle
 
 /**
@@ -151,6 +152,26 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * @param animation [BukkitAnimation]
      */
     fun sendAnimation(animation: BukkitAnimation)
+
+    /**
+     * 添加附着单位
+     * 附着单位是临时的，不会被持久化
+     * 随着主实体的移动而移动
+     *
+     * @param id 附着单位序号
+     * @param relativePos 相对位置
+     */
+    fun addAttachEntity(id: Int, relativePos: Vector)
+
+    /**
+     * 移除附着单位
+     */
+    fun removeAttachEntity(id: Int)
+
+    /**
+     * 获取所有附着单位
+     */
+    fun getAttachEntities(): Map<Int, Vector>
 
     /**
      * 克隆实体
