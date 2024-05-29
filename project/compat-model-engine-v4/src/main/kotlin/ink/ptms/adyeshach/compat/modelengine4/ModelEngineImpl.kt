@@ -56,12 +56,13 @@ interface DefaultModelEngine : ModelEngine {
                 // 创建模型
                 val model = ModelEngineAPI.getOrCreateModeledEntity(normalizeUniqueId) { entity }
                 model.isBaseEntityVisible = false
+                model.setSaved(false)
 
                 // 销毁原版实体
                 despawn()
 
                 // 没有模型
-                val useStateMachine = false
+                val useStateMachine = true
                 val activeModel = ModelEngineAPI.createActiveModel(modelEngineName, null) {
                     if (useStateMachine) StateMachineHandler(it) else PriorityHandler(it)
                 }

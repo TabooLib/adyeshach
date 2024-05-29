@@ -12,32 +12,32 @@ import taboolib.common5.Baffle
 open class ViewPlayers(val entityInstance: EntityInstance) {
 
     val viewers: ConcurrentSet<String>
-        get() = entityInstance.viewPlayers.viewers
+        get() = ConcurrentSet<String>().also { it.addAll(entityInstance.v2.viewPlayers.viewers) }
 
     val visible: ConcurrentSet<String>
-        get() = entityInstance.viewPlayers.visible
+        get() = ConcurrentSet<String>().also { it.addAll(entityInstance.v2.viewPlayers.visible) }
 
     val visibleRefreshLocker: Baffle
-        get() = entityInstance.viewPlayers.visibleRefreshLocker
+        get() = entityInstance.v2.viewPlayers.visibleRefreshLocker
 
     fun getPlayers(): List<Player> {
-        return entityInstance.viewPlayers.getPlayers()
+        return entityInstance.v2.viewPlayers.getPlayers()
     }
 
     fun getPlayersInViewDistance(): List<Player> {
-        return entityInstance.viewPlayers.getPlayersInViewDistance()
+        return entityInstance.v2.viewPlayers.getPlayersInViewDistance()
     }
 
     fun getViewPlayers(): List<Player> {
-        return entityInstance.viewPlayers.getViewPlayers()
+        return entityInstance.v2.viewPlayers.getViewPlayers()
     }
 
     fun getOutsidePlayers(): List<Player> {
-        return entityInstance.viewPlayers.getOutsidePlayers()
+        return entityInstance.v2.viewPlayers.getOutsidePlayers()
     }
 
     fun hasVisiblePlayer(): Boolean {
-        return entityInstance.viewPlayers.hasVisiblePlayer()
+        return entityInstance.v2.viewPlayers.hasVisiblePlayer()
     }
 
     override fun toString(): String {
