@@ -432,6 +432,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         }
         // 同步 passengers 位置
         getPassengers().forEach { it.teleport(location) }
+        // 更新 passengers 信息
+        refreshPassenger()
     }
 
     override fun setVelocity(vector: Vector) {
