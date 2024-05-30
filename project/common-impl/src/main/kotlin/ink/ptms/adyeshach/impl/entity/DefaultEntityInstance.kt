@@ -495,8 +495,6 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun onTick() {
         // 处理玩家可见
         handleTracker()
-        // 同步到载具位置
-        syncToVehicle()
         // 允许位置同步
         if (allowSyncPosition()) {
             // 处理移动
