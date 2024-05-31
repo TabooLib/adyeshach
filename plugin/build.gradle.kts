@@ -6,7 +6,7 @@ taboolib {
             name("坏黑")
             name("Arasple")
             name("zhanshi123")
-name("AkiDev")
+            name("AkiDev")
         }
         dependencies {
             name("Zaphkiel").optional(true)
