@@ -2,23 +2,18 @@ package ink.ptms.adyeshach.core.util
 
 import com.google.common.base.Enums
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.event.AdyeshachItemHookEvent
-import net.minecraft.core.EnumDirection
-import net.minecraft.util.MathHelper
 import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.block.BlockFace
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.console
+import taboolib.common.platform.function.submit
 import taboolib.common5.Demand
 import taboolib.common5.cint
 import taboolib.library.xseries.parseToMaterial
 import taboolib.platform.util.buildItem
-import java.lang.Math.abs
 
 /**
  * 使用 AdyeshachLanguage 发送语言文件
@@ -60,7 +55,7 @@ fun errorBy(node: String, vararg args: Any): Nothing = error(Adyeshach.api().get
  * 安全测距
  */
 fun Location.safeDistance(loc: Location): Double {
-    return if (world!!.name == loc.world!!.name) distance(loc) else Double.MAX_VALUE
+    return if (world != null && world?.name == loc.world?.name) distance(loc) else Double.MAX_VALUE
 }
 
 /**
@@ -164,4 +159,15 @@ fun String.toItem(): ItemStack {
     val event = AdyeshachItemHookEvent(namespace, source, itemStack)
     event.call()
     return event.itemStack
+}
+
+fun submitRepeat(times: Int, async: Boolean = false, func: Runnable) {
+    var i = 0
+    submit(async = async, period = 1) {
+        if (i++ < times) {
+            func.run()
+        } else {
+            cancel()
+        }
+    }
 }
