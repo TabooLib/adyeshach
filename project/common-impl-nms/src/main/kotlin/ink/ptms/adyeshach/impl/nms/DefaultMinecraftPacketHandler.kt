@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftPacketHandler
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
+import taboolib.module.nms.PacketSender
 import taboolib.module.nms.sendPacket
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -20,6 +21,10 @@ class DefaultMinecraftPacketHandler : MinecraftPacketHandler {
 
     val buffer = ConcurrentHashMap<Player, MutableList<BufferPacket>>()
     val operator by unsafeLazy { Adyeshach.api().getMinecraftAPI().getEntityOperator() }
+
+    init {
+        PacketSender.useMinecraftMethod()
+    }
 
     override fun sendPacket(player: List<Player>, packet: Any) {
         player.forEach { it.sendPacket(packet) }
