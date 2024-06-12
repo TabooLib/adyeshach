@@ -39,29 +39,35 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
 
     override fun getTexture(name: String): CompletableFuture<AdyeshachNetworkAPI.SkinTexture> {
         val future = CompletableFuture<AdyeshachNetworkAPI.SkinTexture>()
-        val file = File(getDataFolder(), "skin/$name")
+        var file = File(getDataFolder(), "skin/$name")
+        // 从 ashcon 中检索
+        if (!file.exists()) {
+            file = File(getDataFolder(), "skin/ashcon/$name")
+        }
         if (file.exists() && file.length() > 1) {
             val json = Configuration.loadFromFile(file, Type.JSON)
             if (json.getKeys(false).isEmpty()) {
                 warning("Unable to read valid data for $name from $file, please delete it.")
                 return future
             }
-            future.complete(when {
-                // ashcon 缓存
-                json.contains("network") -> Texture(json.getString("value")!!, json.getString("signature")!!)
-                // mineskin 上传
-                else -> {
-                    try {
-                        // legacy version
-                        val texture = json.getConfigurationSection("members.data.members.texture.members")!!
-                        Texture(texture.getString("value.value")!!, texture.getString("signature.value")!!)
-                    } catch (ignored: NullPointerException) {
-                        // new version 2021/9/19
-                        val texture = json.getConfigurationSection("data.texture")!!
-                        Texture(texture.getString("value")!!, texture.getString("signature")!!)
+            future.complete(
+                when {
+                    // ashcon 缓存
+                    json.contains("network") -> Texture(json.getString("value")!!, json.getString("signature")!!)
+                    // mineskin 上传
+                    else -> {
+                        try {
+                            // legacy version
+                            val texture = json.getConfigurationSection("members.data.members.texture.members")!!
+                            Texture(texture.getString("value.value")!!, texture.getString("signature.value")!!)
+                        } catch (ignored: NullPointerException) {
+                            // new version 2021/9/19
+                            val texture = json.getConfigurationSection("data.texture")!!
+                            Texture(texture.getString("value")!!, texture.getString("signature")!!)
+                        }
                     }
                 }
-            })
+            )
         } else {
             var playerName = name.substringAfterLast('/')
             if (getProxyPlayer(playerName) != null) {
@@ -69,7 +75,7 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
             }
             Adyeshach.api().getNetworkAPI().getAshcon().getTexture(playerName).thenAccept {
                 future.complete(it)
-                submitAsync { newFile(file).writeText(Serializer.gson.toJson(it)) }
+                submitAsync { newFile(getDataFolder(), "skin/ashcon/$name").writeText(Serializer.gson.toJson(it)) }
             }
         }
         return future
@@ -112,20 +118,25 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                                     403 -> {
                                         sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org denied access to that url")
                                     }
+
                                     404 -> {
                                         sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org unable to find an image at that url")
                                     }
+
                                     408, 504, 599 -> {
                                         sender.sendMessage("${ADYESHACH_PREFIX}Took too long to connect to mineskin.org!")
                                     }
+
                                     else -> {
                                         sender.sendMessage("${ADYESHACH_PREFIX}mineskin.org took too long to connect! Is your image valid?")
                                     }
                                 }
                             }
+
                             400 -> {
                                 sender.sendMessage("${ADYESHACH_PREFIX}Invalid file provided! Please ensure it is a valid .png skin!")
                             }
+
                             else -> {
                                 connection.inputStream.use { input ->
                                     val reader = BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8))
