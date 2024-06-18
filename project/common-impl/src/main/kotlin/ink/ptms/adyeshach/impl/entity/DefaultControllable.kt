@@ -122,7 +122,7 @@ interface DefaultControllable : Controllable {
         val newList = locations.map { it.clone() }
         // 修正路径高度
         if (fixHeight) {
-            newList.forEach { p -> p.y = ChunkAccess.getChunkAccess(world).getBlockHighest(p.x, p.y, p.z) }
+             newList.forEach { p -> p.y = ChunkAccess.getChunkAccess(world).getBlockHighest(p.x, p.y, p.z) }
         }
         // 设置移动路径
         moveFrames = ResultNavigation(newList.map { it.toVector() }.toMutableList()).toInterpolated(world, speed)

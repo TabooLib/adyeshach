@@ -167,7 +167,7 @@ fun DefaultEntityInstance.handleMove() {
             }
             // 调试模式下显示路径
             if (AdyeshachSettings.debug) {
-                world.spawnParticle(org.bukkit.Particle.SOUL_FIRE_FLAME, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
+                world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
             }
         }
     }
