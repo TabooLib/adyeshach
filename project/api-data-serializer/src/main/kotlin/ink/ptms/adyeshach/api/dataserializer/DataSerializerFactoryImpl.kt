@@ -65,11 +65,11 @@ class DataSerializerFactoryImpl(val buf: ByteBuf) : DataSerializerFactory, DataS
     }
 
     override fun writeComponent(json: String) {
-        try {
+        if (MinecraftVersion.majorLegacy >= 12002) {
             val component = ChatSerializer.fromJson(json)
             val nbt = SystemUtils.getOrThrow(ComponentSerialization.CODEC.encodeStart(DynamicOpsNBT.INSTANCE, component)) { err -> EncoderException("Failed to encode: $err $component") }
             NBTCompressedStreamTools.writeAnyTag(nbt, ByteBufOutputStream(buf))
-        } catch (_: NoClassDefFoundError) {
+        } else {
             writeUtf(json, 262144)
         }
     }
