@@ -65,7 +65,8 @@ class DataSerializerFactoryImpl(val buf: ByteBuf) : DataSerializerFactory, DataS
     }
 
     override fun writeComponent(json: String) {
-        if (MinecraftVersion.majorLegacy >= 12002) {
+        // 1.20.2 没有 ComponentSerialization, 23w40a (1.20.3的快照) 之后加的
+        if (MinecraftVersion.majorLegacy >= 12003) {
             val component = ChatSerializer.fromJson(json)
             val nbt = SystemUtils.getOrThrow(ComponentSerialization.CODEC.encodeStart(DynamicOpsNBT.INSTANCE, component)) { err -> EncoderException("Failed to encode: $err $component") }
             NBTCompressedStreamTools.writeAnyTag(nbt, ByteBufOutputStream(buf))
