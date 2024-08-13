@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.core
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
-import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import org.bukkit.inventory.ItemStack
@@ -24,7 +23,7 @@ import java.util.function.Consumer
 interface MinecraftEntityMetadataHandler {
 
     /**
-     * 构建并生成元数据（只能处理元数据类型）
+     * 借助 Adyeshach Entity 生成独立的元数据
      * ```
      * val metaList = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().buildMetadata(AdyHuman::class.java) { entity ->
      *    entity.setInvisible(true)
@@ -35,8 +34,9 @@ interface MinecraftEntityMetadataHandler {
      * // 2. 直接发送
      * Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(player, entityId, metaList)
      * ```
+     * 只能处理基于元数据的属性，例如 Player 的 setPing 不会被处理。
      */
-    fun <T: AdyEntity> buildMetadata(type: Class<T>, process: Consumer<T>): List<MinecraftMeta>
+    fun <T : AdyEntity> buildMetadata(type: Class<T>, process: Consumer<T>): List<MinecraftMeta>
 
     /**
      * 创建元数据数据包
