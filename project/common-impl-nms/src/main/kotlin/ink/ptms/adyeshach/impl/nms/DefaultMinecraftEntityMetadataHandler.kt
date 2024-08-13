@@ -1,11 +1,14 @@
 package ink.ptms.adyeshach.impl.nms
 
+import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
 import org.bukkit.Art
@@ -17,7 +20,9 @@ import org.bukkit.util.Vector
 import taboolib.common.platform.function.warning
 import taboolib.common5.Quat
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.MinecraftVersion.isUniversal
 import java.util.*
+import java.util.function.Consumer
 
 /**
  * Adyeshach
@@ -65,6 +70,51 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         // 1.20+
         if (MinecraftVersion.majorLegacy >= 12000) {
             addParser("SnifferState", SnifferStateParser())
+        }
+        // 注册一个事件专门用来处理 generateMetadata 方法中的特殊实体
+        @Suppress("UNCHECKED_CAST")
+        Adyeshach.api().getEventBus().prepareMetaUpdate { e ->
+            if (e.entity.hasTag("META_GENERATOR")) {
+                val record = e.entity.getTag("META_GENERATOR_RECORD") as ArrayList<String>
+                record += e.key
+            }
+            true
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : AdyEntity> buildMetadata(type: Class<T>, process: Consumer<T>): List<MinecraftMeta> {
+        val entityType = Adyeshach.api().getEntityTypeRegistry().getEntityTypeFromAdyClass(type) ?: error("Unsupported entity type: $type")
+        val entityInstance = Adyeshach.api().getEntityTypeRegistry().getEntityInstance(entityType) as DefaultEntityInstance
+        val record = arrayListOf<String>()
+        entityInstance.setTag("META_GENERATOR", 1)
+        entityInstance.setTag("META_GENERATOR_RECORD", record)
+        process.accept(entityInstance as T)
+        val generated = arrayListOf<MinecraftMeta>()
+        entityInstance.getAvailableEntityMeta().forEach { meta ->
+            if (meta.key in record) {
+                generated += meta.generateMetadata(entityInstance)
+            }
+        }
+        return generated
+    }
+
+    override fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any {
+        // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
+        return if (majorLegacy >= 11903) {
+            NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
+        } else if (isUniversal) {
+            NMSPacketPlayOutEntityMetadata(createDataSerializer {
+                writeVarInt(entityId)
+                writeMetadata(metaList)
+            }.toNMS() as NMSPacketDataSerializer)
+        } else {
+            NMS16PacketPlayOutEntityMetadata().also {
+                it.a(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeMetadata(metaList)
+                }.toNMS() as NMS16PacketDataSerializer)
+            }
         }
     }
 
@@ -144,12 +194,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (rawMessage == null) null else craftChatMessageFromString(rawMessage) as NMSIChatBaseComponent)
                     )
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS16DataWatcherItem(
                         NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.f),
                         Optional.ofNullable(if (rawMessage == null) null else craftChatMessageFromString(rawMessage) as NMS16IChatBaseComponent)
                     )
                 }
+
                 else -> {
                     NMS12DataWatcherItem(NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.d), rawMessage ?: "")
                 }
@@ -166,18 +218,21 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         CraftItemStack19.asNMSCopy(itemStack)
                     )
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS16DataWatcherItem(
                         NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.g),
                         CraftItemStack16.asNMSCopy(itemStack)
                     )
                 }
+
                 majorLegacy >= 11200 -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.f),
                         CraftItemStack12.asNMSCopy(itemStack)
                     )
                 }
+
                 else -> {
                     NMS9DataWatcherItem(
                         NMS9DataWatcherObject(index, NMS9DataWatcherRegistry.f),
@@ -209,12 +264,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers19.getBlock(blockData))
                     )
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.h),
                         Optional.ofNullable(if (blockData == null) null else CraftMagicNumbers13.getBlock(blockData))
                     )
                 }
+
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.g),
@@ -237,9 +294,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 majorLegacy >= 11900 -> {
                     NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.BOOLEAN), value)
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.i), value)
                 }
+
                 else -> {
                     NMS11DataWatcherItem(NMS11DataWatcherObject(index, NMS11DataWatcherRegistry.h), value)
                 }
@@ -274,12 +333,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMSBlockPosition(vector.x, vector.y, vector.z))
                     )
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.m),
                         Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMS13BlockPosition(vector.x, vector.y, vector.z))
                     )
                 }
+
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.k),
@@ -301,12 +362,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         NMSVector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
                     )
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(
                         NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.k),
                         NMS13Vector3f(value.x.toFloat(), value.y.toFloat(), value.z.toFloat())
                     )
                 }
+
                 else -> {
                     NMS12DataWatcherItem(
                         NMS12DataWatcherObject(index, NMS12DataWatcherRegistry.i),
@@ -474,9 +537,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 majorLegacy >= 11900 -> {
                     NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.OPTIONAL_UUID), Optional.of(value))
                 }
+
                 majorLegacy >= 11300 -> {
                     NMS13DataWatcherItem(NMS13DataWatcherObject(index, NMS13DataWatcherRegistry.o), Optional.of(value))
                 }
+
                 else -> {
                     NMS11DataWatcherItem(NMS11DataWatcherObject(index, NMS11DataWatcherRegistry.m), com.google.common.base.Optional.of(value))
                 }

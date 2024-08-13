@@ -1,5 +1,6 @@
 dependencies {
     compileOnly(project(":project:common"))
+    compileOnly(project(":project:common-impl"))
     compileOnly(project(":project:api-data-serializer"))
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly("ink.ptms.core:v11900:11900:universal")

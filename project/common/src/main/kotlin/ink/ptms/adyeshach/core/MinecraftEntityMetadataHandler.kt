@@ -3,13 +3,16 @@ package ink.ptms.adyeshach.core
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import taboolib.common5.Quat
-import java.util.UUID
+import java.util.*
+import java.util.function.Consumer
 
 /**
  * Adyeshach
@@ -21,6 +24,26 @@ import java.util.UUID
 interface MinecraftEntityMetadataHandler {
 
     /**
+     * 构建并生成元数据（只能处理元数据类型）
+     * ```
+     * val metaList = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().buildMetadata(AdyHuman::class.java) { entity ->
+     *    entity.setInvisible(true)
+     *    entity.setGlowing(true)
+     * }
+     * // 1. 创建数据包自行处理
+     * val packet = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler().createMetadataPacket(entityId, metaList)
+     * // 2. 直接发送
+     * Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(player, entityId, metaList)
+     * ```
+     */
+    fun <T: AdyEntity> buildMetadata(type: Class<T>, process: Consumer<T>): List<MinecraftMeta>
+
+    /**
+     * 创建元数据数据包
+     */
+    fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any
+
+    /**
      * 注册元数据鉴别器
      */
     fun addParser(id: String, metadataParser: MinecraftMetadataParser<*>)
@@ -28,7 +51,7 @@ interface MinecraftEntityMetadataHandler {
     /**
      * 获取对应元数据鉴别器
      */
-    fun  getParser(id: String): MinecraftMetadataParser<*>?
+    fun getParser(id: String): MinecraftMetadataParser<*>?
 
     /**
      * 获取所有元数据鉴别器
@@ -79,7 +102,7 @@ interface MinecraftEntityMetadataHandler {
      * 生成 Optional<IBlockData> 类型的元数据，对应 OPTIONAL_BLOCK_DATA (1.19.4 以下为 BLOCK_DATA) 字段
      */
     fun createOptBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta
-    
+
     /**
      * 生成 Boolean 类型的元数据
      */
