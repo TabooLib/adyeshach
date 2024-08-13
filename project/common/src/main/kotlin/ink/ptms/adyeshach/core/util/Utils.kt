@@ -59,6 +59,13 @@ fun Location.safeDistance(loc: Location): Double {
 }
 
 /**
+ * 安全测距，并忽略 Y 轴
+ */
+fun Location.safeDistanceIgnoreY(loc: Location): Double {
+    return if (world != null && world?.name == loc.world?.name) distance(Location(world, loc.x, y, loc.z)) else Double.MAX_VALUE
+}
+
+/**
  * 通过字符串获取枚举值
  */
 fun <T : Enum<T>> Class<T>.getEnum(vararg name: Any): T {

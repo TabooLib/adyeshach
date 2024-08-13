@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.manager.ManagerService
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.core.util.safeDistanceIgnoreY
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.warning
@@ -52,7 +53,7 @@ open class BaseManager : Manager, ManagerService, TickService {
         entityInstance.manager = this
         // 添加观察者
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
-        entityInstance.viewPlayers.visible.addAll(player.filter { it.location.safeDistance(location) < entityInstance.visibleDistance }.map { it.name })
+        entityInstance.viewPlayers.visible.addAll(player.filter { it.location.safeDistanceIgnoreY(location) < entityInstance.visibleDistance }.map { it.name })
         // 唤起事件
         val event = AdyeshachEntityCreateEvent(entityInstance, location)
         if (event.call()) {

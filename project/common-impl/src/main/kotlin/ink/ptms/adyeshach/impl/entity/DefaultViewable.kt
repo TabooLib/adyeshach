@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.entity
 import ink.ptms.adyeshach.core.entity.EntityBase
 import ink.ptms.adyeshach.core.entity.Viewable
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.core.util.safeDistanceIgnoreY
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
 import java.util.function.Consumer
@@ -46,7 +47,7 @@ interface DefaultViewable : Viewable {
 
     override fun isInVisibleDistance(player: Player): Boolean {
         this as EntityBase
-        return player.location.safeDistance(getLocation()) < visibleDistance
+        return player.location.safeDistanceIgnoreY(getLocation()) < visibleDistance
     }
 
     override fun forViewers(viewer: Consumer<Player>) {
