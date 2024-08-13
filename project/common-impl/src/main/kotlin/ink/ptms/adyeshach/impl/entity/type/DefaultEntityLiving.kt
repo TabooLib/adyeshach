@@ -9,12 +9,11 @@ import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
-import ink.ptms.adyeshach.impl.util.toColor
+import ink.ptms.adyeshach.impl.util.toRGB
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
 import java.util.concurrent.ConcurrentHashMap
@@ -124,7 +123,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
             "potioneffectcolor", "potion_effect_color" -> {
                 // 对 RGB 写法进行兼容
                 if (value != null && value.contains(',')) {
-                    setPotionEffectColor(value.toColor())
+                    setPotionEffectColor(value.toRGB())
                     true
                 } else {
                     false

@@ -178,3 +178,11 @@ fun submitRepeat(times: Int, async: Boolean = false, func: Runnable) {
         }
     }
 }
+
+fun rgb(r: Int, g: Int, b: Int): Int {
+    return (r shl 16) or (g shl 8) or b
+}
+
+fun argb(a: Int, r: Int, g: Int, b: Int): Int {
+    return a shl 24 or (r shl 16) or (g shl 8) or b
+}

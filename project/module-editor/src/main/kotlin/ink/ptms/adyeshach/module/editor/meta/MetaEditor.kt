@@ -124,6 +124,7 @@ interface MetaEditor {
                 entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, Frog.Variant::class.java).nameToKey()
                 // 展示实体
                 entity is AdyDisplay && key == "glowColorOverride" -> MetaColor(key)
+                entity is AdyTextDisplay && key == "backgroundColor" -> MetaColor(key)
                 // 嗅探兽
                 entity is AdySniffer && key == "snifferState" -> MetaEnum(key, AdySniffer.State::class.java).nameToKey()
                 // 实体

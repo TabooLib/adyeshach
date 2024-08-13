@@ -3,7 +3,7 @@ package ink.ptms.adyeshach.impl.entity.type
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyArrow
 import ink.ptms.adyeshach.impl.util.ifTrue
-import ink.ptms.adyeshach.impl.util.toColor
+import ink.ptms.adyeshach.impl.util.toRGB
 
 /**
  * Adyeshach
@@ -22,7 +22,7 @@ abstract class DefaultArrow(entityTypes: EntityTypes) : DefaultEntity(entityType
             "color" -> {
                 // 对 RGB 写法进行兼容
                 if (value != null && value.contains(',')) {
-                    setColor(value.toColor())
+                    setColor(value.toRGB())
                     true
                 } else {
                     false
