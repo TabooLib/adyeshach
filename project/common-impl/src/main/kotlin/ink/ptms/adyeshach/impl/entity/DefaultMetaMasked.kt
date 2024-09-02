@@ -45,6 +45,21 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: Stri
         return null
     }
 
+    override fun generateMetadata(entityInstance: EntityInstance): MinecraftMeta {
+        if (index == -1) {
+            error("Meta not supported")
+        }
+        entityInstance as DefaultEntityInstance
+        val generateByteMask = HashMap<MetaMasked<*>, Boolean>()
+        var bits = 0
+        val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: error("Meta not supported")
+        entityInstance.getAvailableEntityMeta().filter { it.index == index && it is MetaMasked<*> }.forEach {
+            generateByteMask[it as MetaMasked<*>] = byteMask[it.key] == true
+        }
+        generateByteMask.filter { it.value }.forEach { (k, _) -> bits += k.mask }
+        return parser.createMeta(index, bits.toByte())
+    }
+
     override fun updateEntityMetadata(entityInstance: EntityInstance) {
         val handler = Adyeshach.api().getMinecraftAPI().getPacketHandler()
         entityInstance.forViewers {

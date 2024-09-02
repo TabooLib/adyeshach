@@ -1,8 +1,11 @@
 package ink.ptms.adyeshach.core.entity.type
 
 import ink.ptms.adyeshach.core.bukkit.data.BukkitTextAlignment
-import org.bukkit.Color
+import ink.ptms.adyeshach.core.util.BukkitColor
+import ink.ptms.adyeshach.core.util.JavaColor
+import ink.ptms.adyeshach.core.util.argb
 import taboolib.module.chat.ComponentText
+import kotlin.math.roundToInt
 
 /**
  * @author sky
@@ -22,12 +25,38 @@ interface AdyTextDisplay : AdyDisplay {
         return getMetadata("lineWidth")
     }
 
-    fun setBackgroundColor(value: Color) {
-        setMetadata("backgroundColor", value.asRGB())
+    fun unsetBackgroundColor() {
+        setBackgroundColor(JavaColor(0, 0, 0, 0))
     }
 
-    fun getBackgroundColor(): Color {
-        return Color.fromRGB(getMetadata<Int>("backgroundColor").let { if (it == -1) 0 else it })
+    fun setBackgroundColor(value: BukkitColor) {
+        if (value.red == 0 && value.green == 0 && value.blue == 0) {
+            unsetBackgroundColor()
+        } else {
+            setMetadata("backgroundColor", argb(255, value.red, value.green, value.blue))
+        }
+    }
+
+    fun setBackgroundColor(value: JavaColor) {
+        setMetadata("backgroundColor", argb(value.alpha, value.red, value.green, value.blue))
+    }
+
+    fun getBackgroundColor(): JavaColor {
+        return JavaColor(getMetadata<Int>("backgroundColor").let { if (it == -1) 0 else it }, true)
+    }
+
+    fun setTextOpacity(percent: Double) {
+        // Ensure the percent is within the range 0 to 1
+        val clampedPercent = percent.coerceIn(0.0, 1.0)
+        // Convert percent to an opacity value from 0 to 255
+        var opacity = (clampedPercent * 255).roundToInt()
+        // Apply the Minecraft specific transformation
+        if (opacity >= 128) {
+            // For values >= 128, use <opacity> - 256
+            opacity -= 256
+        }
+        // Ensure the value is within the range of a byte (-128 to 127)
+        setTextOpacity(opacity.toByte())
     }
 
     fun setTextOpacity(value: Byte) {

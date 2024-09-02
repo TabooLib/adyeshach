@@ -2,20 +2,10 @@ package ink.ptms.adyeshach.impl.entity.type
 
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyDisplay
-import ink.ptms.adyeshach.core.entity.type.AdySheep
-import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
-import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.impl.util.ifTrue
-import ink.ptms.adyeshach.impl.util.toColor
-import org.bukkit.DyeColor
+import ink.ptms.adyeshach.impl.util.toRGB
 import org.bukkit.entity.Display
-import org.bukkit.entity.TextDisplay
-import taboolib.common.platform.function.info
-import taboolib.common5.cbool
 import taboolib.common5.cint
-import taboolib.module.chat.ComponentText
-import taboolib.module.chat.Components
-import kotlin.experimental.and
 
 /**
  * Adyeshach
@@ -33,7 +23,7 @@ abstract class DefaultDisplay(entityTypes: EntityTypes) : DefaultEntity(entityTy
             "glowcoloroverride", "glow_color_override" -> {
                 // 对 RGB 写法进行兼容
                 if (value != null && value.contains(',')) {
-                    setGlowColorOverride(value.toColor())
+                    setGlowColorOverride(value.toRGB())
                     true
                 } else {
                     false

@@ -20,8 +20,17 @@ abstract class Meta<T : EntityInstance>(val index: Int, val key: String, val gro
 
     /**
      * 生成实体元数据
+     * 会触发对应的事件，例如：
+     * + MetaMaskedGenerateEvent
+     * + MetaNaturalGenerateEvent
      */
     abstract fun generateMetadata(player: Player, entityInstance: EntityInstance): MinecraftMeta?
+
+    /**
+     * 生成实体元数据（开发用函数）
+     * 不会触发任何事件
+     */
+    abstract fun generateMetadata(entityInstance: EntityInstance): MinecraftMeta
 
     /**
      * 向所有观察者更新元数据信息

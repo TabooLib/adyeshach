@@ -45,6 +45,14 @@ class DefaultMetaNatural<T, E : EntityInstance>(index: Int, key: String, group: 
         return null
     }
 
+    override fun generateMetadata(entityInstance: EntityInstance): MinecraftMeta {
+        if (index == -1) {
+            error("Meta not supported")
+        }
+        entityInstance as DefaultEntityInstance
+        return parser.createMeta(index, parser.parse(entityInstance.metadata[key] ?: error("Meta not supported")))
+    }
+
     override fun updateEntityMetadata(entityInstance: EntityInstance) {
         val handler = Adyeshach.api().getMinecraftAPI().getPacketHandler()
         entityInstance.forViewers {

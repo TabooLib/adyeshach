@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.page.Page
 import ink.ptms.adyeshach.module.editor.toLocaleKey
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import taboolib.module.chat.colored
 import java.util.*
 
@@ -67,7 +68,13 @@ abstract class SimpleAction(val id: String) : Action {
         }
 
         override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
-            return "adyeshach edit ${entity.uniqueId} e:${id()}->$editor ${value ?: ""}" // 使用 EDIT 并选用特定编辑器
+            // 使用 EDIT 并选用特定编辑器
+            // 物品类型不显示值
+            return if (value is ItemStack) {
+                "adyeshach edit ${entity.uniqueId} e:${id()}->$editor"
+            } else {
+                "adyeshach edit ${entity.uniqueId} e:${id()}->$editor ${value ?: ""}"
+            }
         }
 
         override fun isRefreshPage(): Boolean {

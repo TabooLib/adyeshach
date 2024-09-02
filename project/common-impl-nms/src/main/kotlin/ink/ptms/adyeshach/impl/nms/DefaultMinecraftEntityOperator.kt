@@ -2,10 +2,7 @@ package ink.ptms.adyeshach.impl.nms
 
 import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.api.dataserializer.createDataSerializer
-import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.MinecraftEntityOperator
-import ink.ptms.adyeshach.core.MinecraftMeta
-import ink.ptms.adyeshach.core.MinecraftPacketHandler
+import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.nmsj17.NMSJ17
@@ -36,6 +33,9 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     val packetHandler: MinecraftPacketHandler
         get() = Adyeshach.api().getMinecraftAPI().getPacketHandler()
+
+    val metaHandler: MinecraftEntityMetadataHandler
+        get() = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
 
     override fun destroyEntity(player: List<Player>, entityId: Int) {
         packetHandler.sendPacket(player, NMSPacketPlayOutEntityDestroy(entityId))
@@ -189,22 +189,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updateEntityMetadata(player: List<Player>, entityId: Int, metadata: List<MinecraftMeta>) {
-        // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
-        if (majorLegacy >= 11903) {
-            packetHandler.sendPacket(player, NMSJ17.instance.createPacketPlayOutEntityMetadata(entityId, metadata))
-        } else if (isUniversal) {
-            packetHandler.sendPacket(player, NMSPacketPlayOutEntityMetadata(createDataSerializer {
-                writeVarInt(entityId)
-                writeMetadata(metadata)
-            }.toNMS() as NMSPacketDataSerializer))
-        } else {
-            packetHandler.sendPacket(player, NMS16PacketPlayOutEntityMetadata().also {
-                it.a(createDataSerializer {
-                    writeVarInt(entityId)
-                    writeMetadata(metadata)
-                }.toNMS() as NMS16PacketDataSerializer)
-            })
-        }
+        return packetHandler.sendPacket(player, metaHandler.createMetadataPacket(entityId, metadata))
     }
 
     override fun updateEntityAnimation(player: List<Player>, entityId: Int, animation: BukkitAnimation) {

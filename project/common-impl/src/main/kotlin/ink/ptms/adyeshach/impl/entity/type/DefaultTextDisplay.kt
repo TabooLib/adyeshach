@@ -4,7 +4,7 @@ import ink.ptms.adyeshach.core.bukkit.data.BukkitTextAlignment
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
 import ink.ptms.adyeshach.impl.util.ifTrue
-import ink.ptms.adyeshach.impl.util.toColor
+import ink.ptms.adyeshach.impl.util.toRGBA
 import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 
@@ -34,10 +34,12 @@ abstract class DefaultTextDisplay(entityTypes: EntityTypes) : DefaultDisplay(ent
                 setMetadata("alignmentLeft", false)
                 setMetadata("alignmentRight", false)
             }
+
             BukkitTextAlignment.LEFT -> {
                 setMetadata("alignmentLeft", true)
                 setMetadata("alignmentRight", false)
             }
+
             BukkitTextAlignment.RIGHT -> {
                 setMetadata("alignmentLeft", false)
                 setMetadata("alignmentRight", true)
@@ -62,12 +64,13 @@ abstract class DefaultTextDisplay(entityTypes: EntityTypes) : DefaultDisplay(ent
             "backgroundcolor", "background_color" -> {
                 // 对 RGB 写法进行兼容
                 if (value != null && value.contains(',')) {
-                    setBackgroundColor(value.toColor())
+                    setBackgroundColor(value.toRGBA())
                     true
                 } else {
                     false
                 }
             }
+
             else -> false
         }
     }

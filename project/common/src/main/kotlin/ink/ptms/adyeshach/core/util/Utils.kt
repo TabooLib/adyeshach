@@ -59,6 +59,13 @@ fun Location.safeDistance(loc: Location): Double {
 }
 
 /**
+ * 安全测距，并忽略 Y 轴
+ */
+fun Location.safeDistanceIgnoreY(loc: Location): Double {
+    return if (world != null && world?.name == loc.world?.name) distance(Location(world, loc.x, y, loc.z)) else Double.MAX_VALUE
+}
+
+/**
  * 通过字符串获取枚举值
  */
 fun <T : Enum<T>> Class<T>.getEnum(vararg name: Any): T {
@@ -170,4 +177,12 @@ fun submitRepeat(times: Int, async: Boolean = false, func: Runnable) {
             cancel()
         }
     }
+}
+
+fun rgb(r: Int, g: Int, b: Int): Int {
+    return (r shl 16) or (g shl 8) or b
+}
+
+fun argb(a: Int, r: Int, g: Int, b: Int): Int {
+    return a shl 24 or (r shl 16) or (g shl 8) or b
 }
