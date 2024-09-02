@@ -34,7 +34,7 @@ object TraitTitle : Trait() {
     @Awake(LifeCycle.ACTIVE)
     fun enable() {
         Adyeshach.api().getEventBus().prepareTeleport { e ->
-            if (entityLookup.containsKey(e.entity.uniqueId) && !e.entity.isDerived()) {
+            if (e.isPositionChanged && entityLookup.containsKey(e.entity.uniqueId) && !e.entity.isDerived()) {
                 entityLookup[e.entity.uniqueId]!!.forEach {
                     it.value.teleport(e.location.clone().add(0.0, e.entity.entitySize.height + e.entity.getTraitTitleHeight(), 0.0))
                 }

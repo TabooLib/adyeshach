@@ -5,13 +5,16 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.TickService
+import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.encodePos
 import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.ServerTours
+import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
 import ink.ptms.adyeshach.impl.util.ChunkAccess
+import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common.util.random
 import taboolib.common5.clong
@@ -88,17 +91,29 @@ fun DefaultEntityInstance.handleTracker() {
             position = vehicle.position.clone()
             clientPosition = vehicle.position.clone()
         }
-        // 获取不可视的玩家
-        viewPlayers.getOutsidePlayers().forEach { player ->
+        // 同步可见状态
+        val entityManager = manager
+        if (entityManager is PlayerManager) {
+            handleTracker(entityManager.owner)
+        } else {
+            playersInGameTick.forEach { handleTracker(it) }
+        }
+    }
+}
+
+private fun DefaultEntityInstance.handleTracker(player: Player) {
+    // 是观察者
+    if (player.name in viewPlayers.viewers) {
+        // 是可见的观察者
+        if (player.name in viewPlayers.visible) {
+            // 销毁不在可视范围内的实体
+            if (!isInVisibleDistance(player) && !ServerTours.isRoutePlaying(player) && visible(player, false)) {
+                viewPlayers.visible -= player.name
+            }
+        } else {
             // 属否在可视范围内 && 所在区块是否可见 && 显示实体
             if (isInVisibleDistance(player) && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ) && visible(player, true)) {
                 viewPlayers.visible += player.name
-            }
-        }
-        // 销毁不在可视范围内的实体
-        viewPlayers.getViewPlayers { !isInVisibleDistance(it) }.forEach { player ->
-            if (!ServerTours.isRoutePlaying(player) && visible(player, false)) {
-                viewPlayers.visible -= player.name
             }
         }
     }

@@ -4,6 +4,8 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import ink.ptms.adyeshach.impl.storage.EntityStorage
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
@@ -19,6 +21,9 @@ import taboolib.platform.util.onlinePlayers
  */
 internal object DefaultManagerHandler {
 
+    // 当前游戏刻的玩家列表
+    var playersInGameTick: Collection<Player> = listOf()
+
     @Awake(LifeCycle.ACTIVE)
     fun onActive() {
         // 公共管理器
@@ -27,6 +32,7 @@ internal object DefaultManagerHandler {
         onlinePlayers.forEach { Adyeshach.api().setupEntityManager(it) }
         // 公共管理器
         submit(period = 1) {
+            playersInGameTick = Bukkit.getOnlinePlayers()
             DefaultAdyeshachBooster.api.localPublicEntityManager.onTick()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onTick()
         }

@@ -2,11 +2,11 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.ViewPlayers
-import org.bukkit.Bukkit
+import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
 import org.bukkit.entity.Player
 import taboolib.common5.Baffle
 import taboolib.common5.clong
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
@@ -19,34 +19,34 @@ import java.util.function.Function
  */
 class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayers {
 
-    override val viewers = CopyOnWriteArraySet<String>()
+    override val viewers = ConcurrentSkipListSet<String>()
 
-    override val visible = CopyOnWriteArraySet<String>()
+    override val visible = ConcurrentSkipListSet<String>()
 
-    override val visibleRefreshLocker = Baffle.of(AdyeshachSettings.visibleRefreshInterval.clong, TimeUnit.MILLISECONDS)
+    override val visibleRefreshLocker = Baffle.of(AdyeshachSettings.visibleRefreshInterval.clong * 50, TimeUnit.MILLISECONDS)
 
     override fun getPlayers(): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers }
+        return playersInGameTick.filter { it.name in viewers }
     }
 
     override fun getPlayersInViewDistance(): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers && entityInstance.isInVisibleDistance(it) }
+        return playersInGameTick.filter { it.name in viewers && entityInstance.isInVisibleDistance(it) }
     }
 
     override fun getViewPlayers(): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name in visible }
+        return playersInGameTick.filter { it.name in viewers && it.name in visible }
     }
 
     override fun getViewPlayers(cond: Function<Player, Boolean>): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name in visible && cond.apply(it) }
+        return playersInGameTick.filter { it.name in viewers && it.name in visible && cond.apply(it) }
     }
 
     override fun getOutsidePlayers(): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name !in visible }
+        return playersInGameTick.filter { it.name in viewers && it.name !in visible }
     }
 
     override fun getOutsidePlayers(cond: Function<Player, Boolean>): List<Player> {
-        return Bukkit.getOnlinePlayers().filter { it.name in viewers && it.name !in visible && cond.apply(it) }
+        return playersInGameTick.filter { it.name in viewers && it.name !in visible && cond.apply(it) }
     }
 
     override fun hasVisiblePlayer(): Boolean {
