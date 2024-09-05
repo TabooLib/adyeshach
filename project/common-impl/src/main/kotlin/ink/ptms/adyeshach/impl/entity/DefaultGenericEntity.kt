@@ -84,7 +84,7 @@ interface DefaultGenericEntity : GenericEntity {
 
     override fun setSneaking(sneaking: Boolean) {
         this as Metaable
-        setMetadata("sneaking", sneaking)
+        setMetadata("isCrouched", sneaking)
     }
 
     override fun setSprinting(sprinting: Boolean) {
