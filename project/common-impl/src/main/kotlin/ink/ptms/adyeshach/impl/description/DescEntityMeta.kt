@@ -23,31 +23,52 @@ class DescEntityMeta(input: InputStream) : Description(input) {
 
     @Suppress("UNCHECKED_CAST")
     override fun load(part: DescriptionBlock) {
+        // 获取命名空间
         val namespace = part.next()
         val adyeshachInterface = kotlin.runCatching { Class.forName(namespace) as Class<AdyEntity> }.getOrNull() ?: return
-        var support = true
-        var group = ""
-        val currentMeta = ArrayList<PrepareMeta>()
+
+        // 分组
+        var groupName = ""
+        // 已解析的 Meta
+        val metaList = arrayListOf<PrepareMeta>()
+        // 是否支持当前版本
+        var isSupported = true
 
         var i = 0
-        val index = ArrayList<Pair<Int, Int>>()
-        val indexLast = ArrayList<Pair<Int, Int>>()
+        val index = arrayListOf<Pair<Int, Int>>()
+        val indexLast = arrayListOf<Pair<Int, Int>>()
 
+        /**
+         * 注册到游戏中
+         */
         fun apply() {
-            if (support) {
-                currentMeta.forEach { meta ->
+            if (isSupported) {
+                metaList.forEach { meta ->
                     count++
-                    meta.register(adyeshachInterface, index.firstOrNull { (version, _) ->
-                        if (version > 1_0000) majorLegacy >= version else major >= toMajor(version)
-                    }?.second ?: -1, group)
+                    meta.register(
+                        adyeshachInterface,
+                        index.firstOrNull { (version, _) ->
+                            // 细分版本
+                            if (version > 1_0000) {
+                                majorLegacy >= version
+                            } else {
+                                major >= toMajor(version)
+                            }
+                        }?.second ?: -1,
+                        groupName
+                    )
                 }
             }
-            support = true
-            currentMeta.clear()
+            // 重置信息
             i = 0
-            indexLast.clear()
-            indexLast.addAll(index)
+            metaList.clear()
+            // 版本支持才会替换
+            if (isSupported) {
+                indexLast.clear()
+                indexLast.addAll(index)
+            }
             index.clear()
+            isSupported = true
         }
 
         while (part.hasNext()) {
@@ -56,27 +77,32 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                 // 序列行 —— 8 空格
                 line.startsWith(" ".repeat(8)) -> {
                     val idx = line.trim()
-                    // 组
+                    // 分组
                     if (idx.startsWith('&')) {
-                        group = idx.substring(1)
+                        groupName = idx.substring(1)
                     }
                     // 版本限制
                     else if (idx.startsWith('@')) {
                         // 是否细分版本
                         val checkMajorLegacy = idx.startsWith("@!")
-
+                        // 当前版本
                         val version = if (checkMajorLegacy) majorLegacy else major
+                        // 检查版本
                         val check = if (checkMajorLegacy) idx.substring(2, idx.length - 1).toInt() else toMajor(idx.substring(1, idx.length - 1).toInt())
-
                         when {
-                            idx.endsWith('+') -> support = version >= check
-                            idx.endsWith('-') -> support = version < check
+                            idx.endsWith('+') -> isSupported = version >= check
+                            idx.endsWith('-') -> isSupported = version < check
                         }
-                    } else {
+                    }
+                    // 索引
+                    else {
                         val args = idx.split(" ")
+                        // 继承上个
                         if (args[0] == "~") {
                             index.addAll(indexLast.map { it.first to it.second + 1 })
-                        } else if (args.size == 2) {
+                        }
+                        // 合法索引
+                        else if (args.size == 2) {
                             when {
                                 // 禁用
                                 args[1] == "!" -> {
@@ -95,24 +121,25 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                                     index.add(args[0].toInt() to args[1].toInt())
                                 }
                             }
-                        } else if (args.size == 1) {
+                        }
+                        // 无版本限制
+                        else if (args.size == 1) {
                             index.add(0 to args[0].toInt())
-                        } else {
+                        }
+                        // 无效索引
+                        else {
                             errorBy("error-meta-index-invalid", idx, namespace)
                         }
-                        // 若支持该版本则增加索引
-                        if (support) {
-                            i++
-                        }
+                        i++
                     }
                 }
                 // 名称行 - 4 空格
                 // 这一段必须放在后面，因为 8 个空格的序列行也是以 4 个空格开头
                 line.startsWith(" ".repeat(4)) -> {
-                    if (currentMeta.isNotEmpty()) {
+                    if (metaList.isNotEmpty()) {
                         apply()
                     }
-                    currentMeta += line.trim().split("|").mapNotNull {
+                    metaList += line.trim().split("|").mapNotNull {
                         // 在低版本解析特殊类型 Meta 会出现异常，例如：Cat.Type, Frog.Variant
                         // 在这里直接过滤掉
                         try {
@@ -124,6 +151,8 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                 }
             }
         }
+
+        // 注册最后一组
         apply()
     }
 
