@@ -100,7 +100,10 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                         } else {
                             errorBy("error-meta-index-invalid", idx, namespace)
                         }
-                        i++
+                        // 若支持该版本则增加索引
+                        if (support) {
+                            i++
+                        }
                     }
                 }
                 // 名称行 - 4 空格
