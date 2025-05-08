@@ -3,7 +3,6 @@ package ink.ptms.adyeshach.compat.modelengine4
 import com.ticxo.modelengine.api.ModelEngineAPI
 import com.ticxo.modelengine.api.animation.BlueprintAnimation
 import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler
-import com.ticxo.modelengine.api.events.AnimationEndEvent
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
 import com.ticxo.modelengine.api.nms.entity.HitboxEntity
@@ -14,7 +13,6 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.ModelEngine
 import ink.ptms.adyeshach.core.entity.ModelEngineOptions
 import org.bukkit.entity.Entity
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
 import taboolib.common.util.orNull
 
@@ -61,13 +59,6 @@ fun ModelEngine.getModeledEntity(): ModeledEntity? {
 fun ModelEngine.getActiveModel(modelId: String): ActiveModel? {
     val modeledEntity = getModeledEntity() ?: return null
     return modeledEntity.getModel(modelId.lowercase()).orNull()
-}
-
-/**
- * 尝试从 ActiveModel 中获取绑定的 EntityInstance 对象
- */
-fun ActiveModel.getBaseEntityInstance(): EntityInstance? {
-    return modeledEntity.base.original as? EntityInstance
 }
 
 /**
@@ -138,70 +129,6 @@ fun ModelEngine.stopAnimation(
     } else {
         handler.stopAnimation(animationId)
     }
-}
-
-/**
- * 更改模型部件
- *
- * @param fromModelId 源模型 ID
- * @param fromPartId 源部件 ID
- * @param toModelId 目标模型 ID
- * @param toPartId 目标部件 ID
- */
-fun ModelEngine.changePart(
-    fromModelId: String,
-    fromPartId: String,
-    toModelId: String,
-    toPartId: String,
-): Boolean {
-    val activeModel = getActiveModel(fromModelId) ?: return false
-    val fromBone = activeModel.getBone(fromPartId).orNull() ?: return false
-    if (fromBone.isRenderer) {
-        val toBlueprint = ModelEngineAPI.getBlueprint(toModelId) ?: return false
-        val toBone = toBlueprint.flatMap[toPartId] ?: return false
-        if (toBone.isRenderer) {
-            fromBone.setModelScale(toBone.scale)
-            fromBone.setModel(toBone)
-            return true
-        }
-    }
-    return false
-}
-
-/**
- * 更改模型部件的可见性
- *
- * @param modelId 模型 ID
- * @param partId 部件 ID
- * @param visible 可见性
- */
-fun ModelEngine.changePartVisible(
-    modelId: String,
-    partId: String,
-    visible: Boolean,
-): Boolean {
-    val activeModel = getActiveModel(modelId) ?: return false
-    val fromBone = activeModel.getBone(partId).orNull() ?: return false
-    if (fromBone.isRenderer) {
-        fromBone.isVisible = visible
-        return true
-    }
-    return false
-}
-
-/**
- * 当模型动画播放完成时
- */
-fun ModelEngine.whenAnimationEnd(callback: Runnable) {
-    this as EntityInstance
-    setTag("animation_end_callback", callback)
-}
-
-@SubscribeEvent
-internal fun onEnd(e: AnimationEndEvent) {
-    val entity = e.model.getBaseEntityInstance() ?: return
-    val callback = entity.getTag("animation_end_callback") as? Runnable ?: return
-    callback.run()
 }
 
 internal fun ModelEngine.createModel() {
