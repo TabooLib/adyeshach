@@ -1,17 +1,16 @@
 package ink.ptms.adyeshach.impl.nms
 
 import com.mojang.datafixers.util.Pair
+import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.util.ifloor
-import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import taboolib.module.nms.MinecraftVersion
-import taboolib.module.nms.createDataSerializer
 
 /**
  * Adyeshach
@@ -69,9 +68,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                 writeBoolean(onGround)
             }.build() as NMSPacketDataSerializer)
             // 1.21
-            13 -> {
-                NMS21.instance.createTeleport(entityId,location,yaw,pitch,onGround)
-            }
+            13 -> error("还不支持")
             // 不支持
             else -> error("Unsupported version.")
         }
@@ -138,9 +135,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
         // 修复视角
         val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player.firstOrNull() ?: return)?.entityType.fixYaw(yaw)
-        if (MinecraftVersion.versionId >= 12101) {
-            packetHandler.sendPacket(player, NMS21.instance.createEntityHead(entityId, ifloor(yf * 256.0 / 360.0).toByte()))
-        } else if (isUniversal) {
+        if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                 writeVarInt(entityId)
                 writeByte(ifloor(yf * 256.0 / 360.0).toByte())
@@ -176,9 +171,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updatePassengers(player: List<Player>, entityId: Int, vararg passengers: Int) {
-        if (MinecraftVersion.versionId >= 12101) {
-            packetHandler.sendPacket(player,NMS21.instance.createPassengers(entityId, *passengers))
-        } else if (isUniversal) {
+        if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {
                 writeVarInt(entityId)
                 writeVarIntArray(passengers)

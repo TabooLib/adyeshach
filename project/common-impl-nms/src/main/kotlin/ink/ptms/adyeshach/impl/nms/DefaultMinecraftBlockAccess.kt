@@ -2,7 +2,7 @@ package ink.ptms.adyeshach.impl.nms
 
 import ink.ptms.adyeshach.core.MinecraftWorldAccess
 import ink.ptms.adyeshach.impl.DefaultAdyeshachMinecraftAPI
-import ink.ptms.adyeshach.impl.nms.specific.NMS21
+import net.minecraft.world.level.chunk.Chunk
 import net.minecraft.world.level.chunk.ChunkStatus
 import org.bukkit.Material
 import org.bukkit.World
@@ -33,9 +33,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
         (obcChunk as org.bukkit.craftbukkit.v1_19_R2.CraftChunk?)?.handle as Any?
     } catch (_: NoSuchMethodError) {
         // 1.19.4 (最新版改动)
-        if (MinecraftVersion.versionId >= 12101) {
-            NMS21.instance.getChunk(world?.getChunkAt(x, z))
-        } else obcChunk?.getHandle(ChunkStatus.FULL) as Any?
+        obcChunk?.getHandle(ChunkStatus.FULL) as Any?
     }
 
     override fun getBlockType(x: Int, y: Int, z: Int): Material {
@@ -48,7 +46,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
             // 这个版本的命名与 1.16 相同，但是类型不同
             9 -> ((nmsChunk as NMS16IBlockAccess).getType(NMS16BlockPosition(x, y, z)) as NMSBlockData).block
             // 1.18, 1.19, 1.20
-            10, 11, 12,13 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
+            10, 11, 12 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
             // 不支持
             else -> error("Unsupported version: $major")
         }

@@ -7,7 +7,6 @@ import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.impl.nms.NMSDataWatcherItem
 import ink.ptms.adyeshach.impl.nms.NMSDataWatcherObject
-import net.minecraft.core.Holder
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.IChatBaseComponent
@@ -89,11 +88,7 @@ class NMS19Impl : NMS19() {
         val ir = BuiltInRegistries.CAT_VARIANT as IRegistry<CatVariant>
         val texture = "textures/entity/cat/${type.name.lowercase()}.png"
         val variant = ir.first { it.texture.path == texture }
-        return kotlin.runCatching {
-            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
-        }.getOrElse {
-            DataWatcher.Item::class.java.invokeConstructor(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), Holder.direct(variant))
-        }
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
     }
 
     override fun createSnifferStateMeta(index: Int, type: AdySniffer.State): Any {
@@ -104,9 +99,6 @@ class NMS19Impl : NMS19() {
     }
 
     override fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
-//        if (MinecraftVersion.versionId >= 12101) {
-//            return NMS21.instance.createEntityMetadata(entityId, packedItems)
-//        }
         return PacketPlayOutEntityMetadata(entityId, packedItems.map { (it.source() as DataWatcher.Item<*>).value() })
     }
 
@@ -166,7 +158,6 @@ class NMS19Impl : NMS19() {
 //                            }
                         }
                     }
-
                     else -> error("Unsupported action: $action")
                 }
             }
@@ -194,7 +185,13 @@ class NMS19Impl : NMS19() {
         val gameMode = if (gameProfile.spectator) EnumGamemode.SPECTATOR else EnumGamemode.CREATIVE
         val displayName = Adyeshach.api().getMinecraftAPI().getHelper().literalChatBaseComponent(gameProfile.name) as IChatBaseComponent
         return ClientboundPlayerInfoUpdatePacket.b(
-            uuid, gameProfile.toMojang(uuid), listed, latency, gameMode, displayName, null
+            uuid,
+            gameProfile.toMojang(uuid),
+            listed,
+            latency,
+            gameMode,
+            displayName,
+            null
         )
     }
 }

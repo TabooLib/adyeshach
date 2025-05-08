@@ -107,27 +107,11 @@ internal object DefaultPlayerEvents {
             onlinePlayerSet += e.player.name
             AdyeshachPlayerJoinEvent(e.player).call()
         }
-        if (e.packet.name in listOf("PacketPlayInUseEntity", "ServerboundInteractPacket")) {
-            val id = (if (MinecraftVersion.versionId < 12101) e.packet.read<Int>("a") else e.packet.read<Int>("entityId")) ?: return
-            val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(id, e.player) ?: return
+        if (e.packet.name == "PacketPlayInUseEntity") {
+            val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(e.packet.read("a")!!, e.player) ?: return
             // 判定观察者并检测作弊
             if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
-                if (MinecraftVersion.versionId >= 12101) {
-                    val action = e.packet.read<Any>("action")!!
-                    val name = action.javaClass.name
-                    when {
-                        name.endsWith("ServerboundInteractPacket\$InteractionAction") -> {
-                            val location = kotlin.runCatching { action.getProperty<Any>("location") }.getOrNull()
-                            val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
-                        }
-
-                        name.endsWith("ServerboundInteractPacket\$1") -> {
-                            submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
-                        }
-                    }
-                } else if (MinecraftVersion.isUniversal) {
+                if (MinecraftVersion.isUniversal) {
                     val action = e.packet.source.getProperty<Any>("b", remap = false)!!
                     // 高版本 EnumEntityUseAction 不再是枚举类型
                     // 通过类名判断点击方式
@@ -152,7 +136,6 @@ internal object DefaultPlayerEvents {
                         "ATTACK" -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
-
                         "INTERACT_AT" -> {
                             val location = e.packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
