@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.nms.specific.NMS19p
 import ink.ptms.adyeshach.impl.nms.specific.NMS20p
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import ink.ptms.adyeshach.minecraft.ChunkPos
 import org.bukkit.Location
 import org.bukkit.World
@@ -137,10 +138,18 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun craftChatSerializerToJson(compound: Any): String {
-        return if (MinecraftVersion.isUniversal) {
-            NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
-        } else {
-            NMS16ChatSerializer.a(compound as NMS16IChatBaseComponent)
+        return when {
+            MinecraftVersion.versionId >= 12100 -> {
+                NMS21.instance.toJson(compound)
+            }
+
+            MinecraftVersion.isUniversal -> {
+                NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+            }
+
+            else -> {
+                NMS16ChatSerializer.a(compound as NMS16IChatBaseComponent)
+            }
         }
     }
 
@@ -164,9 +173,12 @@ class DefaultMinecraftHelper : MinecraftHelper {
         } catch (_: Throwable) {
         }
         return try {
+            if (MinecraftVersion.versionId >= 12101) {
+                (player.world as CraftWorld19).isChunkLoaded(chunkX, chunkZ)
+            }
             // 从 1.18 开始 getVisibleChunk  -> getVisibleChunkIfPresent
             //             getChunkProvider -> getChunkSource
-            if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18)) {
+            else if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18)) {
                 val craftWorld = player.world as CraftWorld19
                 craftWorld.handle.chunkSource.chunkMap.visibleChunkMap.get(ChunkPos.asLong(chunkX, chunkZ)) != null
             }

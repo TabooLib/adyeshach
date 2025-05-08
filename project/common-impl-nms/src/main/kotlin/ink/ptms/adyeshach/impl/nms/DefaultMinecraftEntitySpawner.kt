@@ -1,20 +1,22 @@
 package ink.ptms.adyeshach.impl.nms
 
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
 import taboolib.common.util.unsafeLazy
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.UnsafeAccess
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.createDataSerializer
 import java.lang.invoke.MethodHandle
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -117,7 +119,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 }.build() as NMS16PacketDataSerializer)
             }
             // 1.17, 1.18, 1.19, 1.12
-            9, 10, 11, 12 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
+            9, 10, 11, 12 -> NMSPacketPlayOutSpawnEntity::class.java.invokeConstructor(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
                 // 类型
@@ -125,7 +127,9 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     // 1.17, 1.18 写法相同
                     // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
                     // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
-                    9, 10 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                    9, 10 -> writeVarInt(
+                        NMSIRegistry::class.java.getProperty<Any>("ENTITY_TYPE")?.invokeMethod<Int>("getId", helper.adapt(entityType) as NMSEntityTypes<*>)!!
+                    )
                     // 1.19 写法不同
                     11 -> {
                         when (minor) {
@@ -160,6 +164,19 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 writeShort(0)
                 writeShort(0)
             }.build() as NMSPacketDataSerializer)
+
+            13 -> {
+                NMS21.instance.createSpawnEntity(
+                    entityId,
+                    uuid,
+                    location,
+                    yaw.toFloat(),
+                    pitch.toFloat(),
+                    data,
+                    NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
+                    0.0
+                )
+            }
             // 不支持
             else -> error("Unsupported version.")
         }

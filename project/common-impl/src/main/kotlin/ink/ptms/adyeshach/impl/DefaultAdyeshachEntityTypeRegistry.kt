@@ -59,6 +59,12 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
 
     /** 所有实体对象的原件，用于克隆实体 */
     val originEntityBaseMap = HashMap<EntityTypes, EntityBase>()
+        get() {
+            if (field.isEmpty()) {
+                field += generateEntityBase()
+            }
+            return field
+        }
 
     init {
         // 生成实体类

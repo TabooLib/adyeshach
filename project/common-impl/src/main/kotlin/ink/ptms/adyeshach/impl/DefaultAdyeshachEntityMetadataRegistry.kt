@@ -12,7 +12,6 @@ import ink.ptms.adyeshach.impl.entity.DefaultMetaNatural
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
-import taboolib.common.platform.function.registerLifeCycleTask
 import taboolib.common.platform.function.releaseResourceFile
 import taboolib.common.util.unsafeLazy
 import taboolib.platform.bukkit.parallel
