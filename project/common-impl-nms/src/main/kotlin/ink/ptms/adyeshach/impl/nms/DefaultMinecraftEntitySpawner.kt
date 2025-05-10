@@ -128,7 +128,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
                     // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
                     9, 10 -> writeVarInt(
-                        NMSIRegistry::class.java.getProperty<Any>("ENTITY_TYPE")?.invokeMethod<Int>("getId", helper.adapt(entityType) as NMSEntityTypes<*>)!!
+                        NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>)
                     )
                     // 1.19 写法不同
                     11 -> {
@@ -174,7 +174,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     pitch.toFloat(),
                     data,
                     NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
-                    0.0
+                    yaw.toDouble()
                 )
             }
             // 不支持

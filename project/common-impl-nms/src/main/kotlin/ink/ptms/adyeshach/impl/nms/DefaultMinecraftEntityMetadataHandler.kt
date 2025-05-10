@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms
 
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitParticles
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
@@ -11,6 +10,7 @@ import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Art
 import org.bukkit.entity.Cat
 import org.bukkit.inventory.ItemStack
@@ -21,6 +21,7 @@ import taboolib.common.platform.function.warning
 import taboolib.common5.Quat
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.MinecraftVersion.isUniversal
+import taboolib.module.nms.createDataSerializer
 import java.util.*
 import java.util.function.Consumer
 
@@ -100,8 +101,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     override fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any {
-        // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
-        return if (majorLegacy >= 11903) {
+        // 1.21取消了DataSerializer,改用构造函数实例化
+        return if (MinecraftVersion.versionId >= 12101) {
+            NMS21.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
+        } else if (majorLegacy >= 11903) {
+            // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
             NMS19.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
         } else if (isUniversal) {
             NMSPacketPlayOutEntityMetadata(createDataSerializer {

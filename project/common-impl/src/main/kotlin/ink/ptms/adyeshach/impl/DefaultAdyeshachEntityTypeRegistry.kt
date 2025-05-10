@@ -156,7 +156,11 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
             // 执行回调函数
             callback.forEach { interfaces += it(k, interfaces) }
             // 生成类
-            val newClass = AsmClassLoader.createNewClass(name, generator.generate(name, v.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
+            val newClass = kotlin.runCatching {
+                AsmClassLoader.createNewClass(name, generator.generate(name, v.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
+            }.getOrElse {
+                AsmClassLoader.loadClass(name)
+            }
             // 生成实例
             map[k] = newClass.invokeConstructor(k) as EntityBase
         }

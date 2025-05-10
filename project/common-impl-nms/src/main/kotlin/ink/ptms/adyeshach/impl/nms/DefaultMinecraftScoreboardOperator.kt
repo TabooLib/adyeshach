@@ -5,7 +5,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftPacketHandler
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.info
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import taboolib.module.nms.MinecraftVersion
 
 /**
@@ -93,6 +93,10 @@ class DefaultMinecraftScoreboardOperator : MinecraftScoreboardOperator {
                     team.members.forEach { name -> writeUtf(name) }
                 }
             }.build() as NMSPacketDataSerializer)
+
+            13 -> {
+                NMS21.instance.createTeam(team, method)
+            }
             // 不支持
             else -> error("Unsupported version.")
         }

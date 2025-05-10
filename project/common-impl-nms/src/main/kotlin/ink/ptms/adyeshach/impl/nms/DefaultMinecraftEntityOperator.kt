@@ -10,6 +10,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
 
@@ -70,7 +71,19 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
             }.build() as NMSPacketDataSerializer)
             // 1.21
             13 -> {
-                NMS21.instance.createTeleport(entityId,location,yaw,pitch,onGround)
+                if (MinecraftVersion.versionId == 12101) {
+                    NMSPacketPlayOutEntityTeleport::class.java.invokeConstructor(createDataSerializer {
+                        writeVarInt(entityId)
+                        writeDouble(location.x)
+                        writeDouble(location.y)
+                        writeDouble(location.z)
+                        writeByte(yaw)
+                        writeByte(pitch)
+                        writeBoolean(onGround)
+                    }.build() as NMSPacketDataSerializer)
+                } else {
+                    NMS21.instance.createTeleport(entityId, location, yaw, pitch, onGround)
+                }
             }
             // 不支持
             else -> error("Unsupported version.")
@@ -161,6 +174,9 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateEquipment(player: List<Player>, entityId: Int, equipment: Map<EquipmentSlot, ItemStack>) {
         when {
+            majorLegacy >= 12100 -> {
+                packetHandler.sendPacket(player, NMS21.instance.createEntityEquipment(entityId, equipment))
+            }
             // 从 1.16 开始每个包支持多个物品
             majorLegacy >= 11600 -> {
                 val items = equipment.map { Pair(it.key.toNMSEnumItemSlot(), CraftItemStack19.asNMSCopy(it.value)) }
@@ -177,7 +193,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updatePassengers(player: List<Player>, entityId: Int, vararg passengers: Int) {
         if (MinecraftVersion.versionId >= 12101) {
-            packetHandler.sendPacket(player,NMS21.instance.createPassengers(entityId, *passengers))
+            packetHandler.sendPacket(player, NMS21.instance.createPassengers(entityId, *passengers))
         } else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {
                 writeVarInt(entityId)

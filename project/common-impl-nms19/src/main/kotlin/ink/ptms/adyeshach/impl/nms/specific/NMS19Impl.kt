@@ -104,9 +104,6 @@ class NMS19Impl : NMS19() {
     }
 
     override fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
-//        if (MinecraftVersion.versionId >= 12101) {
-//            return NMS21.instance.createEntityMetadata(entityId, packedItems)
-//        }
         return PacketPlayOutEntityMetadata(entityId, packedItems.map { (it.source() as DataWatcher.Item<*>).value() })
     }
 
