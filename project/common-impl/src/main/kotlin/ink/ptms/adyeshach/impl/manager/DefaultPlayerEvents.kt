@@ -18,6 +18,7 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
+import taboolib.common5.util.endsWithAny
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
@@ -112,33 +113,20 @@ internal object DefaultPlayerEvents {
             val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(id, e.player) ?: return
             // 判定观察者并检测作弊
             if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
-                if (MinecraftVersion.versionId >= 12101) {
-                    val action = e.packet.read<Any>("action")!!
-                    val name = action.javaClass.name
-                    when {
-                        name.endsWith("ServerboundInteractPacket\$InteractionAction") -> {
-                            val location = kotlin.runCatching { action.getProperty<Any>("location") }.getOrNull()
-                            val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
-                        }
-
-                        name.endsWith("ServerboundInteractPacket\$1") -> {
-                            submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
-                        }
-                    }
-                } else if (MinecraftVersion.isUniversal) {
+                if (MinecraftVersion.isUniversal) {
                     val action = e.packet.source.getProperty<Any>("b", remap = false)!!
                     // 高版本 EnumEntityUseAction 不再是枚举类型
                     // 通过类名判断点击方式
                     val name = action.javaClass.name
+                    val isLeft = name.endsWithAny("PacketPlayInUseEntity\$1","ServerboundInteractPack\$1")
+                    val isRight = name.endsWithAny("PacketPlayInUseEntity\$e","ServerboundInteractPacket\$InteractAction")
                     when {
                         // 左键
-                        name.endsWith("PacketPlayInUseEntity\$1") -> {
+                        isLeft -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
                         // 右键
-                        name.endsWith("PacketPlayInUseEntity\$e") -> {
+                        isRight-> {
                             val location = action.getProperty<Any>("b", remap = false)
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
                             val hand = action.getProperty<Any>("a", remap = false).toString() == "MAIN_HAND"
