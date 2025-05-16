@@ -114,19 +114,20 @@ internal object DefaultPlayerEvents {
             // 判定观察者并检测作弊
             if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
                 if (MinecraftVersion.isUniversal) {
-                    val action = e.packet.source.getProperty<Any>("b", remap = false)!!
+                    // 1.21+的字段变为c了,太操蛋了
+                    val action = e.packet.source.getProperty<Any>(if (MinecraftVersion.versionId >= 12101) "c" else "b", remap = false)!!
                     // 高版本 EnumEntityUseAction 不再是枚举类型
                     // 通过类名判断点击方式
                     val name = action.javaClass.name
-                    val isLeft = name.endsWithAny("PacketPlayInUseEntity\$1","ServerboundInteractPack\$1")
-                    val isRight = name.endsWithAny("PacketPlayInUseEntity\$e","ServerboundInteractPacket\$InteractAction")
+                    val isLeft = name.endsWithAny("PacketPlayInUseEntity\$1", "ServerboundInteractPacket\$1")
+                    val isRight = name.endsWithAny("PacketPlayInUseEntity\$e", "ServerboundInteractPacket\$InteractAction")
                     when {
                         // 左键
                         isLeft -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
                         // 右键
-                        isRight-> {
+                        isRight -> {
                             val location = action.getProperty<Any>("b", remap = false)
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
                             val hand = action.getProperty<Any>("a", remap = false).toString() == "MAIN_HAND"
