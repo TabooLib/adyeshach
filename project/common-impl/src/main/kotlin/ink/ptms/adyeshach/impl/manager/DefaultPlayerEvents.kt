@@ -18,8 +18,8 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
-import taboolib.common5.util.endsWithAny
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 import taboolib.platform.util.bukkitPlugin
@@ -115,22 +115,25 @@ internal object DefaultPlayerEvents {
             if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
                 if (MinecraftVersion.isUniversal) {
                     // 1.21+的字段变为c了,太操蛋了
-                    val action = e.packet.source.getProperty<Any>(if (MinecraftVersion.versionId >= 12101) "c" else "b", remap = false)!!
-                    // 高版本 EnumEntityUseAction 不再是枚举类型
-                    // 通过类名判断点击方式
-                    val name = action.javaClass.name
-                    val isLeft = name.endsWithAny("PacketPlayInUseEntity\$1", "ServerboundInteractPacket\$1")
-                    val isRight = name.endsWithAny("PacketPlayInUseEntity\$e", "ServerboundInteractPacket\$InteractAction")
-                    when {
+                    // nm的缓存傻逼玩意,换了就必须清缓存
+                    val action = if (MinecraftVersion.versionId >= 12101) {
+                        e.packet.source.getProperty<Any>("action", remap = true)
+                    } else {
+                        e.packet.source.getProperty("b", remap = true)
+                    }!!
+
+                    val actionOrdinal = (action.invokeMethod<Any>("getType", remap = true) as Enum<*>).ordinal
+
+                    when(actionOrdinal) {
                         // 左键
-                        isLeft -> {
+                        1 -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
                         // 右键
-                        isRight -> {
-                            val location = action.getProperty<Any>("b", remap = false)
+                        0, 2 -> {
+                            val location = kotlin.runCatching { action.getProperty<Any>("location", remap = true) }.getOrNull()
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = action.getProperty<Any>("a", remap = false).toString() == "MAIN_HAND"
+                            val hand = action.getProperty<Any>("hand", remap = true).toString() == "MAIN_HAND"
                             submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
                         }
                     }

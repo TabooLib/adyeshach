@@ -48,7 +48,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
             // 这个版本的命名与 1.16 相同，但是类型不同
             9 -> ((nmsChunk as NMS16IBlockAccess).getType(NMS16BlockPosition(x, y, z)) as NMSBlockData).block
             // 1.18, 1.19, 1.20
-            10, 11, 12,13 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
+            10, 11, 12, 13 -> ((nmsChunk as NMSIBlockAccess).getBlockState(NMSBlockPosition(x, y, z)) as NMSBlockData).block
             // 不支持
             else -> error("Unsupported version: $major")
         }
@@ -85,7 +85,7 @@ class DefaultMinecraftBlockAccess(val world: World?, override val x: Int, overri
                 // 1.9, 1.10, 1.11, 1.12
                 1, 2, 3, 4 -> getBlockHeightLegacy(obcChunk!!.getBlock(x, y, z))
                 // 1.13, 1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20
-                5, 6, 7, 8, 9, 10, 11, 12 -> {
+                5, 6, 7, 8, 9, 10, 11, 12, 13 -> {
                     val slab = world!!.getBlockAt(x, y, z).blockData as Slab
                     if (slab.type == Slab.Type.TOP || slab.type == Slab.Type.DOUBLE) 1.0 else 0.5
                 }
