@@ -74,10 +74,9 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
                 // 启用皮肤
                 setSkinEnabled(true)
-                // 修复玩家类型视角和装备无法正常显示的问题
+                // 修复装备无法正常显示的问题
                 submit(delay = 1) {
-                    setHeadRotation(yaw, pitch, forceUpdate = true)
-                    updateEquipment()
+                    updateEquipment(viewer)
                 }
                 // 更新状态
                 submit(delay = 5) {

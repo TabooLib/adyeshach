@@ -81,6 +81,17 @@ abstract class DefaultEntityBase(
      */
     override val isInvalid = Adyeshach.api().getEntityTypeRegistry().getEntityFlags(entityType).contains("INVALID")
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DefaultEntityBase) return false
+        if (uniqueId != other.uniqueId) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return uniqueId.hashCode()
+    }
+
     override fun toString(): String {
         return "$entityType($id)"
     }

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityEquipable
+import ink.ptms.adyeshach.core.event.AdyeshachEntityEquipmentUpdateEvent
 import ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -27,13 +28,18 @@ interface DefaultEquipable : EntityEquipable {
     override fun updateEquipment() {
         this as DefaultEntityLiving
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-        operator.updateEquipment(getVisiblePlayers(), index, EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) })
+        val players = getVisiblePlayers()
+        val equipment = EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
+        AdyeshachEntityEquipmentUpdateEvent(players, this, equipment).call()
+        operator.updateEquipment(players, index, equipment)
     }
 
     override fun updateEquipment(player: Player) {
         this as DefaultEntityLiving
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-        operator.updateEquipment(player, index, EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) })
+        val equipment = EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
+        AdyeshachEntityEquipmentUpdateEvent(listOf(player), this, equipment).call()
+        operator.updateEquipment(player, index, equipment)
     }
 
     override fun getEquipment(): Map<EquipmentSlot, ItemStack> {

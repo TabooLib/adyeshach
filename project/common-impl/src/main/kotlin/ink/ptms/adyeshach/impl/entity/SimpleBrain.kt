@@ -27,8 +27,6 @@ open class SimpleBrain(val entity: DefaultEntityInstance) : Brain {
     protected val interrupt = hashMapOf<String, Controller>()
     /** 预加载控制器 */
     protected val postponeAdd = arrayListOf<Controller>()
-    /** 每 30 秒检查一次 hold 内的无效控制器 */
-    protected var checker = System.currentTimeMillis()
 
     override fun tick() {
         interrupt.clear()
@@ -69,15 +67,10 @@ open class SimpleBrain(val entity: DefaultEntityInstance) : Brain {
             // 开始
             hold[k] = controller.also { it.start() }
         }
-        // 本次是否检查无效控制器
-        val checkInvalid = checker + TimeUnit.SECONDS.toMillis(30) < System.currentTimeMillis()
-        if (checkInvalid) {
-            checker = System.currentTimeMillis()
-        }
         // 处理继续
         hold.forEach { (k, controller) ->
             // 检查无效控制器
-            if (checkInvalid && !entity.controller.contains(controller)) {
+            if (!entity.controller.contains(controller)) {
                 hold.remove(k)
             }
             // 不是被中断的
@@ -93,7 +86,6 @@ open class SimpleBrain(val entity: DefaultEntityInstance) : Brain {
         // 处理预加载控制器
         if (postponeAdd.isNotEmpty()) {
             entity.controller.addAll(postponeAdd)
-            entity.controller.sort()
         }
     }
 

@@ -37,6 +37,11 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
     val isDie: Boolean
 
     /**
+     * 是否允许生成时刷新装备
+     */
+    var isEquipmentRefreshOnSpawn: Boolean
+
+    /**
      * 切换数据包实体的死亡状态，该功能是通过利用客户端渲染漏洞实现，无法保证稳定性
      */
     fun die(die: Boolean = true)

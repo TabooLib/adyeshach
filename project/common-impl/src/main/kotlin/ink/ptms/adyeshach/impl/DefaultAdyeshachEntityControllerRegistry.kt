@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.AdyeshachEntityControllerRegistry
 import ink.ptms.adyeshach.core.entity.controller.ControllerGenerator
 import ink.ptms.adyeshach.impl.entity.controller.ControllerLookAtPlayer
+import ink.ptms.adyeshach.impl.entity.controller.ControllerLookAtPlayerWithPacket
 import ink.ptms.adyeshach.impl.entity.controller.ControllerRandomLookaround
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -43,6 +44,9 @@ class DefaultAdyeshachEntityControllerRegistry : AdyeshachEntityControllerRegist
             }
             registeredControllerGenerator["LOOK_AT_PLAYER_ALWAYS"] = ControllerGenerator(ControllerLookAtPlayer::class.java) {
                 ControllerLookAtPlayer(it, 8.0, 1.0)
+            }
+            registeredControllerGenerator["LOOK_AT_PLAYER_WITH_PACKET"] = ControllerGenerator(ControllerLookAtPlayerWithPacket::class.java) {
+                ControllerLookAtPlayerWithPacket(it, 8.0)
             }
             registeredControllerGenerator["RANDOM_LOOKAROUND"] = ControllerGenerator(ControllerRandomLookaround::class.java) {
                 ControllerRandomLookaround(it)

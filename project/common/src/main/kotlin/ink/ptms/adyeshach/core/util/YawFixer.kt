@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.nms
+package ink.ptms.adyeshach.core.util
 
 import ink.ptms.adyeshach.core.entity.EntityTypes
 

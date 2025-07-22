@@ -32,6 +32,7 @@ class TypeController : JsonSerializer<Controller>, JsonDeserializer<Controller> 
             return when (element.asString) {
                 "LookAtPlayer" -> PrepareController(registry.getControllerGenerator("LOOK_AT_PLAYER")!!, element)
                 "LookAtPlayerAlways" -> PrepareController(registry.getControllerGenerator("LOOK_AT_PLAYER_ALWAYS")!!, element)
+                "LookAtPlayerWithPacket" -> PrepareController(registry.getControllerGenerator("LOOK_AT_PLAYER_WITH_PACKET")!!, element)
                 "RandomLookGround" -> PrepareController(registry.getControllerGenerator("RANDOM_LOOKAROUND")!!, element)
                 else -> PrepareController(ControllerGenerator(LegacyController::class.java) { LegacyController(it, element) }, element)
             }

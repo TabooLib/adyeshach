@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachAPI
 import ink.ptms.adyeshach.core.AdyeshachEntityFinder
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
@@ -51,7 +52,9 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getVisibleEntities(player: Player, filter: Predicate<EntityInstance>): List<EntityInstance> {
-        return getEntities(player) { it.isVisibleViewer(player) && it.getLocation().safeDistanceIgnoreY(player.location) <= it.visibleDistance && filter.test(it) }
+        return getEntities(player) {
+            it.getLocation().safeDistanceIgnoreY(player.location) <= it.visibleDistance && it.isVisibleViewer(player) && filter.test(it)
+        }
     }
 
     override fun getEntitiesFromId(id: String, player: Player?): List<EntityInstance> {

@@ -30,6 +30,11 @@ interface AdyeshachAPI {
     fun refreshEntityManager(player: Player)
 
     /**
+     * 刷新公共管理器（重新生成所有单位）
+     */
+    fun refreshPublicEntityManager()
+
+    /**
      * 获取公共单位管理器
      *
      * @param type 容器类型

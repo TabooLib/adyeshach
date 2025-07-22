@@ -33,6 +33,7 @@ class ActionController(val symbol: Symbol, val controller: String?) : ScriptActi
         when (id) {
             "LookAtPlayer" -> id = "LOOK_AT_PLAYER"
             "LookAtPlayerAlways" -> id = "LOOK_AT_PLAYER_ALWAYS"
+            "LookAtPlayerWithPacket" -> id = "LOOK_AT_PLAYER_WITH_PACKET"
             "RandomLookGround" -> id = "RANDOM_LOOKAROUND"
         }
         val registry = Adyeshach.api().getEntityControllerRegistry()

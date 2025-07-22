@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.util.fixYaw
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
 import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Location
@@ -69,10 +70,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int) {
-        // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player)?.entityType.fixYaw(location.yaw)
         // 计算视角
-        val yaw = (yf * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (entityType.fixYaw(location.yaw) * 256.0f / 360.0f).toInt().toByte()
         val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
@@ -189,10 +188,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         if ((entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) || majorLegacy >= 11900) {
             return spawnEntity(player, entityType, entityId, uuid, location)
         }
-        // 修复视角
-        val yf = Adyeshach.api().getEntityFinder().getEntityFromClientEntityId(entityId, player)?.entityType.fixYaw(location.yaw)
         // 计算视角
-        val yaw = (yf * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (entityType.fixYaw(location.yaw) * 256.0f / 360.0f).toInt().toByte()
         val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {

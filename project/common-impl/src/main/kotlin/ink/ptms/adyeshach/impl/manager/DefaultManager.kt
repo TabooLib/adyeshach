@@ -5,7 +5,8 @@ import ink.ptms.adyeshach.core.entity.TickService
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
-import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListSet
 import java.util.function.Predicate
 
 /**
@@ -17,7 +18,8 @@ import java.util.function.Predicate
  */
 open class DefaultManager : BaseManager() {
 
-    val activeEntity = CopyOnWriteArrayList<EntityInstance>()
+    val activeEntity = ConcurrentSkipListSet(Comparator.comparing(EntityInstance::uniqueId))
+    val activeEntityByUniqueId = ConcurrentHashMap<String, EntityInstance>()
 
     override fun getPlayers(): List<Player> {
         return onlinePlayers
@@ -25,14 +27,16 @@ open class DefaultManager : BaseManager() {
 
     override fun add(entity: EntityInstance) {
         activeEntity.add(entity)
+        activeEntityByUniqueId[entity.uniqueId] = entity
     }
 
     override fun remove(entityInstance: EntityInstance) {
         activeEntity.remove(entityInstance)
+        activeEntityByUniqueId.remove(entityInstance.uniqueId)
     }
 
     override fun getEntities(): List<EntityInstance> {
-        return activeEntity.toList()
+        return ArrayList(activeEntity)
     }
 
     override fun getEntities(filter: Predicate<EntityInstance>): List<EntityInstance> {
@@ -52,7 +56,7 @@ open class DefaultManager : BaseManager() {
     }
 
     override fun getEntityByUniqueId(id: String): EntityInstance? {
-        return activeEntity.firstOrNull { it.uniqueId == id }
+        return activeEntityByUniqueId[id]
     }
 
     override fun isPublic(): Boolean {

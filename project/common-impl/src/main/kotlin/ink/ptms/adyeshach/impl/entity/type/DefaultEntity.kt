@@ -29,8 +29,8 @@ abstract class DefaultEntity(entityType: EntityTypes) : DefaultEntityInstance(en
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
                 // 矿车，凋零头
-                submit(delay = 5) {
-                    setHeadRotation(yaw, pitch, forceUpdate = true)
+                if (isRotationFixOnSpawn) {
+                    submit(delay = 5) { setHeadRotation(yaw, pitch, forceUpdate = true) }
                 }
             }
         } else {
@@ -45,10 +45,14 @@ abstract class DefaultEntity(entityType: EntityTypes) : DefaultEntityInstance(en
     }
 
     protected fun registerClientEntity(viewer: Player) {
-        clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this)
+        if (useClientEntityMap) {
+            clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this)
+        }
     }
 
     protected fun unregisterClientEntity(viewer: Player) {
-        clientEntityMap[viewer.name]?.remove(index)
+        if (useClientEntityMap) {
+            clientEntityMap[viewer.name]?.remove(index)
+        }
     }
 }

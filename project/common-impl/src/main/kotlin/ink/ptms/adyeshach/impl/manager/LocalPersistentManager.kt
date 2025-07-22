@@ -35,6 +35,8 @@ open class LocalPersistentManager : DefaultManager() {
                 ex.printStackTrace()
             }
         }
+        // 关联实体合法性验证
+        activeEntity.forEach { it.verifyPassenger() }
     }
 
     override fun onSave() {

@@ -27,6 +27,10 @@ import java.util.function.Predicate
  */
 open class BaseManager : Manager, ManagerService, TickService {
 
+    override fun isValid(): Boolean {
+        return true
+    }
+
     open fun getPlayers(): List<Player> {
         return onlinePlayers
     }

@@ -1,10 +1,13 @@
 package ink.ptms.adyeshach.impl.script
 
+import ink.ptms.adyeshach.core.event.AdyeshachScriptEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.loadError
 import ink.ptms.adyeshach.impl.setEntities
+import org.bukkit.entity.Player
+import taboolib.common.util.isPlayer
 import taboolib.library.kether.ArgTypes
 import taboolib.module.kether.*
 
@@ -43,15 +46,18 @@ private fun actionSelect() = scriptParser {
         }
         run(value).str { id ->
             run(world).str { world ->
-                val entities = if (byId) {
+                var entities = if (byId) {
                     script.getManager()!!.getEntityById(id)
                 } else {
                     script.getManager()!!.getEntityByUniqueId(id)?.let { e -> listOf(e) } ?: emptyList()
                 }
-                if (world == "*") {
-                    script.setEntities(entities)
-                } else {
-                    script.setEntities(entities.filter { e -> e.world.name == world })
+                if (world != "*") {
+                    entities = entities.filter { e -> e.world.name == world }
+                }
+                val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null
+                val event = AdyeshachScriptEvent.Select(entities.toMutableList(), script.getManager()!!, sender, id, world, byId)
+                if (event.call()) {
+                    script.setEntities(event.entity)
                 }
                 f.complete(null)
             }

@@ -74,8 +74,12 @@ public class BionicSight {
             this.getXRotD().ifPresent((var0) -> {
                 xRot = rotateTowards(xRot, var0, this.xMaxRotAngle);
             });
-            this.entity.setHeadRotation(EntityPosition.Companion.normalizeYaw(yHeadRot), EntityPosition.Companion.normalizePitch(xRot), forceUpdate);
+            update();
         }
+    }
+
+    public void update() {
+        this.entity.setHeadRotation(EntityPosition.Companion.normalizeYaw(yHeadRot), EntityPosition.Companion.normalizePitch(xRot), forceUpdate);
     }
 
     public double getWantedX() {

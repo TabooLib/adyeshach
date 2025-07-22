@@ -33,21 +33,23 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
     @Expose
     override var isDie = false
 
+    override var isEquipmentRefreshOnSpawn = false
+
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             prepareSpawn(viewer) {
                 viewPlayers.visible += viewer.name
                 // 创建客户端对应表
-                clientEntityMap.computeIfAbsent(viewer.name) { ConcurrentHashMap() }[index] = ClientEntity(this)
+                registerClientEntity(viewer)
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 更新装备
-                submit(delay = 1) { updateEquipment() }
+                if (isEquipmentRefreshOnSpawn) {
+                    submit(delay = 1) { updateEquipment() }
+                }
                 // 更新死亡状态
-                submit(delay = 5) {
-                    if (isDie) {
-                        die(viewer = viewer)
-                    }
+                if (isDie) {
+                    submit(delay = 5) { die(viewer = viewer) }
                 }
             }
         } else {
@@ -56,7 +58,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 // 销毁实体
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
                 // 移除客户端对应表
-                clientEntityMap[viewer.name]?.remove(index)
+                unregisterClientEntity(viewer)
             }
         }
     }
@@ -98,30 +100,37 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 die(value?.cbool ?: false)
                 true
             }
+
             "helmet", "head" -> {
                 setHelmet(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "chestplate", "chest" -> {
                 setChestplate(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "leggings", "legs" -> {
                 setLeggings(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "boots", "feet" -> {
                 setBoots(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "hand", "mainhand", "main_hand" -> {
                 setItemInMainHand(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "offhand", "off_hand" -> {
                 setItemInOffHand(value?.toItem() ?: ItemStack(Material.AIR))
                 true
             }
+
             "potioneffectcolor", "potion_effect_color" -> {
                 // 对 RGB 写法进行兼容
                 if (value != null && value.contains(',')) {
@@ -131,6 +140,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                     false
                 }
             }
+
             else -> false
         }
     }

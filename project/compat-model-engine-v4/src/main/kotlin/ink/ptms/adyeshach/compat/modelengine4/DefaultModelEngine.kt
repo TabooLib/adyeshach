@@ -22,7 +22,6 @@ import taboolib.common.util.unsafeLazy
  * @author 坏黑
  * @since 2022/6/19 21:58
  */
-@Suppress("SpellCheckingInspection")
 internal interface DefaultModelEngine : ModelEngine {
 
     override fun showModelEngine(viewer: Player): Boolean {
@@ -44,6 +43,13 @@ internal interface DefaultModelEngine : ModelEngine {
             return true
         }
         return false
+    }
+
+    override fun destroyModelEngine() {
+        if (isModelEngineHooked) {
+            this as DefaultEntityInstance
+            ModelEngineAPI.removeModeledEntity(normalizeUniqueId)
+        }
     }
 
     override fun refreshModelEngine(): Boolean {

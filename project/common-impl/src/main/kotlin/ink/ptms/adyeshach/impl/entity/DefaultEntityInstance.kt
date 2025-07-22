@@ -15,10 +15,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityDestroyEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
-import ink.ptms.adyeshach.core.util.errorBy
-import ink.ptms.adyeshach.core.util.getEnum
-import ink.ptms.adyeshach.core.util.modify
-import ink.ptms.adyeshach.core.util.plus
+import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
@@ -34,8 +31,7 @@ import taboolib.common5.cbool
 import taboolib.common5.cdouble
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.concurrent.ConcurrentSkipListSet
 
 /**
  * Adyeshach
@@ -180,11 +176,11 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     /** 骑乘者 */
     @Expose
-    var passengers = CopyOnWriteArraySet<String>()
+    var passengers = ConcurrentSkipListSet<String>()
 
     /** 控制器 */
     @Expose
-    var controller = CopyOnWriteArrayList<Controller>()
+    var controller = ConcurrentSkipListSet(Comparator.comparing(Controller::id))
 
     /** Ady 的小脑 */
     override var brain: Brain = SimpleBrain(this)
@@ -223,6 +219,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     /** 载具位置同步 */
     override var vehicleSync = System.currentTimeMillis()
+
+    override var useClientEntityMap = true
+
+    override var isRotationFixOnSpawn = true
+
+    override var isPassengerRefreshOnSpawn = true
+
+    override var isDisableVisibleEvent = false
+
+    override var isDisableVehicleCheckOnTick = false
 
     /** 插值定位 */
     override var moveFrames: InterpolatedLocation? = null
@@ -326,7 +332,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
-        if (AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
+        if (isDisableVisibleEvent || AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
             // 使用事件系统控制实体显示
             if (DefaultAdyeshachAPI.localEventBus.callSpawn(this, viewer)) {
                 spawn.run()
@@ -335,16 +341,20 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             // 更新单位属性
             updateEntityMetadata(viewer)
             // 更新单位视角
-            setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
+            if (isRotationFixOnSpawn) {
+                setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
+            }
             // 关联实体初始化
-            submit(delay = 2) { refreshPassenger(viewer) }
+            if (isPassengerRefreshOnSpawn) {
+                submit(delay = 2) { refreshPassenger(viewer) }
+            }
             return true
         }
         return false
     }
 
     override fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
-        if (AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
+        if (isDisableVisibleEvent || AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
             // 使用事件系统控制实体销毁
             if (DefaultAdyeshachAPI.localEventBus.callDestroy(this, viewer)) {
                 destroy.run()
@@ -417,11 +427,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (tag.containsKey(StandardTags.FORCE_TELEPORT)) {
             tag.remove(StandardTags.FORCE_TELEPORT)
         }
-        // 是否发生位置变更
+        // 如果坐标没变则不做处理
         else if (newPosition == position) {
             return
         }
-        // 切换世界
+        // 是否发生实质性位置变更
+        val isMoved = position.x != newPosition.x || position.y != newPosition.y || position.z != newPosition.z
+        // 是否切换世界
         if (position.world != newPosition.world) {
             position = newPosition
             despawn()
@@ -431,14 +443,21 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (manager == null || manager !is TickService || !allowSyncPosition()) {
             position = newPosition
             clientPosition = position
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, location)
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
+                getVisiblePlayers(),
+                index,
+                location.modify(yaw = entityType.fixYaw(location.yaw))
+            )
         } else {
             clientPosition = newPosition
         }
-        // 同步 passengers 位置
-        getPassengers().forEach { it.teleport(location) }
-        // 更新 passengers 信息
-        refreshPassenger()
+        // 只有在位置发生变更时才进行 passengers 同步
+        if (isMoved) {
+            // 同步 passengers 位置
+            getPassengers().forEach { it.teleport(location) }
+            // 更新 passengers 信息
+            refreshPassenger()
+        }
     }
 
     override fun setVelocity(vector: Vector) {
@@ -471,7 +490,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             position.pitch = pitch
             clientPosition.yaw = yaw
             clientPosition.pitch = pitch
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(getVisiblePlayers(), index, yaw, pitch, !entityPathType.isFly())
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
+                getVisiblePlayers(),
+                index,
+                entityType.fixYaw(yaw),
+                pitch,
+                !entityPathType.isFly()
+            )
         } else {
             teleport(clientPosition.toLocation().modify(yaw, pitch))
         }
@@ -546,7 +571,12 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun refreshPosition() {
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(getVisiblePlayers(), index, getLocation())
+        val location = getLocation()
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
+            getVisiblePlayers(),
+            index,
+            location.modify(yaw = entityType.fixYaw(location.yaw))
+        )
     }
 
     override fun getLocation(): Location {

@@ -6,6 +6,9 @@ import ink.ptms.adyeshach.core.entity.StandardTags;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import ink.ptms.adyeshach.core.entity.manager.Manager;
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager;
+import ink.ptms.adyeshach.core.entity.manager.event.ControllerLookEvent;
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -141,8 +144,17 @@ public class ControllerLookAtPlayer extends Controller {
         }
         if (this.lookAt != null && this.lookAt.isValid()) {
             double y = this.onlyHorizontal ? getEntity().getEyeLocation().getY() : this.lookAt.getEyeLocation().getY();
-            getEntity().controllerLookAt(this.lookAt.getLocation().getX(), y, this.lookAt.getLocation().getZ());
-            this.lookTime--;
+            Location target = new Location(
+                    this.lookAt.getWorld(),
+                    this.lookAt.getLocation().getX(),
+                    y,
+                    this.lookAt.getLocation().getZ()
+            );
+            ControllerLookEvent event = new ControllerLookEvent(getEntity(), this.lookAt, target);
+            if (DefaultAdyeshachAPI.Companion.getLocalEventBus().callControllerLook(event)) {
+                getEntity().controllerLookAt(event.getLookTarget().getX(), event.getLookTarget().getY(), event.getLookTarget().getZ());
+                this.lookTime--;
+            }
         }
     }
 

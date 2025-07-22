@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinVisualTeamEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
@@ -81,6 +82,10 @@ object VisualTeam {
         fun join(entity: EntityInstance, nameTagVisible: Boolean, collision: Boolean, color: ChatColor, canSeeInvisible: Boolean) {
             // 离开队伍
             leave(entity)
+            // 配置
+            if (AdyeshachSettings.conf.getBoolean("Settings.disable-visual-team")) return
+            // 事件
+            if (!AdyeshachPlayerJoinVisualTeamEvent(player, entity, nameTagVisible, collision, color, canSeeInvisible).call()) return
             // 获取队伍（或创建）
             val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color, canSeeInvisible)) { key ->
                 // 生成队伍名称

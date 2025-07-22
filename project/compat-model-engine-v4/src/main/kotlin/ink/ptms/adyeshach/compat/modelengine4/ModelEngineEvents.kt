@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.ModelEngine
 import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
@@ -43,6 +44,10 @@ internal object ModelEngineEvents {
                 val modeledEntity = ModelEngineAPI.getModeledEntity(e.entity.normalizeUniqueId) ?: return@postTeleport
                 val entityModeled = modeledEntity.base as EntityModeled
                 entityModeled.syncLocation(e.location)
+            }
+            // 实体移除
+            registerBukkitListener(AdyeshachEntityRemoveEvent::class.java) { e ->
+                (e.entity as ModelEngine).destroyModelEngine()
             }
             // 交互事件
             registerBukkitListener(BaseEntityInteractEvent::class.java) { e ->

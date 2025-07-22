@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler
 import ink.ptms.adyeshach.module.editor.ChatEditor
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
 import org.bukkit.command.CommandSender
@@ -15,12 +16,10 @@ import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 import taboolib.expansion.createHelper
-import taboolib.library.xseries.XBlock
 import taboolib.library.xseries.XMaterial
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.platform.util.hasMeta
-import taboolib.platform.util.isAir
 import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
 import java.io.File
@@ -181,6 +180,28 @@ object CommandAPI {
         execute<Player> { sender, _, _ ->
             Adyeshach.api().refreshEntityManager(sender)
             sender.sendMessage("${ADYESHACH_PREFIX}Refreshed.")
+        }
+    }
+
+    /**
+     * 刷新公共
+     */
+    @CommandBody
+    val refreshPublic = subCommand {
+        execute<Player> { sender, _, _ ->
+            Adyeshach.api().refreshPublicEntityManager()
+            sender.sendMessage("${ADYESHACH_PREFIX}Refreshed.")
+        }
+    }
+
+    @CommandBody
+    val dump = subCommand {
+        player {
+            exec<CommandSender> {
+                val player = ctx.player("player").cast<Player>()
+                DefaultManagerHandler.dump(player)
+                sender.sendMessage("${ADYESHACH_PREFIX}Dumped to \"dump/${player.name}.log\".")
+            }
         }
     }
 

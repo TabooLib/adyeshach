@@ -60,4 +60,10 @@ interface Rideable {
      * 刷新骑乘者
      */
     fun refreshPassenger()
+
+    /**
+     * 验证骑乘者
+     * 将会移除所有不在相同管理器的骑乘者 UUID
+     */
+    fun verifyPassenger()
 }

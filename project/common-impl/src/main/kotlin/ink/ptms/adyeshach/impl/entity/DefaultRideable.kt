@@ -29,7 +29,10 @@ interface DefaultRideable : Rideable {
 
     override fun getVehicle(): EntityInstance? {
         this as EntityInstance
-        return manager?.getEntity { it.getPassengers().any { p -> p.uniqueId == uniqueId } }
+        return manager?.getEntity {
+            it as DefaultEntityInstance
+            it.passengers.contains(uniqueId)
+        }
     }
 
     override fun getPassengers(): List<EntityInstance> {
@@ -47,7 +50,8 @@ interface DefaultRideable : Rideable {
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.filter { it != this }.filterIsInstance<DefaultEntityInstance>().forEach { target ->
+        entity.filter { it != this }.forEach { target ->
+            target as DefaultEntityInstance
             // 避免循环骑乘
             target.passengers.remove(uniqueId)
             // 从载具中离开
@@ -72,7 +76,7 @@ interface DefaultRideable : Rideable {
         if (entity.any { it.manager != manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.filter { it != this }.filterIsInstance<DefaultEntityInstance>().forEach { target ->
+        entity.filter { it != this }.forEach { target ->
             // 进行二次判断是否为乘客
             if (passengers.contains(target.uniqueId)) {
                 // 事件
@@ -109,5 +113,12 @@ interface DefaultRideable : Rideable {
     override fun refreshPassenger() {
         this as DefaultEntityInstance
         forViewers { refreshPassenger(it) }
+    }
+
+    override fun verifyPassenger() {
+        this as DefaultEntityInstance
+        val validPassengers = getPassengers()
+        passengers.clear()
+        passengers += validPassengers.map { it.uniqueId }
     }
 }

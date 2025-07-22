@@ -17,6 +17,11 @@ import java.util.function.Predicate
 interface Manager {
 
     /**
+     * 是否有效
+     */
+    fun isValid(): Boolean
+
+    /**
      * 是否为公开单位管理器
      */
     fun isPublic(): Boolean

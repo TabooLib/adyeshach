@@ -53,10 +53,7 @@ interface DefaultControllable : Controllable {
         if (AdyeshachControllerAddEvent(this, controller).call()) {
             // 移除相同的控制器
             this.controller.removeIf { it.id() == controller.id() }
-            // 注册控制器
             this.controller.add(controller)
-            // 排序
-            this.controller.sort()
             return true
         }
         return false

@@ -53,8 +53,7 @@ publishing {
     repositories {
         mavenLocal()
         maven {
-            url = uri("http://sacredcraft.cn:8081/repository/releases")
-            isAllowInsecureProtocol = true
+            url = uri("https://repo.tabooproject.org/repository/releases")
             credentials {
                 username = project.findProperty("taboolibUsername").toString()
                 password = project.findProperty("taboolibPassword").toString()

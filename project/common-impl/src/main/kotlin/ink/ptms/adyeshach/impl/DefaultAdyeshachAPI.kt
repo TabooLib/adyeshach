@@ -114,6 +114,13 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         localEntityFinder.getVisibleEntities(player).forEach { it.visible(player, true) }
     }
 
+    override fun refreshPublicEntityManager() {
+        localPublicEntityManager.getEntities().forEach {
+            it.despawn()
+            it.spawn(it.getLocation())
+        }
+    }
+
     override fun getPublicEntityManager(type: ManagerType): BaseManager {
         return when (type) {
             ManagerType.PERSISTENT -> localPublicEntityManager

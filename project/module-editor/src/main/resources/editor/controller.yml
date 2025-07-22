@@ -24,6 +24,15 @@ Controllers:
     instance: LOOK_AT_PLAYER:8d,1.00d,false,100i
   - icon:
       material: ENDER_EYE
+      name: '&7看向所有玩家 (发包)'
+      lore:
+        - ''
+        - '&8固定看向玩家的视线效果, 每个玩家的视角下都是看向自己'
+        - '&8参数:'
+        - '&f看向 &f8 &7格内的所有玩家'
+    instance: LOOK_AT_PLAYER_WITH_PACKET:8d,false
+  - icon:
+      material: ENDER_EYE
       name: '&7看向周围 (1%)'
       lore:
         - ''

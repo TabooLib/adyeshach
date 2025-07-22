@@ -14,6 +14,7 @@ import taboolib.common5.Demand
 import taboolib.common5.cint
 import taboolib.library.xseries.parseToMaterial
 import taboolib.platform.util.buildItem
+import kotlin.math.sqrt
 
 /**
  * 使用 AdyeshachLanguage 发送语言文件
@@ -62,7 +63,13 @@ fun Location.safeDistance(loc: Location): Double {
  * 安全测距，并忽略 Y 轴
  */
 fun Location.safeDistanceIgnoreY(loc: Location): Double {
-    return if (world != null && world?.name == loc.world?.name) distance(Location(world, loc.x, y, loc.z)) else Double.MAX_VALUE
+    return if (world != null && world?.name == loc.world?.name) {
+        val dx = x - loc.x
+        val dz = z - loc.z
+        sqrt(dx * dx + dz * dz)
+    } else {
+        Double.MAX_VALUE
+    }
 }
 
 /**

@@ -38,6 +38,11 @@ interface ModelEngine {
     fun hideModelEngine(viewer: Player): Boolean
 
     /**
+     * 销毁 ModelEngine 模型
+     */
+    fun destroyModelEngine()
+
+    /**
      * 刷新 ModelEngine 模型
      */
     fun refreshModelEngine(): Boolean

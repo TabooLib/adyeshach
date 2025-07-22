@@ -32,6 +32,7 @@ class DefaultEventBus : EventBus {
     val postDestroy = LinkedList<Consumer<DestroyEvent>>()
     val postMetaUpdates = LinkedList<Consumer<MetaUpdateEvent>>()
     val postTeleports = LinkedList<Consumer<TeleportEvent>>()
+    val prepareControllerLook = LinkedList<Predicate<ControllerLookEvent>>()
 
     fun callSpawn(entity: EntityInstance, viewer: Player): Boolean {
         return prepareSpawn.all { it.test(SpawnEvent(entity, viewer)) }
@@ -85,6 +86,10 @@ class DefaultEventBus : EventBus {
         postTeleports.forEach { it.accept(TeleportEvent(entity, location)) }
     }
 
+    fun callControllerLook(event: ControllerLookEvent): Boolean {
+        return prepareControllerLook.all { it.test(event) }
+    }
+
     override fun prepareSpawn(callback: Predicate<SpawnEvent>) {
         prepareSpawn.add(callback)
     }
@@ -135,5 +140,9 @@ class DefaultEventBus : EventBus {
 
     override fun postTeleport(callback: Consumer<TeleportEvent>) {
         postTeleports.add(callback)
+    }
+
+    override fun prepareControllerLook(callback: Predicate<ControllerLookEvent>) {
+        prepareControllerLook.add(callback)
     }
 }

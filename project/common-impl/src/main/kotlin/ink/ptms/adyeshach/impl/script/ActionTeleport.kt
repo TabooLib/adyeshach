@@ -1,10 +1,13 @@
 package ink.ptms.adyeshach.impl.script
 
+import ink.ptms.adyeshach.core.event.AdyeshachScriptEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
 import org.bukkit.Location
+import org.bukkit.entity.Player
+import taboolib.common.util.isPlayer
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -21,7 +24,11 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
             if (script.getManager() == null || !script.isEntitySelected()) {
                 errorBy("error-no-manager-or-entity-selected")
             }
-            script.getEntities().forEach { e -> e.teleport(it) }
+            val entities = script.getEntities()
+            val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null
+            if (AdyeshachScriptEvent.Teleport(entities, sender, it).call()) {
+                entities.forEach { e -> e.teleport(it) }
+            }
         }
     }
 

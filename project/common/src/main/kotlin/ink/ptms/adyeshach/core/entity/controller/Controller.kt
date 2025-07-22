@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
  * @author 坏黑
  * @since 2022/6/15 23:38
  */
-@Suppress("SpellCheckingInspection")
 abstract class Controller(var entity: EntityInstance? = null) : Comparable<Controller> {
 
     var error = false

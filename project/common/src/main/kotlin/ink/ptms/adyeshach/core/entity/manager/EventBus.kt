@@ -78,4 +78,9 @@ interface EventBus {
      * 在 teleport 之后插入一段回调函数
      */
     fun postTeleport(callback: Consumer<TeleportEvent>)
+
+    /**
+     * 在 Controller Look 之前插入回调函数
+     */
+    fun prepareControllerLook(callback: Predicate<ControllerLookEvent>)
 }
