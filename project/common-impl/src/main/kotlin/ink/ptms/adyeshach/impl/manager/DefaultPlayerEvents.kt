@@ -104,7 +104,7 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onReceive(e: PacketReceiveEvent) {
-        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in onlinePlayerSet) {
+        if (e.packet.name in listOf("PacketPlayInPosition", "Pos") && e.player.name !in onlinePlayerSet) {
             onlinePlayerSet += e.player.name
             AdyeshachPlayerJoinEvent(e.player).call()
         }
@@ -124,7 +124,7 @@ internal object DefaultPlayerEvents {
 
                     val actionOrdinal = (action.invokeMethod<Any>("getType", remap = true) as Enum<*>).ordinal
 
-                    when(actionOrdinal) {
+                    when (actionOrdinal) {
                         // 左键
                         1 -> {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }

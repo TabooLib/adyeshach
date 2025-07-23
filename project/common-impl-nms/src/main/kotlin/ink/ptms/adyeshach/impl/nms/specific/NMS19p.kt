@@ -12,7 +12,7 @@ import taboolib.module.nms.nmsProxy
  */
 abstract class NMS19p {
 
-    abstract fun isChunkSent(player: Player, playerChunkMap: Any, chunkX: Int, chunkZ: Int): Boolean
+    abstract fun isChunkSent(player: Player, worldServer: Any, chunkX: Int, chunkZ: Int): Boolean
 
     companion object {
 

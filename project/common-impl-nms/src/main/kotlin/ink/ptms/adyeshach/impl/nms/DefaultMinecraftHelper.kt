@@ -169,7 +169,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
         // 你改你妈个🥚，我爱说实话
         try {
             val craftWorld = player.world as CraftWorld19
-            return NMS19p.instance.isChunkSent(player, craftWorld.handle.chunkSource.chunkMap, chunkX, chunkZ)
+            return NMS19p.instance.isChunkSent(player, craftWorld.handle, chunkX, chunkZ)
         } catch (_: Throwable) {
         }
         return try {

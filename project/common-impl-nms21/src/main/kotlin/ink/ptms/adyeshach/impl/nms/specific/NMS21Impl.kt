@@ -15,6 +15,9 @@ import net.minecraft.world.entity.EnumItemSlot
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
 import net.minecraft.world.phys.Vec3D
+import net.minecraft.world.scores.Scoreboard
+import net.minecraft.world.scores.ScoreboardTeam
+import net.minecraft.world.scores.ScoreboardTeamBase
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack
@@ -25,7 +28,7 @@ import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
 import java.util.*
 
-class NMS21Impl : NMS21() {
+class NMS21Impl : NMS21 {
     override fun createEntityHead(entityId: Int, yHeadRot: Byte): Any {
         return PacketPlayOutEntityHeadRotation::class.java.invokeConstructor(createDataSerializer {
             writeVarInt(entityId)
@@ -91,24 +94,35 @@ class NMS21Impl : NMS21() {
     }
 
     override fun createTeam(team: MinecraftScoreboardOperator.Team, method: MinecraftScoreboardOperator.TeamMethod): Any {
-        return PacketPlayOutScoreboardTeam::class.java.invokeConstructor(createDataSerializer {
-            writeUtf(team.name, 16)
-            writeByte(method.ordinal.toByte())
-            // ADD or CHANGE
-            if (method.ordinal == 0 || method.ordinal == 2) {
-                writeComponent("{\"text\":\"\"}")
-                writeByte(2) // 设置
-                writeUtf(if (team.nameTagVisible) "always" else "never", 40)
-                writeUtf(if (team.collision) "always" else "never", 40)
-                writeEnumSet(EnumSet.copyOf(EnumChatFormat.values().toList()), EnumChatFormat::class.java)
-                writeComponent("{\"text\":\"\"}")
-                writeComponent("{\"text\":\"\"}")
+        // ADD or CHANGE
+        val parameters = if (method.ordinal in listOf(0, 2)) {
+            val scoreTeam = ScoreboardTeam(Scoreboard(), team.name)
+            // 改变颜色
+            scoreTeam.color = EnumChatFormat.valueOf(team.color.name)
+            // 设置
+            scoreTeam.unpackOptions(2)
+            // 是否隐藏名字
+            scoreTeam.nameTagVisibility = if (team.nameTagVisible) {
+                ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS
+            } else {
+                ScoreboardTeamBase.EnumNameTagVisibility.NEVER
             }
-            // ADD or JOIN or LEAVE
-            if (method.ordinal == 0 || method.ordinal == 3 || method.ordinal == 4) {
-                writeVarInt(team.members.size)
-                team.members.forEach { name -> writeUtf(name) }
+            // 是否启用碰撞箱
+            scoreTeam.collisionRule = if (team.collision) {
+                ScoreboardTeamBase.EnumTeamPush.ALWAYS
+            } else {
+                ScoreboardTeamBase.EnumTeamPush.NEVER
             }
-        }.build())
+            Optional.of(PacketPlayOutScoreboardTeam.b(scoreTeam))
+        } else {
+            Optional.empty()
+        }
+        // ADD or JOIN or LEAVE
+        val players = if (method.ordinal in listOf(0, 3, 4)) {
+            team.members
+        } else {
+            listOf()
+        }
+        return PacketPlayOutScoreboardTeam::class.java.invokeConstructor(team.name, method.ordinal, parameters, players)
     }
 }
