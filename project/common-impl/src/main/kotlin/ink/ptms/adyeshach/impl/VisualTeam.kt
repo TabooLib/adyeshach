@@ -11,7 +11,6 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.info
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -89,7 +88,7 @@ object VisualTeam {
             // 获取队伍（或创建）
             val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color, canSeeInvisible)) { key ->
                 // 生成队伍名称
-                val teamId = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}", key)
+                val teamId = AdyeshachSettings.conf.getString("Settings.team-id", "ady_{id}")!!.replace("{id}", key)
                 // 生成队伍
                 val team = MinecraftScoreboardOperator.Team(teamId, hashSetOf(), nameTagVisible, collision, color, canSeeInvisible)
                 // 发送队伍数据包

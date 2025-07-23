@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
+import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -66,5 +67,13 @@ internal class EntityModeled(val entity: EntityInstance) : Dummy<EntityInstance>
 
     override fun isWalking(): Boolean {
         return entity.hasTag(StandardTags.IS_MOVING)
+    }
+
+    override fun isGlowing(): Boolean {
+        return entity.isGlowing()
+    }
+
+    override fun getGlowColor(): Int {
+        return Color.WHITE.asRGB()
     }
 }
