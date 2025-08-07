@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   release:
-    types: [ created ]
+    types: [ 创建 ]
 
 jobs:
   build:
@@ -21,17 +21,17 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
         
-    - name: Build with Maven
-      run: mvn -B package
+    - name: Build with Gradle
+      run: ./gradlew build
       
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: Plugin
-        path: target/*.jar
+        path: build/libs/*.jar
         
     - name: Upload to release
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
       with:
-        files: target/*.jar
+        files: build/libs/*.jar
