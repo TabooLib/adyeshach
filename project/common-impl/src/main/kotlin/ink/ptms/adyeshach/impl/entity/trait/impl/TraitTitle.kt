@@ -75,10 +75,14 @@ object TraitTitle : Trait() {
     @SubscribeEvent
     private fun onQuit(e: PlayerQuitEvent) {
         // 玩家退出时必须清空位于 playerLookup 中的容器，并删除全息对象
-        playerLookup.remove(e.player.name)?.forEach {
-            it.value.remove()
-            // 同时回收 entityLookup 中对应的缓存
-            entityLookup[it.key]!!.remove(e.player.name)
+        playerLookup.remove(e.player.name)?.forEach { (entityId, hologram) ->
+            hologram.remove()
+            // 同时回收 entityLookup 中对应的缓存，并检查是否存在
+            entityLookup[entityId]?.remove(e.player.name)
+            // 如果 entityLookup 中该实体的 Map 为空，则移除它以避免内存泄漏
+            if (entityLookup[entityId]?.isEmpty() == true) {
+                entityLookup.remove(entityId)
+            }
         }
     }
 
@@ -95,9 +99,10 @@ object TraitTitle : Trait() {
     fun create(viewer: Player, entity: EntityInstance) {
         // 是否存在 title 配置
         if (data.contains(entity.uniqueId)) {
-            // 先移除
+            // 先彻底移除可能存在的旧全息
             remove(viewer, entity)
-            // 再创建
+            
+            // 再创建新的全息
             val loc = entity.getLocation().add(0.0, entity.entitySize.height + entity.getTraitTitleHeight(), 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
                 runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
@@ -106,12 +111,16 @@ object TraitTitle : Trait() {
                 return
             }
             val hologram = Adyeshach.api().getHologramHandler().createHologram(viewer, loc, message)
-            // 写入 playerLookup 并删除之前存在的全息对象
+            
+            // 写入 playerLookup
             val playerHologramMap = playerLookup.computeIfAbsent(viewer.name) { ConcurrentHashMap() }
-            playerHologramMap.put(entity.uniqueId, hologram)?.remove()
+            val oldHologram1 = playerHologramMap.put(entity.uniqueId, hologram)
+            oldHologram1?.remove() // 清理可能存在的旧全息
+            
             // 写入 entityLookup
             val entityHologramMap = entityLookup.computeIfAbsent(entity.uniqueId) { ConcurrentHashMap() }
-            entityHologramMap.put(viewer.name, hologram)?.remove()
+            val oldHologram2 = entityHologramMap.put(viewer.name, hologram)
+            oldHologram2?.remove() // 清理可能存在的旧全息
         }
     }
 
@@ -158,12 +167,24 @@ object TraitTitle : Trait() {
      * 移除全息缓存
      */
     fun remove(viewer: Player, entity: EntityInstance) {
-        val playerHologramMap = playerLookup[viewer.name] ?: return
-        if (playerHologramMap.containsKey(entity.uniqueId)) {
-            // 移除 playerLookup 中的缓存并删除全息实例
-            playerHologramMap.remove(entity.uniqueId)!!.remove()
-            // 移除 entityLookup 中的缓存
-            entityLookup[entity.uniqueId]!!.remove(viewer.name)
+        val playerHologramMap = playerLookup[viewer.name]
+        val entityHologramMap = entityLookup[entity.uniqueId]
+        
+        // 先尝试从 playerLookup 中移除
+        val hologram1 = playerHologramMap?.remove(entity.uniqueId)
+        // 再尝试从 entityLookup 中移除
+        val hologram2 = entityHologramMap?.remove(viewer.name)
+        
+        // 移除全息实例（优先使用 playerLookup 中的，如果不存在则使用 entityLookup 中的）
+        val hologramToRemove = hologram1 ?: hologram2
+        hologramToRemove?.remove()
+        
+        // 清理空的 Map 容器以避免内存泄漏
+        if (playerHologramMap?.isEmpty() == true) {
+            playerLookup.remove(viewer.name)
+        }
+        if (entityHologramMap?.isEmpty() == true) {
+            entityLookup.remove(entity.uniqueId)
         }
     }
 
