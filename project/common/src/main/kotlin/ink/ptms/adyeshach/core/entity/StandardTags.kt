@@ -77,6 +77,12 @@ object StandardTags {
     const val IS_IN_VEHICLE = "IS_IN_VEHICLE"
 
     /**
+     * Sit 状态
+     */
+    @PersistentTag
+    const val IS_SITTING = "IS_SITTING"
+
+    /**
      * 寻路状态
      * 持有该标签的单位正在寻路
      */

@@ -3,13 +3,11 @@ package ink.ptms.adyeshach.module.command
 import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import ink.ptms.adyeshach.impl.entity.controller.KetherController
 import ink.ptms.adyeshach.module.command.subcommand.*
 import org.bukkit.command.CommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
-import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.command.*
 import taboolib.common.util.ResettableLazy
 import taboolib.common.util.unsafeLazy
 import taboolib.expansion.createHelper
@@ -21,6 +19,7 @@ import taboolib.expansion.createHelper
  * @author 坏黑
  * @since 2022/12/17 20:47
  */
+@Suppress("ObjectPropertyName")
 @CommandHeader(name = "adyeshach", aliases = ["ady", "npc"], permission = "adyeshach.command")
 object Command {
 
@@ -69,6 +68,12 @@ object Command {
 
     @CommandBody(aliases = ["near"])
     val list = listSubCommand
+
+    @CommandBody
+    val `save-all` = subCommandExec<CommandSender> {
+        DefaultAdyeshachBooster.api.localPublicEntityManager.onSave()
+        sender.sendMessage("${ADYESHACH_PREFIX}Saved.")
+    }
 
     @CommandBody
     val reload = subCommand {

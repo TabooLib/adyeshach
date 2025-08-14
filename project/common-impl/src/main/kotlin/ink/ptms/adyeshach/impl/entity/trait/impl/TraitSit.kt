@@ -2,7 +2,10 @@ package ink.ptms.adyeshach.impl.entity.trait.impl
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.type.AdyArmorStand
+import ink.ptms.adyeshach.core.event.AdyeshachEntityHeadRotationEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityLoadedEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import org.bukkit.entity.Player
@@ -18,6 +21,20 @@ object TraitSit : Trait() {
         val vehicle = e.entity.getVehicle() ?: return
         if (vehicle.getCustomName().uncolored() == "trait_sit_npc") {
             vehicle.remove()
+        }
+    }
+
+    @SubscribeEvent
+    private fun onCreate(e: AdyeshachEntityLoadedEvent) {
+        if (e.entity.hasPersistentTag(StandardTags.IS_SITTING)) {
+            e.entity.setTraitSit(true)
+        }
+    }
+
+    @SubscribeEvent
+    private fun onHeadRotation(e: AdyeshachEntityHeadRotationEvent) {
+        if (e.entity.hasPersistentTag(StandardTags.IS_SITTING)) {
+            e.entity.getVehicle()?.setHeadRotation(e.yaw, 0f, forceUpdate = true)
         }
     }
 
@@ -72,9 +89,11 @@ fun EntityInstance.setTraitSit(value: Boolean) {
             chair.setSmall(true)
             chair.addPassenger(this)
         }
+        setPersistentTag(StandardTags.IS_SITTING, "true")
     } else if (getVehicle()?.getCustomName()?.uncolored() == "trait_sit_npc") {
         val chair = getVehicle()!!
         chair.removePassenger(this)
         chair.remove()
+        removePersistentTag(StandardTags.IS_SITTING)
     }
 }

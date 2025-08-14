@@ -53,13 +53,14 @@ interface DefaultRideable : Rideable {
         entity.filter { it != this }.forEach { target ->
             target as DefaultEntityInstance
             // 避免循环骑乘
-            target.passengers.remove(uniqueId)
-            // 从载具中离开
+            target.removePassenger(this)
+            // 从当前载具中离开
             target.getVehicle()?.removePassenger(target)
             // 事件
             if (AdyeshachEntityVehicleEnterEvent(target, this).call()) {
                 passengers.add(target.uniqueId)
-                // 设置标签
+                // 标记状态
+                target.cacheVehicleEntity = this
                 target.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
             }
         }
@@ -77,12 +78,14 @@ interface DefaultRideable : Rideable {
             errorBy("error-entity-manager-not-match")
         }
         entity.filter { it != this }.forEach { target ->
+            target as DefaultEntityInstance
             // 进行二次判断是否为乘客
             if (passengers.contains(target.uniqueId)) {
                 // 事件
                 if (AdyeshachEntityVehicleLeaveEvent(target, this).call()) {
                     passengers.remove(target.uniqueId)
-                    // 移除标签
+                    // 移除状态
+                    target.cacheVehicleEntity = null
                     target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
                     // 校准位置
                     manager?.getEntityByUniqueId(target.uniqueId)?.refreshPosition()
@@ -120,5 +123,6 @@ interface DefaultRideable : Rideable {
         val validPassengers = getPassengers()
         passengers.clear()
         passengers += validPassengers.map { it.uniqueId }
+        cacheVehicleEntity = getVehicle()
     }
 }

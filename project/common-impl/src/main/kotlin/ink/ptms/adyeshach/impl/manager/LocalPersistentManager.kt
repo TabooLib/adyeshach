@@ -41,6 +41,10 @@ open class LocalPersistentManager : DefaultManager() {
 
     override fun onSave() {
         activeEntity.forEach { entity ->
+            // 不再保存衍生单位
+            if (entity.isDerived()) {
+                return@forEach
+            }
             val json = entity.toJson()
             val jsonHash = json.digest("sha-1")
             if (hash[entity.uniqueId] != jsonHash) {

@@ -64,11 +64,6 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var moveTarget: Location?
 
     /**
-     * 载具位置同步
-     */
-    var vehicleSync: Long
-
-    /**
      * 是否启用客户端 ID 对应表
      */
     var useClientEntityMap: Boolean
