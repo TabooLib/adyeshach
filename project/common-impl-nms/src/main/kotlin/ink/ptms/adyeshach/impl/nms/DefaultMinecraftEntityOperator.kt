@@ -88,6 +88,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         packetHandler.sendPacket(player, packet)
         // 同步头部朝向
         updateHeadRotation(player, entityId, location.yaw)
+        // 同步位置
+        syncPosition(player, entityId, location, onGround)
     }
 
     override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
@@ -141,20 +143,21 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
+        val yHeadRot = ifloor(yaw * 256.0 / 360.0).toByte()
         if (isUniversal) {
             if (MinecraftVersion.versionId >= 12100) {
-                packetHandler.sendPacket(player, NMS21.instance.createEntityHead(entityId, yaw.toInt().toByte()))
+                packetHandler.sendPacket(player, NMS21.instance.createEntityHead(entityId, yHeadRot))
             } else {
                 packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(ifloor(yaw * 256.0 / 360.0).toByte())
+                    writeByte(yHeadRot)
                 }.build() as NMSPacketDataSerializer))
             }
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(ifloor(yaw * 256.0 / 360.0).toByte())
+                    writeByte(yHeadRot)
                 }.build() as NMS16PacketDataSerializer)
             })
         }
@@ -245,6 +248,12 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         })
     }
 
+    fun syncPosition(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
+        if (MinecraftVersion.versionId >= 12102) {
+            packetHandler.sendPacket(player, NMS21.instance.createSyncPosition(entityId, location, onGround))
+        }
+    }
+
     fun EquipmentSlot.toNMSEnumItemSlot(): NMSEnumItemSlot {
         return when (this) {
             EquipmentSlot.HAND -> NMSEnumItemSlot.MAINHAND
@@ -253,7 +262,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
             EquipmentSlot.LEGS -> NMSEnumItemSlot.LEGS
             EquipmentSlot.CHEST -> NMSEnumItemSlot.CHEST
             EquipmentSlot.HEAD -> NMSEnumItemSlot.HEAD
-            EquipmentSlot.valueOf("BODY")->NMSEnumItemSlot.valueOf("BODY")
+            EquipmentSlot.valueOf("BODY") -> NMSEnumItemSlot.valueOf("BODY")
             else -> error("Unknown EquipmentSlot: $this")
         }
     }

@@ -3,6 +3,9 @@ package ink.ptms.adyeshach.impl.nms.specific
 import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
+import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.util.ifloor
+import ink.ptms.adyeshach.impl.nms.NMSEntityPose
 import ink.ptms.adyeshach.impl.nms.NMSIChatBaseComponent
 import ink.ptms.adyeshach.impl.nms.NMSPacketDataSerializer
 import net.minecraft.EnumChatFormat
@@ -11,6 +14,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.DataWatcher
+import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.EnumItemSlot
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
@@ -58,7 +62,7 @@ class NMS21Impl : NMS21 {
         return PacketPlayOutSpawnEntity(entityId, uuid, location.x, location.y, location.z, pitch, yaw, type, data, Vec3D.ZERO, yhead)
     }
 
-    override fun createPacketPlayOutEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
+    override fun createEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
         return PacketPlayOutEntityMetadata(entityId, packedItems.map { (it.source() as DataWatcher.Item<*>).value() })
     }
 
@@ -76,9 +80,25 @@ class NMS21Impl : NMS21 {
     override fun createTeleport(entityId: Int, location: Location, yaw: Byte, pitch: Byte, onGround: Boolean): Any {
         return PacketPlayOutEntityTeleport(
             entityId,
-            PositionMoveRotation(Vec3D(location.x, location.y, location.z), Vec3D(location.x, location.y, location.z), yaw.toFloat(), pitch.toFloat()),
+            PositionMoveRotation(
+                Vec3D(location.x, location.y, location.z),
+                Vec3D(location.x, location.y, location.z),
+                ifloor(yaw * 256.0 / 360.0).toFloat(),
+                pitch.toFloat()
+            ),
             setOf(Relative.X, Relative.Y, Relative.Z),
             onGround
+        )
+    }
+
+    override fun createSyncPosition(entityId: Int, location: Location, onGround: Boolean): Any {
+        return ClientboundEntityPositionSyncPacket(
+            entityId, PositionMoveRotation(
+                Vec3D(location.x, location.y, location.z),
+                Vec3D(location.x, location.y, location.z),
+                ifloor(location.yaw * 256.0 / 360.0).toFloat(),
+                location.pitch
+            ), onGround
         )
     }
 
@@ -87,7 +107,7 @@ class NMS21Impl : NMS21 {
             return when (this) {
                 EquipmentSlot.HAND -> EnumItemSlot.MAINHAND
                 EquipmentSlot.OFF_HAND -> EnumItemSlot.OFFHAND
-                else -> EnumItemSlot.valueOf(name)
+                else -> TODO()
             }
         }
         return PacketPlayOutEntityEquipment(entityId, equipment.map { Pair(it.key.toNMS(), CraftItemStack.asNMSCopy(it.value)) })
@@ -124,5 +144,15 @@ class NMS21Impl : NMS21 {
             listOf()
         }
         return PacketPlayOutScoreboardTeam::class.java.invokeConstructor(team.name, method.ordinal, parameters, players)
+    }
+
+    override fun getPose(pose: BukkitPose): NMSEntityPose {
+        return when (pose) {
+            BukkitPose.SITTING -> EntityPose.SITTING
+            BukkitPose.SLIDING -> EntityPose.SLIDING
+            BukkitPose.SHOOTING -> EntityPose.SHOOTING
+            BukkitPose.INHALING -> EntityPose.INHALING
+            else -> TODO()
+        }
     }
 }

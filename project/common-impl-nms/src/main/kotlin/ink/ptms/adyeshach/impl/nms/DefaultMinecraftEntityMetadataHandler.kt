@@ -103,7 +103,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any {
         // 1.21取消了DataSerializer,改用构造函数实例化
         return if (MinecraftVersion.versionId >= 12101) {
-            NMS21.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
+            NMS21.instance.createEntityMetadata(entityId, metaList)
         } else if (majorLegacy >= 11903) {
             // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
             NMS19.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
@@ -466,10 +466,8 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         BukkitPose.SNIFFING -> NMSEntityPose.SNIFFING
                         BukkitPose.DIGGING -> NMSEntityPose.DIGGING
                         BukkitPose.EMERGING -> NMSEntityPose.EMERGING
-                        BukkitPose.SITTING -> TODO()
-                        BukkitPose.SLIDING -> TODO()
-                        BukkitPose.SHOOTING -> TODO()
-                        BukkitPose.INHALING -> TODO()
+                        BukkitPose.SITTING, BukkitPose.SLIDING,
+                        BukkitPose.SHOOTING, BukkitPose.INHALING -> NMS21.instance.getPose(pose)
                     }
                 )
             } else {
