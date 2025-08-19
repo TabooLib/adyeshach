@@ -109,14 +109,14 @@ internal object DefaultPlayerEvents {
             AdyeshachPlayerJoinEvent(e.player).call()
         }
         if (e.packet.name in listOf("PacketPlayInUseEntity", "ServerboundInteractPacket")) {
-            val id = (if (MinecraftVersion.versionId < 12101) e.packet.read<Int>("a") else e.packet.read<Int>("entityId")) ?: return
+            val id = (if (MinecraftVersion.versionId < 12005) e.packet.read<Int>("a") else e.packet.read<Int>("entityId")) ?: return
             val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(id, e.player) ?: return
             // 判定观察者并检测作弊
             if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
                 if (MinecraftVersion.isUniversal) {
                     // 1.21+的字段变为c了,太操蛋了
                     // nm的缓存傻逼玩意,换了就必须清缓存
-                    val action = if (MinecraftVersion.versionId >= 12101) {
+                    val action = if (MinecraftVersion.versionId >= 12005) {
                         e.packet.source.getProperty<Any>("action", remap = true)
                     } else {
                         e.packet.source.getProperty("b", remap = true)
