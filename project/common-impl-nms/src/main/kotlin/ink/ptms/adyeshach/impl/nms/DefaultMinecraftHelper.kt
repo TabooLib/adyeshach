@@ -139,7 +139,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun craftChatSerializerToJson(compound: Any): String {
         return when {
-            MinecraftVersion.versionId >= 12100 -> {
+            MinecraftVersion.versionId >= 12005 -> {
                 NMS21.instance.toJson(compound)
             }
 

@@ -5,8 +5,6 @@ import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.impl.nms.NMSEntityPose
 import org.bukkit.Location
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import taboolib.common.util.unsafeLazy
 import taboolib.module.nms.nmsProxy
 import java.util.*
@@ -52,11 +50,6 @@ interface NMS21 {
      * 创建位置同步数据包
      */
     fun createSyncPosition(entityId: Int, location: Location, onGround:Boolean): Any
-
-    /**
-     * 创建实体槽位数据包
-     */
-    fun createEntityEquipment(entityId: Int, equipment: Map<EquipmentSlot, ItemStack>): Any
 
     /**
      * 创建队伍数据包

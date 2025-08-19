@@ -16,6 +16,6 @@ class NMS19pImpl : NMS19p() {
     override fun isChunkSent(player: Player, worldServer: Any, chunkX: Int, chunkZ: Int): Boolean {
         player as CraftPlayer
         worldServer as WorldServer
-        return worldServer.I().b(chunkX,chunkZ)
+        return worldServer.k().b(chunkX, chunkZ)
     }
 }

@@ -145,7 +145,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
         val yHeadRot = ifloor(yaw * 256.0 / 360.0).toByte()
         if (isUniversal) {
-            if (MinecraftVersion.versionId >= 12100) {
+            if (MinecraftVersion.versionId >= 12005) {
                 packetHandler.sendPacket(player, NMS21.instance.createEntityHead(entityId, yHeadRot))
             } else {
                 packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
@@ -185,7 +185,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updatePassengers(player: List<Player>, entityId: Int, vararg passengers: Int) {
         if (isUniversal) {
-            if (MinecraftVersion.versionId >= 12100) {
+            if (MinecraftVersion.versionId >= 12005) {
                 packetHandler.sendPacket(player, NMS21.instance.createPassengers(entityId, *passengers))
             } else {
                 packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {

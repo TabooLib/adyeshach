@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
-import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
@@ -15,7 +14,6 @@ import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.DataWatcher
 import net.minecraft.world.entity.EntityPose
-import net.minecraft.world.entity.EnumItemSlot
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
 import net.minecraft.world.phys.Vec3D
@@ -24,9 +22,6 @@ import net.minecraft.world.scores.ScoreboardTeam
 import net.minecraft.world.scores.ScoreboardTeamBase
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
-import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack
-import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.inventory.ItemStack
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
@@ -54,7 +49,7 @@ class NMS21Impl : NMS21 {
         entityType: Int,
         yhead: Double
     ): Any {
-        val type = if (MinecraftVersion.versionId == 12101) {
+        val type = if (MinecraftVersion.versionId >= 12005) {
             BuiltInRegistries.ENTITY_TYPE.byId(entityType)
         } else {
             BuiltInRegistries.ENTITY_TYPE.get(entityType).get().value()
@@ -100,17 +95,6 @@ class NMS21Impl : NMS21 {
                 location.pitch
             ), onGround
         )
-    }
-
-    override fun createEntityEquipment(entityId: Int, equipment: Map<EquipmentSlot, ItemStack>): Any {
-        fun EquipmentSlot.toNMS(): EnumItemSlot {
-            return when (this) {
-                EquipmentSlot.HAND -> EnumItemSlot.MAINHAND
-                EquipmentSlot.OFF_HAND -> EnumItemSlot.OFFHAND
-                else -> TODO()
-            }
-        }
-        return PacketPlayOutEntityEquipment(entityId, equipment.map { Pair(it.key.toNMS(), CraftItemStack.asNMSCopy(it.value)) })
     }
 
     override fun createTeam(team: MinecraftScoreboardOperator.Team, method: MinecraftScoreboardOperator.TeamMethod): Any {

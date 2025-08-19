@@ -102,7 +102,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any {
         // 1.21取消了DataSerializer,改用构造函数实例化
-        return if (MinecraftVersion.versionId >= 12101) {
+        return if (MinecraftVersion.versionId >= 12005) {
             NMS21.instance.createEntityMetadata(entityId, metaList)
         } else if (majorLegacy >= 11903) {
             // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
