@@ -117,8 +117,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                 }.build() as NMS16PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19, 1.12
-            9, 10, 11, 12 -> {
+            // 1.17, 1.18, 1.19, 1.20, 1.21
+            9, 10, 11, 12, 13 -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createSpawnEntity(
                         entityId,
@@ -177,19 +177,6 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                         writeShort(0)
                     }.build() as NMSPacketDataSerializer)
                 }
-            }
-
-            13 -> {
-                NMS21.instance.createSpawnEntity(
-                    entityId,
-                    uuid,
-                    location,
-                    yaw.toFloat(),
-                    pitch.toFloat(),
-                    data,
-                    NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
-                    yaw.toDouble()
-                )
             }
             // 不支持
             else -> error("Unsupported version.")

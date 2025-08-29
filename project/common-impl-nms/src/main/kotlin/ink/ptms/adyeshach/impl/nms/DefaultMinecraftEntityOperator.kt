@@ -56,20 +56,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     writeBoolean(onGround)
                 }.build() as NMS9PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19, 1.20
+            // 1.17, 1.18, 1.19, 1.20, 1.21
             // 使用带有 DataSerializer 的构造函数生成数据包
-            9, 10, 11, 12 -> NMSPacketPlayOutEntityTeleport(createDataSerializer {
-                writeVarInt(entityId)
-                writeDouble(location.x)
-                writeDouble(location.y)
-                writeDouble(location.z)
-                writeByte(yaw)
-                writeByte(pitch)
-                writeBoolean(onGround)
-            }.build() as NMSPacketDataSerializer)
-            // 1.21
-            13 -> if (MinecraftVersion.versionId == 12101) {
-                NMSPacketPlayOutEntityTeleport::class.java.invokeConstructor(createDataSerializer {
+            9, 10, 11, 12, 13 -> {
+                val data = createDataSerializer {
                     writeVarInt(entityId)
                     writeDouble(location.x)
                     writeDouble(location.y)
@@ -77,9 +67,14 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     writeByte(yaw)
                     writeByte(pitch)
                     writeBoolean(onGround)
-                }.build() as NMSPacketDataSerializer)
-            } else {
-                NMS21.instance.createTeleport(entityId, location, yaw, pitch, onGround)
+                }.build() as NMSPacketDataSerializer
+                if (MinecraftVersion.versionId >= 12103) {
+                    NMS21.instance.createTeleport(entityId, location, yaw, pitch, onGround)
+                } else if (MinecraftVersion.versionId >= 12005) {
+                    NMSPacketPlayOutEntityTeleport::class.java.invokeConstructor(data)
+                } else {
+                    NMSPacketPlayOutEntityTeleport(data)
+                }
             }
             // 不支持
             else -> error("Unsupported version.")
@@ -263,6 +258,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
             EquipmentSlot.CHEST -> NMSEnumItemSlot.CHEST
             EquipmentSlot.HEAD -> NMSEnumItemSlot.HEAD
             EquipmentSlot.valueOf("BODY") -> NMSEnumItemSlot.valueOf("BODY")
+            EquipmentSlot.valueOf("SADDLE") -> NMSEnumItemSlot.valueOf("SADDLE")
             else -> error("Unknown EquipmentSlot: $this")
         }
     }

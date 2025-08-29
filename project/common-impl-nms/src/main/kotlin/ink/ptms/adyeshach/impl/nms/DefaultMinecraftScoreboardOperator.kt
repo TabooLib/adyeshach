@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.impl.nms
 
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftPacketHandler
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
-import org.bukkit.entity.Player
 import ink.ptms.adyeshach.impl.nms.specific.NMS21
+import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.createDataSerializer
 
 /**
  * Adyeshach
@@ -74,28 +74,30 @@ class DefaultMinecraftScoreboardOperator : MinecraftScoreboardOperator {
                 }.build() as NMS13PacketDataSerializer)
             }
             // 1.17, 1.18, 1.19, 1.20
-            9, 10, 11, 12 -> NMSPacketPlayOutScoreboardTeam(createDataSerializer {
-                writeUtf(team.name, 16)
-                writeByte(method.ordinal.toByte())
-                // ADD or CHANGE
-                if (method.ordinal == 0 || method.ordinal == 2) {
-                    writeComponent("{\"text\":\"\"}")
-                    writeByte(2) // 设置
-                    writeUtf(if (team.nameTagVisible) "always" else "never", 40)
-                    writeUtf(if (team.collision) "always" else "never", 40)
-                    writeVarInt(team.color.ordinal)
-                    writeComponent("{\"text\":\"\"}")
-                    writeComponent("{\"text\":\"\"}")
+            9, 10, 11, 12, 13 -> {
+                if (MinecraftVersion.versionId >= 12005) {
+                    NMS21.instance.createTeam(team, method)
+                } else {
+                    NMSPacketPlayOutScoreboardTeam(createDataSerializer {
+                        writeUtf(team.name, 16)
+                        writeByte(method.ordinal.toByte())
+                        // ADD or CHANGE
+                        if (method.ordinal == 0 || method.ordinal == 2) {
+                            writeComponent("{\"text\":\"\"}")
+                            writeByte(2) // 设置
+                            writeUtf(if (team.nameTagVisible) "always" else "never", 40)
+                            writeUtf(if (team.collision) "always" else "never", 40)
+                            writeVarInt(team.color.ordinal)
+                            writeComponent("{\"text\":\"\"}")
+                            writeComponent("{\"text\":\"\"}")
+                        }
+                        // ADD or JOIN or LEAVE
+                        if (method.ordinal == 0 || method.ordinal == 3 || method.ordinal == 4) {
+                            writeVarInt(team.members.size)
+                            team.members.forEach { name -> writeUtf(name) }
+                        }
+                    }.build() as NMSPacketDataSerializer)
                 }
-                // ADD or JOIN or LEAVE
-                if (method.ordinal == 0 || method.ordinal == 3 || method.ordinal == 4) {
-                    writeVarInt(team.members.size)
-                    team.members.forEach { name -> writeUtf(name) }
-                }
-            }.build() as NMSPacketDataSerializer)
-
-            13 -> {
-                NMS21.instance.createTeam(team, method)
             }
             // 不支持
             else -> error("Unsupported version.")
