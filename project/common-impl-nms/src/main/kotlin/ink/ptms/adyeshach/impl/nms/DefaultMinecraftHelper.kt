@@ -13,6 +13,7 @@ import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import ink.ptms.adyeshach.minecraft.ChunkPos
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftTropicalFish
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.TropicalFish
@@ -101,11 +102,21 @@ class DefaultMinecraftHelper : MinecraftHelper {
     }
 
     override fun adaptTropicalFishPattern(data: Int): TropicalFish.Pattern {
-        return CraftTropicalFishPattern19.fromData(data and '\uffff'.code)
+        return try {
+            CraftTropicalFishPattern19.fromData(data and '\uffff'.code)
+        } catch (_: Throwable) {
+            CraftTropicalFish.getPattern(data and '\uffff'.code)
+        }
     }
 
     override fun adaptTropicalFishPattern(pattern: TropicalFish.Pattern): Int {
-        return CraftTropicalFishPattern19.values()[pattern.ordinal].dataValue
+        return try{
+            CraftTropicalFishPattern19.values()[pattern.ordinal].dataValue
+        }catch (_:NoClassDefFoundError){
+            val color = CraftTropicalFish.getPatternColor(pattern.ordinal)
+            val body = CraftTropicalFish.getBodyColor(pattern.ordinal)
+            CraftTropicalFish.getData(color,body,pattern)
+        }
     }
 
     override fun getEntity(world: World, id: Int): Entity? {

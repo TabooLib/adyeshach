@@ -494,7 +494,6 @@ ink.ptms.adyeshach.core.entity.type.AdyPainting
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultPainting
     20
-    INVALID
 
 ink.ptms.adyeshach.core.entity.type.AdyPanda
     PANDA
@@ -1013,6 +1012,220 @@ ink.ptms.adyeshach.core.entity.type.AdyCamel
     CAMEL
     -1
     2.375 1.7
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+#################################
+#                               #
+#       UPDATE IN 1.21          #
+#                               #
+#################################
+
+ink.ptms.adyeshach.core.entity.type.AdyWindCharge
+    WIND_CHARGE
+    1
+    0.3125 0.3125
+    BREEZE_WIND_CHARGE
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBogged
+    BOGGED
+    1
+    1.99 0.6
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBreeze
+    BREEZE
+    1
+    1.77 0.6
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyOminousItemSpawner
+    OMINOUS_ITEM_SPAWNER
+    1
+    0.25 0.25
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBambooRaft
+    BAMBOO_RAFT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyAcaciaBoat
+    ACACIA_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBirchBoat
+    BIRCH_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyCherryBoat
+    CHERRY_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyDarkOakBoat
+    DARK_OAK_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyJungleBoat
+    JUNGLE_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyOakBoat
+    OAK_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyPaleOakBoat
+    PALE_OAK_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdySpruceBoat
+    SPRUCE_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyMangroveBoat
+    MANGROVE_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBambooChestRaft
+    BAMBOO_CHEST_RAFT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyAcaciaChestBoat
+    ACACIA_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyBirchChestBoat
+    BIRCH_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyCherryChestBoat
+    CHERRY_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyDarkOakChestBoat
+    DARK_OAK_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyJungleChestBoat
+    JUNGLE_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyOakChestBoat
+    OAK_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyPaleOakChestBoat
+    PALE_OAK_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdySpruceChestBoat
+    SPRUCE_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyMangroveChestBoat
+    MANGROVE_CHEST_BOAT
+    1
+    0.5625 1.375
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntity@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyCreaking
+    CREAKING
+    1
+    0.9 2.7
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2
+
+ink.ptms.adyeshach.core.entity.type.AdyArmadillo
+    ARMADILLO
+    1
+    0.65 0.7
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
     2

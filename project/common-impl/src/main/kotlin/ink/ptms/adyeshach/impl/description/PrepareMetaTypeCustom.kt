@@ -1,8 +1,7 @@
 package ink.ptms.adyeshach.impl.description
 
 import com.eatthepath.uuid.FastUUID
-import ink.ptms.adyeshach.core.bukkit.BukkitParticles
-import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.core.util.getEnumOrNull
@@ -58,6 +57,12 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
             // 1.20 新增
             CustomType.SNIFFER_STATE -> PrepareMetaNatural(name, AdySniffer.State.IDLING, "SnifferState")
+            // 1.21 新增
+            CustomType.DIRECTION -> PrepareMetaNatural(name, BukkitDirection.SOUTH, "BukkitDirection")
+            CustomType.CHICKEN_VARIANT -> PrepareMetaNatural(name, BukkitChickenType.TEMPERATE, "Chicken.Variant")
+            CustomType.ARMADILLO_STATE -> PrepareMetaNatural(name, BukkitArmadilloState.IDLE, "Armadillo.State")
+            CustomType.PIG_VARIANT -> PrepareMetaNatural(name, BukkitPigVariant.TEMPERATE, "Pig.Variant")
+            CustomType.WOLF_VARIANT -> PrepareMetaNatural(name, BukkitWolfVariant.PALE, "Wolf.Variant")
         }
     }
 
@@ -78,6 +83,6 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
     }
 
     private fun parseParticle(args: List<String>): BukkitParticles {
-        return BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.VILLAGER_HAPPY
+        return BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.HAPPY_VILLAGER
     }
 }

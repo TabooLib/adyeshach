@@ -2,17 +2,20 @@ package ink.ptms.adyeshach.impl.nms.specific
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
-import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.*
+import ink.ptms.adyeshach.core.bukkit.BukkitChickenType.*
+import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.util.ifloor
-import ink.ptms.adyeshach.impl.nms.NMSEntityPose
-import ink.ptms.adyeshach.impl.nms.NMSIChatBaseComponent
-import ink.ptms.adyeshach.impl.nms.NMSPacketDataSerializer
+import ink.ptms.adyeshach.impl.nms.*
 import net.minecraft.EnumChatFormat
+import net.minecraft.core.Holder
 import net.minecraft.core.IRegistryCustom
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.DataWatcher
+import net.minecraft.network.syncher.DataWatcherObject
+import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
@@ -20,8 +23,20 @@ import net.minecraft.world.phys.Vec3D
 import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
 import net.minecraft.world.scores.ScoreboardTeamBase
+import org.bukkit.Art
 import org.bukkit.Location
+import org.bukkit.NamespacedKey
+import org.bukkit.Registry
+import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
+import org.bukkit.craftbukkit.v1_21_R4.entity.CraftChicken
+import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPig
+import org.bukkit.craftbukkit.v1_21_R4.entity.CraftWolf
+import org.bukkit.entity.Chicken
+import org.bukkit.entity.Pig
+import org.bukkit.entity.Wolf
+import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
@@ -138,5 +153,69 @@ class NMS21Impl : NMS21 {
             BukkitPose.INHALING -> EntityPose.INHALING
             else -> TODO()
         }
+    }
+
+    override fun getVillagerType(type: VillagerData.Type): NMSVillagerType {
+        val a = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(type.name.lowercase()))
+        return CraftVillager.CraftType.bukkitToMinecraft(a)
+    }
+
+    override fun getVillagerProfession(profession: VillagerData.Profession): NMSVillagerProfession {
+        val a = Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(profession.name.lowercase()))
+        return CraftVillager.CraftProfession.bukkitToMinecraft(a)
+    }
+
+    override fun getArtType(art: BukkitPaintings): Int {
+        return CraftArt.bukkitToMinecraft(Registry.ART.get(NamespacedKey.minecraft(art.legacy.toString().lowercase())))!!.area()
+    }
+
+    override fun artBukkitToNotch(art: Art): Any {
+        return Holder.direct(CraftArt.bukkitToMinecraft(art))
+    }
+
+    override fun createOptBlockStateMeta(index: Int, material: MaterialData?): Any {
+        return DataWatcher.Item(
+            DataWatcherObject(index, DataWatcherRegistry.BYTE),
+//            Optional.ofNullable(CraftBlockData.newData(material?.itemType?.asBlockType(),null).state)
+            index.toByte()
+        )
+    }
+
+    override fun createChickenMeta(index: Int, type: BukkitChickenType): Any {
+        val value = when (type) {
+            TEMPERATE -> Chicken.Variant.TEMPERATE
+            WARM -> Chicken.Variant.WARM
+            COLD -> Chicken.Variant.COLD
+        }
+        val variant = CraftChicken.CraftVariant.bukkitToMinecraftHolder(value)
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CHICKEN_VARIANT), variant)
+    }
+
+    override fun createArmadilloMeta(index: Int, value: BukkitArmadilloState): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.ARMADILLO_STATE), value.state)
+    }
+
+    override fun createPigVariantMeta(index: Int, value: BukkitPigVariant): Any {
+        val type = when (value) {
+            BukkitPigVariant.COLD -> Pig.Variant.COLD
+            BukkitPigVariant.TEMPERATE -> Pig.Variant.TEMPERATE
+            BukkitPigVariant.WARM -> Pig.Variant.WARM
+        }
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.PIG_VARIANT), CraftPig.CraftVariant.bukkitToMinecraftHolder(type))
+    }
+
+    override fun createWolfVariantMeta(index: Int, value: BukkitWolfVariant): Any {
+        val type = when (value) {
+            BukkitWolfVariant.PALE -> Wolf.Variant.PALE
+            BukkitWolfVariant.SPOTTED -> Wolf.Variant.SPOTTED
+            BukkitWolfVariant.SNOWY -> Wolf.Variant.SNOWY
+            BukkitWolfVariant.BLACK -> Wolf.Variant.BLACK
+            BukkitWolfVariant.ASHEN -> Wolf.Variant.ASHEN
+            BukkitWolfVariant.RUSTY -> Wolf.Variant.RUSTY
+            BukkitWolfVariant.WOODS -> Wolf.Variant.WOODS
+            BukkitWolfVariant.CHESTNUT -> Wolf.Variant.CHESTNUT
+            BukkitWolfVariant.STRIPED -> Wolf.Variant.STRIPED
+        }
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.WOLF_VARIANT), CraftWolf.CraftVariant.bukkitToMinecraftHolder(type))
     }
 }

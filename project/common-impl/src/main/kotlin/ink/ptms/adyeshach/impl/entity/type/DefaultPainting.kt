@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Art
 import org.bukkit.entity.Player
-import taboolib.module.nms.MinecraftVersion
 
 /**
  * Adyeshach
@@ -29,10 +28,6 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
     private var direction = BukkitDirection.NORTH
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
-        if (MinecraftVersion.majorLegacy >= 11900) {
-            return super.visible(viewer, visible)
-        }
-        // 低版本使用独立的 Painting 包生成实体
         val api = Adyeshach.api().getMinecraftAPI()
         return if (visible) {
             prepareSpawn(viewer) {
@@ -45,16 +40,12 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
         }
     }
 
-    @Deprecated("1.19 以上不支持")
     override fun setDirection(direction: BukkitDirection) {
-        ink.ptms.adyeshach.core.entity.type.assert(minecraftVersion >= 11900, "setDirection")
         this.direction = direction
         respawn()
     }
 
-    @Deprecated("1.19 以上不支持")
     override fun getDirection(): BukkitDirection {
-        ink.ptms.adyeshach.core.entity.type.assert(minecraftVersion >= 11900, "getDirection")
         return direction
     }
 

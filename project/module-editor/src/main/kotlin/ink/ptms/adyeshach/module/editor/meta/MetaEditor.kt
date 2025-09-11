@@ -10,7 +10,6 @@ import ink.ptms.adyeshach.module.editor.meta.impl.*
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
-import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -127,6 +126,10 @@ interface MetaEditor {
                 entity is AdyTextDisplay && key == "backgroundColor" -> MetaColor(key)
                 // 嗅探兽
                 entity is AdySniffer && key == "snifferState" -> MetaEnum(key, AdySniffer.State::class.java).nameToKey()
+                entity is AdyChicken && key == "chickenType" -> MetaEnum(key, BukkitChickenType::class.java).nameToKey()
+                entity is AdyArmadillo && key == "armadilloState" -> MetaEnum(key, BukkitArmadilloState::class.java).nameToKey()
+                entity is AdyWolf && key == "wolfVariant" -> MetaEnum(key, BukkitWolfVariant::class.java).nameToKey()
+                entity is AdyPig && key == "pigVariant" -> MetaEnum(key, BukkitPigVariant::class.java).nameToKey()
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java).nameToKey()
                 // 不支持

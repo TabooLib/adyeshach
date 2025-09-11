@@ -133,7 +133,31 @@ enum class EntityTypes {
     BLOCK_DISPLAY, // 方块显示
     SNIFFER, // 嗅探兽
     CAMEL, // 骆驼
-//    ARMADILLO, // 犰狳
-//    BREEZE, // 微风
-//    BOGGED // 泥沼僵尸
+    ARMADILLO, // 犰狳
+    OMINOUS_ITEM_SPAWNER, // 不祥之物生成器
+    BOGGED, // 沼骸
+    BREEZE, // 旋风人
+    BAMBOO_RAFT, // 竹筏
+    ACACIA_BOAT, // 金合欢木船
+    BIRCH_BOAT, // 白桦木船
+    CHERRY_BOAT, // 樱花木船
+    DARK_OAK_BOAT, // 深色橡木船
+    JUNGLE_BOAT, // 丛林木船
+    MANGROVE_BOAT, // 红树木船
+    OAK_BOAT, // 橡木船
+    PALE_OAK_BOAT, // 苍白橡木船
+    SPRUCE_BOAT, // 云杉木船
+    BAMBOO_CHEST_RAFT, // 运输竹筏
+    ACACIA_CHEST_BOAT, // 金合欢木运输船
+    BIRCH_CHEST_BOAT, // 白桦木运输船
+    CHERRY_CHEST_BOAT, // 樱花木运输船
+    DARK_OAK_CHEST_BOAT, // 深色橡木运输船
+    JUNGLE_CHEST_BOAT, // 丛林木运输船
+    MANGROVE_CHEST_BOAT, // 红树木运输船
+    OAK_CHEST_BOAT, // 橡木运输船
+    PALE_OAK_CHEST_BOAT, // 苍白橡木运输船
+    SPRUCE_CHEST_BOAT, // 云杉木运输船
+    WIND_CHARGE, // 风弹
+    CREAKING, // 嘎枝
+    FISHING_BOBBER, // 浮漂
 }

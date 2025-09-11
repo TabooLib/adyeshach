@@ -121,14 +121,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             9, 10, 11, 12, 13 -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createSpawnEntity(
-                        entityId,
-                        uuid,
-                        location,
-                        yaw.toFloat(),
-                        pitch.toFloat(),
-                        data,
-                        NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
-                        yaw.toDouble()
+                        entityId, uuid, location, yaw.toFloat(), pitch.toFloat(), data, NMS19.instance.entityTypeGetId(helper.adapt(entityType)), yaw.toDouble()
                     )
                 } else {
                     NMSPacketPlayOutSpawnEntity::class.java.invokeConstructor(createDataSerializer {
@@ -378,16 +371,31 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
-        if (MinecraftVersion.majorLegacy >= 11900) {
-            error("spawnEntityPainting() is not supported in this version")
-        }
         // 获取 ID
         val id = motiveCache.getOrPut(painting) {
-            NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(painting))
+            try {
+                NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(painting))
+            } catch (_: Exception) {
+                NMS21.instance.getArtType(painting)
+            }
+        }
+        if (MinecraftVersion.majorLegacy >= 11900) {
+            packetHandler.sendPacket(
+                player, NMS21.instance.createSpawnEntity(
+                    entityId,
+                    uuid,
+                    location,
+                    0.0F,
+                    0.0F,
+                    direction.get2DRotationValue(),
+                    NMS19.instance.entityTypeGetId(helper.adapt(EntityTypes.PAINTING)),
+                    0.0
+                )
+            )
         }
         // 使用带有 DataSerializer 的构造函数生成数据包
         // 使用 IRegistry.MOTIVE
-        if (isUniversal) {
+        else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityPainting(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
@@ -423,12 +431,11 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     fun BukkitDirection.get2DRotationValue(): Int {
-        return when (this) {
-            BukkitDirection.SOUTH -> 0
-            BukkitDirection.WEST -> 1
-            BukkitDirection.NORTH -> 2
-            BukkitDirection.EAST -> 3
-            else -> error("Unsupported direction.")
+        if (legacyDirection == -1 || direction == -1) error("Unsupported direction.")
+        return if (MinecraftVersion.versionId >= 12000) {
+            direction
+        } else {
+            legacyDirection
         }
     }
 

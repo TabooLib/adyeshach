@@ -44,5 +44,17 @@ enum class CustomType(val id: String) {
 
     SNIFFER_STATE("SnifferState"),
 
+    // 1.21 新增
+
+    DIRECTION("Direction"),
+
+    CHICKEN_VARIANT("ChickenVariant"),
+
+    ARMADILLO_STATE("ArmadilloState"),
+
+    PIG_VARIANT("PigVariant"),
+
+    WOLF_VARIANT("WolfVariant"),
+
     ;
 }

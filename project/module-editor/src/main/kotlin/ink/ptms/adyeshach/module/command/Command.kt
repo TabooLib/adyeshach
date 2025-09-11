@@ -11,6 +11,7 @@ import taboolib.common.platform.command.*
 import taboolib.common.util.ResettableLazy
 import taboolib.common.util.unsafeLazy
 import taboolib.expansion.createHelper
+import taboolib.module.lang.Language
 
 /**
  * Adyeshach
@@ -78,6 +79,7 @@ object Command {
     @CommandBody
     val reload = subCommand {
         execute<CommandSender> { sender, _, _ ->
+            Language.reload()
             AdyeshachSettings.conf.reload()
             KetherController.init()
             ResettableLazy.reset()

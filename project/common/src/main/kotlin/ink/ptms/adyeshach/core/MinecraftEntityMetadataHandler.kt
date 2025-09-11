@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.core
 
-import ink.ptms.adyeshach.core.bukkit.BukkitParticles
-import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
@@ -181,4 +180,24 @@ interface MinecraftEntityMetadataHandler {
      * 生成 Quaternion 类型的元数据，对应 QUATERNION 字段 (1.19.4 以下没有此字段)
      */
     fun createQuaternionMeta(index: Int, value: Quat): MinecraftMeta
+
+    /**
+     * 生成 Chicken 类型元数据,对应 ChickenVariant 字段 (1.21.5)
+     */
+    fun createChickenVariantMeta(index: Int, value: BukkitChickenType): MinecraftMeta
+
+    /**
+     * 生成 Armadillo 类型元数据,对应 ArmadilloState 字段 (1.21.5)
+     */
+    fun createArmadilloStateMeta(index: Int, value: BukkitArmadilloState): MinecraftMeta
+
+    /**
+     * 生成 Wolf 变种元数据,对应 Wolf.Variant 字段
+     */
+    fun createWolfVariantMeta(index: Int, value: BukkitWolfVariant): MinecraftMeta
+
+    /**
+     * 生成 Pig 变种元数据,对应 Pig.Variant 字段
+     */
+    fun createPigVariantMeta(index: Int, value: BukkitPigVariant): MinecraftMeta
 }
