@@ -1,13 +1,9 @@
 package ink.ptms.adyeshach.impl.entity
 
-import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.ViewPlayers
 import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
 import org.bukkit.entity.Player
-import taboolib.common5.Baffle
-import taboolib.common5.clong
 import java.util.concurrent.ConcurrentSkipListSet
-import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 /**
@@ -22,8 +18,6 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
     override val viewers = ConcurrentSkipListSet<String>()
 
     override val visible = ConcurrentSkipListSet<String>()
-
-    override val visibleRefreshLocker = Baffle.of(AdyeshachSettings.visibleRefreshInterval.clong * 50, TimeUnit.MILLISECONDS)
 
     override fun getPlayers(): List<Player> {
         return playersInGameTick.filter { it.name in viewers }

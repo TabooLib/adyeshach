@@ -48,7 +48,7 @@ import kotlin.math.absoluteValue
  */
 @Suppress("LeakingThis", "SpellCheckingInspection")
 abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBIE) :
-    DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultViewable, InternalEntity, TickService {
+    DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, InternalEntity {
 
     override val x: Double
         get() = clientPosition.x
@@ -570,46 +570,36 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         return attachedEntity
     }
 
-    override fun onTick() {
-        // 处理玩家可见
-        // 大量用户反馈的 NPC 概率性不可见问题，根本原因在于这个逻辑写垃圾
-        // 尝试性修复 - 2023/12/29: 玩家在可见范围内呆上一个检查周期后才会显示实体，并缩短检查周期 (5s -> 2s)
-        // 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
-        if (viewPlayers.visibleRefreshLocker.hasNext()) {
-            // 同步到载具位置
-            if (!isDisableVehicleCheckOnTick) {
-                val vehicle = cacheVehicleEntity
-                if (vehicle != null) {
-                    position = vehicle.position.copy(yaw = position.yaw, pitch = position.pitch)
-                    clientPosition = vehicle.position.copy(yaw = clientPosition.yaw, pitch = clientPosition.pitch)
-                    setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
-                } else {
-                    removePersistentTag(StandardTags.IS_IN_VEHICLE)
-                }
-            }
-            // 同步可见状态
-            val entityManager = manager
-            if (entityManager is PlayerManager) {
-                handleVisible(entityManager.owner)
-            } else {
-                playersInGameTick.forEach { handleVisible(it) }
-            }
-        }
-        // 允许位置同步
-        if (allowSyncPosition()) {
-            // 处理移动
-            handleMove()
-            // 处理行为
-            brain.tick()
-            bionicSight.tick()
-            // 更新位置
-            syncPosition()
-        }
+    override fun isInVisibleDistance(player: Player): Boolean {
+        this as EntityBase
+        return player.location.safeDistanceIgnoreY(getLocation()) < visibleDistance
     }
 
-    private fun allowSyncPosition(): Boolean {
-        // 不是傻子 && 存在可见玩家 && 所在区块已经加载
-        return !isNitwit && viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
+    /**
+     * 处理玩家可见
+     * 大量用户反馈的 NPC 概率性不可见问题，根本原因在于这个逻辑写垃圾
+     * 尝试性修复 - 2023/12/29: 玩家在可见范围内呆上一个检查周期后才会显示实体，并缩短检查周期 (5s -> 2s)
+     * 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
+     */
+    override fun checkVisible() {
+        // 同步到载具位置
+        if (!isDisableVehicleCheckOnTick) {
+            val vehicle = cacheVehicleEntity
+            if (vehicle != null) {
+                position = vehicle.position.copy(yaw = position.yaw, pitch = position.pitch)
+                clientPosition = vehicle.position.copy(yaw = clientPosition.yaw, pitch = clientPosition.pitch)
+                setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
+            } else {
+                removePersistentTag(StandardTags.IS_IN_VEHICLE)
+            }
+        }
+        // 同步可见状态
+        val entityManager = manager
+        if (entityManager is PlayerManager) {
+            handleVisible(entityManager.owner)
+        } else {
+            playersInGameTick.forEach { handleVisible(it) }
+        }
     }
 
     // 更新可见性
@@ -629,6 +619,24 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
                 }
             }
         }
+    }
+
+    override fun onTick() {
+        // 允许位置同步
+        if (allowSyncPosition()) {
+            // 处理移动
+            handleMove()
+            // 处理行为
+            brain.tick()
+            bionicSight.tick()
+            // 更新位置
+            syncPosition()
+        }
+    }
+
+    private fun allowSyncPosition(): Boolean {
+        // 不是傻子 && 存在可见玩家 && 所在区块已经加载
+        return !isNitwit && viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
     }
 
     // 处理移动

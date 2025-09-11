@@ -17,9 +17,6 @@ open class ViewPlayers(val entityInstance: EntityInstance) {
     val visible: ConcurrentSet<String>
         get() = ConcurrentSet<String>().also { it.addAll(entityInstance.v2.viewPlayers.visible) }
 
-    val visibleRefreshLocker: Baffle
-        get() = entityInstance.v2.viewPlayers.visibleRefreshLocker
-
     fun getPlayers(): List<Player> {
         return entityInstance.v2.viewPlayers.getPlayers()
     }

@@ -15,8 +15,7 @@ import taboolib.common5.Baffle
  * @author 坏黑
  * @since 2022/6/15 22:57
  */
-@Suppress("SpellCheckingInspection")
-interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Viewable {
+interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Viewable, TickService {
 
     /**
      * 实体序号，用于发包
@@ -208,7 +207,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * 发送客户端移动量数据包
      */
     @Deprecated("请使用 setVelocity(vector)", ReplaceWith("setVelocity(vector)"))
-    fun sendVelocity(vector: org.bukkit.util.Vector)
+    fun sendVelocity(vector: Vector)
 
     /**
      * 重新校准位置

@@ -111,4 +111,9 @@ interface Manager {
      * 从文件中加载单位
      */
     fun loadEntityFromFile(file: File): EntityInstance
+
+    /**
+     * 检查可见性
+     */
+    fun checkVisible()
 }

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
@@ -73,7 +74,7 @@ object DefaultManagerHandler {
                     activeEntity.forEach {
                         if (it.isVisibleViewer(player)) {
                             it as DefaultEntityInstance
-                            append("     ${it.id} (${it.entityType}, ${it.getTag(StandardTags.DERIVED)}): ${it.getLocation()}\n")
+                            append("     ${it.id} (${it.entityType}, ${it.getTag(StandardTags.DERIVED)}, isNitwit: ${it.isNitwit}): ${it.getLocation()}\n")
                         }
                     }
                     append("   Active entities: ${activeEntity.size}\n")
@@ -81,9 +82,9 @@ object DefaultManagerHandler {
                     append("   Entities: \n")
                     activeEntity.forEach {
                         it as DefaultEntityInstance
-                        append("     ${it.id} (${it.entityType}, Visible: ${it.isVisibleViewer(player)}): ${it.getLocation()}\n")
+                        append("     ${it.id} (${it.entityType}, Visible: ${it.viewPlayers.hasVisiblePlayer()}, isNitwit: ${it.isNitwit}): ${it.getLocation()}\n")
                         if (it.passengers.isNotEmpty()) {
-                            append("     Passengers:")
+                            append("     Passengers:\n")
                             val pt = measureTime {
                                 it.passengers.forEach { p ->
                                     val find = manager.getEntityByUniqueId(p)
@@ -109,25 +110,31 @@ object DefaultManagerHandler {
         DefaultAdyeshachBooster.api.localPublicEntityManager.onEnable()
         // 私有管理器
         onlinePlayers.forEach { Adyeshach.api().setupEntityManager(it) }
-        // 公共管理器
-        submit(period = 1) {
+        // 可见性更新
+        submitAsync(period = AdyeshachSettings.visibleRefreshInterval.toLong()) {
             playersInGameTick = Bukkit.getOnlinePlayers()
+            // 公共管理器
+            DefaultAdyeshachBooster.api.localPublicEntityManager.checkVisible()
+            DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
+            // 私有管理器
+            onlinePlayers.forEach { player ->
+                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player.name]?.checkVisible()
+            }
+        }
+        // Tick
+        submit(period = 1) {
+            // 公共管理器
             DefaultAdyeshachBooster.api.localPublicEntityManager.onTick()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onTick()
-        }
-        // 私有管理器
-        submit(period = 1) {
-            onlinePlayers.forEach { player ->
-                val manager = DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player.name]
-                if (manager != null) {
-                    val time = measureTime { manager.onTick() }
-                    // 如果处理这个玩家的时间超过 50ms 则在后台进行报告，报告周期为 5 秒 1 次。
-                    if (time > 50.milliseconds) {
-                        if (isFirstReport) {
-                            isFirstReport = false
-                        } else {
-                            entityReport(player, time)
-                        }
+            // 私有管理器
+            DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.forEach { (_, manager) ->
+                val time = measureTime { manager.onTick() }
+                // 如果处理这个玩家的时间超过 50ms 则在后台进行报告，报告周期为 5 秒 1 次。
+                if (time > 50.milliseconds) {
+                    if (isFirstReport) {
+                        isFirstReport = false
+                    } else {
+                        entityReport(manager.owner, time)
                     }
                 }
             }

@@ -24,11 +24,6 @@ interface ViewPlayers {
     val visible: MutableSet<String>
 
     /**
-     * 用于控制单位显示距离的阻断器
-     */
-    val visibleRefreshLocker: Baffle
-
-    /**
      * 获取允许看到的所有玩家
      */
     fun getPlayers(): List<Player>

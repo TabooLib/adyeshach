@@ -117,6 +117,9 @@ open class BaseManager : Manager, ManagerService, TickService {
     override fun onSave() {
     }
 
+    override fun checkVisible() {
+    }
+
     override fun onTick() {
     }
 
