@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.Manager
+import ink.ptms.adyeshach.core.util.errorBy
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
@@ -62,8 +63,24 @@ fun ScriptContext.setEntities(entities: List<EntityInstance>) {
     set("@entities", entities)
 }
 
+fun ScriptContext.setEntitySelectId(id: String) {
+    set("@entities_id", id)
+}
+
 fun ScriptContext.isEntitySelected(): Boolean {
     return getEntities().isNotEmpty()
+}
+
+fun ScriptContext.getEntitySelectId(): String? {
+    return get("@entities_id", null)
+}
+
+fun ScriptContext.throwUndefinedError() {
+    val selectId = getEntitySelectId()
+    if (selectId != null) {
+        errorBy("error-entity-undefined", selectId)
+    }
+    errorBy("error-no-manager-or-entity-selected")
 }
 
 fun loadError(message: String): LocalizedException {

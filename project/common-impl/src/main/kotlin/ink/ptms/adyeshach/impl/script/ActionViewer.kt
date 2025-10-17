@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
 import ink.ptms.adyeshach.impl.loadError
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import org.bukkit.Bukkit
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
@@ -24,7 +25,7 @@ class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : ScriptAct
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         if (viewer == null || symbol == Symbol.RESET) {
             script.getEntities().forEach { it.clearViewer() }
@@ -59,7 +60,7 @@ class ActionViewer(val symbol: Symbol, val viewer: ParsedAction<*>?) : ScriptAct
         fun parser2() = scriptParser {
             actionNow {
                 if (script().getManager() == null || !script().isEntitySelected()) {
-                    errorBy("error-no-manager-or-entity-selected")
+                    script().throwUndefinedError()
                 }
                 script().getEntities().first().viewPlayers.getViewPlayers().map { it.name }
             }

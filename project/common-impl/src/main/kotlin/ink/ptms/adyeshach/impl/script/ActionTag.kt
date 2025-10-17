@@ -19,7 +19,7 @@ class ActionTag(val persistent: Boolean, val key: String, val symbol: Symbol, va
     override fun run(frame: ScriptFrame): CompletableFuture<Any?> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         return when (symbol) {
             Symbol.REMOVE -> {

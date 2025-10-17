@@ -22,6 +22,7 @@ error-meta-not-allow: '实体元数据 "{0}" 不允许修改'
 error-meta-index-invalid: '无效的实体元数据索引: {0} ({1})'
 error-no-manager-selected: '未选择单位管理器'
 error-no-manager-or-entity-selected: '未选择单位管理器或实体'
+error-entity-undefined: '没有找到对应的实体: {0}'
 error-private-manager-require-player: '访问私有单位管理器需要以玩家为视角执行'
 
 command-create-success-0: ' &5&l‹ ›&f &7已创建新的单位。'

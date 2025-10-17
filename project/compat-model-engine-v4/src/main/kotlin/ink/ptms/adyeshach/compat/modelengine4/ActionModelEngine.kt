@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.module.kether.*
@@ -29,7 +30,7 @@ internal fun init() {
             ).apply(it) { action, method, token, speed, lerpin, lerpout, ingorelerp ->
                 now {
                     if (script().getManager() == null || !script().isEntitySelected()) {
-                        errorBy("error-no-manager-or-entity-selected")
+                        script().throwUndefinedError()
                     }
                     script().getEntities().filterIsInstance<ModelEngine>().forEach { e ->
                         val uuid = e.modelEngineUniqueId

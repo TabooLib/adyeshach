@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
 import ink.ptms.adyeshach.impl.loadError
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
@@ -21,7 +22,7 @@ class ActionPassenger(val symbol: Symbol, val passenger: String?) : ScriptAction
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         script.getEntities().forEach {
             when (symbol) {

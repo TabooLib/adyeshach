@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.util.toItem
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -20,7 +21,7 @@ class ActionEquipment(val equipment: BukkitEquipment, val item: ParsedAction<*>)
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         frame.newFrame(item).run<Any>().thenAccept { item ->
             val itemStack = item.toString().toItem()

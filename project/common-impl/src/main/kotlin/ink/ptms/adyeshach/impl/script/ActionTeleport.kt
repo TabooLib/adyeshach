@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.util.isPlayer
@@ -22,7 +23,7 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
         return frame.newFrame(location).run<Location>().thenAccept {
             val script = frame.script()
             if (script.getManager() == null || !script.isEntitySelected()) {
-                errorBy("error-no-manager-or-entity-selected")
+                script.throwUndefinedError()
             }
             val entities = script.getEntities()
             val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null

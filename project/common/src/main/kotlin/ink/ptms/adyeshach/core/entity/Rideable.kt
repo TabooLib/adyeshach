@@ -27,6 +27,11 @@ interface Rideable {
     fun getVehicle(): EntityInstance?
 
     /**
+     * 是否有乘客
+     */
+    fun hasPassengers(): Boolean
+
+    /**
      * 获取骑乘者
      */
     fun getPassengers(): List<EntityInstance>

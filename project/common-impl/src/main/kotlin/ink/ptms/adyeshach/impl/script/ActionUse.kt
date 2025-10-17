@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.setManager
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.common.platform.ProxyPlayer
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
@@ -16,7 +17,7 @@ class ActionUse(val manager: String, val temporary: Boolean): ScriptAction<Void>
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (manager == "private" && script.sender !is ProxyPlayer) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         script.setManager(when (manager) {
             "public" -> {

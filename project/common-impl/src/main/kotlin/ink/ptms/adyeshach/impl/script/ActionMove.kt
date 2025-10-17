@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import org.bukkit.Location
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
@@ -32,7 +33,7 @@ private fun actionMove() = combinationParser {
             future {
                 val script = script()
                 if (script.getManager() == null || !script.isEntitySelected()) {
-                    errorBy("error-no-manager-or-entity-selected")
+                    script.throwUndefinedError()
                 }
                 val entities = script.getEntities()
                 val future = CompletableFuture<Unit>()
@@ -55,7 +56,7 @@ private fun actionMove() = combinationParser {
             now {
                 val script = script()
                 if (script.getManager() == null || !script.isEntitySelected()) {
-                    errorBy("error-no-manager-or-entity-selected")
+                    script.throwUndefinedError()
                 }
                 script.getEntities().forEach { e ->
                     if (to is Location) {

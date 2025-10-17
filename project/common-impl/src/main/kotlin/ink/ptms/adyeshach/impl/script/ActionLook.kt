@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.util.submitRepeat
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.util.isPlayer
@@ -25,7 +26,7 @@ private fun actionLook() = combinationParser {
         now {
             val script = script()
             if (script.getManager() == null || !script.isEntitySelected()) {
-                errorBy("error-no-manager-or-entity-selected")
+                script.throwUndefinedError()
             }
             val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null
             val entities = script.getEntities()

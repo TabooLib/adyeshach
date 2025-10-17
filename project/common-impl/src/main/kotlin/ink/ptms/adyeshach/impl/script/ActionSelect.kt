@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.loadError
 import ink.ptms.adyeshach.impl.setEntities
+import ink.ptms.adyeshach.impl.setEntitySelectId
 import org.bukkit.entity.Player
 import taboolib.common.util.isPlayer
 import taboolib.library.kether.ArgTypes
@@ -58,6 +59,7 @@ private fun actionSelect() = scriptParser {
                 val event = AdyeshachScriptEvent.Select(entities.toMutableList(), script.getManager()!!, sender, id, world, byId)
                 if (event.call()) {
                     script.setEntities(event.entity)
+                    script.setEntitySelectId(id)
                 }
                 f.complete(null)
             }

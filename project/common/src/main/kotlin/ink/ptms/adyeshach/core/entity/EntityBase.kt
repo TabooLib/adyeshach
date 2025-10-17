@@ -111,6 +111,11 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     fun getLocation(): Location
 
     /**
+     * 实体身体所在未知
+     */
+     fun getBodyLocation(): Location
+
+    /**
      * 实体眼部所在位置
      */
     fun getEyeLocation(): Location

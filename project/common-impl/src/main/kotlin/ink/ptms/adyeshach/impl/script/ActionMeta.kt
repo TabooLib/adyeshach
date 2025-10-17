@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
 import ink.ptms.adyeshach.impl.loadError
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.common5.cbool
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -23,7 +24,7 @@ class ActionMeta(val key: String, val symbol: Symbol, val value: ParsedAction<*>
     override fun run(frame: ScriptFrame): CompletableFuture<Void> {
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         // 判定操作符
         when (symbol) {

@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.impl.entity.trait.impl.*
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.library.kether.ArgTypes
 import taboolib.library.kether.ParsedAction
 import taboolib.module.kether.*
@@ -19,7 +20,7 @@ class ActionTrait(val type: Int, val source: List<ParsedAction<*>>) : ScriptActi
         val future = CompletableFuture<List<String>>()
         val script = frame.script()
         if (script.getManager() == null || !script.isEntitySelected()) {
-            errorBy("error-no-manager-or-entity-selected")
+            script.throwUndefinedError()
         }
         val array = ArrayList<String>()
         fun process(cur: Int) {
@@ -59,7 +60,7 @@ class ActionTrait(val type: Int, val source: List<ParsedAction<*>>) : ScriptActi
                     val bool = it.nextParsedAction()
                     actionNow {
                         if (script().getManager() == null || !script().isEntitySelected()) {
-                            errorBy("error-no-manager-or-entity-selected")
+                            script().throwUndefinedError()
                         }
                         run(bool).double { height -> script().getEntities().forEach { e -> e.setTraitTitleHeight(height) } }
                     }
@@ -77,7 +78,7 @@ class ActionTrait(val type: Int, val source: List<ParsedAction<*>>) : ScriptActi
                     val bool = it.nextParsedAction()
                     actionNow {
                         if (script().getManager() == null || !script().isEntitySelected()) {
-                            errorBy("error-no-manager-or-entity-selected")
+                            script().throwUndefinedError()
                         }
                         run(bool).bool { b ->
                             if (b) {

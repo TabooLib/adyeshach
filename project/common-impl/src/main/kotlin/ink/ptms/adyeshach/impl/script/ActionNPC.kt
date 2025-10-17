@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.util.plus
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.module.kether.*
 import java.util.concurrent.CompletableFuture
 
@@ -18,7 +19,7 @@ private fun actionNPC() = scriptParser {
             actionNow {
                 val script = script()
                 if (script.getManager() == null || !script.isEntitySelected()) {
-                    errorBy("error-no-manager-or-entity-selected")
+                    script.throwUndefinedError()
                 }
                 val entities = script.getEntities()
                 if (entities.size > 1) entities.map { e -> e.getLocation() } else entities.first().getLocation()
@@ -36,7 +37,7 @@ private fun actionNPC() = scriptParser {
             actionNow {
                 val script = script()
                 if (script.getManager() == null || !script.isEntitySelected()) {
-                    errorBy("error-no-manager-or-entity-selected")
+                    script.throwUndefinedError()
                 }
                 val entities = script.getEntities()
                 if (entities.size > 1) entities.map { e -> e.getEyeLocation().plus(y = fixed) } else entities.first().getEyeLocation().plus(y = fixed)

@@ -94,8 +94,6 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.removeViewer(player) }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
-            // 异步卸载私有管理器
-            submitAsync(now = !async) { getPrivateEntityManager(player, ManagerType.TEMPORARY).onDisable() }
             // 移除缓存
             playerEntityTemporaryManagerMap.remove(player.name)
         } else {
@@ -130,6 +128,14 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
     }
 
     override fun getPrivateEntityManager(player: Player, type: ManagerType): BaseManager {
+        if (!player.isOnline) {
+            error(
+                """
+                    玩家 ${player.name} 不是在线状态，无法获取其私有实体管理器。
+                    Player ${player.name} is not online, cannot get its private entity manager.
+                """.trimIndent()
+            )
+        }
         return when (type) {
             ManagerType.ISOLATED -> IsolatedPlayerManager(player)
             ManagerType.TEMPORARY -> playerEntityTemporaryManagerMap.computeIfAbsent(player.name) { DefaultPlayerManager(player) }

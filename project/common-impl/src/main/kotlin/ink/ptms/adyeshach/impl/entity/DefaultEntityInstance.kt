@@ -194,9 +194,31 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     /** 仿生视线 */
     var bionicSight = BionicSight(this)
 
-    /** 客户端位置 */
+    /**
+     * 客户端位置
+     */
     @Expose
     var clientPosition = position
+        set(value) {
+            // 是否发生实质性位置变动
+            if (field.x != value.x || field.y != value.y || field.z != value.z) {
+                clientBodyPosition = value.clone()
+            }
+            field = value.clone()
+        }
+        get() {
+            // 修正因反序列化带来的坐标偏移
+            if (field.isZero() && field != position) {
+                field = position
+            }
+            return field
+        }
+
+    /**
+     * 客户端身体位置
+     * 只有发生实质性位置变动才会更新
+     */
+    var clientBodyPosition = position
         set(value) {
             field = value.clone()
         }
@@ -837,6 +859,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun getLocation(): Location {
         return clientPosition.toLocation()
+    }
+
+    override fun getBodyLocation(): Location {
+        return clientBodyPosition.toLocation()
     }
 
     override fun getEyeLocation(): Location {

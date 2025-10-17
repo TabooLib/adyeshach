@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity.controller;
 
 import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
+import ink.ptms.adyeshach.core.entity.EntityTypes;
 import ink.ptms.adyeshach.core.entity.StandardTags;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import ink.ptms.adyeshach.core.entity.manager.event.ControllerLookEvent;
@@ -140,13 +141,22 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
         if (entity == null || entity.hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START, StandardTags.IS_PATHFINDING)) {
             return;
         }
+        boolean isVillagerWithPassenger = entity.getEntityType() == EntityTypes.VILLAGER && entity.hasPassengers();
+
         // 向所有可见玩家发送朝向更新
         for (Player player : entity.getVisiblePlayers()) {
             if (player.isValid() && player.getWorld().equals(entity.getWorld())) {
                 double distance = player.getLocation().distanceSquared(entity.getLocation());
                 if (distance <= lookDistance * lookDistance) {
                     Location entityLoc = entity.getEyeLocation();
-                    ControllerLookEvent event = new ControllerLookEvent(getEntity(), player, player.getEyeLocation());
+                    Location target = player.getEyeLocation();
+                    
+                    // 检查是否为村民且有乘客
+                    if (isVillagerWithPassenger) {
+                        target = ControllerLookAtPlayer.fixVillagerTarget(entity, target);
+                    }
+                    
+                    ControllerLookEvent event = new ControllerLookEvent(getEntity(), player, target);
                     if (DefaultAdyeshachAPI.Companion.getLocalEventBus().callControllerLook(event)) {
                         // 计算朝向向量
                         Vector direction = event.getLookTarget().toVector().subtract(entityLoc.toVector());
@@ -175,8 +185,7 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
                                 true
                         );
                         // 记录最后的朝向角度
-                        LAST_LOOK_ANGLES.computeIfAbsent(player.getName(), k -> new ConcurrentHashMap<>())
-                                .put(entity.getUniqueId(), new Angle(yaw, pitch));
+                        LAST_LOOK_ANGLES.computeIfAbsent(player.getName(), k -> new ConcurrentHashMap<>()).put(entity.getUniqueId(), new Angle(yaw, pitch));
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.core.entity.manager
 
 import org.bukkit.entity.Player
+import java.util.UUID
 
 /**
  * Adyeshach
@@ -13,4 +14,6 @@ interface PlayerManager {
 
     /** 持有者 */
     var owner: Player
+
+    val uniqueId: UUID
 }

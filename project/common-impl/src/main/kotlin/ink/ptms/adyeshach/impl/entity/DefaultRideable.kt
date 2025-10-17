@@ -35,6 +35,11 @@ interface DefaultRideable : Rideable {
         }
     }
 
+    override fun hasPassengers(): Boolean {
+        this as DefaultEntityInstance
+        return passengers.isNotEmpty()
+    }
+
     override fun getPassengers(): List<EntityInstance> {
         this as DefaultEntityInstance
         return passengers.mapNotNull { manager?.getEntityByUniqueId(it) }

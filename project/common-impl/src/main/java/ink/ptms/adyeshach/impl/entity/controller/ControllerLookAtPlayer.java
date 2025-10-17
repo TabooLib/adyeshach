@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity.controller;
 
 import com.google.gson.annotations.Expose;
 import ink.ptms.adyeshach.core.entity.EntityInstance;
+import ink.ptms.adyeshach.core.entity.EntityTypes;
 import ink.ptms.adyeshach.core.entity.StandardTags;
 import ink.ptms.adyeshach.core.entity.controller.Controller;
 import ink.ptms.adyeshach.core.entity.manager.Manager;
@@ -9,8 +10,10 @@ import ink.ptms.adyeshach.core.entity.manager.PlayerManager;
 import ink.ptms.adyeshach.core.entity.manager.event.ControllerLookEvent;
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -150,6 +153,12 @@ public class ControllerLookAtPlayer extends Controller {
                     y,
                     this.lookAt.getLocation().getZ()
             );
+            
+            // 检查是否为村民且有乘客
+            if (getEntity().getEntityType() == EntityTypes.VILLAGER && getEntity().hasPassengers()) {
+                target = fixVillagerTarget(getEntity(), target);
+            }
+            
             ControllerLookEvent event = new ControllerLookEvent(getEntity(), this.lookAt, target);
             if (DefaultAdyeshachAPI.Companion.getLocalEventBus().callControllerLook(event)) {
                 getEntity().controllerLookAt(event.getLookTarget().getX(), event.getLookTarget().getY(), event.getLookTarget().getZ());
@@ -171,5 +180,32 @@ public class ControllerLookAtPlayer extends Controller {
     @Override
     public String toString() {
         return id() + ":" + String.format("%.2f", lookDistance) + "," + String.format("%.2f", probability) + "," + onlyHorizontal + "," + baseLookTime;
+    }
+
+    public static Location fixVillagerTarget(EntityInstance entity, Location target) {
+        // 获取实体的原始位置和朝向
+        Location entityLoc = entity.getBodyLocation().clone();
+        float entityYaw = entityLoc.getYaw();
+        // 计算目标位置相对于实体的方向向量
+        Vector direction = target.toVector().subtract(entityLoc.toVector()).normalize();
+        // 计算目标朝向角度
+        double targetYaw = Math.toDegrees(Math.atan2(-direction.getX(), direction.getZ()));
+        // 计算角度差，确保在 -180 到 180 度之间
+        double yawDiff = ((targetYaw - entityYaw) % 360 + 540) % 360 - 180;
+        // 如果角度差超过 90 度，则看向原始位置的正前方
+        if (Math.abs(yawDiff) > 90) {
+            entity.getWorld().spawnParticle(Particle.FLAME, entity.getEyeLocation(), 10, 0.0, 0.0, 0.0, 0.0);
+            // 使用 body location 的 yaw 值来确定正前方方向
+            Location newTarget = entityLoc.clone();
+            newTarget.setY(entity.getEyeLocation().getY());
+            // 设置 pitch 为 0 以确保看向水平方向
+            newTarget.setPitch(0f);
+            // 根据 yaw 值计算正前方的位置
+            Vector forward = newTarget.getDirection().multiply(5.0); // 向前 5 个单位
+            newTarget.add(forward);
+            entity.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, entityLoc, 10, 0.0, 0.0, 0.0, 0.0);
+            return newTarget;
+        }
+        return target;
     }
 }

@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.getEntities
 import ink.ptms.adyeshach.impl.getManager
 import ink.ptms.adyeshach.impl.isEntitySelected
+import ink.ptms.adyeshach.impl.throwUndefinedError
 import taboolib.module.kether.KetherParser
 import taboolib.module.kether.combinationParser
 import taboolib.module.kether.script
@@ -14,7 +15,7 @@ private fun actionName() = combinationParser {
         now {
             val script = script()
             if (script.getManager() == null || !script.isEntitySelected()) {
-                errorBy("error-no-manager-or-entity-selected")
+                script.throwUndefinedError()
             }
             script.getEntities().forEach { e -> e.id = newId }
         }

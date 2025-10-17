@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.manager
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.*
 
 /**
  * Adyeshach
@@ -13,17 +14,19 @@ import org.bukkit.entity.Player
  */
 open class IsolatedPlayerManager(owner: Player) : BaseManager(), PlayerManager {
 
+    override val uniqueId: UUID = owner.uniqueId
+
     override var owner = owner
         get() {
             // 2023/5/31 玩家对象因未知原因可能失效，重新获取
-            if (!field.isValid) {
-                Bukkit.getPlayerExact(field.name)?.let { field = it }
+            if (!field.isOnline) {
+                Bukkit.getPlayer(uniqueId)?.let { field = it }
             }
             return field
         }
 
     override fun isValid(): Boolean {
-        return owner.isOnline
+        return Bukkit.getPlayer(uniqueId) != null
     }
 
     override fun isPublic(): Boolean {
