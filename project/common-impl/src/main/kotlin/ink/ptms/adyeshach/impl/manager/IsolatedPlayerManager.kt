@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.manager
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import taboolib.common.function.throttle
 import java.util.*
 
 /**
@@ -25,8 +26,15 @@ open class IsolatedPlayerManager(owner: Player) : BaseManager(), PlayerManager {
             return field
         }
 
+    private var isValid = true
+
+    val updateValid = throttle(50) {
+        isValid = Bukkit.getPlayer(uniqueId) != null
+    }
+
     override fun isValid(): Boolean {
-        return Bukkit.getPlayer(uniqueId) != null
+        updateValid()
+        return isValid
     }
 
     override fun isPublic(): Boolean {

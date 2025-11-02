@@ -12,6 +12,7 @@ import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.core.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerUUIDGenerateEvent
 import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.impl.network.NetworkMineskin
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
@@ -50,16 +51,20 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     @Expose
     internal var isSleepingLegacy = false
 
-    /** 是否从玩家列表中移除 */
+    /**
+     * 是否从玩家列表中移除
+     * 在 1.19.3 及以上版本中，通过修改 gameProfile 的 listed 属性实现列表隐藏
+     */
     @Expose
     override var isHideFromTabList = true
         set(value) {
+            field = value
+            gameProfile.listed = !value
             if (value) {
                 forViewers { removePlayerInfo(it) }
             } else {
                 forViewers { addPlayerInfo(it) }
             }
-            field = value
         }
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
@@ -83,8 +88,9 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                     if (isDie) die(viewer = viewer)
                     if (isSleepingLegacy) setSleeping(true)
                 }
-                submit(delay = 10) {
-                    if (isHideFromTabList) removePlayerInfo(viewer)
+                // 在低版本中，如果玩家被隐藏，则需要延迟 10  ticks 后移除玩家信息
+                if (isHideFromTabList && !GameProfile.isListedSupported) {
+                    submit(delay = 10) { removePlayerInfo(viewer) }
                 }
                 spawned = true
             }
@@ -187,14 +193,16 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             return
         }
         val skin = Adyeshach.api().getNetworkAPI().getSkin()
-        // 自动下载的玩家皮肤，会被分类到 ashcon 目录下
-        if (skin.hasTexture("ashcon/$name") || !skin.hasTexture(name)) {
-            skin.getTexture("ashcon/$name").thenAccept { setTexture(it.value(), it.signature()) }
+        // 启用 ashcon 缓存时，从 ashcon 中检索
+        if (NetworkMineskin.enableAshcon) {
+            // 自动下载的玩家皮肤，会被分类到 ashcon 目录下
+            if (skin.hasTexture("ashcon/$name") || !skin.hasTexture(name)) {
+                skin.getTexture("ashcon/$name").thenAccept { setTexture(it.value(), it.signature()) }
+                return
+            }
         }
-        // 主动上传
-        else {
-            skin.getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
-        }
+        // 主动上传的皮肤
+        skin.getTexture(name).thenAccept { setTexture(it.value(), it.signature()) }
     }
 
     override fun setTexture(texture: String, signature: String) {
@@ -246,8 +254,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         removePlayerInfo(viewer)
         addPlayerInfo(viewer)
         // 短暂延迟后删除玩家信息
-        submit(delay = 5) {
-            if (isHideFromTabList) {
+        submit(delay = 10) {
+            if (isHideFromTabList && !GameProfile.isListedSupported) {
                 removePlayerInfo(viewer)
             }
         }

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.core.bukkit.data
 
 import com.google.gson.annotations.Expose
 import com.mojang.authlib.properties.Property
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 
 /**
@@ -14,7 +15,7 @@ class GameProfile {
     var name = "Adyeshach"
         set(value) {
             // 长度限制
-            field = (if (value.length > 16) value.substring(0, 16) else value)
+            field = (if (value.length > 16) value.take(16) else value)
         }
 
     /**
@@ -69,5 +70,13 @@ class GameProfile {
         gameProfile.spectator = spectator
         gameProfile.listed = listed
         return gameProfile
+    }
+
+    companion object {
+
+        /**
+         * 当前版本是否支持 listed 功能
+         */
+        val isListedSupported by lazy { MinecraftVersion.majorLegacy >= 11903 }
     }
 }

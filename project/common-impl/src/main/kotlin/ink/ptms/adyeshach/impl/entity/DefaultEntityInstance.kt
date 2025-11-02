@@ -656,13 +656,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         }
     }
 
-    private fun allowSyncPosition(): Boolean {
+    fun allowSyncPosition(): Boolean {
         // 不是傻子 && 存在可见玩家 && 所在区块已经加载
         return !isNitwit && viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
     }
 
     // 处理移动
-    private fun handleMove() {
+    fun handleMove() {
         // region handleMove
         // 乘坐实体 || 冻结
         if (hasTag(StandardTags.IS_IN_VEHICLE) || hasTag(StandardTags.IS_FROZEN)) {
@@ -753,7 +753,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     // 同步位置
-    private fun syncPosition() {
+    fun syncPosition() {
         // region syncPosition
         val updateRotation = (yaw - position.yaw).absoluteValue >= 1 || (pitch - position.pitch).absoluteValue >= 1 || taboolib.common.util.random(0.2)
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()

@@ -33,7 +33,7 @@ object TraitSit : Trait() {
 
     @SubscribeEvent
     private fun onHeadRotation(e: AdyeshachEntityHeadRotationEvent) {
-        if (e.entity.hasPersistentTag(StandardTags.IS_SITTING)) {
+        if (e.entity.hasPersistentTag(StandardTags.IS_SITTING) && e.entity.hasPersistentTag(StandardTags.ENABLE_VEHICLE_ROTATION)) {
             e.entity.getVehicle()?.setHeadRotation(e.yaw, 0f, forceUpdate = true)
         }
     }

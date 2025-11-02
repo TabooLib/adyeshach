@@ -42,7 +42,10 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
         var file = File(getDataFolder(), "skin/$name")
         // 从 ashcon 中检索
         if (!file.exists()) {
-            file = File(getDataFolder(), "skin/ashcon/$name")
+            // 开启 ashcon 缓存时，从 ashcon 中检索
+            if (enableAshcon) {
+                file = File(getDataFolder(), "skin/ashcon/$name")
+            }
         }
         if (file.exists() && file.length() > 1) {
             val json = Configuration.loadFromFile(file, Type.JSON)
@@ -60,7 +63,7 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                             // legacy version
                             val texture = json.getConfigurationSection("members.data.members.texture.members")!!
                             Texture(texture.getString("value.value")!!, texture.getString("signature.value")!!)
-                        } catch (ignored: NullPointerException) {
+                        } catch (_: NullPointerException) {
                             // new version 2021/9/19
                             val texture = json.getConfigurationSection("data.texture")!!
                             Texture(texture.getString("value")!!, texture.getString("signature")!!)
@@ -68,7 +71,9 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                     }
                 }
             )
-        } else {
+        }
+        // 开启 ashcon 缓存时，请求 ashcon 接口
+        else if (enableAshcon) {
             var playerName = name.substringAfterLast('/')
             if (getProxyPlayer(playerName) != null) {
                 playerName = getProxyPlayer(playerName)!!.uniqueId.toString()
@@ -80,6 +85,8 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
                 future.completeExceptionally(t)
                 null
             }
+        } else {
+            future.completeExceptionally(IllegalStateException("No skin found for $name"))
         }
         return future
     }
@@ -180,5 +187,10 @@ class NetworkMineskin : AdyeshachNetworkAPI.Skin {
         override fun value(): String {
             return value
         }
+    }
+
+    companion object {
+
+        var enableAshcon = true
     }
 }

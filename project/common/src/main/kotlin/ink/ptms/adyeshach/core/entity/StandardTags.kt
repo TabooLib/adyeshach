@@ -92,4 +92,9 @@ object StandardTags {
      * 下一次的传送将不会检查位置变更
      */
     const val FORCE_TELEPORT = "FORCE_TELEPORT"
+
+    /**
+     * 启用载具旋转跟随
+     */
+     const val ENABLE_VEHICLE_ROTATION = "ENABLE_VEHICLE_ROTATION"
 }
