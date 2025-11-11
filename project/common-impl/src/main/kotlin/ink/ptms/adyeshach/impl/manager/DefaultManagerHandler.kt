@@ -57,7 +57,7 @@ object DefaultManagerHandler {
     }
 
     fun dump(player: Player) {
-        val manager = DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player.name]!!
+        val manager = DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.get(player)!!
         val activeEntity = manager.activeEntity.sortedBy { it.id }
         warning("-- Manager Details --")
         warning("   Active entities: ${activeEntity.size}")
@@ -118,7 +118,7 @@ object DefaultManagerHandler {
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
             // 私有管理器
             onlinePlayers.forEach { player ->
-                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player.name]?.checkVisible()
+                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.get(player)?.checkVisible()
             }
         }
         // Tick
@@ -127,7 +127,7 @@ object DefaultManagerHandler {
             DefaultAdyeshachBooster.api.localPublicEntityManager.onTick()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onTick()
             // 私有管理器
-            DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.forEach { (_, manager) ->
+            DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.values().forEach { manager ->
                 val time = measureTime { manager.onTick() }
                 // 如果处理这个玩家的时间超过 50ms 则在后台进行报告，报告周期为 5 秒 1 次。
                 if (time > 50.milliseconds) {

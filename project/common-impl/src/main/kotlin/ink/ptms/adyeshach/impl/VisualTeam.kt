@@ -9,8 +9,8 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinVisualTeamEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.platform.util.PlayerSessionMap
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -25,7 +25,7 @@ object VisualTeam {
     val operator: MinecraftScoreboardOperator
         get() = Adyeshach.api().getMinecraftAPI().getScoreboardOperator()
 
-    val playerTeams = ConcurrentHashMap<String, PlayerTeam>()
+    val playerTeams = PlayerSessionMap<PlayerTeam>()
 
     /**
      * 更新单位的队伍信息
@@ -35,7 +35,7 @@ object VisualTeam {
             return
         }
         entity.forViewers { p ->
-            val playerTeam = playerTeams.computeIfAbsent(p.name) { PlayerTeam(p) }
+            val playerTeam = playerTeams.getOrCreate(p) { PlayerTeam(p) }!!
             if (entity.needVisualTeam()) {
                 playerTeam.join(entity, entity.isNameTagVisible, entity.isCollision, entity.glowingColor, entity.canSeeInvisible)
             } else {
@@ -47,18 +47,13 @@ object VisualTeam {
     @SubscribeEvent
     private fun onVisible(e: AdyeshachEntityVisibleEvent) {
         if (e.visible) {
-            val playerTeam = playerTeams.computeIfAbsent(e.viewer.name) { PlayerTeam(e.viewer) }
+            val playerTeam = playerTeams.getOrCreate(e.viewer) { PlayerTeam(e.viewer) }!!
             if (e.entity.needVisualTeam()) {
                 playerTeam.join(e.entity, e.entity.isNameTagVisible, e.entity.isCollision, e.entity.glowingColor, e.entity.canSeeInvisible)
             } else {
                 playerTeam.leave(e.entity)
             }
         }
-    }
-
-    @SubscribeEvent
-    private fun onQuit(e: PlayerQuitEvent) {
-        playerTeams.remove(e.player.name)
     }
 
     /**
@@ -88,7 +83,7 @@ object VisualTeam {
             // 获取队伍（或创建）
             val team = teams.computeIfAbsent(getKey(nameTagVisible, collision, color, canSeeInvisible)) { key ->
                 // 生成队伍名称
-                val teamId = AdyeshachSettings.conf.getString("Settings.team-id", "ady_{id}")!!.replace("{id}", key)
+                val teamId = AdyeshachSettings.conf.getString("Settings.team-id","ady_{id}")!!.replace("{id}", key)
                 // 生成队伍
                 val team = MinecraftScoreboardOperator.Team(teamId, hashSetOf(), nameTagVisible, collision, color, canSeeInvisible)
                 // 发送队伍数据包

@@ -75,6 +75,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 addPlayerInfo(viewer)
                 // 创建客户端对应表
                 registerClientEntity(viewer)
+                // 添加到可见实体索引
+                updateVisibleEntityIndex(viewer, true)
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, position.toLocation())
                 // 启用皮肤
@@ -97,6 +99,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         } else {
             prepareDestroy(viewer) {
                 viewPlayers.visible -= viewer.name
+                // 从可见实体索引中移除
+                updateVisibleEntityIndex(viewer, false)
                 // 移除玩家信息
                 removePlayerInfo(viewer)
                 // 销毁实体

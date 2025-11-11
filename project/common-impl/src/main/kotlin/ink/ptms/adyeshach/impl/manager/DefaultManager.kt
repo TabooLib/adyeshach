@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.entity.EntityInstance
-import ink.ptms.adyeshach.core.entity.TickService
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers

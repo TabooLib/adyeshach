@@ -26,6 +26,8 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 viewPlayers.visible += viewer.name
                 // 创建客户端对应表
                 registerClientEntity(viewer)
+                // 添加到可见实体索引
+                updateVisibleEntityIndex(viewer, true)
                 // 修正掉落物信息
                 setMetadata("item", getItem())
                 // 生成实体
@@ -37,7 +39,15 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 }
             }
         } else {
-            super.visible(viewer, false)
+            prepareDestroy(viewer) {
+                viewPlayers.visible -= viewer.name
+                // 从可见实体索引中移除
+                updateVisibleEntityIndex(viewer, false)
+                // 销毁实体
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
+                // 移除客户端对应表
+                unregisterClientEntity(viewer)
+            }
         }
     }
 

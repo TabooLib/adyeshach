@@ -1,9 +1,8 @@
 package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import taboolib.common.function.throttle
+import taboolib.platform.util.PlayerSessionClosable
 import java.util.*
 
 /**
@@ -13,27 +12,13 @@ import java.util.*
  * @author 坏黑
  * @since 2022/6/28 15:10
  */
-open class DefaultPlayerManager(owner: Player) : DefaultManager(), PlayerManager {
+open class DefaultPlayerManager(override val owner: Player) : DefaultManager(), PlayerManager, PlayerSessionClosable {
 
     override val uniqueId: UUID = owner.uniqueId
 
-    override var owner = owner
-        get() {
-            // 2023/5/31 玩家对象因未知原因可能失效，重新获取
-            if (!field.isOnline) {
-                Bukkit.getPlayer(uniqueId)?.let { field = it }
-            }
-            return field
-        }
-
     private var isValid = true
 
-    val updateValid = throttle(50) {
-        isValid = Bukkit.getPlayer(uniqueId) != null
-    }
-
     override fun isValid(): Boolean {
-        updateValid()
         return isValid
     }
 
@@ -43,5 +28,9 @@ open class DefaultPlayerManager(owner: Player) : DefaultManager(), PlayerManager
 
     override fun getPlayers(): List<Player> {
         return listOf(owner)
+    }
+
+    override fun onSessionRemove(uuid: UUID) {
+        isValid = false
     }
 }

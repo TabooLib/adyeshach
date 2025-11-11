@@ -3,19 +3,16 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachAPI
 import ink.ptms.adyeshach.core.AdyeshachEntityFinder
-import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.util.safeDistance
-import ink.ptms.adyeshach.core.util.safeDistanceIgnoreY
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
-import taboolib.common.platform.event.SubscribeEvent
+import taboolib.platform.util.PlayerSessionMap
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
@@ -31,6 +28,39 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
 
     val api: AdyeshachAPI
         get() = Adyeshach.api()
+
+    /**
+     * 玩家可见实体索引
+     */
+    private val playerVisibleEntitiesIndex = PlayerSessionMap<MutableSet<EntityInstance>>()
+
+    /**
+     * 添加实体到玩家的可见列表
+     */
+    override fun addVisibleEntity(player: Player, entity: EntityInstance) {
+        playerVisibleEntitiesIndex.getOrCreate(player) { ConcurrentHashMap.newKeySet() }?.add(entity)
+    }
+
+    /**
+     * 从玩家的可见列表中移除实体
+     */
+    override fun removeVisibleEntity(player: Player, entity: EntityInstance) {
+        playerVisibleEntitiesIndex[player]?.remove(entity)
+    }
+
+    /**
+     * 清理玩家的所有可见实体索引
+     */
+    override fun clearPlayerVisibleEntities(player: Player) {
+        playerVisibleEntitiesIndex.remove(player)
+    }
+
+    /**
+     * 从所有玩家的可见列表中移除实体（实体销毁时调用）
+     */
+    override fun removeEntityFromAllPlayers(entity: EntityInstance) {
+        playerVisibleEntitiesIndex.values().forEach { it.remove(entity) }
+    }
 
     override fun getEntity(player: Player?, match: Predicate<EntityInstance>): EntityInstance? {
         api.getPublicEntityManager(ManagerType.PERSISTENT).getEntity(match)?.let { return it }
@@ -52,8 +82,26 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getVisibleEntities(player: Player, filter: Predicate<EntityInstance>): List<EntityInstance> {
-        return getEntities(player) {
-            it.getLocation().safeDistanceIgnoreY(player.location) <= it.visibleDistance && it.isVisibleViewer(player) && filter.test(it)
+        // 优化：直接从索引中获取该玩家的可见实体,避免遍历所有管理器
+        val visibleSet = playerVisibleEntitiesIndex[player]
+        if (visibleSet == null || visibleSet.isEmpty()) {
+            return emptyList()
+        }
+        val pLoc = player.location
+        // 从索引中过滤，只需要检查距离和额外的过滤条件
+        return visibleSet.filter { entity ->
+            // 快速距离检查（使用平方距离避免开方运算）
+            val loc = entity.position
+            // 先检查世界是否相同
+            if (loc.world.name != pLoc.world.name) {
+                return@filter false
+            }
+            // 使用平方距离比较，避免 sqrt 计算
+            val dx = loc.x - pLoc.x
+            val dz = loc.z - pLoc.z
+            val distanceSquared = dx * dx + dz * dz
+            val visibleDistanceSquared = entity.visibleDistance * entity.visibleDistance
+            distanceSquared <= visibleDistanceSquared && filter.test(entity)
         }
     }
 
@@ -74,11 +122,11 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getEntityFromClientEntityId(id: Int, player: Player): EntityInstance? {
-        return clientEntityMap[player.name]?.values?.firstOrNull { it.entityId == id }?.entity
+        return clientEntityMap[player]?.values?.firstOrNull { it.entityId == id }?.entity
     }
 
     override fun getEntityFromClientUniqueId(id: UUID, player: Player): EntityInstance? {
-        return clientEntityMap[player.name]?.values?.firstOrNull { it.clientId == id }?.entity
+        return clientEntityMap[player]?.values?.firstOrNull { it.clientId == id }?.entity
     }
 
     override fun getNearestEntity(player: Player, filter: Predicate<EntityInstance>): EntityInstance? {
@@ -107,12 +155,7 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
 
     companion object {
 
-        val clientEntityMap = ConcurrentHashMap<String, MutableMap<Int, ClientEntity>>()
-
-        @SubscribeEvent
-        fun onQuit(e: PlayerQuitEvent) {
-            clientEntityMap.remove(e.player.name)
-        }
+        val clientEntityMap = PlayerSessionMap<MutableMap<Int, ClientEntity>>()
 
         @Awake(LifeCycle.CONST)
         fun init() {

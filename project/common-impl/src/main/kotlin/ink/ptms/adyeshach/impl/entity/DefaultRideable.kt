@@ -35,6 +35,11 @@ interface DefaultRideable : Rideable {
         }
     }
 
+    override fun getVehicleCache(): EntityInstance? {
+        this as DefaultEntityInstance
+        return cacheVehicleEntity
+    }
+
     override fun hasPassengers(): Boolean {
         this as DefaultEntityInstance
         return passengers.isNotEmpty()

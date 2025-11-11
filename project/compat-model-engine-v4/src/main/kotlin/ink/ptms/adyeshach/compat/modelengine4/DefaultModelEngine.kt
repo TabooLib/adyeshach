@@ -39,16 +39,23 @@ internal interface DefaultModelEngine : ModelEngine {
 
     override fun hideModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked && modelEngineName.isNotBlank() && modelEngineUniqueId != null) {
-            getDummy()?.setForceViewing(viewer, false)
+            this as DefaultEntityInstance
+            // 如果没有其他观察者，直接销毁模型而不是隐藏
+            if (!viewPlayers.hasVisiblePlayer()) {
+                destroyModelEngine()
+            } else {
+                getDummy()?.setForceViewing(viewer, false)
+            }
             return true
         }
         return false
     }
 
     override fun destroyModelEngine() {
-        if (isModelEngineHooked) {
+        if (isModelEngineHooked && modelEngineUniqueId != null) {
             this as DefaultEntityInstance
-            ModelEngineAPI.removeModeledEntity(normalizeUniqueId)
+            ModelEngineAPI.removeModeledEntity(modelEngineUniqueId)
+            modelEngineUniqueId = null
         }
     }
 
@@ -58,11 +65,10 @@ internal interface DefaultModelEngine : ModelEngine {
             // 创建模型
             if (modelEngineName.isNotBlank()) {
                 // 初始化模型
-                modelEngineUniqueId = normalizeUniqueId
                 createModel()
             }
             // 销毁模型
-            else if (ModelEngineAPI.removeModeledEntity(normalizeUniqueId) != null) {
+            else if (ModelEngineAPI.removeModeledEntity(modelEngineUniqueId) != null) {
                 respawn()
             }
             return true

@@ -665,7 +665,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     fun handleMove() {
         // region handleMove
         // 乘坐实体 || 冻结
-        if (hasTag(StandardTags.IS_IN_VEHICLE) || hasTag(StandardTags.IS_FROZEN)) {
+        if (tag.containsKey(StandardTags.IS_IN_VEHICLE) || tag.containsKey(StandardTags.IS_FROZEN)) {
             deltaMovement = Vector(0.0, 0.0, 0.0)
             return
         }

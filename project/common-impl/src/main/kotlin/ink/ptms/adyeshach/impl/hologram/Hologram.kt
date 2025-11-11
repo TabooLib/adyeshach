@@ -20,7 +20,7 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
 
     override fun teleport(location: Location) {
         this.origin = location.clone()
-        this.content.filterIsInstance<HoloEntity<*>>().reversed().forEach { it.teleport(origin) }
+        this.content.filterIsInstance<HoloEntity<*>>().asReversed().forEach { it.teleport(origin) }
     }
 
     override fun update(content: List<Any>) {
@@ -54,7 +54,7 @@ class Hologram(val manager: Manager, var origin: Location, var content: List<Ady
             return
         }
         var offset = -content.first().space
-        content.filterIsInstance<HoloEntity<*>>().reversed().forEach {
+        content.filterIsInstance<HoloEntity<*>>().asReversed().forEach {
             it.spawn(offset, origin, manager)
             offset += it.space
         }

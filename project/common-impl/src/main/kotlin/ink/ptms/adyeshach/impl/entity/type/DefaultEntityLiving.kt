@@ -2,11 +2,9 @@ package ink.ptms.adyeshach.impl.entity.type
 
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
 import ink.ptms.adyeshach.core.util.toItem
-import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEquipable
 import ink.ptms.adyeshach.impl.util.ifTrue
 import ink.ptms.adyeshach.impl.util.toRGB
@@ -41,6 +39,8 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 viewPlayers.visible += viewer.name
                 // 创建客户端对应表
                 registerClientEntity(viewer)
+                // 添加到可见实体索引
+                updateVisibleEntityIndex(viewer, true)
                 // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, normalizeUniqueId, position.toLocation())
                 // 更新装备
@@ -55,6 +55,8 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
         } else {
             prepareDestroy(viewer) {
                 viewPlayers.visible -= viewer.name
+                // 从可见实体索引中移除
+                updateVisibleEntityIndex(viewer, false)
                 // 销毁实体
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
                 // 移除客户端对应表

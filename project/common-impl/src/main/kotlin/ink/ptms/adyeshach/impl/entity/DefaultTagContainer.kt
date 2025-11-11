@@ -86,8 +86,7 @@ interface DefaultTagContainer : TagContainer {
  */
 fun DefaultTagContainer.collectTagMap(): Map<String, Any> {
     this as DefaultEntityInstance
-    val tags = HashMap<String, Any>()
-    tags.putAll(tag)
+    val tags = HashMap<String, Any>(tag)
     tags.putAll(persistentTag)
     return tags
 }

@@ -132,7 +132,11 @@ fun ModelEngine.stopAnimation(
 }
 
 internal fun ModelEngine.createModel() {
+    this as EntityInstance
+    // 先销毁原始模型
     destroyModelEngine()
+    // 没有观察者，不创建模型
+    if (!viewPlayers.hasVisiblePlayer()) return
     // 获取配置
     val options = modelEngineOptions ?: ModelEngineOptions()
     // 创建模型对象
@@ -154,6 +158,7 @@ internal fun ModelEngine.createModel() {
     // 销毁原版实体
     // despawn()
     // 创建模型
+    modelEngineUniqueId = normalizeUniqueId
     ModelEngineAPI.createModeledEntity(entity) { model ->
         model.isBaseEntityVisible = false
         // 设置是否强制显示
