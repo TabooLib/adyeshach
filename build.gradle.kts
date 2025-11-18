@@ -18,10 +18,10 @@ subprojects {
             install(Bukkit, BukkitUI, BukkitNavigation, BukkitUtil, BukkitHook)
             install(BukkitNMSUtil)
             install(MinecraftEffect, MinecraftChat)
-
             install(BukkitNMSDataSerializer)
+            // repoTabooLib = project.repositories.mavenLocal().url.toString()
         }
-        version { taboolib = "6.2.4-00117ad1" }
+        version { taboolib = "6.2.4-abd325ee" }
     }
     repositories {
         mavenLocal()

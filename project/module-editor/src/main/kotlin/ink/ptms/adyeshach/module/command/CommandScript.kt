@@ -148,6 +148,7 @@ object CommandScript {
                     null
                 }
                 try {
+                    val time = System.currentTimeMillis()
                     KetherShell.eval(
                         argument,
                         namespace = listOf("adyeshach"),
@@ -160,10 +161,11 @@ object CommandScript {
                         } catch (_: Throwable) {
                             sender.sendMessage(" §5§l‹ ›§f §7Result: §f$v")
                         }
+                        sender.sendMessage(" §5§l‹ ›§f §7Time: §f${System.currentTimeMillis() - time}ms")
                     }
                 } catch (ex: Throwable) {
                     sender.sendMessage(" §5§l‹ ›§f §7Error: ${ex.message}")
-                    ex.printKetherErrorMessage()
+                    ex.printKetherErrorMessage(detailError = true)
                 }
             }
         }
