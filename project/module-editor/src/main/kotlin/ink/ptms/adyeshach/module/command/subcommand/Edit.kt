@@ -157,7 +157,7 @@ val editSubCommand = subCommand {
     }
     // 就近编辑
     execute<Player> { sender, _, _ ->
-        val nearestEntity = Command.finder.getNearestEntity(sender) { !it.isDerived() }
+        val nearestEntity = Command.finder.getNearestEntity(sender) { !it.isDerived() && !it.isUneditable() }
         if (nearestEntity == null) {
             sender.sendLang("command-find-empty")
         } else {

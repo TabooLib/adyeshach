@@ -76,13 +76,34 @@ object TraitViewCondition : Trait() {
     fun checkView(entity: EntityInstance, viewer: Player): Boolean {
         if (data.contains(entity.uniqueId)) {
             return runKether {
-                KetherShell.eval(data.getStringList(entity.uniqueId), namespace = listOf("adyeshach"), sender = adaptPlayer(viewer)) {
-                    set("@entities", entity)
-                    set("@manager", entity.manager)
-                }.getNow(false).cbool
+                runViewConditionScript(
+                    data.getStringList(entity.uniqueId),
+                    entity,
+                    viewer,
+                    entity
+                ).getNow(false).cbool
             } ?: false
         }
         return true
+    }
+
+    /**
+     * 统一执行可视条件脚本
+     */
+    fun runViewConditionScript(
+        script: List<String>,
+        entity: EntityInstance,
+        viewer: Player,
+        entitiesValue: Any,
+    ): CompletableFuture<Any?> {
+        return KetherShell.eval(
+            script,
+            namespace = listOf("adyeshach"),
+            sender = adaptPlayer(viewer)
+        ) {
+            set("@entities", entitiesValue)
+            set("@manager", entity.manager)
+        }
     }
 }
 
@@ -122,22 +143,24 @@ fun EntityInstance.updateTraitViewCondition() {
         // 设置冷却
         setTag(TraitViewCondition.CHECK_TAG, System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50))
         // 获取玩家
-        viewPlayers.getPlayersInViewDistance().forEach {
+        viewPlayers.getPlayersInViewDistance().forEach { player ->
             runKether {
-                KetherShell.eval(script, namespace = listOf("adyeshach"), sender = adaptPlayer(it)) {
-                    set("@entities", listOf(this@updateTraitViewCondition))
-                    set("@manager", manager)
-                }.bool { cond ->
+                TraitViewCondition.runViewConditionScript(
+                    script,
+                    this@updateTraitViewCondition,
+                    player,
+                    listOf(this@updateTraitViewCondition)
+                ).bool { cond ->
                     if (cond) {
                         // 看不见但是满足可视条件
-                        if (it.name !in viewPlayers.visible) {
-                            visible(it, true)
+                        if (player.name !in viewPlayers.visible) {
+                            visible(player, true)
                         }
                     } else {
                         // 看得见但不满足可视条件
-                        if (it.name in viewPlayers.visible) {
-                            visible(it, false)
-                            viewPlayers.visible.remove(it.name)
+                        if (player.name in viewPlayers.visible) {
+                            visible(player, false)
+                            viewPlayers.visible.remove(player.name)
                         }
                     }
                 }

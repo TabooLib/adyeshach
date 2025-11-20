@@ -23,6 +23,13 @@ object StandardTags {
     const val DERIVED = "DERIVED"
 
     /**
+     * 不可编辑
+     * 不会触发 /npc edit 快速编辑
+     */
+    @PersistentTag
+    const val UNEDITABLE = "UNEDITABLE"
+
+    /**
      * 孤立单位
      * 持有该标签的单位不属于任何管理器
      */

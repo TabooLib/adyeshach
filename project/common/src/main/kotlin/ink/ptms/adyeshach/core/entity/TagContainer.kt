@@ -76,4 +76,12 @@ interface TagContainer {
     fun isDerived(): Boolean {
         return hasPersistentTag(StandardTags.DERIVED)
     }
+
+    /**
+     * 是否不可编辑
+     * 不会触发 /npc edit 快速编辑
+     */
+    fun isUneditable(): Boolean {
+        return hasPersistentTag(StandardTags.UNEDITABLE)
+    }
 }
