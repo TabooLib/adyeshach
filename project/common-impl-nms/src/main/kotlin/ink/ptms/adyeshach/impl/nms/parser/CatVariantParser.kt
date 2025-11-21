@@ -2,8 +2,8 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.bukkit.BukkitCatType
 import ink.ptms.adyeshach.core.util.getEnumOrNull
-import org.bukkit.entity.Cat
 
 /**
  * Adyeshach
@@ -12,13 +12,13 @@ import org.bukkit.entity.Cat
  * @author 坏黑
  * @since 2022/6/28 23:25
  */
-class CatVariantParser : MinecraftMetadataParser<Cat.Type>() {
+class CatVariantParser : MinecraftMetadataParser<BukkitCatType>() {
 
-    override fun parse(value: Any): Cat.Type {
-        return if (value is Cat.Type) value else Cat.Type::class.java.getEnumOrNull(value) ?: Cat.Type.TABBY
+    override fun parse(value: Any): BukkitCatType {
+        return if (value is BukkitCatType) value else BukkitCatType::class.java.getEnumOrNull(value) ?: BukkitCatType.TABBY
     }
 
-    override fun createMeta(index: Int, value: Cat.Type): MinecraftMeta {
+    override fun createMeta(index: Int, value: BukkitCatType): MinecraftMeta {
         return metadataHandler().createCatVariantMeta(index, value)
     }
 }

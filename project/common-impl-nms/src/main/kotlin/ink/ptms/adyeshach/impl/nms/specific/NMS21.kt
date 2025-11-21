@@ -111,6 +111,11 @@ interface NMS21 {
      */
     fun createWolfVariantMeta(index: Int, value: BukkitWolfVariant): Any
 
+    /**
+     * 创建猫变种类型数据
+     */
+    fun createCatVariantMeta(index: Int, value: BukkitCatType): Any
+
     companion object {
         val instance by unsafeLazy { nmsProxy<NMS21>() }
     }

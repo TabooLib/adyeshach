@@ -8,8 +8,6 @@ import ink.ptms.adyeshach.core.util.getEnumOrNull
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.Material
-import org.bukkit.entity.Cat
-import org.bukkit.entity.Frog
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -53,8 +51,8 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.QUATERNION -> PrepareMetaNatural(name, parseQuat(args), "Quaternion")
             // 特殊版本约定
             CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB, "Art")
-            CustomType.CAT_TYPE -> PrepareMetaNatural(name, Cat.Type.TABBY, "Cat.Type")
-            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
+            CustomType.CAT_TYPE -> PrepareMetaNatural(name, parseCatType(args), "Cat.Type")
+            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, BukkitFrogVariant.TEMPERATE, "Frog.Variant")
             // 1.20 新增
             CustomType.SNIFFER_STATE -> PrepareMetaNatural(name, AdySniffer.State.IDLING, "SnifferState")
             // 1.21 新增
@@ -84,5 +82,9 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
 
     private fun parseParticle(args: List<String>): BukkitParticles {
         return BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.HAPPY_VILLAGER
+    }
+
+    private fun parseCatType(args: List<String>): BukkitCatType {
+        return BukkitCatType::class.java.getEnumOrNull(args[1]) ?: BukkitCatType.TABBY
     }
 }

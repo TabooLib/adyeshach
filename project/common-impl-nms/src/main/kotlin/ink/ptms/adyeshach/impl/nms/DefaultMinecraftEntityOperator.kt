@@ -243,7 +243,7 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         })
     }
 
-    fun syncPosition(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
+    private fun syncPosition(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
         if (MinecraftVersion.versionId >= 12102) {
             packetHandler.sendPacket(player, NMS21.instance.createSyncPosition(entityId, location, onGround))
         }

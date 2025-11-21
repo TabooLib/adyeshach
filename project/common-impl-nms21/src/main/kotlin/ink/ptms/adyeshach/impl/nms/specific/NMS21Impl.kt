@@ -9,9 +9,7 @@ import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.nms.*
 import net.minecraft.EnumChatFormat
 import net.minecraft.core.Holder
-import net.minecraft.core.IRegistryCustom
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.DataWatcher
 import net.minecraft.network.syncher.DataWatcherObject
@@ -19,6 +17,7 @@ import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
+import net.minecraft.world.entity.animal.armadillo.Armadillo
 import net.minecraft.world.phys.Vec3D
 import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
@@ -29,10 +28,13 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Registry
 import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
+import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftChicken
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPig
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftWolf
+import org.bukkit.entity.Cat
 import org.bukkit.entity.Chicken
 import org.bukkit.entity.Pig
 import org.bukkit.entity.Wolf
@@ -51,7 +53,7 @@ class NMS21Impl : NMS21 {
     }
 
     override fun toJson(compound: Any): String {
-        return IChatBaseComponent.ChatSerializer.toJson(compound as NMSIChatBaseComponent, IRegistryCustom.EMPTY)
+        return CraftChatMessage.toJSON(compound as NMSIChatBaseComponent)
     }
 
     override fun createSpawnEntity(
@@ -170,15 +172,11 @@ class NMS21Impl : NMS21 {
     }
 
     override fun artBukkitToNotch(art: Art): Any {
-        return Holder.direct(CraftArt.bukkitToMinecraft(art))
+        return CraftArt.bukkitToMinecraft(art).direct()
     }
 
     override fun createOptBlockStateMeta(index: Int, material: MaterialData?): Any {
-        return DataWatcher.Item(
-            DataWatcherObject(index, DataWatcherRegistry.BYTE),
-//            Optional.ofNullable(CraftBlockData.newData(material?.itemType?.asBlockType(),null).state)
-            index.toByte()
-        )
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.BYTE), index.toByte())
     }
 
     override fun createChickenMeta(index: Int, type: BukkitChickenType): Any {
@@ -192,7 +190,7 @@ class NMS21Impl : NMS21 {
     }
 
     override fun createArmadilloMeta(index: Int, value: BukkitArmadilloState): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.ARMADILLO_STATE), value.state)
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.ARMADILLO_STATE), Armadillo.a.valueOf(value.name))
     }
 
     override fun createPigVariantMeta(index: Int, value: BukkitPigVariant): Any {
@@ -217,5 +215,14 @@ class NMS21Impl : NMS21 {
             BukkitWolfVariant.STRIPED -> Wolf.Variant.STRIPED
         }
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.WOLF_VARIANT), CraftWolf.CraftVariant.bukkitToMinecraftHolder(type))
+    }
+
+    override fun createCatVariantMeta(index: Int, value: BukkitCatType): Any {
+        val variant = CraftCat.CraftType.bukkitToMinecraft(Cat.Type.valueOf(value.name))
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant.direct())
+    }
+
+    private fun <T> T.direct(): Holder<T> {
+        return Holder.direct(this)
     }
 }

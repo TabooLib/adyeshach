@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.nms.specific
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.bukkit.BukkitCatType
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
@@ -20,7 +21,6 @@ import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
-import org.bukkit.entity.Cat
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import org.joml.Quaternionf
@@ -85,7 +85,7 @@ class NMS19Impl : NMS19() {
         )
     }
 
-    override fun createCatVariantMeta(index: Int, type: Cat.Type): Any {
+    override fun createCatVariantMeta(index: Int, type: BukkitCatType): Any {
         val ir = BuiltInRegistries.CAT_VARIANT as IRegistry<CatVariant>
         val texture = "textures/entity/cat/${type.name.lowercase()}.png"
         val variant = ir.first { it.texture.path == texture }

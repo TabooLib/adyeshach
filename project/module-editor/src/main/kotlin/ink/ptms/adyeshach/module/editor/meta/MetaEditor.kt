@@ -80,7 +80,7 @@ interface MetaEditor {
                 entity is AdyLlama && key == "carpetColor" -> MetaEnum(key, DyeColor::class.java)
                 entity is AdyLlama && key == "color" -> MetaEnum(key, Llama.Color::class.java)
                 // 猫
-                entity is AdyCat && key == "type" -> MetaEnum(key, Cat.Type::class.java).nameToKey()
+                entity is AdyCat && key == "type" -> MetaEnum(key, BukkitCatType::class.java).nameToKey()
                 entity is AdyCat && key == "color" -> MetaEnum(key, DyeColor::class.java)
                 // 船
                 entity is AdyBoat && key == "type" -> MetaEnum(key, BukkitBoat::class.java)
@@ -120,7 +120,7 @@ interface MetaEditor {
                 // 水晶
                 entity is AdyEndCrystal && key == "beamTarget" -> MetaVector(key)
                 // 青蛙
-                entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, Frog.Variant::class.java).nameToKey()
+                entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, BukkitFrogVariant::class.java).nameToKey()
                 // 展示实体
                 entity is AdyDisplay && key == "glowColorOverride" -> MetaColor(key)
                 entity is AdyTextDisplay && key == "backgroundColor" -> MetaColor(key)

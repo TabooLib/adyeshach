@@ -13,7 +13,6 @@ import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import net.minecraft.core.Holder
 import net.minecraft.world.entity.decoration.PaintingVariant
 import org.bukkit.Art
-import org.bukkit.entity.Cat
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -75,7 +74,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
             addParser("SnifferState", SnifferStateParser())
         }
         if (MinecraftVersion.majorLegacy >= 12105) {
-            addParser("Pig.Variant",PigVariantParser())
+            addParser("Pig.Variant", PigVariantParser())
             addParser("Wolf.Variant", WolfVariantParser())
             addParser("Armadillo.State", ArmadilloStateParser())
             addParser("Chicken.Variant", ChickenVariantParser())
@@ -526,7 +525,12 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta {
         return if (majorLegacy >= 11903) {
             val meta = when (type) {
-                is Cat.Type -> NMS19.instance.createCatVariantMeta(index, type)
+                is BukkitCatType -> try {
+                    NMS19.instance.createCatVariantMeta(index, type)
+                } catch (_: NoSuchFieldError) {
+                    NMS21.instance.createCatVariantMeta(index, type)
+                }
+
                 is BukkitChickenType -> NMS21.instance.createChickenMeta(index, type)
                 is BukkitArmadilloState -> NMS21.instance.createArmadilloMeta(index, type)
                 is BukkitWolfVariant -> NMS21.instance.createWolfVariantMeta(index, type)

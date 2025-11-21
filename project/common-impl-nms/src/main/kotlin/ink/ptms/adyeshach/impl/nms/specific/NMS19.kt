@@ -1,10 +1,10 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
 import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.bukkit.BukkitCatType
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
-import org.bukkit.entity.Cat
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import taboolib.common.util.unsafeLazy
@@ -28,7 +28,7 @@ abstract class NMS19 {
 
     abstract fun createOptBlockStateMeta(index: Int, materialData: MaterialData?): Any
 
-    abstract fun createCatVariantMeta(index: Int, type: Cat.Type): Any
+    abstract fun createCatVariantMeta(index: Int, type: BukkitCatType): Any
 
     abstract fun createSnifferStateMeta(index: Int, type: AdySniffer.State): Any
 

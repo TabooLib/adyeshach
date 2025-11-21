@@ -160,7 +160,7 @@ ink.ptms.adyeshach.core.entity.type.AdyCamel
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyCat
-    type !Cat.Type
+    type !Cat.Type TABBY
         &cat1
         17 19
         15 -

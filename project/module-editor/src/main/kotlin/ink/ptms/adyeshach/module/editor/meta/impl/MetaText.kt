@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
+import taboolib.module.chat.uncolored
 import taboolib.platform.util.nextChat
 
 /**
@@ -19,7 +20,7 @@ import taboolib.platform.util.nextChat
 class MetaText(val key: String) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
-        val plainMessage = Components.toLegacyText(def)
+        val plainMessage = Components.toLegacyText(def).takeIf { it.uncolored().isNotEmpty() } ?: ""
         player.clearScreen()
         player.sendLang("editor-input-chat-component", plainMessage, plainMessage.replace('§', '&'), def.replace('§', '&'))
         player.nextChat {

@@ -2,9 +2,8 @@ package ink.ptms.adyeshach.impl.nms.parser
 
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
+import ink.ptms.adyeshach.core.bukkit.BukkitFrogVariant
 import ink.ptms.adyeshach.core.util.getEnumOrNull
-import org.bukkit.entity.Frog
-import taboolib.common.platform.function.info
 
 /**
  * Adyeshach
@@ -13,13 +12,13 @@ import taboolib.common.platform.function.info
  * @author 坏黑
  * @since 2022/6/28 23:25
  */
-class FrogVariantParser : MinecraftMetadataParser<Frog.Variant>() {
+class FrogVariantParser : MinecraftMetadataParser<BukkitFrogVariant>() {
 
-    override fun parse(value: Any): Frog.Variant {
-        return if (value is Frog.Variant) value else Frog.Variant::class.java.getEnumOrNull(value) ?: Frog.Variant.TEMPERATE
+    override fun parse(value: Any): BukkitFrogVariant {
+        return if (value is BukkitFrogVariant) value else BukkitFrogVariant::class.java.getEnumOrNull(value) ?: BukkitFrogVariant.TEMPERATE
     }
 
-    override fun createMeta(index: Int, value: Frog.Variant): MinecraftMeta {
+    override fun createMeta(index: Int, value: BukkitFrogVariant): MinecraftMeta {
         return metadataHandler().createFrogVariantMeta(index, value)
     }
 }
