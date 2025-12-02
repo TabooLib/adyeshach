@@ -39,4 +39,10 @@ open class ModelEngineOptions {
 
     /** 是否覆盖原有的碰撞箱 */
     var isOverrideHitbox = true
+
+    /**
+     * 是否在不可见时销毁模型
+     * 默认是开启的，如果实体有 HOLD/LOOP 动画，销毁后动画也会停止
+     */
+    var isDestroyWhenInvisible = true
 }
