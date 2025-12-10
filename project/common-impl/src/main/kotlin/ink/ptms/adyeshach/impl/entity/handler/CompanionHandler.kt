@@ -1,40 +1,40 @@
-package ink.ptms.adyeshach.impl.entity
+package ink.ptms.adyeshach.impl.entity.handler
 
 import ink.ptms.adyeshach.core.entity.Companionable
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.event.AdyeshachEntityCompanionEvent
 import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.DefaultCompanionable
+ * ink.ptms.adyeshach.impl.entity.handler.CompanionHandler
  *
- * 伴生关系的默认实现
+ * 负责实体的伴生关系管理
  *
  * @author 坏黑
  * @since 2024/12/11
  */
-interface DefaultCompanionable : Companionable {
+class CompanionHandler(private val self: DefaultEntityInstance) {
 
-    override fun getHost(): EntityInstance? {
-        this as DefaultEntityInstance
+    fun getHost(): EntityInstance? {
         // 优先使用缓存
-        val cache = cacheHostEntity
+        val cache = self.cacheHostEntity
         if (cache != null) {
             return cache
         }
         // 从持久化标签恢复
-        val hostId = getPersistentTag(StandardTags.COMPANION_HOST) ?: return null
-        val host = manager?.getEntityByUniqueId(hostId)
+        val hostId = self.getPersistentTag(StandardTags.COMPANION_HOST) ?: return null
+        val host = self.manager?.getEntityByUniqueId(hostId)
         // 更新缓存
         if (host != null) {
-            cacheHostEntity = host
+            self.cacheHostEntity = host
         }
         return host
     }
 
-    override fun getRootHost(): EntityInstance? {
+    fun getRootHost(): EntityInstance? {
         var current = getHost() ?: return null
         while (true) {
             val parent = (current as? Companionable)?.getHost() ?: return current
@@ -42,82 +42,79 @@ interface DefaultCompanionable : Companionable {
         }
     }
 
-    override fun setHost(entity: EntityInstance?) {
-        this as DefaultEntityInstance
+    fun setHost(entity: EntityInstance?) {
         val previousHost = getHost()
 
         // 相同宿主，无需操作
         if (previousHost?.uniqueId == entity?.uniqueId) return
 
         // 事件
-        if (!AdyeshachEntityCompanionEvent(this, entity, previousHost).call()) {
+        if (!AdyeshachEntityCompanionEvent(self, entity, previousHost).call()) {
             return
         }
 
         // 从旧宿主移除
         previousHost?.let { oldHost ->
             oldHost as DefaultEntityInstance
-            oldHost.companions.remove(uniqueId)
+            oldHost.companions.remove(self.uniqueId)
         }
 
         if (entity == null) {
             // 解除归属
-            cacheHostEntity = null
-            removePersistentTag(StandardTags.COMPANION_HOST)
+            self.cacheHostEntity = null
+            self.removePersistentTag(StandardTags.COMPANION_HOST)
         } else {
             // 校验 manager 一致
-            if (entity.manager != manager) {
+            if (entity.manager != self.manager) {
                 errorBy("error-entity-manager-not-match")
             }
             // 避免循环归属
             var current: EntityInstance? = entity
             while (current != null) {
-                if (current.uniqueId == uniqueId) {
+                if (current.uniqueId == self.uniqueId) {
                     errorBy("error-circular-companion")
                 }
                 current = (current as? Companionable)?.getHost()
             }
             // 设置归属
             entity as DefaultEntityInstance
-            entity.companions.add(uniqueId)
-            cacheHostEntity = entity
-            setPersistentTag(StandardTags.COMPANION_HOST, entity.uniqueId)
+            entity.companions.add(self.uniqueId)
+            self.cacheHostEntity = entity
+            self.setPersistentTag(StandardTags.COMPANION_HOST, entity.uniqueId)
             // 同步观察者列表
             syncViewersFromHost(entity)
         }
     }
 
-    override fun hasHost(): Boolean {
-        this as DefaultEntityInstance
-        return cacheHostEntity != null || hasPersistentTag(StandardTags.COMPANION_HOST)
+    fun hasHost(): Boolean {
+        return self.cacheHostEntity != null || self.hasPersistentTag(StandardTags.COMPANION_HOST)
     }
 
-    override fun isCompanion(): Boolean = hasHost()
+    fun isCompanion(): Boolean = hasHost()
 
-    override fun getCompanions(): List<EntityInstance> {
-        this as DefaultEntityInstance
-        return companions.mapNotNull { manager?.getEntityByUniqueId(it) }
+    fun getCompanions(): List<EntityInstance> {
+        return self.companions.mapNotNull { self.manager?.getEntityByUniqueId(it) }
     }
 
-    override fun getAllCompanions(): List<EntityInstance> {
+    fun getAllCompanions(): List<EntityInstance> {
         val result = mutableListOf<EntityInstance>()
-        collectCompanions(this as EntityInstance, result)
+        collectCompanions(self, result)
         return result
     }
 
-    override fun addCompanion(vararg entity: EntityInstance) {
-        entity.forEach { it.setHost(this as EntityInstance) }
+    fun addCompanion(vararg entity: EntityInstance) {
+        entity.forEach { it.setHost(self) }
     }
 
-    override fun removeCompanion(vararg entity: EntityInstance) {
+    fun removeCompanion(vararg entity: EntityInstance) {
         entity.forEach {
-            if ((it as? Companionable)?.getHost()?.uniqueId == (this as EntityInstance).uniqueId) {
+            if ((it as? Companionable)?.getHost()?.uniqueId == self.uniqueId) {
                 it.setHost(null)
             }
         }
     }
 
-    override fun clearCompanions() {
+    fun clearCompanions() {
         removeCompanion(*getCompanions().toTypedArray())
     }
 
@@ -125,12 +122,11 @@ interface DefaultCompanionable : Companionable {
      * 从宿主同步观察者列表
      */
     private fun syncViewersFromHost(host: EntityInstance) {
-        this as DefaultEntityInstance
         // 清空当前观察者
-        viewPlayers.viewers.clear()
-        viewPlayers.visible.clear()
+        self.viewPlayers.viewers.clear()
+        self.viewPlayers.visible.clear()
         // 同步宿主的观察者列表
-        viewPlayers.viewers.addAll(host.viewPlayers.viewers)
+        self.viewPlayers.viewers.addAll(host.viewPlayers.viewers)
     }
 
     /**

@@ -138,6 +138,110 @@ command-find-more-passenger-reset:
         hover: '点击重制骑乘'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
+command-find-more-viewer-info:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach viewer {uuid} info'
+        hover: '点击查看可见性信息'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-show:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} show '
+        hover: '点击显示给玩家...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-hide:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} hide '
+        hover: '点击对玩家隐藏...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-add:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} add '
+        hover: '点击添加观察者...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} remove '
+        hover: '点击移除观察者...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-clear:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach viewer {uuid} clear'
+        hover: '点击清空观察者'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-respawn:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} respawn '
+        hover: '点击重新生成...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-add:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} add '
+        hover: '点击添加伴生实体...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} remove '
+        hover: '点击移除伴生实体...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-clear:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} clear'
+        hover: '点击清空伴生实体'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-host:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} host '
+        hover: '点击设置宿主...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-unhost:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} unhost'
+        hover: '点击解除归属'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-info:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} info'
+        hover: '点击查看伴生关系信息'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
 
 # END
 

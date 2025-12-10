@@ -10,34 +10,28 @@ import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
-import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
 import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
-import ink.ptms.adyeshach.core.event.*
 import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
-import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
-import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
+import ink.ptms.adyeshach.impl.entity.handler.*
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import ink.ptms.adyeshach.impl.util.Indexs
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.submit
 import taboolib.common5.Baffle
-import taboolib.common5.cbool
-import taboolib.common5.cdouble
-import taboolib.common5.clong
+import taboolib.library.configuration.ConfigurationSection
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
-import java.util.concurrent.TimeUnit
-import kotlin.math.absoluteValue
+import java.util.function.Function
 
 /**
  * Adyeshach
@@ -46,811 +40,263 @@ import kotlin.math.absoluteValue
  * @author 坏黑
  * @since 2022/6/19 21:26
  */
-@Suppress("LeakingThis", "SpellCheckingInspection")
-abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBIE) :
-    DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultCompanionable, InternalEntity {
+@Suppress("LeakingThis")
+abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBIE) : DefaultEntityBase(entityType), EntityInstance, InternalEntity {
 
-    override val x: Double
-        get() = clientPosition.x
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 位置属性（委托到 clientPosition）
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    override val y: Double
-        get() = clientPosition.y
+    override val x get() = clientPosition.x
+    override val y get() = clientPosition.y
+    override val z get() = clientPosition.z
+    override val yaw get() = clientPosition.yaw
+    override val pitch get() = clientPosition.pitch
+    override val world: World get() = clientPosition.world
+    override val chunkX get() = (x / 16).toInt()
+    override val chunkZ get() = (z / 16).toInt()
 
-    override val z: Double
-        get() = clientPosition.z
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 核心属性
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    override val chunkX: Int
-        get() = (x / 16).toInt()
-
-    override val chunkZ: Int
-        get() = (z / 16).toInt()
-
-    override val yaw: Float
-        get() = clientPosition.yaw
-
-    override val pitch: Float
-        get() = clientPosition.pitch
-
-    override val world: World
-        get() = clientPosition.world
-
-    /** 实体序号 */
     override val index: Int = Indexs.nextIndex()
-
-    /** 可见玩家 */
     override val viewPlayers = DefaultViewPlayers(this)
-
-    /** 实体大小 */
     override val entitySize = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
-
-    /** 实体路径类型 */
     override val entityPathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
-    /** 是否移除 */
     override var isRemoved = false
+    @Expose override var isNitwit = false
+    @Expose override var moveSpeed = 0.2
+    override var brain: Brain = SimpleBrain(this)
 
-    /** 是否傻子 */
-    @Expose
-    override var isNitwit = false
+    override var useClientEntityMap = true
+    override var isRotationFixOnSpawn = true
+    override var isPassengerRefreshOnSpawn = true
+    override var isDisableVisibleEvent = false
+    override var isDisableVehicleCheckOnTick = false
+    override var clientPositionFixed = System.currentTimeMillis()
+    override var clientPositionUpdateInterval: Baffle = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
+    override var isIgnoredClientPositionUpdateInterval = true
 
-    /** 移动速度 */
-    @Expose
-    override var moveSpeed = 0.2
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 记分板相关属性（需要同步 VisualTeam）
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    /** 是否可见名称 */
     @Expose
     override var isNameTagVisible = true
         set(value) {
-            // 与 canSeeInvisible 冲突
-            if (!value) {
-                canSeeInvisible = false
-            }
+            if (!value) canSeeInvisible = false
             field = value
             VisualTeam.updateTeam(this)
         }
 
-    /** 是否碰撞 */
     @Expose
     override var isCollision = true
         set(value) {
-            // 与 canSeeInvisible 冲突
-            if (!value) {
-                canSeeInvisible = false
-            }
+            if (!value) canSeeInvisible = false
             field = value
             VisualTeam.updateTeam(this)
         }
 
-    /** 发光颜色 */
     @Expose
-    override var glowingColor = ChatColor.WHITE
+    override var glowingColor: ChatColor = ChatColor.WHITE
         set(value) {
-            // 与 canSeeInvisible 冲突
-            if (value != ChatColor.WHITE) {
-                canSeeInvisible = true
-            }
+            if (value != ChatColor.WHITE) canSeeInvisible = true
             field = value
             VisualTeam.updateTeam(this)
         }
 
-    /** 是否可见隐形单位 */
     @Expose
     override var canSeeInvisible = false
         set(value) {
-            // 与其他其他记分板功能冲突
-            if (!isNameTagVisible || !isCollision || glowingColor != ChatColor.WHITE) {
-                return
-            }
+            if (!isNameTagVisible || !isCollision || glowingColor != ChatColor.WHITE) return
             field = value
             VisualTeam.updateTeam(this)
         }
 
-    /** 可视距离 */
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 可见性与显示属性
+    // ═══════════════════════════════════════════════════════════════════════════════
+
     @Expose
     override var visibleDistance = -1.0
         get() = if (field == -1.0) AdyeshachSettings.visibleDistance else field
 
-    /** 加载后自动显示 */
     @Expose
     override var visibleAfterLoaded = true
         set(value) {
-            if (!isPublic()) {
-                errorBy("error-cannot-set-visible-after-loaded-for-private-entity")
-            }
-            if (!value) {
-                clearViewer()
-            }
+            if (!isPublic()) errorBy("error-cannot-set-visible-after-loaded-for-private-entity")
+            if (!value) clearViewer()
             field = value
         }
 
-    /** ModelEngine 唯一序号 */
-    var modelEngineUniqueId: UUID? = null
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // ModelEngine 支持
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    /** ModelEngine 支持 */
+    var modelEngineUniqueId: UUID? = null
+    var modelEngineOptions: ModelEngineOptions? = null
+
     @Expose
     var modelEngineName = ""
         set(value) {
             field = value
-            // 重新加载模型
-            if (this is ModelEngine) {
-                refreshModelEngine()
-            }
+            if (this is ModelEngine) refreshModelEngine()
         }
 
-    /** ModelEngine 配置 */
-    var modelEngineOptions: ModelEngineOptions? = null
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 关联实体数据
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    /** 骑乘者 */
-    @Expose
-    var passengers = ConcurrentSkipListSet<String>()
+    @Expose var passengers = ConcurrentSkipListSet<String>()
+    @Expose var companions = ConcurrentSkipListSet<String>()
+    @Expose var controller = ConcurrentSkipListSet(Comparator.comparing(Controller::id))
+    @Transient var cacheHostEntity: EntityInstance? = null
+    var cacheVehicleEntity: EntityInstance? = null
+    val attachedEntity = ConcurrentHashMap<Int, Vector>()
 
-    /** 伴生实体列表（存储 uniqueId） */
-    @Expose
-    var companions = ConcurrentSkipListSet<String>()
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 处理器
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    /** 宿主实体缓存（运行时恢复，不持久化） */
-    @Transient
-    var cacheHostEntity: EntityInstance? = null
-
-    /** 控制器 */
-    @Expose
-    var controller = ConcurrentSkipListSet(Comparator.comparing(Controller::id))
-
-    /** Ady 的小脑 */
-    override var brain: Brain = SimpleBrain(this)
-
-    /** 仿生视线 */
+    val movementHandler = MovementHandler(this)
+    val visibilityHandler = VisibilityHandler(this)
+    val passengerHandler = PassengerHandler(this)
+    val controllerHandler = ControllerHandler(this)
+    val positionHandler = PositionHandler(this)
+    val lifecycleHandler = LifecycleHandler(this)
+    val customMetaHandler = CustomMetaHandler(this)
+    val genericEntityHandler = GenericEntityHandler(this)
+    val companionHandler = CompanionHandler(this)
+    val metaHandler = MetaHandler(this)
+    val tagHandler = TagHandler(this)
+    val serializationHandler = SerializationHandler(this)
     var bionicSight = BionicSight(this)
 
-    /**
-     * 客户端位置
-     */
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 位置状态
+    // ═══════════════════════════════════════════════════════════════════════════════
+
     @Expose
-    var clientPosition = position
+    var clientPosition: EntityPosition = position
         set(value) {
-            // 是否发生实质性位置变动
             if (field.x != value.x || field.y != value.y || field.z != value.z) {
                 clientBodyPosition = value.clone()
             }
             field = value.clone()
         }
         get() {
-            // 修正因反序列化带来的坐标偏移
-            if (field.isZero() && field != position) {
-                field = position
-            }
+            if (field.isZero() && field != position) field = position
             return field
         }
 
-    /**
-     * 客户端身体位置
-     * 只有发生实质性位置变动才会更新
-     */
-    var clientBodyPosition = position
-        set(value) {
-            field = value.clone()
-        }
+    var clientBodyPosition: EntityPosition = position
+        set(value) { field = value.clone() }
         get() {
-            // 修正因反序列化带来的坐标偏移
-            if (field.isZero() && field != position) {
-                field = position
-            }
+            if (field.isZero() && field != position) field = position
             return field
         }
 
-    /** 客户端位置修正 */
-    override var clientPositionFixed = System.currentTimeMillis()
+    var deltaMovement: Vector = Vector(0.0, 0.0, 0.0)
+        set(value) { field = value.clone() }
 
-    /** 客户端更新间隔 */
-    override var clientPositionUpdateInterval = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
-
-    /** 是否启用客户端更新间隔 **/
-    override var isIgnoredClientPositionUpdateInterval = true
-
-    /** 单位移动量 */
-    var deltaMovement = Vector(0.0, 0.0, 0.0)
-        set(value) {
-            field = value.clone()
-        }
-
-    override var useClientEntityMap = true
-
-    override var isRotationFixOnSpawn = true
-
-    override var isPassengerRefreshOnSpawn = true
-
-    override var isDisableVisibleEvent = false
-
-    override var isDisableVehicleCheckOnTick = false
-
-    /** 插值定位 */
     override var moveFrames: InterpolatedLocation? = null
         set(value) {
             field = value
             DefaultAdyeshachAPI.localEventBus.callMove(this, value != null)
         }
 
-    /** 移动目的 */
     override var moveTarget: Location? = null
         set(value) {
             field = value
-            // 更新移动路径
-            // 傻子或没有目的地
-            if (isNitwit || moveTarget == null) {
-                // 移除移动路径
-                if (moveFrames != null) {
-                    moveFrames = null
-                    // 移除移动标签
-                    tag.remove(StandardTags.IS_MOVING)
-                }
-                return
-            }
-            // 设置标签
-            setTag(StandardTags.IS_PATHFINDING, true)
-            // 请求路径
-            PathFinderHandler.request(position.toLocation(), moveTarget!!, entityPathType) {
-                it as ResultNavigation
-                // 移除标签
-                removeTag(StandardTags.IS_PATHFINDING)
-                // 按照路径移动
-                controllerMoveBy(it.pointList.map { v -> v.toLocation(world) })
-            }
+            handleMoveTargetChange()
         }
 
-    /** 管理器 */
+    private fun handleMoveTargetChange() {
+        if (isNitwit || moveTarget == null) {
+            if (moveFrames != null) {
+                moveFrames = null
+                tag.remove(StandardTags.IS_MOVING)
+            }
+            return
+        }
+        setTag(StandardTags.IS_PATHFINDING, true)
+        PathFinderHandler.request(position.toLocation(), moveTarget!!, entityPathType) {
+            it as ResultNavigation
+            removeTag(StandardTags.IS_PATHFINDING)
+            controllerMoveBy(it.pointList.map { v -> v.toLocation(world) })
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 管理器
+    // ═══════════════════════════════════════════════════════════════════════════════
+
     override var manager: Manager? = null
         set(value) {
-            // 没有管理器 || 移除管理器
-            if (field == null || value == null) {
-                field = value
-                // 更新标签
-                // 孤立单位
-                if (value == null || value !is TickService) {
-                    tag[StandardTags.ISOLATED] = true
-                } else {
-                    tag.remove(StandardTags.ISOLATED)
-                    // 公共单位
-                    if (value.isPublic()) {
-                        tag[StandardTags.IS_PUBLIC] = true
-                        tag.remove(StandardTags.IS_PRIVATE)
-                    } else {
-                        tag[StandardTags.IS_PRIVATE] = true
-                        tag.remove(StandardTags.IS_PUBLIC)
-                    }
-                    // 临时单位
-                    if (value.isTemporary()) {
-                        tag[StandardTags.IS_TEMPORARY] = true
-                    } else {
-                        tag.remove(StandardTags.IS_TEMPORARY)
-                    }
-                }
-            } else {
+            if (field != null && value != null) {
                 errorBy("error-manager-has-been-initialized")
             }
+            field = value
+            updateManagerTags(value)
         }
 
-    /** 附着单位 */
-    val attachedEntity = ConcurrentHashMap<Int, Vector>()
-
-    // 缓存的载具实体
-    var cacheVehicleEntity: EntityInstance? = null
-
-    override fun setCustomMeta(key: String, value: String?): Boolean {
-        // region setCustomMeta
-        return when (key) {
-            // 实体姿态
-            "pose" -> {
-                setPose(if (value != null) BukkitPose::class.java.getEnum(value) else BukkitPose.STANDING)
-                true
-            }
-            // 是否傻逼
-            "nitwit" -> {
-                isNitwit = value?.cbool ?: false
-                true
-            }
-            // 移动速度
-            "movespeed", "move_speed" -> {
-                moveSpeed = value?.cdouble ?: 0.2
-                true
-            }
-            // 是否可见名称
-            "nametagvisible", "name_tag_visible" -> {
-                isNameTagVisible = value?.cbool ?: true
-                true
-            }
-            // 是否存在碰撞体积
-            "collision", "is_collision" -> {
-                isCollision = value?.cbool ?: true
-                true
-            }
-            // 发光颜色
-            "glowingcolor", "glowing_color" -> {
-                glowingColor = if (value != null) {
-                    if (value.startsWith('§')) {
-                        ChatColor.getByChar(value) ?: ChatColor.WHITE
-                    } else {
-                        ChatColor::class.java.getEnum(value)
-                    }
-                } else {
-                    ChatColor.WHITE
-                }
-                true
-            }
-            // 是否可见隐形单位
-            "canseeinvisible", "can_see_invisible" -> {
-                canSeeInvisible = value?.cbool ?: false
-                true
-            }
-            // 可见距离
-            "visibledistance", "visible_distance" -> {
-                visibleDistance = value?.cdouble ?: AdyeshachSettings.visibleDistance
-                true
-            }
-            // 加载后自动显示
-            "visibleafterloaded", "visible_after_loaded" -> {
-                visibleAfterLoaded = value?.cbool ?: true
-                true
-            }
-            // 模型引擎
-            "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
-                modelEngineName = value ?: ""
-                true
-            }
-            // 冻结
-            "freeze", "isfreeze", "is_freeze" -> {
-                isFreeze = value?.cbool ?: false
-                true
-            }
-            // 其他
-            else -> false
-        }
-        // endregion
-    }
-
-    override fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
-        if (isDisableVisibleEvent || AdyeshachEntityVisibleEvent(this, viewer, true).call()) {
-            // 使用事件系统控制实体显示
-            if (DefaultAdyeshachAPI.localEventBus.callSpawn(this, viewer)) {
-                spawn.run()
-            }
-            DefaultAdyeshachAPI.localEventBus.postSpawn(this, viewer)
-            // 更新单位属性
-            updateEntityMetadata(viewer)
-            // 更新单位视角
-            if (isRotationFixOnSpawn) {
-                setHeadRotation(position.yaw, position.pitch, forceUpdate = true)
-            }
-            // 关联实体初始化
-            if (isPassengerRefreshOnSpawn) {
-                submit(delay = 2) { refreshPassenger(viewer) }
-            }
-            return true
-        }
-        return false
-    }
-
-    override fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
-        if (isDisableVisibleEvent || AdyeshachEntityVisibleEvent(this, viewer, false).call()) {
-            // 使用事件系统控制实体销毁
-            if (DefaultAdyeshachAPI.localEventBus.callDestroy(this, viewer)) {
-                destroy.run()
-                DefaultAdyeshachAPI.localEventBus.postDestroy(this, viewer)
-            }
-            return true
-        }
-        return false
-    }
-
-    override fun isPublic(): Boolean {
-        return manager?.isPublic() == true
-    }
-
-    override fun isTemporary(): Boolean {
-        return manager?.isTemporary() == true
-    }
-
-    override fun spawn(location: Location) {
-        position = EntityPosition.fromLocation(location)
-        clientPosition = position
-        forViewers { visible(it, true) }
-        AdyeshachEntitySpawnEvent(this).call()
-    }
-
-    override fun respawn() {
-        if (isRemoved) {
-            error("Entity has been removed")
-        }
-        spawn(clientPosition.toLocation())
-    }
-
-    override fun despawn(destroyPacket: Boolean, removeFromManager: Boolean) {
-        if (destroyPacket) {
-            forViewers { visible(it, false) }
-            AdyeshachEntityDestroyEvent(this).call()
-        }
-        if (removeFromManager) {
-            if (manager != null) {
-                isRemoved = true
-                // 销毁所有伴生实体（先处理，避免 manager 置空后无法获取）
-                getCompanions().forEach { it.remove() }
-                // 从宿主的伴生列表中移除自己
-                cacheHostEntity?.let { host ->
-                    host as DefaultEntityInstance
-                    host.companions.remove(uniqueId)
-                }
-                manager!!.remove(this)
-                AdyeshachEntityRemoveEvent(this).call()
-                manager = null
-            }
-        }
-    }
-
-    override fun teleport(entityPosition: EntityPosition) {
-        teleport(entityPosition.toLocation())
-    }
-
-    override fun teleport(x: Double, y: Double, z: Double) {
-        teleport(clientPosition.toLocation().modify(x, y, z))
-    }
-
-    override fun teleport(location: Location) {
-        // 异常角度警告
-        if (location.yaw.isNaN() || location.pitch.isNaN()) {
-            IllegalStateException("Invalid head rotation (yaw=${location.yaw}, pitch=${location.pitch})").printStackTrace()
-        }
-        // 处理事件
-        val eventBus = DefaultAdyeshachAPI.localEventBus
-        if (eventBus.callTeleport(this, location)) {
-            eventBus.postTeleport(this, location)
-        } else {
+    private fun updateManagerTags(manager: Manager?) {
+        if (manager == null || manager !is TickService) {
+            tag[StandardTags.ISOLATED] = true
             return
         }
-        val newPosition = EntityPosition.fromLocation(location)
-        // 强制传送
-        if (tag.containsKey(StandardTags.FORCE_TELEPORT)) {
-            tag.remove(StandardTags.FORCE_TELEPORT)
-        }
-        // 如果坐标没变则不做处理
-        else if (newPosition == position) {
-            return
-        }
-        // 是否发生实质性位置变更
-        val isMoved = position.x != newPosition.x || position.y != newPosition.y || position.z != newPosition.z
-        // 是否切换世界
-        if (position.world != newPosition.world) {
-            position = newPosition
-            despawn()
-            respawn()
-        }
-        // 无管理器 || 孤立管理器 || 不允许进行位置同步
-        if (manager == null || manager !is TickService || !allowSyncPosition()) {
-            position = newPosition
-            clientPosition = position
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
-                getVisiblePlayers(),
-                index,
-                location.modify(yaw = entityType.fixYaw(location.yaw))
-            )
+        tag.remove(StandardTags.ISOLATED)
+        if (manager.isPublic()) {
+            tag[StandardTags.IS_PUBLIC] = true
+            tag.remove(StandardTags.IS_PRIVATE)
         } else {
-            clientPosition = newPosition
+            tag[StandardTags.IS_PRIVATE] = true
+            tag.remove(StandardTags.IS_PUBLIC)
         }
-        // 只有在位置发生变更时才进行 passengers 同步
-        if (isMoved) {
-            // 同步 passengers 位置
-            getPassengers().forEach { it.teleport(location) }
-            // 更新 passengers 信息
-            refreshPassenger()
-        }
-    }
-
-    override fun setVelocity(vector: Vector) {
-        val eventBus = DefaultAdyeshachAPI.localEventBus
-        if (eventBus.callVelocity(this, vector)) {
-            deltaMovement = vector.clone()
-        }
-    }
-
-    override fun setVelocity(x: Double, y: Double, z: Double) {
-        setVelocity(Vector(x, y, z))
-    }
-
-    override fun getVelocity(): Vector {
-        return deltaMovement.clone()
-    }
-
-    override fun setHeadRotation(location: Location, forceUpdate: Boolean) {
-        val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
-        clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
-            entityLocation.direction = location.clone().subtract(entityLocation).toVector()
-            setHeadRotation(entityLocation.yaw, entityLocation.pitch, forceUpdate)
-        }
-    }
-
-    override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) {
-        if (AdyeshachEntityHeadRotationEvent(this, yaw, pitch, forceUpdate).call()) {
-            // 强制更新
-            if (forceUpdate) {
-                position.yaw = yaw
-                position.pitch = pitch
-                clientPosition.yaw = yaw
-                clientPosition.pitch = pitch
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
-                    getVisiblePlayers(),
-                    index,
-                    entityType.fixYaw(yaw),
-                    pitch,
-                    !entityPathType.isFly()
-                )
-            } else {
-                teleport(clientPosition.toLocation().modify(yaw, pitch))
-            }
-        }
-    }
-
-    override fun sendAnimation(animation: BukkitAnimation) {
-        if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE && modelEngineName.isNotBlank()) {
-            hurt()
+        if (manager.isTemporary()) {
+            tag[StandardTags.IS_TEMPORARY] = true
         } else {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+            tag.remove(StandardTags.IS_TEMPORARY)
         }
     }
 
-    override fun addAttachEntity(id: Int, relativePos: Vector) {
-        attachedEntity[id] = relativePos.clone()
-    }
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 核心方法
+    // ═══════════════════════════════════════════════════════════════════════════════
 
-    override fun removeAttachEntity(id: Int) {
-        attachedEntity.remove(id)
-    }
-
-    override fun getAttachEntities(): Map<Int, Vector> {
-        return attachedEntity
-    }
-
-    override fun isInVisibleDistance(player: Player): Boolean {
-        this as EntityBase
-        return player.location.safeDistanceIgnoreY(getLocation()) < visibleDistance
-    }
-
-    /**
-     * 处理玩家可见
-     * 大量用户反馈的 NPC 概率性不可见问题，根本原因在于这个逻辑写垃圾
-     * 尝试性修复 - 2023/12/29: 玩家在可见范围内呆上一个检查周期后才会显示实体，并缩短检查周期 (5s -> 2s)
-     * 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
-     */
-    override fun checkVisible() {
-        // 伴生实体跳过独立的可见性检查（由宿主驱动）
-        if (isCompanion()) return
-        // 同步到载具位置
-        if (!isDisableVehicleCheckOnTick) {
-            val vehicle = cacheVehicleEntity
-            if (vehicle != null) {
-                position = vehicle.position.copy(yaw = position.yaw, pitch = position.pitch)
-                clientPosition = vehicle.position.copy(yaw = clientPosition.yaw, pitch = clientPosition.pitch)
-                setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
-            } else {
-                removePersistentTag(StandardTags.IS_IN_VEHICLE)
-            }
-        }
-        // 同步可见状态
-        val entityManager = manager
-        if (entityManager is PlayerManager) {
-            handleVisible(entityManager.owner)
-        } else {
-            playersInGameTick.forEach { handleVisible(it) }
-        }
-    }
-
-    // 更新可见性
-    private fun handleVisible(player: Player) {
-        // 是观察者
-        if (player.name in viewPlayers.viewers) {
-            // 是可见的观察者
-            if (player.name in viewPlayers.visible) {
-                // 销毁不在可视范围内的实体
-                if (!isInVisibleDistance(player) && !ServerTours.isRoutePlaying(player)) {
-                    visible(player, false)
-                }
-            } else {
-                // 属否在可视范围内 && 所在区块是否可见 && 显示实体
-                if (isInVisibleDistance(player) && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ)) {
-                    visible(player, true)
-                }
-            }
-        }
-    }
+    override fun isPublic() = manager?.isPublic() == true
+    override fun isTemporary() = manager?.isTemporary() == true
 
     override fun onTick() {
-        // 允许位置同步
         if (allowSyncPosition()) {
-            // 处理移动
-            handleMove()
-            // 处理行为
+            movementHandler.handleMove()
             brain.tick()
             bionicSight.tick()
-            // 更新位置
-            syncPosition()
+            movementHandler.syncPosition()
         }
     }
 
     fun allowSyncPosition(): Boolean {
-        // 不是傻子 && 存在可见玩家 && 所在区块已经加载
         return !isNitwit && viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
-    }
-
-    // 处理移动
-    fun handleMove() {
-        // region handleMove
-        // 乘坐实体 || 冻结
-        if (tag.containsKey(StandardTags.IS_IN_VEHICLE) || tag.containsKey(StandardTags.IS_FROZEN)) {
-            deltaMovement = Vector(0.0, 0.0, 0.0)
-            return
-        }
-        // 行走
-        if (moveFrames != null) {
-            // 是否已抵达目的地
-            if (moveFrames!!.isArrived()) {
-                // 同步朝向
-                moveTarget?.let { setHeadRotation(it.yaw, it.pitch, true) }
-                moveTarget = null
-                return
-            }
-            // 首次移动
-            // 在单位首次移动之前，会有 0.25 秒的时间用于调整视角
-            // 在这期间，单位会保持原地不动，并持有 "IS_MOVING_START" 标签
-            if (!tag.containsKey(StandardTags.IS_MOVING)) {
-                var cur = 1
-                var next = moveFrames!!.peek(cur)
-                while (next != null && x == next.x && y == next.y && z == next.z) {
-                    cur++
-                    next = moveFrames!!.peek(cur)
-                }
-                if (next != null && (tag[StandardTags.IS_MOVING_START] == null || tag[StandardTags.IS_MOVING_START].clong > System.currentTimeMillis())) {
-                    // 初始化等待时间
-                    if (tag[StandardTags.IS_MOVING_START] == null) {
-                        tag[StandardTags.IS_MOVING_START] = System.currentTimeMillis() + 250
-                    }
-                    // 调整视角
-                    controllerLookAt(next.x, getEyeLocation().y, next.z, 35f, 40f)
-                    return
-                }
-            }
-            // 正在移动视角
-            if (bionicSight.isLooking) {
-                return
-            }
-            tag.remove(StandardTags.IS_MOVING_START)
-            // 获取下一个移动点
-            val next = moveFrames!!.next()
-            if (next != null) {
-                // 设置移动标签
-                tag[StandardTags.IS_MOVING] = true
-                // 默认会看向移动方向
-                val eyeLocation = clientPosition.toLocation().plus(y = entitySize.height * 0.9)
-                // 设置方向
-                eyeLocation.direction = Vector(next.x, eyeLocation.y, next.z).subtract(eyeLocation.toVector())
-                // 不会看向脚下
-                if (eyeLocation.pitch < 90f) {
-                    next.yaw = EntityPosition.normalizeYaw(eyeLocation.yaw)
-                    next.pitch = EntityPosition.normalizePitch(eyeLocation.pitch)
-                }
-                // 更新位置
-                if (next.yaw.isNaN() || next.pitch.isNaN()) {
-                    teleport(next.x, next.y, next.z)
-                } else {
-                    teleport(next)
-                }
-                // 调试模式下显示路径
-                if (AdyeshachSettings.debug) {
-                    world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
-                }
-            }
-        }
-        // 是否处于活动状态
-        if (deltaMovement.lengthSquared() > 1E-6) {
-            // 获取下一个移动位置
-            val nextPosition = clientPosition.clone().add(deltaMovement.x, deltaMovement.y, deltaMovement.z)
-            // 只有在向下移动的时候才会进行碰撞检测
-            if (deltaMovement.y < 0) {
-                val chunkAccess = ChunkAccess.getChunkAccess(world)
-                val blockHeight = chunkAccess.getBlockTypeAndHeight(nextPosition.x, nextPosition.y, nextPosition.z)
-                if (blockHeight.first.isSolid) {
-                    clientPosition = nextPosition
-                    clientPosition.y = ifloor(nextPosition.y) + blockHeight.second + 0.01
-                    deltaMovement = Vector(0.0, 0.0, 0.0)
-                    return
-                }
-            }
-            // 更新位置
-            clientPosition = nextPosition
-            // 更新速度
-            deltaMovement = Vector(deltaMovement.x * 0.9, (deltaMovement.y - 0.08) * 0.98, deltaMovement.z * 0.9)
-        }
-        // endregion
-    }
-
-    // 同步位置
-    fun syncPosition() {
-        // region syncPosition
-        val updateRotation = (yaw - position.yaw).absoluteValue >= 1 || (pitch - position.pitch).absoluteValue >= 1 || taboolib.common.util.random(0.2)
-        val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-        // 乘坐实体
-        if (hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
-            // 是否需要更新视角
-            if (updateRotation) {
-                operator.updateEntityLook(getVisiblePlayers(), index, entityType.fixYaw(yaw), pitch, true)
-            }
-        } else {
-            // 是否需要更新位置
-            if (clientPosition != position) {
-                // 计算差值
-                val offset = clientPosition.clone().subtract(position)
-                val x = encodePos(offset.x)
-                val y = encodePos(offset.y)
-                val z = encodePos(offset.z)
-                val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
-                if (requireTeleport || clientPositionFixed + TimeUnit.SECONDS.toMillis(20) < System.currentTimeMillis()) {
-                    clientPositionFixed = System.currentTimeMillis()
-                    val toLocation = clientPosition.toLocation().modify(yaw = entityType.fixYaw(clientPosition.yaw))
-                    operator.teleportEntity(getVisiblePlayers(), index, toLocation, !entityPathType.isFly())
-                    position = clientPosition
-                } else {
-                    val updatePosition = offset.lengthSquared() > 1E-6
-                    if (updatePosition) {
-                        // 更新间隔
-                        if (isIgnoredClientPositionUpdateInterval || clientPositionUpdateInterval.hasNext()) {
-                            if (updateRotation) {
-                                operator.updateRelEntityMoveLook(
-                                    getVisiblePlayers(),
-                                    index,
-                                    x.toShort(),
-                                    y.toShort(),
-                                    z.toShort(),
-                                    entityType.fixYaw(yaw),
-                                    pitch,
-                                    !entityPathType.isFly()
-                                )
-                            } else {
-                                operator.updateRelEntityMove(
-                                    getVisiblePlayers(),
-                                    index,
-                                    x.toShort(),
-                                    y.toShort(),
-                                    z.toShort(),
-                                    !entityPathType.isFly()
-                                )
-                            }
-                            position = clientPosition
-                        }
-                    } else {
-                        operator.updateEntityLook(getVisiblePlayers(), index, entityType.fixYaw(yaw), pitch, !entityPathType.isFly())
-                        position = clientPosition
-                    }
-                }
-            }
-        }
-        // endregion
     }
 
     override fun clone(newId: String, location: Location, manager: Manager?): EntityInstance? {
         val json = JsonParser().parse(toJson()).asJsonObject
         json.addProperty("id", newId)
         json.addProperty("uniqueId", UUID.randomUUID().toString().replace("-", ""))
-        val entity = Adyeshach.api().getEntitySerializer().fromJson(json.toString())
-        entity as DefaultEntityInstance
+        val entity = Adyeshach.api().getEntitySerializer().fromJson(json.toString()) as DefaultEntityInstance
         entity.tag.putAll(tag)
         entity.persistentTag.putAll(persistentTag)
-        entity.manager = (manager ?: this.manager)
+        entity.manager = manager ?: this.manager
         entity.position = EntityPosition.fromLocation(location)
         entity.clientPosition = entity.position
         entity.passengers.clear()
-        // 复制观察者
         forViewers { entity.addViewer(it) }
-        // 复制关联单位
         getPassengers().forEachIndexed { i, p ->
             p.clone("${newId}_passenger_$i", location)?.let { entity.addPassenger(it) }
         }
-        // 添加到管理器
         entity.manager?.add(entity)
         return entity
     }
@@ -860,54 +306,189 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         setPersistentTag(StandardTags.DERIVED, id)
     }
 
+    override fun isInVisibleDistance(player: Player): Boolean {
+        return player.location.safeDistanceIgnoreY(getLocation()) < visibleDistance
+    }
+
+    override fun getLocation(): Location = clientPosition.toLocation()
+    override fun getBodyLocation(): Location = clientBodyPosition.toLocation()
+    override fun getEyeLocation(): Location = clientPosition.toLocation().plus(y = entitySize.height)
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 伴生实体可见性（内部方法）
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
+        getCompanions().forEach { (it as DefaultEntityInstance).handleCompanionVisible(viewer, visible) }
+    }
+
+    open fun handleCompanionVisible(viewer: Player, visible: Boolean) {}
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Lifecycle
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun spawn(location: Location) = lifecycleHandler.spawn(location)
+    override fun respawn() = lifecycleHandler.respawn()
+    override fun despawn(destroyPacket: Boolean, removeFromManager: Boolean) = lifecycleHandler.despawn(destroyPacket, removeFromManager)
+    override fun prepareSpawn(viewer: Player, spawn: Runnable) = lifecycleHandler.prepareSpawn(viewer, spawn)
+    override fun prepareDestroy(viewer: Player, destroy: Runnable) = lifecycleHandler.prepareDestroy(viewer, destroy)
+    override fun checkVisible() = visibilityHandler.checkVisible()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Position
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun teleport(entityPosition: EntityPosition) = positionHandler.teleport(entityPosition)
+    override fun teleport(x: Double, y: Double, z: Double) = positionHandler.teleport(x, y, z)
+    override fun teleport(location: Location) = positionHandler.teleport(location)
+    override fun setVelocity(vector: Vector) = positionHandler.setVelocity(vector)
+    override fun setVelocity(x: Double, y: Double, z: Double) = positionHandler.setVelocity(x, y, z)
+    override fun getVelocity() = positionHandler.getVelocity()
+    override fun setHeadRotation(location: Location, forceUpdate: Boolean) = positionHandler.setHeadRotation(location, forceUpdate)
+    override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) = positionHandler.setHeadRotation(yaw, pitch, forceUpdate)
+    override fun refreshPosition() = positionHandler.refreshPosition()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Rideable
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun isVehicle() = passengerHandler.isVehicle()
+    override fun hasVehicle() = passengerHandler.hasVehicle()
+    override fun getVehicle() = passengerHandler.getVehicle()
+    override fun getVehicleCache() = passengerHandler.getVehicleCache()
+    override fun hasPassengers() = passengerHandler.hasPassengers()
+    override fun getPassengers() = passengerHandler.getPassengers()
+    override fun addPassenger(vararg entity: EntityInstance) = passengerHandler.addPassenger(*entity)
+    override fun removePassenger(vararg entity: EntityInstance) = passengerHandler.removePassenger(*entity)
+    override fun removePassenger(vararg id: String) = passengerHandler.removePassenger(*id)
+    override fun clearPassengers() = passengerHandler.clearPassengers()
+    override fun refreshPassenger(viewer: Player) = passengerHandler.refreshPassenger(viewer)
+    override fun refreshPassenger() = passengerHandler.refreshPassenger()
+    override fun verifyPassenger() = passengerHandler.verifyPassenger()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Controllable
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override var isFreeze by controllerHandler::isFreeze
+    override fun getController() = controllerHandler.getController()
+    override fun <T : Controller> getController(controller: String): T? = controllerHandler.getController(controller)
+    override fun <T : Controller> getController(controller: Class<T>): T? = controllerHandler.getController(controller)
+    override fun registerController(controller: Controller) = controllerHandler.registerController(controller)
+    override fun unregisterController(controller: String) = controllerHandler.unregisterController(controller)
+    override fun unregisterController(controller: Controller) = controllerHandler.unregisterController(controller)
+    override fun <T : Controller> unregisterController(controller: Class<T>) = controllerHandler.unregisterController(controller)
+    override fun resetController() = controllerHandler.resetController()
+    override fun controllerLookAt(entity: Entity) = controllerHandler.controllerLookAt(entity)
+    override fun controllerLookAt(entity: Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float) = controllerHandler.controllerLookAt(entity, yMaxRotSpeed, xMaxRotAngle)
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double) = controllerHandler.controllerLookAt(wantedX, wantedY, wantedZ)
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float) = controllerHandler.controllerLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed)
+    override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float) = controllerHandler.controllerLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
+    override fun controllerMoveTo(location: Location) = controllerHandler.controllerMoveTo(location)
+    override fun controllerMoveBy(locations: List<Location>, speed: Double, fixHeight: Boolean) = controllerHandler.controllerMoveBy(locations, speed, fixHeight)
+    override fun controllerStopMove() = controllerHandler.controllerStopMove()
+    override fun random() = controllerHandler.random()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - GenericEntity
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override var ticksFrozenInPowderedSnow by genericEntityHandler::ticksFrozenInPowderedSnow
+    override fun getDisplayName() = genericEntityHandler.getDisplayName()
+    override fun isFired() = genericEntityHandler.isFired()
+    override fun isSneaking() = genericEntityHandler.isSneaking()
+    override fun isSprinting() = genericEntityHandler.isSprinting()
+    override fun isSwimming() = genericEntityHandler.isSwimming()
+    override fun isInvisible() = genericEntityHandler.isInvisible()
+    override fun isGlowing() = genericEntityHandler.isGlowing()
+    override fun isFlyingElytra() = genericEntityHandler.isFlyingElytra()
+    override fun isNoGravity() = genericEntityHandler.isNoGravity()
+    override fun setFired(onFire: Boolean) = genericEntityHandler.setFired(onFire)
+    override fun setSneaking(sneaking: Boolean) = genericEntityHandler.setSneaking(sneaking)
+    override fun setSprinting(sprinting: Boolean) = genericEntityHandler.setSprinting(sprinting)
+    override fun setSwimming(swimming: Boolean) = genericEntityHandler.setSwimming(swimming)
+    override fun setInvisible(invisible: Boolean) = genericEntityHandler.setInvisible(invisible)
+    override fun setGlowing(glowing: Boolean) = genericEntityHandler.setGlowing(glowing)
+    override fun setFlyingElytra(flyingElytra: Boolean) = genericEntityHandler.setFlyingElytra(flyingElytra)
+    override fun setNoGravity(noGravity: Boolean) = genericEntityHandler.setNoGravity(noGravity)
+    override fun setCustomNameVisible(value: Boolean) = genericEntityHandler.setCustomNameVisible(value)
+    override fun isCustomNameVisible() = genericEntityHandler.isCustomNameVisible()
+    override fun setCustomName(value: String) = genericEntityHandler.setCustomName(value)
+    override fun getCustomName() = genericEntityHandler.getCustomName()
+    override fun getCustomNameRaw() = genericEntityHandler.getCustomNameRaw()
+    override fun setPose(pose: BukkitPose) = genericEntityHandler.setPose(pose)
+    override fun getPose() = genericEntityHandler.getPose()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Companionable
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun getHost() = companionHandler.getHost()
+    override fun getRootHost() = companionHandler.getRootHost()
+    override fun setHost(entity: EntityInstance?) = companionHandler.setHost(entity)
+    override fun hasHost() = companionHandler.hasHost()
+    override fun isCompanion() = companionHandler.isCompanion()
+    override fun getCompanions() = companionHandler.getCompanions()
+    override fun getAllCompanions() = companionHandler.getAllCompanions()
+    override fun addCompanion(vararg entity: EntityInstance) = companionHandler.addCompanion(*entity)
+    override fun removeCompanion(vararg entity: EntityInstance) = companionHandler.removeCompanion(*entity)
+    override fun clearCompanions() = companionHandler.clearCompanions()
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - Metaable
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun <T> getMetadata(key: String): T = metaHandler.getMetadata(key)
+    override fun setMetadata(key: String, value: Any) = metaHandler.setMetadata(key, value)
+    override fun getAvailableEntityMeta() = metaHandler.getAvailableEntityMeta()
+    override fun updateEntityMetadata() = metaHandler.updateEntityMetadata()
+    override fun updateEntityMetadata(viewer: Player) = metaHandler.updateEntityMetadata(viewer)
+    override fun generateEntityMetadata(player: Player) = metaHandler.generateEntityMetadata(player)
+    fun getByteMaskKey(index: Int) = metaHandler.getByteMaskKey(index)
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 委托方法 - TagContainer
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun getTags() = tagHandler.getTags()
+    override fun getTag(key: String) = tagHandler.getTag(key)
+    override fun hasTag(key: String) = tagHandler.hasTag(key)
+    override fun setTag(key: String, value: Any?) = tagHandler.setTag(key, value)
+    override fun removeTag(key: String) = tagHandler.removeTag(key)
+    override fun getPersistentTags() = tagHandler.getPersistentTags()
+    override fun getPersistentTag(key: String) = tagHandler.getPersistentTag(key)
+    override fun hasPersistentTag(key: String) = tagHandler.hasPersistentTag(key)
+    override fun setPersistentTag(key: String, value: String?) = tagHandler.setPersistentTag(key, value)
+    override fun removePersistentTag(key: String) = tagHandler.removePersistentTag(key)
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 序列化方法 - EntitySerializable
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun toJson() = serializationHandler.toJson()
+    override fun toYaml(transfer: Function<String, String>) = serializationHandler.toYaml(transfer)
+    override fun toSection(section: ConfigurationSection, transfer: Function<String, String>) = serializationHandler.toSection(section, transfer)
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // 其他方法
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    override fun setCustomMeta(key: String, value: String?) = customMetaHandler.setCustomMeta(key, value)
+    override fun addAttachEntity(id: Int, relativePos: Vector) { attachedEntity[id] = relativePos.clone() }
+    override fun removeAttachEntity(id: Int) { attachedEntity.remove(id) }
+    override fun getAttachEntities(): Map<Int, Vector> = attachedEntity
+
     @Deprecated("请使用 setVelocity(vector)", replaceWith = ReplaceWith("setVelocity(vector)"))
     override fun sendVelocity(vector: Vector) {
         Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityVelocity(getVisiblePlayers(), index, vector)
     }
 
-    override fun refreshPosition() {
-        val location = getLocation()
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
-            getVisiblePlayers(),
-            index,
-            location.modify(yaw = entityType.fixYaw(location.yaw))
-        )
-    }
-
-    override fun getLocation(): Location {
-        return clientPosition.toLocation()
-    }
-
-    override fun getBodyLocation(): Location {
-        return clientBodyPosition.toLocation()
-    }
-
-    override fun getEyeLocation(): Location {
-        return clientPosition.toLocation().plus(y = entitySize.height)
-    }
-
-    /**
-     * 同步伴生实体的可见性（内部方法）
-     * 在宿主实体的 visible 方法中调用，用于递归同步所有伴生实体
-     *
-     * @param viewer 观察者
-     * @param visible 是否可见
-     */
-    open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
-        getCompanions().forEach { companion ->
-            companion as DefaultEntityInstance
-            companion.handleCompanionVisible(viewer, visible)
+    override fun sendAnimation(animation: BukkitAnimation) {
+        if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE && modelEngineName.isNotBlank()) {
+            hurt()
+        } else {
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
         }
-    }
-
-    /**
-     * 处理伴生实体的可见性（内部方法）
-     * 由宿主调用，绕过 isCompanion 检查
-     *
-     * @param viewer 观察者
-     * @param visible 是否可见
-     */
-    open fun handleCompanionVisible(viewer: Player, visible: Boolean) {
-        // 子类实现具体的可见性处理逻辑
     }
 }
