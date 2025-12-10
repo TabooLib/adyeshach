@@ -306,7 +306,7 @@ ink.ptms.adyeshach.core.entity.type.AdyGuardian
 ink.ptms.adyeshach.core.entity.type.AdyHorse
     variant i
         &horse0
-        17 19
+        17 18
         15 -
         14 -
         10 --
