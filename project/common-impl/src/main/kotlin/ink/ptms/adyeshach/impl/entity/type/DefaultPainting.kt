@@ -29,8 +29,14 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
     private var direction = BukkitDirection.NORTH
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
+        // 伴生实体禁止外部直接操作可见性
+        if (isCompanion()) return false
+        return handleVisibleInternal(viewer, visible)
+    }
+
+    override fun handleVisibleInternal(viewer: Player, visible: Boolean): Boolean {
         if (MinecraftVersion.majorLegacy >= 11900) {
-            return super.visible(viewer, visible)
+            return super.handleVisibleInternal(viewer, visible)
         }
         // 低版本使用独立的 Painting 包生成实体
         val api = Adyeshach.api().getMinecraftAPI()
@@ -41,6 +47,8 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
                 // 添加到可见实体索引
                 updateVisibleEntityIndex(viewer, true)
                 api.getEntitySpawner().spawnEntityPainting(viewer, index, normalizeUniqueId, position.toLocation(), direction, painting)
+                // 同步伴生实体可见性
+                syncCompanionVisible(viewer, true)
             }
         } else {
             prepareDestroy(viewer) {
@@ -51,8 +59,14 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
                 api.getEntityOperator().destroyEntity(viewer, index)
                 // 移除客户端对应表
                 unregisterClientEntity(viewer)
+                // 同步伴生实体可见性
+                syncCompanionVisible(viewer, false)
             }
         }
+    }
+
+    override fun handleCompanionVisible(viewer: Player, visible: Boolean) {
+        handleVisibleInternal(viewer, visible)
     }
 
     @Deprecated("1.19 以上不支持")

@@ -37,20 +37,38 @@ interface Viewable {
 
     /**
      * 添加观察者，在公开状态下这个选项无效
+     * 伴生实体无法直接操作观察者
      */
     fun addViewer(viewer: Player) {
+        // 伴生实体禁止直接操作观察者
+        if (this is Companionable && this.isCompanion()) return
         viewPlayers.viewers.add(viewer.name)
         viewPlayers.visible.add(viewer.name)
         visible(viewer, true)
+        // 同步到伴生实体
+        if (this is Companionable) {
+            getCompanions().forEach {
+                it.viewPlayers.viewers.add(viewer.name)
+            }
+        }
     }
 
     /**
      * 移除观察者，在公开状态下这个选项无效
+     * 伴生实体无法直接操作观察者
      */
     fun removeViewer(viewer: Player) {
+        // 伴生实体禁止直接操作观察者
+        if (this is Companionable && this.isCompanion()) return
         viewPlayers.viewers.remove(viewer.name)
         viewPlayers.visible.remove(viewer.name)
         visible(viewer, false)
+        // 同步到伴生实体
+        if (this is Companionable) {
+            getCompanions().forEach {
+                it.viewPlayers.viewers.remove(viewer.name)
+            }
+        }
     }
 
     /**

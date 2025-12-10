@@ -103,5 +103,12 @@ object StandardTags {
     /**
      * 启用载具旋转跟随
      */
-     const val ENABLE_VEHICLE_ROTATION = "ENABLE_VEHICLE_ROTATION"
+    const val ENABLE_VEHICLE_ROTATION = "ENABLE_VEHICLE_ROTATION"
+
+    /**
+     * 伴生实体的宿主 uniqueId
+     * 持有该标签的单位是伴生实体，其可见性由宿主控制
+     */
+    @PersistentTag
+    const val COMPANION_HOST = "COMPANION_HOST"
 }

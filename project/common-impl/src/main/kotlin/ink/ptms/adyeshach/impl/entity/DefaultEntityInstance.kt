@@ -48,7 +48,7 @@ import kotlin.math.absoluteValue
  */
 @Suppress("LeakingThis", "SpellCheckingInspection")
 abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBIE) :
-    DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, InternalEntity {
+    DefaultEntityBase(entityType), EntityInstance, DefaultControllable, DefaultGenericEntity, DefaultRideable, DefaultCompanionable, InternalEntity {
 
     override val x: Double
         get() = clientPosition.x
@@ -183,6 +183,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     /** 骑乘者 */
     @Expose
     var passengers = ConcurrentSkipListSet<String>()
+
+    /** 伴生实体列表（存储 uniqueId） */
+    @Expose
+    var companions = ConcurrentSkipListSet<String>()
+
+    /** 宿主实体缓存（运行时恢复，不持久化） */
+    @Transient
+    var cacheHostEntity: EntityInstance? = null
 
     /** 控制器 */
     @Expose
@@ -463,6 +471,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (removeFromManager) {
             if (manager != null) {
                 isRemoved = true
+                // 销毁所有伴生实体（先处理，避免 manager 置空后无法获取）
+                getCompanions().forEach { it.remove() }
+                // 从宿主的伴生列表中移除自己
+                cacheHostEntity?.let { host ->
+                    host as DefaultEntityInstance
+                    host.companions.remove(uniqueId)
+                }
                 manager!!.remove(this)
                 AdyeshachEntityRemoveEvent(this).call()
                 manager = null
@@ -604,6 +619,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
      * 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
      */
     override fun checkVisible() {
+        // 伴生实体跳过独立的可见性检查（由宿主驱动）
+        if (isCompanion()) return
         // 同步到载具位置
         if (!isDisableVehicleCheckOnTick) {
             val vehicle = cacheVehicleEntity
@@ -867,5 +884,30 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun getEyeLocation(): Location {
         return clientPosition.toLocation().plus(y = entitySize.height)
+    }
+
+    /**
+     * 同步伴生实体的可见性（内部方法）
+     * 在宿主实体的 visible 方法中调用，用于递归同步所有伴生实体
+     *
+     * @param viewer 观察者
+     * @param visible 是否可见
+     */
+    open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
+        getCompanions().forEach { companion ->
+            companion as DefaultEntityInstance
+            companion.handleCompanionVisible(viewer, visible)
+        }
+    }
+
+    /**
+     * 处理伴生实体的可见性（内部方法）
+     * 由宿主调用，绕过 isCompanion 检查
+     *
+     * @param viewer 观察者
+     * @param visible 是否可见
+     */
+    open fun handleCompanionVisible(viewer: Player, visible: Boolean) {
+        // 子类实现具体的可见性处理逻辑
     }
 }

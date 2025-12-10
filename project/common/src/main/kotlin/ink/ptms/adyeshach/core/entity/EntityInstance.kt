@@ -15,7 +15,7 @@ import taboolib.common5.Baffle
  * @author 坏黑
  * @since 2022/6/15 22:57
  */
-interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Viewable, TickService {
+interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Viewable, TickService, Companionable {
 
     /**
      * 实体序号，用于发包
