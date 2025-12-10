@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.manager
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.AdyeshachParallelTask
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
@@ -17,6 +18,7 @@ import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
 import taboolib.common.util.t
+import taboolib.platform.bukkit.Parallel
 import taboolib.platform.util.onlinePlayers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -104,8 +106,8 @@ object DefaultManagerHandler {
         }
     }
 
-    @Awake(LifeCycle.ACTIVE)
-    fun onActive() {
+    @Parallel(id = AdyeshachParallelTask.MANAGER_INIT, dependOn = [AdyeshachParallelTask.GENERATE_ENTITY_CLASS], runOn = LifeCycle.ACTIVE)
+    private fun onActive() {
         // 公共管理器
         DefaultAdyeshachBooster.api.localPublicEntityManager.onEnable()
         // 私有管理器
