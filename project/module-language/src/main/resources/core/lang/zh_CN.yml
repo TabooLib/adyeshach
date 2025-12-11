@@ -12,6 +12,7 @@ error-entity-type-not-supported: '实体类型 "{0}" 不支持当前版本'
 error-cannot-set-visible-after-loaded-for-private-entity: '无法对私有实体设置 "visibleAfterLoaded" 属性'
 error-entity-manager-is-null: '实体缺少单位管理器'
 error-entity-manager-not-match: '实体之间的单位管理器不相同'
+error-circular-companion: '无法创建循环的伴生关系'
 error-entity-type-not-found: '无法找到与 "{0}" 对应的实体类型'
 error-failed-to-load-model: '无法加载 ModelEngine 模型: {0}'
 error-failed-to-create-modeled-entity: '无法创建 ModeledEntity 对象'
@@ -137,6 +138,110 @@ command-find-more-passenger-reset:
         hover: '点击重制骑乘'
       - command: '/adyeshach tp {uuid}'
         hover: '点击传送'
+command-find-more-viewer-info:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach viewer {uuid} info'
+        hover: '点击查看可见性信息'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-show:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} show '
+        hover: '点击显示给玩家...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-hide:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} hide '
+        hover: '点击对玩家隐藏...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-add:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} add '
+        hover: '点击添加观察者...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} remove '
+        hover: '点击移除观察者...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-clear:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach viewer {uuid} clear'
+        hover: '点击清空观察者'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-viewer-respawn:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach viewer {uuid} respawn '
+        hover: '点击重新生成...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-add:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} add '
+        hover: '点击添加伴生实体...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-remove:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} remove '
+        hover: '点击移除伴生实体...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-clear:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} clear'
+        hover: '点击清空伴生实体'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-host:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - suggest: '/adyeshach companion {uuid} host '
+        hover: '点击设置宿主...'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-unhost:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} unhost'
+        hover: '点击解除归属'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
+command-find-more-companion-info:
+  - ==: JSON
+    text: ' &5&l‹ ›&f &8 - [&e[ &l|||&f &e\]] [&6[ &6&l››&f &6\]] &8| &f{type} &7(&f{name}&7) &8&l›&f &a{distance}'
+    args:
+      - command: '/adyeshach companion {uuid} info'
+        hover: '点击查看伴生关系信息'
+      - command: '/adyeshach tp {uuid}'
+        hover: '点击传送'
 
 # END
 
@@ -208,6 +313,32 @@ command-passenger-remove-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7从 &f"{1}"
 command-passenger-reset-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7的乘客列表重置。'
 command-passenger-add-self: ' &5&l‹ ›&f &7不能将自己添加为乘客。'
 
+command-companion-not-found: ' &5&l‹ ›&f &7未找到 &f"{0}" &7。'
+command-companion-add-self: ' &5&l‹ ›&f &7不能将自己添加为伴生实体。'
+command-companion-add-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7添加为 &f"{1}" &7的伴生实体。'
+command-companion-remove-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7从 &f"{1}" &7的伴生实体列表中移除。'
+command-companion-clear-success: ' &5&l‹ ›&f &7已清空 &f"{0}" &7的所有伴生实体 (共 {1} 个)。'
+command-companion-host-self: ' &5&l‹ ›&f &7不能将自己设置为宿主。'
+command-companion-host-multiple: ' &5&l‹ ›&f &7宿主只能指定一个实体。'
+command-companion-host-success: ' &5&l‹ ›&f &7已将 &f"{0}" &7归属给 &f"{1}" &7。'
+command-companion-host-failed: ' &5&l‹ ›&f &7设置宿主失败: &c{0}'
+command-companion-no-host: ' &5&l‹ ›&f &7实体 &f"{0}" &7没有宿主。'
+command-companion-unhost-success: ' &5&l‹ ›&f &7已解除 &f"{0}" &7与 &f"{1}" &7的归属关系。'
+
+command-viewer-player-not-found: ' &5&l‹ ›&f &7玩家 &f"{0}" &7不在线。'
+command-viewer-is-companion: ' &5&l‹ ›&f &7实体 &f"{0}" &7是伴生实体，无法直接操作可见性。'
+command-viewer-show-result: ' &5&l‹ ›&f &7对你显示 &f"{0}" &7: {1}'
+command-viewer-show-result-player: ' &5&l‹ ›&f &7对 &f"{1}" &7显示 &f"{0}" &7: {2}'
+command-viewer-hide-result: ' &5&l‹ ›&f &7对你隐藏 &f"{0}" &7: {1}'
+command-viewer-hide-result-player: ' &5&l‹ ›&f &7对 &f"{1}" &7隐藏 &f"{0}" &7: {2}'
+command-viewer-add-result: ' &5&l‹ ›&f &7已将你添加为 &f"{0}" &7的观察者。'
+command-viewer-add-result-player: ' &5&l‹ ›&f &7已将 &f"{1}" &7添加为 &f"{0}" &7的观察者。'
+command-viewer-remove-result: ' &5&l‹ ›&f &7已将你从 &f"{0}" &7的观察者列表移除。'
+command-viewer-remove-result-player: ' &5&l‹ ›&f &7已将 &f"{1}" &7从 &f"{0}" &7的观察者列表移除。'
+command-viewer-clear-result: ' &5&l‹ ›&f &7已清空 &f"{0}" &7的所有观察者 (共 {1} 个)。'
+command-viewer-respawn-result: ' &5&l‹ ›&f &7已对你重新生成 &f"{0}" &7。'
+command-viewer-respawn-result-player: ' &5&l‹ ›&f &7已对 &f"{1}" &7重新生成 &f"{0}" &7。'
+
 command-script-error:
   - ' &5&l‹ ›&f &7在运行脚本时发生了错误:'
   - ' &5&l‹ ›&f &7{0}'
@@ -236,6 +367,8 @@ editor-tags: '&f标签 &7({0})'
 editor-link: '&f关联 &7({0})'
 editor-link-vehicle: '&f这个单位的载具:'
 editor-link-passengers: '&f这个单位的乘客:'
+editor-link-host: '&f这个单位的宿主:'
+editor-link-companions: '&f这个单位的伴生实体:'
 editor-entity-is-invalid: '&c这个实体类型暂不支持, 无法编辑。'
 editor-entity-is-testing: '&c这个实体类型处于测试阶段，可能会出现问题。'
 editor-entity-is-derived: '&c这是一个由 "{0}" 生成的衍生单位, 无法编辑。'

@@ -1,4 +1,4 @@
-package ink.ptms.adyeshach.impl.entity
+package ink.ptms.adyeshach.impl.entity.handler
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
@@ -7,17 +7,16 @@ import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleLeaveEvent
 import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.entity.Player
 
 /**
  * Adyeshach
- * ink.ptms.adyeshach.impl.entity.DefaultRideable
+ * ink.ptms.adyeshach.impl.entity.handler.PassengerHandler
  *
- * @author 坏黑
- * @since 2022/6/20 00:32
+ * 负责实体的骑乘相关逻辑
  */
-@Suppress("DuplicatedCode")
-interface DefaultRideable : Rideable {
+open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideable {
 
     override fun isVehicle(): Boolean {
         return getPassengers().isNotEmpty()
@@ -28,49 +27,45 @@ interface DefaultRideable : Rideable {
     }
 
     override fun getVehicle(): EntityInstance? {
-        this as EntityInstance
-        return manager?.getEntity {
+        return self.manager?.getEntity {
             it as DefaultEntityInstance
-            it.passengers.contains(uniqueId)
+            it.passengers.contains(self.uniqueId)
         }
     }
 
     override fun getVehicleCache(): EntityInstance? {
-        this as DefaultEntityInstance
-        return cacheVehicleEntity
+        return self.cacheVehicleEntity
     }
 
     override fun hasPassengers(): Boolean {
-        this as DefaultEntityInstance
-        return passengers.isNotEmpty()
+        return self.passengers.isNotEmpty()
     }
 
     override fun getPassengers(): List<EntityInstance> {
-        this as DefaultEntityInstance
-        return passengers.mapNotNull { manager?.getEntityByUniqueId(it) }
+        return self.passengers.mapNotNull { self.manager?.getEntityByUniqueId(it) }
     }
 
     override fun addPassenger(vararg entity: EntityInstance) {
-        this as DefaultEntityInstance
         // 单位管理器必须有效
-        if (manager == null || entity.any { it.manager == null }) {
+        if (self.manager == null || entity.any { it.manager == null }) {
             errorBy("error-entity-manager-is-null")
         }
         // 单位管理器必须相同
-        if (entity.any { it.manager != manager }) {
+        if (entity.any { it.manager != self.manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.filter { it != this }.forEach { target ->
+        
+        entity.filter { it != self }.forEach { target ->
             target as DefaultEntityInstance
             // 避免循环骑乘
-            target.removePassenger(this)
+            target.removePassenger(self)
             // 从当前载具中离开
             target.getVehicle()?.removePassenger(target)
             // 事件
-            if (AdyeshachEntityVehicleEnterEvent(target, this).call()) {
-                passengers.add(target.uniqueId)
+            if (AdyeshachEntityVehicleEnterEvent(target, self).call()) {
+                self.passengers.add(target.uniqueId)
                 // 标记状态
-                target.cacheVehicleEntity = this
+                target.cacheVehicleEntity = self
                 target.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
             }
         }
@@ -78,27 +73,27 @@ interface DefaultRideable : Rideable {
     }
 
     override fun removePassenger(vararg entity: EntityInstance) {
-        this as DefaultEntityInstance
         // 单位管理器必须有效
-        if (manager == null || entity.any { it.manager == null }) {
+        if (self.manager == null || entity.any { it.manager == null }) {
             errorBy("error-entity-manager-is-null")
         }
         // 单位管理器必须相同
-        if (entity.any { it.manager != manager }) {
+        if (entity.any { it.manager != self.manager }) {
             errorBy("error-entity-manager-not-match")
         }
-        entity.filter { it != this }.forEach { target ->
+        
+        entity.filter { it != self }.forEach { target ->
             target as DefaultEntityInstance
             // 进行二次判断是否为乘客
-            if (passengers.contains(target.uniqueId)) {
+            if (self.passengers.contains(target.uniqueId)) {
                 // 事件
-                if (AdyeshachEntityVehicleLeaveEvent(target, this).call()) {
-                    passengers.remove(target.uniqueId)
+                if (AdyeshachEntityVehicleLeaveEvent(target, self).call()) {
+                    self.passengers.remove(target.uniqueId)
                     // 移除状态
                     target.cacheVehicleEntity = null
                     target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
                     // 校准位置
-                    manager?.getEntityByUniqueId(target.uniqueId)?.refreshPosition()
+                    self.manager?.getEntityByUniqueId(target.uniqueId)?.refreshPosition()
                 }
             }
         }
@@ -106,33 +101,32 @@ interface DefaultRideable : Rideable {
     }
 
     override fun removePassenger(vararg id: String) {
-        this as DefaultEntityInstance
         removePassenger(*getPassengers().filter { it.id in id }.toTypedArray())
     }
 
     override fun clearPassengers() {
-        this as DefaultEntityInstance
         removePassenger(*getPassengers().toTypedArray())
     }
 
     override fun refreshPassenger(viewer: Player) {
-        this as DefaultEntityInstance
         // 刷新自己
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().updatePassengers(viewer, index, *getPassengers().map { e -> e.index }.toIntArray())
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updatePassengers(
+            viewer, 
+            self.index, 
+            *getPassengers().map { e -> e.index }.toIntArray()
+        )
         // 刷新坐骑
         getVehicle()?.refreshPassenger(viewer)
     }
 
     override fun refreshPassenger() {
-        this as DefaultEntityInstance
-        forViewers { refreshPassenger(it) }
+        self.forViewers { refreshPassenger(it) }
     }
 
     override fun verifyPassenger() {
-        this as DefaultEntityInstance
         val validPassengers = getPassengers()
-        passengers.clear()
-        passengers += validPassengers.map { it.uniqueId }
-        cacheVehicleEntity = getVehicle()
+        self.passengers.clear()
+        self.passengers += validPassengers.map { it.uniqueId }
+        self.cacheVehicleEntity = getVehicle()
     }
 }

@@ -41,7 +41,7 @@ internal interface DefaultModelEngine : ModelEngine {
         if (isModelEngineHooked && modelEngineName.isNotBlank() && modelEngineUniqueId != null) {
             this as DefaultEntityInstance
             // 如果没有其他观察者，直接销毁模型而不是隐藏
-            if (!viewPlayers.hasVisiblePlayer()) {
+            if (!viewPlayers.hasVisiblePlayer() && modelEngineOptions?.isDestroyWhenInvisible == true) {
                 destroyModelEngine()
             } else {
                 getDummy()?.setForceViewing(viewer, false)

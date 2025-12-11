@@ -123,21 +123,38 @@ class PageMain(editor: EditPanel) : Page(editor) {
 
     /** 关联实体数量 */
     fun linkedCount(): Int {
-        return entity.getPassengers().size + if (entity.getVehicle() != null) 1 else 0
+        var count = entity.getPassengers().size + entity.getCompanions().size
+        if (entity.getVehicle() != null) count++
+        if (entity.getHost() != null) count++
+        return count
     }
 
     /** 关联实体描述 */
     fun hoverLinked(): String {
         val list = arrayListOf<String>()
+        // 载具
         val vehicle = entity.getVehicle()
         if (vehicle != null) {
             list += player.lang("link-vehicle")
             list += "&f - &7${vehicle.id} &8(${vehicle.entityType})"
         }
+        // 乘客
         val passengers = entity.getPassengers()
         if (passengers.isNotEmpty()) {
             list += player.lang("link-passengers")
             list += passengers.map { "&f - &7${it.id} &8(${it.entityType})" }
+        }
+        // 宿主
+        val host = entity.getHost()
+        if (host != null) {
+            list += player.lang("link-host")
+            list += "&f - &7${host.id} &8(${host.entityType})"
+        }
+        // 伴生实体
+        val companions = entity.getCompanions()
+        if (companions.isNotEmpty()) {
+            list += player.lang("link-companions")
+            list += companions.map { "&f - &7${it.id} &8(${it.entityType})" }
         }
         return list.colored().joinToString("\n")
     }

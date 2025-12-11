@@ -51,6 +51,12 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
     }
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
+        // 伴生实体禁止外部直接操作可见性
+        if (isCompanion()) return false
+        return handleVisibleInternal(viewer, visible)
+    }
+
+    override fun handleVisibleInternal(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             prepareSpawn(viewer) {
                 viewPlayers.visible += viewer.name
@@ -63,6 +69,8 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
                 // 修正向量
                 setNoGravity(true)
                 sendVelocity(Vector(0, 0, 0))
+                // 同步伴生实体可见性
+                syncCompanionVisible(viewer, true)
             }
         } else {
             prepareDestroy(viewer) {
@@ -73,8 +81,14 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
                 // 移除客户端对应表
                 unregisterClientEntity(viewer)
+                // 同步伴生实体可见性
+                syncCompanionVisible(viewer, false)
             }
         }
+    }
+
+    override fun handleCompanionVisible(viewer: Player, visible: Boolean) {
+        handleVisibleInternal(viewer, visible)
     }
 
     override fun setCustomMeta(key: String, value: String?): Boolean {

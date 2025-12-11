@@ -58,6 +58,12 @@ object Command {
     @CommandBody
     val passenger = passengerSubCommand
 
+    @CommandBody
+    val companion = companionSubCommand
+
+    @CommandBody
+    val viewer = viewerSubCommand
+
     @CommandBody(aliases = ["copy"])
     val clone = cloneSubCommand
 

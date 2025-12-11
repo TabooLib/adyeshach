@@ -10,6 +10,8 @@ import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinVisualTeamEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.util.resettableLazy
+import taboolib.common5.eqic
 import taboolib.platform.util.PlayerSessionMap
 import java.util.concurrent.ConcurrentHashMap
 
@@ -27,11 +29,15 @@ object VisualTeam {
 
     val playerTeams = PlayerSessionMap<PlayerTeam>()
 
+    val isDisabled by resettableLazy {
+        AdyeshachSettings.conf.getString("Settings.team-id", "DISABLED")!!.trim().eqic("DISABLED")
+    }
+
     /**
      * 更新单位的队伍信息
      */
     fun updateTeam(entity: EntityInstance) {
-        if (AdyeshachSettings.conf.getString("Settings.team-id", "DISABLED").toString().equals("DISABLED", true)) {
+        if (isDisabled) {
             return
         }
         entity.forViewers { p ->
@@ -46,6 +52,9 @@ object VisualTeam {
 
     @SubscribeEvent
     private fun onVisible(e: AdyeshachEntityVisibleEvent) {
+        if (isDisabled) {
+            return
+        }
         if (e.visible) {
             val playerTeam = playerTeams.getOrCreate(e.viewer) { PlayerTeam(e.viewer) }!!
             if (e.entity.needVisualTeam()) {
