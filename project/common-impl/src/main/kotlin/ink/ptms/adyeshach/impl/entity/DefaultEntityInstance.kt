@@ -61,14 +61,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // ═══════════════════════════════════════════════════════════════════════════════
 
     override val index: Int = Indexs.nextIndex()
-    override val viewPlayers = DefaultViewPlayers(this)
+    override val viewPlayers = EntityHandlerFactory.createViewPlayers(this)
     override val entitySize = Adyeshach.api().getEntityTypeRegistry().getEntitySize(entityType)
     override val entityPathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
     override var isRemoved = false
     @Expose override var isNitwit = false
     @Expose override var moveSpeed = 0.2
-    override var brain: Brain = SimpleBrain(this)
+    override var brain: Brain = EntityHandlerFactory.createBrain(this)
 
     override var useClientEntityMap = true
     override var isRotationFixOnSpawn = true
@@ -160,19 +160,19 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // 处理器
     // ═══════════════════════════════════════════════════════════════════════════════
 
-    val movementHandler = MovementHandler(this)
-    val visibilityHandler = VisibilityHandler(this)
-    val passengerHandler = PassengerHandler(this)
-    val controllerHandler = ControllerHandler(this)
-    val positionHandler = PositionHandler(this)
-    val lifecycleHandler = LifecycleHandler(this)
-    val customMetaHandler = CustomMetaHandler(this)
-    val genericEntityHandler = GenericEntityHandler(this)
-    val companionHandler = CompanionHandler(this)
-    val metaHandler = MetaHandler(this)
-    val tagHandler = TagHandler(this)
-    val serializationHandler = SerializationHandler(this)
-    var bionicSight = BionicSight(this)
+    val movementHandler = EntityHandlerFactory.createMovementHandler(this)
+    val visibilityHandler = EntityHandlerFactory.createVisibilityHandler(this)
+    val passengerHandler = EntityHandlerFactory.createPassengerHandler(this)
+    val controllerHandler = EntityHandlerFactory.createControllerHandler(this)
+    val positionHandler = EntityHandlerFactory.createPositionHandler(this)
+    val lifecycleHandler = EntityHandlerFactory.createLifecycleHandler(this)
+    val customMetaHandler = EntityHandlerFactory.createCustomMetaHandler(this)
+    val genericEntityHandler = EntityHandlerFactory.createGenericEntityHandler(this)
+    val companionHandler = EntityHandlerFactory.createCompanionHandler(this)
+    val metaHandler = EntityHandlerFactory.createMetaHandler(this)
+    val tagHandler = EntityHandlerFactory.createTagHandler(this)
+    val serializationHandler = EntityHandlerFactory.createSerializationHandler(this)
+    var bionicSight = EntityHandlerFactory.createBionicSight(this)
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // 位置状态

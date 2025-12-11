@@ -120,7 +120,7 @@ object DefaultManagerHandler {
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
             // 私有管理器
             onlinePlayers.forEach { player ->
-                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap.get(player)?.checkVisible()
+                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.checkVisible()
             }
         }
         // Tick
