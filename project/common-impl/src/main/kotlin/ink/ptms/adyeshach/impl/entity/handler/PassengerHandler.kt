@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
  *
  * 负责实体的骑乘相关逻辑
  */
-class PassengerHandler(private val self: DefaultEntityInstance) : Rideable {
+open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideable {
 
     override fun isVehicle(): Boolean {
         return getPassengers().isNotEmpty()

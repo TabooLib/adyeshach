@@ -14,13 +14,13 @@ import org.bukkit.entity.Player
  *
  * 负责实体的可见性检查和处理
  */
-class VisibilityHandler(private val self: DefaultEntityInstance) {
+open class VisibilityHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 检查实体可见性
      * 处理玩家可见性检查的主入口
      */
-    fun checkVisible() {
+    open fun checkVisible() {
         // 伴生实体跳过独立的可见性检查（由宿主驱动）
         if (self.isCompanion()) return
         // 同步到载具位置
@@ -32,7 +32,7 @@ class VisibilityHandler(private val self: DefaultEntityInstance) {
     /**
      * 同步到载具位置
      */
-    private fun syncVehiclePosition() {
+    protected open fun syncVehiclePosition() {
         if (self.isDisableVehicleCheckOnTick) {
             return
         }
@@ -49,7 +49,7 @@ class VisibilityHandler(private val self: DefaultEntityInstance) {
     /**
      * 同步可见状态
      */
-    private fun syncVisibleState() {
+    protected open fun syncVisibleState() {
         val entityManager = self.manager
         if (entityManager is PlayerManager) {
             handleVisible(entityManager.owner)
@@ -60,12 +60,12 @@ class VisibilityHandler(private val self: DefaultEntityInstance) {
 
     /**
      * 处理单个玩家的可见性
-     * 
+     *
      * 大量用户反馈的 NPC 概率性不可见问题，根本原因在于这个逻辑
      * 尝试性修复 - 2023/12/29: 玩家在可见范围内呆上一个检查周期后才会显示实体，并缩短检查周期 (5s -> 2s)
      * 尝试性修复 - 2024/02/27: 基于原版 PlayerChunkMap 的区块可见性决定实体可见性
      */
-    private fun handleVisible(player: Player) {
+    protected open fun handleVisible(player: Player) {
         val viewPlayers = self.viewPlayers
         // 是观察者
         if (player.name !in viewPlayers.viewers) {
@@ -88,7 +88,7 @@ class VisibilityHandler(private val self: DefaultEntityInstance) {
     /**
      * 检查区块是否对玩家可见
      */
-    private fun isChunkVisible(player: Player): Boolean {
+    protected open fun isChunkVisible(player: Player): Boolean {
         return Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, self.chunkX, self.chunkZ)
     }
 }

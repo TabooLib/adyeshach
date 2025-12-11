@@ -22,13 +22,13 @@ import kotlin.math.absoluteValue
  *
  * 负责实体的移动处理和位置同步
  */
-class MovementHandler(private val self: DefaultEntityInstance) {
+open class MovementHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 处理移动逻辑
      * 包括路径行走和物理模拟
      */
-    fun handleMove() {
+    open fun handleMove() {
         // 乘坐实体 || 冻结
         if (self.tag.containsKey(StandardTags.IS_IN_VEHICLE) || self.tag.containsKey(StandardTags.IS_FROZEN)) {
             self.deltaMovement = Vector(0.0, 0.0, 0.0)
@@ -45,7 +45,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 处理路径行走
      */
-    private fun handlePathWalking() {
+    protected open fun handlePathWalking() {
         val moveFrames = self.moveFrames ?: return
         
         // 是否已抵达目的地
@@ -105,7 +105,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
      * 处理移动开始阶段（视角调整）
      * @return 是否可以开始移动
      */
-    private fun handleMovementStart(moveFrames: InterpolatedLocation): Boolean {
+    protected open fun handleMovementStart(moveFrames: InterpolatedLocation): Boolean {
         var cur = 1
         var next = moveFrames.peek(cur)
         while (next != null && self.x == next.x && self.y == next.y && self.z == next.z) {
@@ -130,7 +130,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 处理物理模拟（重力、碰撞等）
      */
-    private fun handlePhysics() {
+    protected open fun handlePhysics() {
         val deltaMovement = self.deltaMovement
         // 是否处于活动状态
         if (deltaMovement.lengthSquared() <= 1E-6) {
@@ -164,7 +164,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 同步位置到客户端
      */
-    fun syncPosition() {
+    open fun syncPosition() {
         val updateRotation = shouldUpdateRotation()
         // 乘坐实体
         if (self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
@@ -177,14 +177,14 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 判断是否需要更新视角
      */
-    private fun shouldUpdateRotation(): Boolean {
+    protected open fun shouldUpdateRotation(): Boolean {
         return (self.yaw - self.position.yaw).absoluteValue >= 1 || (self.pitch - self.position.pitch).absoluteValue >= 1 || random(0.2)
     }
 
     /**
      * 同步载具中实体的视角
      */
-    private fun syncVehicleRotation(updateRotation: Boolean) {
+    protected open fun syncVehicleRotation(updateRotation: Boolean) {
         if (updateRotation) {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
                 player = self.getVisiblePlayers(),
@@ -199,7 +199,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 同步自由移动实体的位置
      */
-    private fun syncFreeMovement(updateRotation: Boolean) {
+    protected open fun syncFreeMovement(updateRotation: Boolean) {
         // 是否需要更新位置
         if (self.clientPosition == self.position) {
             return
@@ -223,7 +223,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 通过传送同步位置
      */
-    private fun syncByTeleport() {
+    protected open fun syncByTeleport() {
         self.clientPositionFixed = System.currentTimeMillis()
         val toLocation = self.clientPosition.toLocation().apply {
             yaw = self.entityType.fixYaw(self.clientPosition.yaw)
@@ -240,7 +240,7 @@ class MovementHandler(private val self: DefaultEntityInstance) {
     /**
      * 通过相对移动同步位置
      */
-    private fun syncByRelativeMove(
+    protected open fun syncByRelativeMove(
         offset: EntityPosition,
         x: Long,
         y: Long,

@@ -11,12 +11,12 @@ import java.util.function.Function
  *
  * 负责实体的序列化
  */
-class SerializationHandler(private val self: DefaultEntityInstance) {
+open class SerializationHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 转换为 Json 字符串
      */
-    fun toJson(): String {
+    open fun toJson(): String {
         return Adyeshach.api().getEntitySerializer().toJson(self)
     }
 
@@ -25,7 +25,7 @@ class SerializationHandler(private val self: DefaultEntityInstance) {
      *
      * @param transfer 节点名称转换函数
      */
-    fun toYaml(transfer: Function<String, String> = Function { it }): ConfigurationSection {
+    open fun toYaml(transfer: Function<String, String> = Function { it }): ConfigurationSection {
         return Adyeshach.api().getEntitySerializer().toYaml(self, transfer)
     }
 
@@ -34,7 +34,7 @@ class SerializationHandler(private val self: DefaultEntityInstance) {
      *
      * @param transfer 节点名称转换函数
      */
-    fun toSection(section: ConfigurationSection, transfer: Function<String, String> = Function { it }) {
+    open fun toSection(section: ConfigurationSection, transfer: Function<String, String> = Function { it }) {
         Adyeshach.api().getEntitySerializer().toSection(self, section, transfer)
     }
 }

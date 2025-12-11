@@ -10,7 +10,7 @@ import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
  *
  * 负责实体标签的管理（临时标签和持久化标签）
  */
-class TagHandler(private val self: DefaultEntityInstance) {
+open class TagHandler(protected val self: DefaultEntityInstance) {
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // 临时标签
@@ -19,28 +19,28 @@ class TagHandler(private val self: DefaultEntityInstance) {
     /**
      * 获取所有标签（临时 + 持久化）
      */
-    fun getTags(): Set<Map.Entry<String, Any>> {
+    open fun getTags(): Set<Map.Entry<String, Any>> {
         return collectTagMap().entries
     }
 
     /**
      * 获取标签
      */
-    fun getTag(key: String): Any? {
+    open fun getTag(key: String): Any? {
         return collectTagMap()[key]
     }
 
     /**
      * 是否持有标签
      */
-    fun hasTag(key: String): Boolean {
+    open fun hasTag(key: String): Boolean {
         return collectTagMap().containsKey(key)
     }
 
     /**
      * 设置标签
      */
-    fun setTag(key: String, value: Any?) {
+    open fun setTag(key: String, value: Any?) {
         val currentValue = self.tag[key]
         if (currentValue == value) {
             return
@@ -58,7 +58,7 @@ class TagHandler(private val self: DefaultEntityInstance) {
     /**
      * 移除标签
      */
-    fun removeTag(key: String) {
+    open fun removeTag(key: String) {
         setTag(key, null)
     }
 
@@ -69,28 +69,28 @@ class TagHandler(private val self: DefaultEntityInstance) {
     /**
      * 获取所有持久化标签
      */
-    fun getPersistentTags(): Set<Map.Entry<String, String>> {
+    open fun getPersistentTags(): Set<Map.Entry<String, String>> {
         return self.persistentTag.entries
     }
 
     /**
      * 获取持久化标签
      */
-    fun getPersistentTag(key: String): String? {
+    open fun getPersistentTag(key: String): String? {
         return self.persistentTag[key]
     }
 
     /**
      * 是否持有持久化标签
      */
-    fun hasPersistentTag(key: String): Boolean {
+    open fun hasPersistentTag(key: String): Boolean {
         return self.persistentTag.containsKey(key)
     }
 
     /**
      * 设置持久化标签
      */
-    fun setPersistentTag(key: String, value: String?) {
+    open fun setPersistentTag(key: String, value: String?) {
         val currentValue = self.persistentTag[key]
         if (currentValue == value) {
             return
@@ -108,7 +108,7 @@ class TagHandler(private val self: DefaultEntityInstance) {
     /**
      * 移除持久化标签
      */
-    fun removePersistentTag(key: String) {
+    open fun removePersistentTag(key: String) {
         setPersistentTag(key, null)
     }
 
@@ -119,7 +119,7 @@ class TagHandler(private val self: DefaultEntityInstance) {
     /**
      * 整理实体标签（合并临时标签和持久化标签）
      */
-    private fun collectTagMap(): Map<String, Any> {
+    protected open fun collectTagMap(): Map<String, Any> {
         val tags = HashMap<String, Any>(self.tag)
         tags.putAll(self.persistentTag)
         return tags

@@ -20,13 +20,13 @@ import taboolib.common.platform.function.submit
  * @author 坏黑
  * @since 2022/6/19
  */
-class LifecycleHandler(private val self: DefaultEntityInstance) {
+open class LifecycleHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 准备生成实体（对单个玩家）
      * @return 是否成功准备生成
      */
-    fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
+    open fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
         if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, true).call()) {
             // 使用事件系统控制实体显示
             if (DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)) {
@@ -52,7 +52,7 @@ class LifecycleHandler(private val self: DefaultEntityInstance) {
      * 准备销毁实体（对单个玩家）
      * @return 是否成功准备销毁
      */
-    fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
+    open fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
         if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, false).call()) {
             // 使用事件系统控制实体销毁
             if (DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)) {
@@ -67,7 +67,7 @@ class LifecycleHandler(private val self: DefaultEntityInstance) {
     /**
      * 生成实体
      */
-    fun spawn(location: Location) {
+    open fun spawn(location: Location) {
         self.position = EntityPosition.fromLocation(location)
         self.clientPosition = self.position
         self.forViewers { self.visible(it, true) }
@@ -78,7 +78,7 @@ class LifecycleHandler(private val self: DefaultEntityInstance) {
      * 重新生成实体
      * @throws IllegalStateException 如果实体已被移除
      */
-    fun respawn() {
+    open fun respawn() {
         if (self.isRemoved) {
             error("Entity has been removed")
         }
@@ -90,7 +90,7 @@ class LifecycleHandler(private val self: DefaultEntityInstance) {
      * @param destroyPacket 是否发送销毁数据包
      * @param removeFromManager 是否从管理器中移除
      */
-    fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false) {
+    open fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false) {
         if (destroyPacket) {
             self.forViewers { self.visible(it, false) }
             AdyeshachEntityDestroyEvent(self).call()

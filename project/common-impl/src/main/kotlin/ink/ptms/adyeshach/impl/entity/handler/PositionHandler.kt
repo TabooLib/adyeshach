@@ -18,26 +18,26 @@ import org.bukkit.util.Vector
  *
  * 负责实体的位置和视角管理
  */
-class PositionHandler(private val self: DefaultEntityInstance) {
+open class PositionHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 传送实体到指定位置
      */
-    fun teleport(entityPosition: EntityPosition) {
+    open fun teleport(entityPosition: EntityPosition) {
         teleport(entityPosition.toLocation())
     }
 
     /**
      * 传送实体到指定坐标
      */
-    fun teleport(x: Double, y: Double, z: Double) {
+    open fun teleport(x: Double, y: Double, z: Double) {
         teleport(self.clientPosition.toLocation().modify(x, y, z))
     }
 
     /**
      * 传送实体到指定位置
      */
-    fun teleport(location: Location) {
+    open fun teleport(location: Location) {
         // 异常角度警告
         if (location.yaw.isNaN() || location.pitch.isNaN()) {
             IllegalStateException("Invalid head rotation (yaw=${location.yaw}, pitch=${location.pitch})").printStackTrace()
@@ -97,7 +97,7 @@ class PositionHandler(private val self: DefaultEntityInstance) {
     /**
      * 设置实体动量
      */
-    fun setVelocity(vector: Vector) {
+    open fun setVelocity(vector: Vector) {
         val eventBus = DefaultAdyeshachAPI.localEventBus
         if (eventBus.callVelocity(self, vector)) {
             self.deltaMovement = vector.clone()
@@ -107,21 +107,21 @@ class PositionHandler(private val self: DefaultEntityInstance) {
     /**
      * 设置实体动量
      */
-    fun setVelocity(x: Double, y: Double, z: Double) {
+    open fun setVelocity(x: Double, y: Double, z: Double) {
         setVelocity(Vector(x, y, z))
     }
 
     /**
      * 获取实体动量
      */
-    fun getVelocity(): Vector {
+    open fun getVelocity(): Vector {
         return self.deltaMovement.clone()
     }
 
     /**
      * 设置实体视角（看向某个位置）
      */
-    fun setHeadRotation(location: Location, forceUpdate: Boolean = false) {
+    open fun setHeadRotation(location: Location, forceUpdate: Boolean = false) {
         val size = Adyeshach.api().getEntityTypeRegistry().getEntitySize(self.entityType)
         self.clientPosition.toLocation().add(0.0, size.height * 0.9, 0.0).also { entityLocation ->
             entityLocation.direction = location.clone().subtract(entityLocation).toVector()
@@ -132,7 +132,7 @@ class PositionHandler(private val self: DefaultEntityInstance) {
     /**
      * 设置实体视角（直接指定角度）
      */
-    fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false) {
+    open fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false) {
         if (AdyeshachEntityHeadRotationEvent(self, yaw, pitch, forceUpdate).call()) {
             // 强制更新
             if (forceUpdate) {
@@ -156,7 +156,7 @@ class PositionHandler(private val self: DefaultEntityInstance) {
     /**
      * 刷新实体位置（强制同步到客户端）
      */
-    fun refreshPosition() {
+    open fun refreshPosition() {
         val location = self.getLocation()
         Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
             player = self.getVisiblePlayers(),

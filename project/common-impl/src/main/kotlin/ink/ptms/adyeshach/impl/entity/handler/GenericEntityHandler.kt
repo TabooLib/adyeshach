@@ -16,13 +16,13 @@ import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
  * @author 坏黑
  * @since 2022/6/19
  */
-class GenericEntityHandler(private val self: DefaultEntityInstance) {
+open class GenericEntityHandler(protected val self: DefaultEntityInstance) {
 
-    var ticksFrozenInPowderedSnow: Int
+    open var ticksFrozenInPowderedSnow: Int
         get() = self.getMetadata("ticksFrozenInPowderedSnow")
         set(value) { self.setMetadata("ticksFrozenInPowderedSnow", value) }
 
-    fun getDisplayName(): String {
+    open fun getDisplayName(): String {
         return when (self) {
             is AdyHuman -> self.getName()
             is AdyTextDisplay -> self.getText().toPlainText()
@@ -30,31 +30,31 @@ class GenericEntityHandler(private val self: DefaultEntityInstance) {
         }
     }
 
-    fun isFired(): Boolean = self.getMetadata("onFire")
-    fun isSneaking(): Boolean = self.getMetadata("isCrouched")
-    fun isSprinting(): Boolean = self.getMetadata("isSprinting")
-    fun isSwimming(): Boolean = self.getMetadata("isSwimming")
-    fun isInvisible(): Boolean = self.getMetadata("isInvisible")
-    fun isGlowing(): Boolean = self.getMetadata("isGlowing")
-    fun isFlyingElytra(): Boolean = self.getMetadata("isFlyingElytra")
-    fun isNoGravity(): Boolean = self.getMetadata("noGravity")
+    open fun isFired(): Boolean = self.getMetadata("onFire")
+    open fun isSneaking(): Boolean = self.getMetadata("isCrouched")
+    open fun isSprinting(): Boolean = self.getMetadata("isSprinting")
+    open fun isSwimming(): Boolean = self.getMetadata("isSwimming")
+    open fun isInvisible(): Boolean = self.getMetadata("isInvisible")
+    open fun isGlowing(): Boolean = self.getMetadata("isGlowing")
+    open fun isFlyingElytra(): Boolean = self.getMetadata("isFlyingElytra")
+    open fun isNoGravity(): Boolean = self.getMetadata("noGravity")
 
-    fun setFired(onFire: Boolean) { self.setMetadata("onFire", onFire) }
-    fun setSneaking(sneaking: Boolean) { self.setMetadata("isCrouched", sneaking) }
-    fun setSprinting(sprinting: Boolean) { self.setMetadata("isSprinting", sprinting) }
-    fun setSwimming(swimming: Boolean) { self.setMetadata("isSwimming", swimming) }
-    fun setInvisible(invisible: Boolean) { self.setMetadata("isInvisible", invisible) }
-    fun setGlowing(glowing: Boolean) { self.setMetadata("isGlowing", glowing) }
-    fun setFlyingElytra(flyingElytra: Boolean) { self.setMetadata("isFlyingElytra", flyingElytra) }
-    fun setNoGravity(noGravity: Boolean) { self.setMetadata("noGravity", noGravity) }
+    open fun setFired(onFire: Boolean) { self.setMetadata("onFire", onFire) }
+    open fun setSneaking(sneaking: Boolean) { self.setMetadata("isCrouched", sneaking) }
+    open fun setSprinting(sprinting: Boolean) { self.setMetadata("isSprinting", sprinting) }
+    open fun setSwimming(swimming: Boolean) { self.setMetadata("isSwimming", swimming) }
+    open fun setInvisible(invisible: Boolean) { self.setMetadata("isInvisible", invisible) }
+    open fun setGlowing(glowing: Boolean) { self.setMetadata("isGlowing", glowing) }
+    open fun setFlyingElytra(flyingElytra: Boolean) { self.setMetadata("isFlyingElytra", flyingElytra) }
+    open fun setNoGravity(noGravity: Boolean) { self.setMetadata("noGravity", noGravity) }
 
-    fun setCustomNameVisible(value: Boolean) { self.setMetadata("isCustomNameVisible", value) }
-    fun isCustomNameVisible(): Boolean = self.getMetadata("isCustomNameVisible")
+    open fun setCustomNameVisible(value: Boolean) { self.setMetadata("isCustomNameVisible", value) }
+    open fun isCustomNameVisible(): Boolean = self.getMetadata("isCustomNameVisible")
 
-    fun setCustomName(value: String) { self.setMetadata("customName", value) }
-    fun getCustomName(): String = Components.toLegacyText(self.getMetadata("customName"))
-    fun getCustomNameRaw(): String = self.getMetadata("customName")
+    open fun setCustomName(value: String) { self.setMetadata("customName", value) }
+    open fun getCustomName(): String = Components.toLegacyText(self.getMetadata("customName"))
+    open fun getCustomNameRaw(): String = self.getMetadata("customName")
 
-    fun setPose(pose: BukkitPose) { self.setMetadata("pose", pose) }
-    fun getPose(): BukkitPose = self.getMetadata("pose")
+    open fun setPose(pose: BukkitPose) { self.setMetadata("pose", pose) }
+    open fun getPose(): BukkitPose = self.getMetadata("pose")
 }

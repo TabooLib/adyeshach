@@ -16,9 +16,9 @@ import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
  * @author 坏黑
  * @since 2024/12/11
  */
-class CompanionHandler(private val self: DefaultEntityInstance) {
+open class CompanionHandler(protected val self: DefaultEntityInstance) {
 
-    fun getHost(): EntityInstance? {
+    open fun getHost(): EntityInstance? {
         // 优先使用缓存
         val cache = self.cacheHostEntity
         if (cache != null) {
@@ -34,7 +34,7 @@ class CompanionHandler(private val self: DefaultEntityInstance) {
         return host
     }
 
-    fun getRootHost(): EntityInstance? {
+    open fun getRootHost(): EntityInstance? {
         var current = getHost() ?: return null
         while (true) {
             val parent = (current as? Companionable)?.getHost() ?: return current
@@ -42,7 +42,7 @@ class CompanionHandler(private val self: DefaultEntityInstance) {
         }
     }
 
-    fun setHost(entity: EntityInstance?) {
+    open fun setHost(entity: EntityInstance?) {
         val previousHost = getHost()
 
         // 相同宿主，无需操作
@@ -86,27 +86,27 @@ class CompanionHandler(private val self: DefaultEntityInstance) {
         }
     }
 
-    fun hasHost(): Boolean {
+    open fun hasHost(): Boolean {
         return self.cacheHostEntity != null || self.hasPersistentTag(StandardTags.COMPANION_HOST)
     }
 
-    fun isCompanion(): Boolean = hasHost()
+    open fun isCompanion(): Boolean = hasHost()
 
-    fun getCompanions(): List<EntityInstance> {
+    open fun getCompanions(): List<EntityInstance> {
         return self.companions.mapNotNull { self.manager?.getEntityByUniqueId(it) }
     }
 
-    fun getAllCompanions(): List<EntityInstance> {
+    open fun getAllCompanions(): List<EntityInstance> {
         val result = mutableListOf<EntityInstance>()
         collectCompanions(self, result)
         return result
     }
 
-    fun addCompanion(vararg entity: EntityInstance) {
+    open fun addCompanion(vararg entity: EntityInstance) {
         entity.forEach { it.setHost(self) }
     }
 
-    fun removeCompanion(vararg entity: EntityInstance) {
+    open fun removeCompanion(vararg entity: EntityInstance) {
         entity.forEach {
             if ((it as? Companionable)?.getHost()?.uniqueId == self.uniqueId) {
                 it.setHost(null)
@@ -114,14 +114,14 @@ class CompanionHandler(private val self: DefaultEntityInstance) {
         }
     }
 
-    fun clearCompanions() {
+    open fun clearCompanions() {
         removeCompanion(*getCompanions().toTypedArray())
     }
 
     /**
      * 从宿主同步观察者列表
      */
-    private fun syncViewersFromHost(host: EntityInstance) {
+    protected open fun syncViewersFromHost(host: EntityInstance) {
         // 清空当前观察者
         self.viewPlayers.viewers.clear()
         self.viewPlayers.visible.clear()
@@ -132,7 +132,7 @@ class CompanionHandler(private val self: DefaultEntityInstance) {
     /**
      * 递归收集所有伴生实体
      */
-    private fun collectCompanions(entity: EntityInstance, result: MutableList<EntityInstance>) {
+    protected open fun collectCompanions(entity: EntityInstance, result: MutableList<EntityInstance>) {
         val companions = (entity as? Companionable)?.getCompanions() ?: return
         companions.forEach {
             result.add(it)

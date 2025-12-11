@@ -18,7 +18,7 @@ import java.util.*
  * 负责实体的控制器相关逻辑
  */
 @Suppress("UNCHECKED_CAST")
-class ControllerHandler(private val self: DefaultEntityInstance) : Controllable {
+open class ControllerHandler(protected val self: DefaultEntityInstance) : Controllable {
 
     override var isFreeze: Boolean
         set(value) {

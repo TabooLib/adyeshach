@@ -17,7 +17,7 @@ import taboolib.common5.cdouble
  * @author 坏黑
  * @since 2022/6/19
  */
-class CustomMetaHandler(private val self: DefaultEntityInstance) {
+open class CustomMetaHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 设置自定义元数据
@@ -25,7 +25,7 @@ class CustomMetaHandler(private val self: DefaultEntityInstance) {
      * @param value 值（null 表示重置为默认值）
      * @return 是否成功处理
      */
-    fun setCustomMeta(key: String, value: String?): Boolean {
+    open fun setCustomMeta(key: String, value: String?): Boolean {
         return when (key) {
             // 实体姿态
             "pose" -> {

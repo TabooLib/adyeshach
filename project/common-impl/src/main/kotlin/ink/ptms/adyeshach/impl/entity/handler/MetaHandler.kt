@@ -25,12 +25,12 @@ import java.util.concurrent.ConcurrentHashMap
  * @since 2022/6/19
  */
 @Suppress("UNCHECKED_CAST")
-class MetaHandler(private val self: DefaultEntityInstance) {
+open class MetaHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 获取实体元数据
      */
-    fun <T> getMetadata(key: String): T {
+    open fun <T> getMetadata(key: String): T {
         val meta = getAvailableEntityMeta().firstOrNull { it.key == key } ?: errorBy("error-meta-not-found", key)
         if (meta.index == -1) {
             errorBy("error-meta-not-supported", key)
@@ -45,7 +45,7 @@ class MetaHandler(private val self: DefaultEntityInstance) {
     /**
      * 设置实体元数据
      */
-    fun setMetadata(key: String, value: Any): Boolean {
+    open fun setMetadata(key: String, value: Any): Boolean {
         val meta = getAvailableEntityMeta().firstOrNull { it.key == key } ?: errorBy("error-meta-not-found", key)
         if (meta.index == -1) {
             errorBy("error-meta-not-supported", key)
@@ -71,23 +71,23 @@ class MetaHandler(private val self: DefaultEntityInstance) {
     /**
      * 获取实体所有元数据模型
      */
-    fun getAvailableEntityMeta(): List<Meta<*>> {
-        return metaTypeLookup.computeIfAbsent(self.javaClass) { 
-            registeredEntityMeta.filterKeys { it.isAssignableFrom(self.javaClass) }.values.flatten() 
+    open fun getAvailableEntityMeta(): List<Meta<*>> {
+        return metaTypeLookup.computeIfAbsent(self.javaClass) {
+            registeredEntityMeta.filterKeys { it.isAssignableFrom(self.javaClass) }.values.flatten()
         }
     }
 
     /**
      * 更新实体元数据
      */
-    fun updateEntityMetadata() {
+    open fun updateEntityMetadata() {
         self.forViewers { updateEntityMetadata(it) }
     }
 
     /**
      * 向给定玩家更新实体元数据
      */
-    fun updateEntityMetadata(viewer: Player) {
+    open fun updateEntityMetadata(viewer: Player) {
         val metadata = generateEntityMetadata(viewer)
         if (metadata.isNotEmpty()) {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityMetadata(viewer, self.index, metadata.toList())
@@ -97,16 +97,16 @@ class MetaHandler(private val self: DefaultEntityInstance) {
     /**
      * 基于给定玩家生成实体元数据
      */
-    fun generateEntityMetadata(player: Player): Array<MinecraftMeta> {
+    open fun generateEntityMetadata(player: Player): Array<MinecraftMeta> {
         return getAvailableEntityMeta().mapNotNull { it.generateMetadata(player, self) }.toTypedArray()
     }
 
     /**
      * 获取字节掩码键
      */
-    fun getByteMaskKey(index: Int): String {
-        return metaKeyLookup.computeIfAbsent(self.javaClass) { 
-            "\$${getAvailableEntityMeta().first { it.index == index }.key.digest("md5").substring(0, 8)}" 
+    open fun getByteMaskKey(index: Int): String {
+        return metaKeyLookup.computeIfAbsent(self.javaClass) {
+            "$${getAvailableEntityMeta().first { it.index == index }.key.digest("md5").substring(0, 8)}"
         }
     }
 }
