@@ -75,4 +75,10 @@ interface Companionable {
      * 清空所有伴生实体
      */
     fun clearCompanions()
+
+    /**
+     * 验证伴生关系
+     * 将会移除所有不在相同管理器的伴生实体 UUID，并更新宿主缓存
+     */
+    fun verifyCompanion()
 }

@@ -434,6 +434,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun addCompanion(vararg entity: EntityInstance) = companionHandler.addCompanion(*entity)
     override fun removeCompanion(vararg entity: EntityInstance) = companionHandler.removeCompanion(*entity)
     override fun clearCompanions() = companionHandler.clearCompanions()
+    override fun verifyCompanion() = companionHandler.verifyCompanion()
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // 委托方法 - Metaable

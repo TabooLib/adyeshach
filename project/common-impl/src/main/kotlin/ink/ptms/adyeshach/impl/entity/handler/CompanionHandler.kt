@@ -118,6 +118,13 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         removeCompanion(*getCompanions().toTypedArray())
     }
 
+    open fun verifyCompanion() {
+        val validCompanions = getCompanions()
+        self.companions.clear()
+        self.companions += validCompanions.map { it.uniqueId }
+        self.cacheHostEntity = getHost()
+    }
+
     /**
      * 从宿主同步观察者列表
      */
