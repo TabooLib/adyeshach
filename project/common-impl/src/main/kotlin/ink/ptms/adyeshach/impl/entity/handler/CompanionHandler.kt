@@ -60,10 +60,6 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
             self.cacheHostEntity = null
             self.removePersistentTag(StandardTags.COMPANION_HOST)
         } else {
-            // 校验 manager 一致
-            if (entity.manager != self.manager) {
-                errorBy("error-entity-manager-not-match")
-            }
             // 避免循环归属
             var current: EntityInstance? = entity
             while (current != null) {
