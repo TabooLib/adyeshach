@@ -130,6 +130,7 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         self.viewPlayers.visible.clear()
         // 同步宿主的观察者列表
         self.viewPlayers.viewers.addAll(host.viewPlayers.viewers)
+        self.viewPlayers.visible.addAll(host.viewPlayers.visible)
     }
 
     /**

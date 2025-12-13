@@ -70,7 +70,12 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
     open fun spawn(location: Location) {
         self.position = EntityPosition.fromLocation(location)
         self.clientPosition = self.position
-        self.forViewers { self.visible(it, true) }
+        // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
+        if (self.isCompanion()) {
+            self.forViewers { self.handleCompanionVisible(it, true) }
+        } else {
+            self.forViewers { self.visible(it, true) }
+        }
         AdyeshachEntitySpawnEvent(self).call()
     }
 
@@ -92,7 +97,12 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      */
     open fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false) {
         if (destroyPacket) {
-            self.forViewers { self.visible(it, false) }
+            // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
+            if (self.isCompanion()) {
+                self.forViewers { self.handleCompanionVisible(it, false) }
+            } else {
+                self.forViewers { self.visible(it, false) }
+            }
             AdyeshachEntityDestroyEvent(self).call()
         }
         if (removeFromManager) {
