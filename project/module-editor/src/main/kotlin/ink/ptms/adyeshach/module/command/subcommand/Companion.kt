@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
+import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.command.*
 import org.bukkit.command.CommandSender
@@ -125,14 +127,15 @@ val companionSubCommand = subCommand {
                 multiControl<EntitySource.Empty>(sender, ctx["id"], "companion-info", unified = false) { entity ->
                     sender.sendMessage("§5§l‹ ›§f §7伴生关系信息: §f${entity.id}")
                     sender.sendMessage("§5§l‹ ›§f §7  - UniqueId: §f${entity.uniqueId}")
+                    sender.sendMessage("§5§l‹ ›§f §7  - Manager: §f${formatManager(entity)}")
                     
                     // 宿主信息
                     val host = entity.getHost()
                     if (host != null) {
-                        sender.sendMessage("§5§l‹ ›§f §7  - 宿主: §f${host.id} §7(${host.uniqueId})")
+                        sender.sendMessage("§5§l‹ ›§f §7  - 宿主: §f${host.id} §7(${host.uniqueId})${formatManagerTag(entity, host)}")
                         val rootHost = entity.getRootHost()
                         if (rootHost != null && rootHost.uniqueId != host.uniqueId) {
-                            sender.sendMessage("§5§l‹ ›§f §7  - 根宿主: §f${rootHost.id} §7(${rootHost.uniqueId})")
+                            sender.sendMessage("§5§l‹ ›§f §7  - 根宿主: §f${rootHost.id} §7(${rootHost.uniqueId})${formatManagerTag(entity, rootHost)}")
                         }
                     } else {
                         sender.sendMessage("§5§l‹ ›§f §7  - 宿主: §c无")
@@ -143,7 +146,7 @@ val companionSubCommand = subCommand {
                     if (companions.isNotEmpty()) {
                         sender.sendMessage("§5§l‹ ›§f §7  - 直接伴生实体 (${companions.size}):")
                         companions.forEach { companion ->
-                            sender.sendMessage("§5§l‹ ›§f §7    - §f${companion.id} §7(${companion.uniqueId})")
+                            sender.sendMessage("§5§l‹ ›§f §7    - §f${companion.id} §7(${companion.uniqueId})${formatManagerTag(entity, companion)}")
                         }
                     } else {
                         sender.sendMessage("§5§l‹ ›§f §7  - 直接伴生实体: §c无")
@@ -156,7 +159,7 @@ val companionSubCommand = subCommand {
                         allCompanions.forEach { companion ->
                             val depth = calculateDepth(companion, entity)
                             val indent = "  ".repeat(depth)
-                            sender.sendMessage("§5§l‹ ›§f §7    $indent- §f${companion.id} §7(${companion.uniqueId})")
+                            sender.sendMessage("§5§l‹ ›§f §7    $indent- §f${companion.id} §7(${companion.uniqueId})${formatManagerTag(entity, companion)}")
                         }
                     }
                     
@@ -172,7 +175,7 @@ val companionSubCommand = subCommand {
 /**
  * 计算伴生实体的嵌套深度
  */
-private fun calculateDepth(companion: ink.ptms.adyeshach.core.entity.EntityInstance, root: ink.ptms.adyeshach.core.entity.EntityInstance): Int {
+private fun calculateDepth(companion: EntityInstance, root: EntityInstance): Int {
     var depth = 1
     var current = companion.getHost()
     while (current != null && current.uniqueId != root.uniqueId) {
@@ -180,4 +183,31 @@ private fun calculateDepth(companion: ink.ptms.adyeshach.core.entity.EntityInsta
         current = current.getHost()
     }
     return depth
+}
+
+/**
+ * 格式化 manager 描述
+ */
+private fun formatManager(entity: EntityInstance): String {
+    val manager = entity.manager ?: return "§c无"
+    return when {
+        manager is PlayerManager -> "§e@${manager.owner.name}"
+        manager.isTemporary() -> "§e临时"
+        manager.isPublic() -> "§a公共"
+        else -> "§7私有"
+    }
+}
+
+/**
+ * 格式化 manager 标签（仅在不同 manager 时显示）
+ */
+private fun formatManagerTag(self: EntityInstance, other: EntityInstance): String {
+    if (other.manager == self.manager) return ""
+    val manager = other.manager ?: return " §c[无管理器]"
+    return when {
+        manager is PlayerManager -> " §e[@${manager.owner.name}]"
+        manager.isTemporary() -> " §e[临时]"
+        manager.isPublic() -> " §e[公共]"
+        else -> " §e[私有]"
+    }
 }

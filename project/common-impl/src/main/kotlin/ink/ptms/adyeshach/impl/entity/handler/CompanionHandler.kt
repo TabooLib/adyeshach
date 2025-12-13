@@ -44,21 +44,17 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
 
     open fun setHost(entity: EntityInstance?) {
         val previousHost = getHost()
-
         // 相同宿主，无需操作
         if (previousHost?.uniqueId == entity?.uniqueId) return
-
         // 事件
         if (!AdyeshachEntityCompanionEvent(self, entity, previousHost).call()) {
             return
         }
-
         // 从旧宿主移除
         previousHost?.let { oldHost ->
             oldHost as DefaultEntityInstance
-            oldHost.companions.remove(self.uniqueId)
+            oldHost.companions.remove(self)
         }
-
         if (entity == null) {
             // 解除归属
             self.cacheHostEntity = null
@@ -78,7 +74,7 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
             }
             // 设置归属
             entity as DefaultEntityInstance
-            entity.companions.add(self.uniqueId)
+            entity.companions.add(self)
             self.cacheHostEntity = entity
             self.setPersistentTag(StandardTags.COMPANION_HOST, entity.uniqueId)
             // 同步观察者列表
@@ -90,10 +86,12 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         return self.cacheHostEntity != null || self.hasPersistentTag(StandardTags.COMPANION_HOST)
     }
 
-    open fun isCompanion(): Boolean = hasHost()
+    open fun isCompanion(): Boolean {
+        return hasHost()
+    }
 
     open fun getCompanions(): List<EntityInstance> {
-        return self.companions.mapNotNull { self.manager?.getEntityByUniqueId(it) }
+        return self.companions.instances.toList()
     }
 
     open fun getAllCompanions(): List<EntityInstance> {
@@ -119,9 +117,11 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
     }
 
     open fun verifyCompanion() {
-        val validCompanions = getCompanions()
-        self.companions.clear()
-        self.companions += validCompanions.map { it.uniqueId }
+        // 先解析待处理的 UUID
+        self.manager?.let { self.companions.resolve(it) }
+        // 验证并清理无效引用
+        self.companions.verify()
+        // 更新 cacheHostEntity
         self.cacheHostEntity = getHost()
     }
 

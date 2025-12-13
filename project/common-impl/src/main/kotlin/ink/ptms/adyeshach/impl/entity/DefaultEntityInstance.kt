@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.core.entity.EntityRefSet
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
@@ -16,7 +17,6 @@ import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.VisualTeam
-import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.entity.handler.*
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import ink.ptms.adyeshach.impl.util.Indexs
@@ -149,10 +149,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // 关联实体数据
     // ═══════════════════════════════════════════════════════════════════════════════
 
-    @Expose var passengers = ConcurrentSkipListSet<String>()
-    @Expose var companions = ConcurrentSkipListSet<String>()
+    @Expose var passengers = EntityRefSet(this)
+    @Expose var companions = EntityRefSet(this)
     @Expose var controller = ConcurrentSkipListSet(Comparator.comparing(Controller::id))
-    @Transient var cacheHostEntity: EntityInstance? = null
+    var cacheHostEntity: EntityInstance? = null
     var cacheVehicleEntity: EntityInstance? = null
     val attachedEntity = ConcurrentHashMap<Int, Vector>()
 

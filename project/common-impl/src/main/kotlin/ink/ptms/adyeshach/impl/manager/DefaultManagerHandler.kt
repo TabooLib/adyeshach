@@ -88,7 +88,7 @@ object DefaultManagerHandler {
                         if (it.passengers.isNotEmpty()) {
                             append("     Passengers:\n")
                             val pt = measureTime {
-                                it.passengers.forEach { p ->
+                                it.passengers.forEachUuid { p ->
                                     val find = manager.getEntityByUniqueId(p)
                                     if (find == null) {
                                         append("     - $p\n")

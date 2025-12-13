@@ -103,7 +103,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
                 // 从宿主的伴生列表中移除自己
                 self.cacheHostEntity?.let { host ->
                     host as DefaultEntityInstance
-                    host.companions.remove(self.uniqueId)
+                    host.companions.remove(self)
                 }
                 self.manager!!.remove(self)
                 AdyeshachEntityRemoveEvent(self).call()

@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.module.editor.page
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.sendNativeFullMessage
@@ -136,27 +138,39 @@ class PageMain(editor: EditPanel) : Page(editor) {
         val vehicle = entity.getVehicle()
         if (vehicle != null) {
             list += player.lang("link-vehicle")
-            list += "&f - &7${vehicle.id} &8(${vehicle.entityType})"
+            list += "&f - &7${vehicle.id} &8(${vehicle.entityType})${formatManagerTag(vehicle)}"
         }
         // 乘客
         val passengers = entity.getPassengers()
         if (passengers.isNotEmpty()) {
             list += player.lang("link-passengers")
-            list += passengers.map { "&f - &7${it.id} &8(${it.entityType})" }
+            list += passengers.map { "&f - &7${it.id} &8(${it.entityType})${formatManagerTag(it)}" }
         }
         // 宿主
         val host = entity.getHost()
         if (host != null) {
             list += player.lang("link-host")
-            list += "&f - &7${host.id} &8(${host.entityType})"
+            list += "&f - &7${host.id} &8(${host.entityType})${formatManagerTag(host)}"
         }
         // 伴生实体
         val companions = entity.getCompanions()
         if (companions.isNotEmpty()) {
             list += player.lang("link-companions")
-            list += companions.map { "&f - &7${it.id} &8(${it.entityType})" }
+            list += companions.map { "&f - &7${it.id} &8(${it.entityType})${formatManagerTag(it)}" }
         }
         return list.colored().joinToString("\n")
+    }
+
+    /** 格式化 manager 标签（仅在不同 manager 时显示） */
+    private fun formatManagerTag(other: EntityInstance): String {
+        if (other.manager == entity.manager) return ""
+        val manager = other.manager ?: return " &c[无管理器]"
+        return when {
+            manager is PlayerManager -> " &e[@${manager.owner.name}]"
+            manager.isTemporary() -> " &e[临时]"
+            manager.isPublic() -> " &e[公共]"
+            else -> " &e[私有]"
+        }
     }
 
     /** 观察者描述 **/

@@ -6,7 +6,6 @@ import ink.ptms.adyeshach.core.entity.Rideable
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleEnterEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVehicleLeaveEvent
-import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.entity.Player
 
@@ -29,7 +28,7 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
     override fun getVehicle(): EntityInstance? {
         return self.manager?.getEntity {
             it as DefaultEntityInstance
-            it.passengers.contains(self.uniqueId)
+            it.passengers.contains(self)
         }
     }
 
@@ -42,19 +41,10 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
     }
 
     override fun getPassengers(): List<EntityInstance> {
-        return self.passengers.mapNotNull { self.manager?.getEntityByUniqueId(it) }
+        return self.passengers.instances.toList()
     }
 
     override fun addPassenger(vararg entity: EntityInstance) {
-        // 单位管理器必须有效
-        if (self.manager == null || entity.any { it.manager == null }) {
-            errorBy("error-entity-manager-is-null")
-        }
-        // 单位管理器必须相同
-        if (entity.any { it.manager != self.manager }) {
-            errorBy("error-entity-manager-not-match")
-        }
-        
         entity.filter { it != self }.forEach { target ->
             target as DefaultEntityInstance
             // 避免循环骑乘
@@ -63,7 +53,7 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
             target.getVehicle()?.removePassenger(target)
             // 事件
             if (AdyeshachEntityVehicleEnterEvent(target, self).call()) {
-                self.passengers.add(target.uniqueId)
+                self.passengers.add(target)
                 // 标记状态
                 target.cacheVehicleEntity = self
                 target.setPersistentTag(StandardTags.IS_IN_VEHICLE, "true")
@@ -73,27 +63,18 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
     }
 
     override fun removePassenger(vararg entity: EntityInstance) {
-        // 单位管理器必须有效
-        if (self.manager == null || entity.any { it.manager == null }) {
-            errorBy("error-entity-manager-is-null")
-        }
-        // 单位管理器必须相同
-        if (entity.any { it.manager != self.manager }) {
-            errorBy("error-entity-manager-not-match")
-        }
-        
         entity.filter { it != self }.forEach { target ->
             target as DefaultEntityInstance
             // 进行二次判断是否为乘客
-            if (self.passengers.contains(target.uniqueId)) {
+            if (self.passengers.contains(target)) {
                 // 事件
                 if (AdyeshachEntityVehicleLeaveEvent(target, self).call()) {
-                    self.passengers.remove(target.uniqueId)
+                    self.passengers.remove(target)
                     // 移除状态
                     target.cacheVehicleEntity = null
                     target.removePersistentTag(StandardTags.IS_IN_VEHICLE)
                     // 校准位置
-                    self.manager?.getEntityByUniqueId(target.uniqueId)?.refreshPosition()
+                    target.refreshPosition()
                 }
             }
         }
@@ -124,9 +105,13 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
     }
 
     override fun verifyPassenger() {
-        val validPassengers = getPassengers()
-        self.passengers.clear()
-        self.passengers += validPassengers.map { it.uniqueId }
+        // 设置 owner（反序列化后可能丢失）
+        self.passengers.owner = self
+        // 先解析待处理的 UUID
+        self.manager?.let { self.passengers.resolve(it) }
+        // 验证并清理无效引用
+        self.passengers.verify()
+        // 更新 cacheVehicleEntity
         self.cacheVehicleEntity = getVehicle()
     }
 }
