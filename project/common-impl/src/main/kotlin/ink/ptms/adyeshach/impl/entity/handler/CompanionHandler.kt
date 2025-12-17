@@ -28,9 +28,7 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         val hostId = self.getPersistentTag(StandardTags.COMPANION_HOST) ?: return null
         val host = self.manager?.getEntityByUniqueId(hostId)
         // 更新缓存
-        if (host != null) {
-            self.cacheHostEntity = host
-        }
+        self.cacheHostEntity = host
         return host
     }
 

@@ -22,18 +22,23 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
     }
 
     override fun hasVehicle(): Boolean {
-        return getVehicle() != null
+        return self.cacheVehicleEntity != null
     }
 
     override fun getVehicle(): EntityInstance? {
-        return self.manager?.getEntity {
+        // 优先使用缓存
+        val cache = self.cacheVehicleEntity
+        if (cache != null) {
+            return cache
+        }
+        // 从管理器中检索
+        val vehicle = self.manager?.getEntity {
             it as DefaultEntityInstance
             it.passengers.contains(self)
         }
-    }
-
-    override fun getVehicleCache(): EntityInstance? {
-        return self.cacheVehicleEntity
+        // 更新缓存
+        self.cacheVehicleEntity = vehicle
+        return vehicle
     }
 
     override fun hasPassengers(): Boolean {
@@ -50,7 +55,7 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
             // 避免循环骑乘
             target.removePassenger(self)
             // 从当前载具中离开
-            target.getVehicle()?.removePassenger(target)
+            target.cacheVehicleEntity?.removePassenger(target)
             // 事件
             if (AdyeshachEntityVehicleEnterEvent(target, self).call()) {
                 self.passengers.add(target)
@@ -97,7 +102,7 @@ open class PassengerHandler(protected val self: DefaultEntityInstance) : Rideabl
             *getPassengers().map { e -> e.index }.toIntArray()
         )
         // 刷新坐骑
-        getVehicle()?.refreshPassenger(viewer)
+        self.cacheVehicleEntity?.refreshPassenger(viewer)
     }
 
     override fun refreshPassenger() {

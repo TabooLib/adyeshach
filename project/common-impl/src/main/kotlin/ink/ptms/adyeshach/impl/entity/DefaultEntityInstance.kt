@@ -355,8 +355,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun isVehicle() = passengerHandler.isVehicle()
     override fun hasVehicle() = passengerHandler.hasVehicle()
-    override fun getVehicle() = passengerHandler.getVehicle()
-    override fun getVehicleCache() = passengerHandler.getVehicleCache()
+    override fun getVehicle() = cacheVehicleEntity
     override fun hasPassengers() = passengerHandler.hasPassengers()
     override fun getPassengers() = passengerHandler.getPassengers()
     override fun addPassenger(vararg entity: EntityInstance) = passengerHandler.addPassenger(*entity)

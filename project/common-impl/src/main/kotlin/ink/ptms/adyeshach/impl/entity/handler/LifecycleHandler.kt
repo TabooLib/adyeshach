@@ -115,6 +115,11 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
                     host as DefaultEntityInstance
                     host.companions.remove(self)
                 }
+                // 从载具中脱离
+                self.cacheVehicleEntity?.removePassenger(self)
+                // 清空所有乘客
+                self.clearPassengers()
+                // 从管理器中移除
                 self.manager!!.remove(self)
                 AdyeshachEntityRemoveEvent(self).call()
                 self.manager = null

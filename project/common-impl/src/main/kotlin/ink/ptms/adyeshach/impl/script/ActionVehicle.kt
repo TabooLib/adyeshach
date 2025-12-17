@@ -15,10 +15,8 @@ internal fun vehicleParser() = scriptParser {
             script.throwUndefinedError()
         }
         when (method) {
-            "get" -> script.getEntities().firstNotNullOfOrNull { e -> e.getVehicle() }
-            "get_cache" -> script.getEntities().firstNotNullOfOrNull { e -> e.getVehicleCache() }
-            "has" -> script.getEntities().any { e -> e.hasVehicle() }
-            "has_cache" -> script.getEntities().any { e -> e.getVehicleCache() != null }
+            "get", "get_cache" -> script.getEntities().firstNotNullOfOrNull { e -> e.getVehicle() }
+            "has", "has_cache" -> script.getEntities().any { e -> e.hasVehicle() }
             else -> error("out of case")
         }
     }
