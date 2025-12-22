@@ -16,6 +16,7 @@ import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.handler.*
 import ink.ptms.adyeshach.impl.util.ChunkAccess
@@ -489,6 +490,31 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             hurt()
         } else {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+        }
+    }
+
+    /**
+     * 更新可见实体索引
+     */
+    fun updateVisibleEntityIndex(player: Player, visible: Boolean) {
+        val finder = Adyeshach.api().getEntityFinder()
+        if (visible) {
+            finder.addVisibleEntity(player, this)
+        } else {
+            finder.removeVisibleEntity(player, this)
+        }
+    }
+
+    fun registerClientEntity(viewer: Player) {
+        if (useClientEntityMap) {
+            val map = clientEntityMap.getOrCreate(viewer) { ConcurrentHashMap() } ?: return
+            map[index] = ClientEntity(this)
+        }
+    }
+
+    fun unregisterClientEntity(viewer: Player) {
+        if (useClientEntityMap) {
+            clientEntityMap[viewer]?.remove(index)
         }
     }
 }

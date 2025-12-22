@@ -114,12 +114,12 @@ object DefaultManagerHandler {
         onlinePlayers.forEach { Adyeshach.api().setupEntityManager(it) }
         // 可见性更新
         submitAsync(period = AdyeshachSettings.visibleRefreshInterval.toLong()) {
-            playersInGameTick = Bukkit.getOnlinePlayers()
+            playersInGameTick = Bukkit.getOnlinePlayers().filter { it.hasMetadata("adyeshach_setup") }
             // 公共管理器
             DefaultAdyeshachBooster.api.localPublicEntityManager.checkVisible()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
             // 私有管理器
-            onlinePlayers.forEach { player ->
+            playersInGameTick.forEach { player ->
                 DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.checkVisible()
             }
         }

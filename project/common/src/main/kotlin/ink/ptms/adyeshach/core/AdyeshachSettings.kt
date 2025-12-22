@@ -74,11 +74,12 @@ object AdyeshachSettings {
      * 单位生成时机
      * JOIN 表示玩家进入游戏时
      * KEEP_ALIVE 表示当玩家向服务端发送第一个心跳包时
+     * DISABLED 表示禁用
      */
     val spawnTrigger by resettableLazy {
         try {
             SpawnTrigger.valueOf(conf.getString("Settings.spawn-event")!!.uppercase())
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
             SpawnTrigger.KEEP_ALIVE
         }
     }
@@ -100,7 +101,7 @@ object AdyeshachSettings {
 
 enum class SpawnTrigger {
 
-    KEEP_ALIVE, JOIN
+    KEEP_ALIVE, JOIN, DISABLED
 }
 
 const val ADYESHACH_PREFIX = " §5§l‹ ›§f§7 "

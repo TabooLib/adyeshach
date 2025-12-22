@@ -24,15 +24,25 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 准备生成实体（对单个玩家）
-     * @return 是否成功准备生成
+     *
+     * @param viewer 观看者
+     * @param impl 具体的生成实现
+     * @return 是否成功
      */
-    open fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, true).call()) {
-            // 使用事件系统控制实体显示
-            if (DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)) {
-                spawn.run()
-            }
+    open fun prepareSpawn(viewer: Player, impl: Runnable): Boolean {
+        if (self.isDisableVisibleEvent
+            || AdyeshachEntityVisibleEvent(self, viewer, true).call()
+            || DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)
+        ) {
+            self.viewPlayers.visible += viewer.name
+            // 创建客户端对应表
+            self.registerClientEntity(viewer)
+            // 添加到可见实体索引
+            self.updateVisibleEntityIndex(viewer, true)
+            impl.run()
             DefaultAdyeshachAPI.localEventBus.postSpawn(self, viewer)
+            // 同步伴生实体可见性
+            self.syncCompanionVisible(viewer, true)
             // 更新单位属性
             self.updateEntityMetadata(viewer)
             // 更新单位视角
@@ -41,7 +51,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
             }
             // 关联实体初始化
             if (self.isPassengerRefreshOnSpawn) {
-                submit(delay = 2) { self.refreshPassenger(viewer) }
+                self.refreshPassenger(viewer)
             }
             return true
         }
@@ -50,15 +60,25 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 准备销毁实体（对单个玩家）
-     * @return 是否成功准备销毁
+     *
+     * @param viewer 观看者
+     * @param impl 具体的销毁实现
+     * @return 是否成功
      */
-    open fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, false).call()) {
-            // 使用事件系统控制实体销毁
-            if (DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)) {
-                destroy.run()
-                DefaultAdyeshachAPI.localEventBus.postDestroy(self, viewer)
-            }
+    open fun prepareDestroy(viewer: Player, impl: Runnable): Boolean {
+        if (self.isDisableVisibleEvent
+            || AdyeshachEntityVisibleEvent(self, viewer, false).call()
+            || DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)
+        ) {
+            self.viewPlayers.visible -= viewer.name
+            // 移除客户端对应表
+            self.unregisterClientEntity(viewer)
+            // 从可见实体索引中移除
+            self.updateVisibleEntityIndex(viewer, false)
+            impl.run()
+            DefaultAdyeshachAPI.localEventBus.postDestroy(self, viewer)
+            // 同步伴生实体可见性
+            self.syncCompanionVisible(viewer, false)
             return true
         }
         return false
