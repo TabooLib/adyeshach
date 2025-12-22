@@ -63,6 +63,7 @@ open class BaseManager : Manager, ManagerService, TickService {
         val event = AdyeshachEntityCreateEvent(entityInstance, location)
         if (event.call()) {
             // 生成实体
+            entityInstance.isCreated = true
             entityInstance.spawn(event.location)
             // 注册实体
             add(entityInstance)

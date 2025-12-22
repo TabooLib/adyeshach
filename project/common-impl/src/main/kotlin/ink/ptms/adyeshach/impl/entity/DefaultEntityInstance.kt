@@ -67,6 +67,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override val entityPathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
     override var isRemoved = false
+    override var isCreated = false
     @Expose override var isNitwit = false
     @Expose override var moveSpeed = 0.2
     override var brain: Brain = EntityHandlerFactory.createBrain(this)
