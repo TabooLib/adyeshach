@@ -31,8 +31,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      */
     open fun prepareSpawn(viewer: Player, impl: Runnable): Boolean {
         if (self.isDisableVisibleEvent
-            || AdyeshachEntityVisibleEvent(self, viewer, true).call()
-            || DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)
+            || (AdyeshachEntityVisibleEvent(self, viewer, true).call() && DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer))
         ) {
             self.viewPlayers.visible += viewer.name
             // 创建客户端对应表
@@ -67,8 +66,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      */
     open fun prepareDestroy(viewer: Player, impl: Runnable): Boolean {
         if (self.isDisableVisibleEvent
-            || AdyeshachEntityVisibleEvent(self, viewer, false).call()
-            || DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)
+            || (AdyeshachEntityVisibleEvent(self, viewer, false).call() && DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer))
         ) {
             self.viewPlayers.visible -= viewer.name
             // 移除客户端对应表
