@@ -123,6 +123,10 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
      * 从宿主同步观察者列表
      */
     protected open fun syncViewersFromHost(host: EntityInstance) {
+        // 私有 NPC 伴生到公共 NPC 时，不同步观察者（保持私有 NPC 的访问控制）
+        if (!self.isPublic() && host.isPublic()) {
+            return
+        }
         // 清空当前观察者
         self.viewPlayers.viewers.clear()
         self.viewPlayers.visible.clear()
