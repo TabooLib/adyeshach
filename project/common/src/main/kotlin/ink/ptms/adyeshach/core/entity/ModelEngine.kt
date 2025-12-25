@@ -56,4 +56,15 @@ interface ModelEngine {
      * 受伤效果
      */
     fun hurt()
+
+    /**
+     * 从持久化标签还原动画状态
+     * 用于在模型重新创建后还原之前的动画状态
+     */
+    fun restoreAnimationState()
+
+    /**
+     * 清除持久化的动画状态
+     */
+    fun clearAnimationState()
 }
