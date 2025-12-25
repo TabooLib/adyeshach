@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
 import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.function.Consumer
 import java.util.function.Function
 
 /**
@@ -17,14 +18,10 @@ import java.util.function.Function
 class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayers {
 
     // 回调函数列表
-    private val viewerAddedHandlers = mutableListOf<(String) -> Unit>()
-    private val viewerRemovedHandlers = mutableListOf<(String) -> Unit>()
-    private val viewersAddedHandlers = mutableListOf<(Collection<String>) -> Unit>()
-    private val viewersRemovedHandlers = mutableListOf<(Collection<String>) -> Unit>()
-    private val visibleAddedHandlers = mutableListOf<(String) -> Unit>()
-    private val visibleRemovedHandlers = mutableListOf<(String) -> Unit>()
-    private val visiblesAddedHandlers = mutableListOf<(Collection<String>) -> Unit>()
-    private val visiblesRemovedHandlers = mutableListOf<(Collection<String>) -> Unit>()
+    private val viewerAddedHandlers = mutableListOf<Consumer<String>>()
+    private val viewerRemovedHandlers = mutableListOf<Consumer<String>>()
+    private val visibleAddedHandlers = mutableListOf<Consumer<String>>()
+    private val visibleRemovedHandlers = mutableListOf<Consumer<String>>()
 
     // 优化：使用 ConcurrentHashMap.newKeySet() 替代 ConcurrentSkipListSet
     // O(1) 查找性能 vs O(log n)
@@ -35,7 +32,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         override fun add(element: String): Boolean {
             val result = viewersDelegate.add(element)
             if (result) {
-                viewerAddedHandlers.forEach { it(element) }
+                viewerAddedHandlers.forEach { it.accept(element) }
             }
             return result
         }
@@ -43,8 +40,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         override fun addAll(elements: Collection<String>): Boolean {
             val added = elements.filter { viewersDelegate.add(it) }
             if (added.isNotEmpty()) {
-                added.forEach { element -> viewerAddedHandlers.forEach { it(element) } }
-                viewersAddedHandlers.forEach { it(added) }
+                added.forEach { element -> viewerAddedHandlers.forEach { it.accept(element) } }
             }
             return added.isNotEmpty()
         }
@@ -52,7 +48,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         override fun remove(element: String): Boolean {
             val result = viewersDelegate.remove(element)
             if (result) {
-                viewerRemovedHandlers.forEach { it(element) }
+                viewerRemovedHandlers.forEach { it.accept(element) }
             }
             return result
         }
@@ -60,8 +56,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         override fun removeAll(elements: Collection<String>): Boolean {
             val removed = elements.filter { viewersDelegate.remove(it) }
             if (removed.isNotEmpty()) {
-                removed.forEach { element -> viewerRemovedHandlers.forEach { it(element) } }
-                viewersRemovedHandlers.forEach { it(removed) }
+                removed.forEach { element -> viewerRemovedHandlers.forEach { it.accept(element) } }
             }
             return removed.isNotEmpty()
         }
@@ -70,8 +65,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
             val toRemove = viewersDelegate.filter { it !in elements }
             val result = viewersDelegate.retainAll(elements)
             if (result && toRemove.isNotEmpty()) {
-                toRemove.forEach { element -> viewerRemovedHandlers.forEach { it(element) } }
-                viewersRemovedHandlers.forEach { it(toRemove) }
+                toRemove.forEach { element -> viewerRemovedHandlers.forEach { it.accept(element) } }
             }
             return result
         }
@@ -80,8 +74,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
             val removed = viewersDelegate.toList()
             viewersDelegate.clear()
             if (removed.isNotEmpty()) {
-                removed.forEach { element -> viewerRemovedHandlers.forEach { it(element) } }
-                viewersRemovedHandlers.forEach { it(removed) }
+                removed.forEach { element -> viewerRemovedHandlers.forEach { it.accept(element) } }
             }
         }
         // endregion
@@ -98,7 +91,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
             val result = visibleDelegate.add(element)
             if (result) {
                 hasVisiblePlayerState.set(true)
-                visibleAddedHandlers.forEach { it(element) }
+                visibleAddedHandlers.forEach { it.accept(element) }
             }
             return result
         }
@@ -107,8 +100,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
             val added = elements.filter { visibleDelegate.add(it) }
             if (added.isNotEmpty()) {
                 hasVisiblePlayerState.set(true)
-                added.forEach { element -> visibleAddedHandlers.forEach { it(element) } }
-                visiblesAddedHandlers.forEach { it(added) }
+                added.forEach { element -> visibleAddedHandlers.forEach { it.accept(element) } }
             }
             return added.isNotEmpty()
         }
@@ -119,7 +111,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
                 if (visibleDelegate.isEmpty()) {
                     hasVisiblePlayerState.set(false)
                 }
-                visibleRemovedHandlers.forEach { it(element) }
+                visibleRemovedHandlers.forEach { it.accept(element) }
             }
             return result
         }
@@ -130,8 +122,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
                 if (visibleDelegate.isEmpty()) {
                     hasVisiblePlayerState.set(false)
                 }
-                removed.forEach { element -> visibleRemovedHandlers.forEach { it(element) } }
-                visiblesRemovedHandlers.forEach { it(removed) }
+                removed.forEach { element -> visibleRemovedHandlers.forEach { it.accept(element) } }
             }
             return removed.isNotEmpty()
         }
@@ -144,8 +135,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
                     hasVisiblePlayerState.set(false)
                 }
                 if (toRemove.isNotEmpty()) {
-                    toRemove.forEach { element -> visibleRemovedHandlers.forEach { it(element) } }
-                    visiblesRemovedHandlers.forEach { it(toRemove) }
+                    toRemove.forEach { element -> visibleRemovedHandlers.forEach { it.accept(element) } }
                 }
             }
             return result
@@ -156,8 +146,7 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
             visibleDelegate.clear()
             hasVisiblePlayerState.set(false)
             if (removed.isNotEmpty()) {
-                removed.forEach { element -> visibleRemovedHandlers.forEach { it(element) } }
-                visiblesRemovedHandlers.forEach { it(removed) }
+                removed.forEach { element -> visibleRemovedHandlers.forEach { it.accept(element) } }
             }
         }
         // endregion
@@ -191,36 +180,20 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         return hasVisiblePlayerState.get()
     }
 
-    override fun onViewerAdded(handler: (String) -> Unit) {
+    override fun onViewerAdded(handler: Consumer<String>) {
         viewerAddedHandlers.add(handler)
     }
 
-    override fun onViewerRemoved(handler: (String) -> Unit) {
+    override fun onViewerRemoved(handler: Consumer<String>) {
         viewerRemovedHandlers.add(handler)
     }
 
-    override fun onViewersAdded(handler: (Collection<String>) -> Unit) {
-        viewersAddedHandlers.add(handler)
-    }
-
-    override fun onViewersRemoved(handler: (Collection<String>) -> Unit) {
-        viewersRemovedHandlers.add(handler)
-    }
-
-    override fun onVisibleAdded(handler: (String) -> Unit) {
+    override fun onVisibleAdded(handler: Consumer<String>) {
         visibleAddedHandlers.add(handler)
     }
 
-    override fun onVisibleRemoved(handler: (String) -> Unit) {
+    override fun onVisibleRemoved(handler: Consumer<String>) {
         visibleRemovedHandlers.add(handler)
-    }
-
-    override fun onVisiblesAdded(handler: (Collection<String>) -> Unit) {
-        visiblesAddedHandlers.add(handler)
-    }
-
-    override fun onVisiblesRemoved(handler: (Collection<String>) -> Unit) {
-        visiblesRemovedHandlers.add(handler)
     }
 
     override fun toString(): String {
