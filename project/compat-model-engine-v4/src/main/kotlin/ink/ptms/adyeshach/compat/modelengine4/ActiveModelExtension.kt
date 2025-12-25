@@ -86,19 +86,21 @@ fun ModelEngine.playAnimation(
     loopMode: BlueprintAnimation.LoopMode = BlueprintAnimation.LoopMode.ONCE,
     priority: Int = 1,
 ) {
-    val activeModel = getActiveModel(modelId) ?: return
-    val handler = activeModel.animationHandler
-    if (handler is IStateMachineHandler) {
-        val property = handler.playAnimation(priority, animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
-        if (property != null) {
-            property.forceLoopMode = loopMode
-            property.isForceOverride = isForceOverride
-        }
-    } else {
-        val property = handler.playAnimation(animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
-        if (property != null) {
-            property.forceLoopMode = loopMode
-            property.isForceOverride = isForceOverride
+    val activeModel = getActiveModel(modelId)
+    if (activeModel != null) {
+        val handler = activeModel.animationHandler
+        if (handler is IStateMachineHandler) {
+            val property = handler.playAnimation(priority, animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
+            if (property != null) {
+                property.forceLoopMode = loopMode
+                property.isForceOverride = isForceOverride
+            }
+        } else {
+            val property = handler.playAnimation(animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
+            if (property != null) {
+                property.forceLoopMode = loopMode
+                property.isForceOverride = isForceOverride
+            }
         }
     }
     // 如果是 HOLD 或 LOOP 模式，自动保存动画状态到持久化标签
@@ -131,18 +133,20 @@ fun ModelEngine.stopAnimation(
     ignoreLerp: Boolean = false,
     priority: Int = 1,
 ) {
-    val activeModel = getActiveModel(modelId) ?: return
-    val handler = activeModel.animationHandler
-    if (handler is IStateMachineHandler) {
-        if (ignoreLerp) {
-            handler.forceStopAnimation(priority, animationId)
+    val activeModel = getActiveModel(modelId)
+    if (activeModel != null) {
+        val handler = activeModel.animationHandler
+        if (handler is IStateMachineHandler) {
+            if (ignoreLerp) {
+                handler.forceStopAnimation(priority, animationId)
+            } else {
+                handler.stopAnimation(priority, animationId)
+            }
+        } else if (ignoreLerp) {
+            handler.forceStopAnimation(animationId)
         } else {
-            handler.stopAnimation(priority, animationId)
+            handler.stopAnimation(animationId)
         }
-    } else if (ignoreLerp) {
-        handler.forceStopAnimation(animationId)
-    } else {
-        handler.stopAnimation(animationId)
     }
     // 停止动画时，清除对应的持久化状态
     this as EntityInstance
