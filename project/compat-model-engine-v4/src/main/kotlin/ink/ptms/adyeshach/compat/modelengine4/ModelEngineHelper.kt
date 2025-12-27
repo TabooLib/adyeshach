@@ -54,6 +54,9 @@ internal fun ModelEngine.createModel() {
     updateModelEngineNameTag()
     // 还原动画状态
     restoreAnimationState()
+    // 触发创建回调
+    this as DefaultModelEngine
+    triggerModelCreateCallbacks(normalizeUniqueId)
 }
 
 internal fun ModelEngine.getDummy(): EntityModeled? {
