@@ -24,42 +24,60 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 准备生成实体（对单个玩家）
-     * @return 是否成功准备生成
+     *
+     * @param viewer 观看者
+     * @param impl 具体的生成实现
+     * @return 是否成功
      */
-    open fun prepareSpawn(viewer: Player, spawn: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, true).call()) {
-            // 使用事件系统控制实体显示
+    open fun prepareSpawn(viewer: Player, impl: Runnable): Boolean {
+        if (self.isDisableVisibleEvent || (AdyeshachEntityVisibleEvent(self, viewer, true).call())) {
             if (DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)) {
-                spawn.run()
+                self.viewPlayers.visible += viewer.name
+                // 创建客户端对应表
+                self.registerClientEntity(viewer)
+                // 添加到可见实体索引
+                self.updateVisibleEntityIndex(viewer, true)
+                impl.run()
+                DefaultAdyeshachAPI.localEventBus.postSpawn(self, viewer)
+                // 同步伴生实体可见性
+                self.syncCompanionVisible(viewer, true)
+                // 更新单位属性
+                self.updateEntityMetadata(viewer)
+                // 更新单位视角
+                if (self.isRotationFixOnSpawn) {
+                    self.setHeadRotation(self.position.yaw, self.position.pitch, forceUpdate = true)
+                }
+                // 关联实体初始化
+                if (self.isPassengerRefreshOnSpawn) {
+                    self.refreshPassenger(viewer)
+                }
+                return true
             }
-            DefaultAdyeshachAPI.localEventBus.postSpawn(self, viewer)
-            // 更新单位属性
-            self.updateEntityMetadata(viewer)
-            // 更新单位视角
-            if (self.isRotationFixOnSpawn) {
-                self.setHeadRotation(self.position.yaw, self.position.pitch, forceUpdate = true)
-            }
-            // 关联实体初始化
-            if (self.isPassengerRefreshOnSpawn) {
-                submit(delay = 2) { self.refreshPassenger(viewer) }
-            }
-            return true
         }
         return false
     }
 
     /**
      * 准备销毁实体（对单个玩家）
-     * @return 是否成功准备销毁
+     *
+     * @param viewer 观看者
+     * @param impl 具体的销毁实现
+     * @return 是否成功
      */
-    open fun prepareDestroy(viewer: Player, destroy: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, false).call()) {
-            // 使用事件系统控制实体销毁
+    open fun prepareDestroy(viewer: Player, impl: Runnable): Boolean {
+        if (self.isDisableVisibleEvent || (AdyeshachEntityVisibleEvent(self, viewer, false).call())) {
             if (DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)) {
-                destroy.run()
+                self.viewPlayers.visible -= viewer.name
+                // 移除客户端对应表
+                self.unregisterClientEntity(viewer)
+                // 从可见实体索引中移除
+                self.updateVisibleEntityIndex(viewer, false)
+                impl.run()
                 DefaultAdyeshachAPI.localEventBus.postDestroy(self, viewer)
+                // 同步伴生实体可见性
+                self.syncCompanionVisible(viewer, false)
+                return true
             }
-            return true
         }
         return false
     }
@@ -70,7 +88,12 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
     open fun spawn(location: Location) {
         self.position = EntityPosition.fromLocation(location)
         self.clientPosition = self.position
-        self.forViewers { self.visible(it, true) }
+        // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
+        if (self.isCompanion()) {
+            self.forViewers { self.handleCompanionVisible(it, true) }
+        } else {
+            self.forViewers { self.visible(it, true) }
+        }
         AdyeshachEntitySpawnEvent(self).call()
     }
 
@@ -92,7 +115,12 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      */
     open fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false) {
         if (destroyPacket) {
-            self.forViewers { self.visible(it, false) }
+            // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
+            if (self.isCompanion()) {
+                self.forViewers { self.handleCompanionVisible(it, false) }
+            } else {
+                self.forViewers { self.visible(it, false) }
+            }
             AdyeshachEntityDestroyEvent(self).call()
         }
         if (removeFromManager) {
@@ -103,8 +131,13 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
                 // 从宿主的伴生列表中移除自己
                 self.cacheHostEntity?.let { host ->
                     host as DefaultEntityInstance
-                    host.companions.remove(self.uniqueId)
+                    host.companions.remove(self)
                 }
+                // 从载具中脱离
+                self.cacheVehicleEntity?.removePassenger(self)
+                // 清空所有乘客
+                self.clearPassengers()
+                // 从管理器中移除
                 self.manager!!.remove(self)
                 AdyeshachEntityRemoveEvent(self).call()
                 self.manager = null

@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.core.entity
 
 import org.bukkit.entity.Player
-import taboolib.common5.Baffle
+import java.util.function.Consumer
 import java.util.function.Function
 
 /**
@@ -57,4 +57,24 @@ interface ViewPlayers {
      * 是否存在任何可见玩家
      */
     fun hasVisiblePlayer(): Boolean
+
+    /**
+     * 注册观察者添加回调
+     */
+    fun onViewerAdded(handler: Consumer<String>)
+
+    /**
+     * 注册观察者移除回调
+     */
+    fun onViewerRemoved(handler: Consumer<String>)
+
+    /**
+     * 注册玩家进入可视范围回调
+     */
+    fun onVisibleAdded(handler: Consumer<String>)
+
+    /**
+     * 注册玩家离开可视范围回调
+     */
+    fun onVisibleRemoved(handler: Consumer<String>)
 }

@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.module.editor.page
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.StandardTags
+import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.sendNativeFullMessage
@@ -123,9 +125,18 @@ class PageMain(editor: EditPanel) : Page(editor) {
 
     /** 关联实体数量 */
     fun linkedCount(): Int {
-        var count = entity.getPassengers().size + entity.getCompanions().size
+        var count = countPassengersRecursive(entity) + entity.getCompanions().size
         if (entity.getVehicle() != null) count++
         if (entity.getHost() != null) count++
+        return count
+    }
+
+    /** 递归计算乘客数量 */
+    private fun countPassengersRecursive(entity: EntityInstance): Int {
+        var count = entity.getPassengers().size
+        entity.getPassengers().forEach { passenger ->
+            count += countPassengersRecursive(passenger)
+        }
         return count
     }
 
@@ -136,27 +147,71 @@ class PageMain(editor: EditPanel) : Page(editor) {
         val vehicle = entity.getVehicle()
         if (vehicle != null) {
             list += player.lang("link-vehicle")
-            list += "&f - &7${vehicle.id} &8(${vehicle.entityType})"
+            list += "&f - &7${vehicle.id} &8(${vehicle.entityType})${formatManagerTag(vehicle)}"
         }
-        // 乘客
+        // 乘客（递归显示）
         val passengers = entity.getPassengers()
         if (passengers.isNotEmpty()) {
             list += player.lang("link-passengers")
-            list += passengers.map { "&f - &7${it.id} &8(${it.entityType})" }
+            passengers.forEach { passenger ->
+                formatPassengerRecursive(passenger, list, 1)
+            }
         }
         // 宿主
         val host = entity.getHost()
         if (host != null) {
             list += player.lang("link-host")
-            list += "&f - &7${host.id} &8(${host.entityType})"
+            list += "&f - &7${host.id} &8(${host.entityType})${formatManagerTag(host)}"
         }
-        // 伴生实体
+        // 伴生实体（递归显示）
         val companions = entity.getCompanions()
         if (companions.isNotEmpty()) {
             list += player.lang("link-companions")
-            list += companions.map { "&f - &7${it.id} &8(${it.entityType})" }
+            companions.forEach { companion ->
+                formatCompanionRecursive(companion, list, 1)
+            }
         }
         return list.colored().joinToString("\n")
+    }
+
+    /** 递归格式化乘客信息 */
+    private fun formatPassengerRecursive(passenger: EntityInstance, list: MutableList<String>, depth: Int) {
+        val indent = "  ".repeat(depth)
+        list += "&f$indent- &7${passenger.id} &8(${passenger.entityType})${formatManagerTag(passenger)}"
+
+        // 递归显示该乘客的乘客
+        val subPassengers = passenger.getPassengers()
+        if (subPassengers.isNotEmpty()) {
+            subPassengers.forEach { subPassenger ->
+                formatPassengerRecursive(subPassenger, list, depth + 1)
+            }
+        }
+    }
+
+    /** 递归格式化伴生信息 */
+    private fun formatCompanionRecursive(companion: EntityInstance, list: MutableList<String>, depth: Int) {
+        val indent = "  ".repeat(depth)
+        list += "&f$indent- &7${companion.id} &8(${companion.entityType})${formatManagerTag(companion)}"
+
+        // 递归显示该伴生的伴生
+        val subCompanions = companion.getCompanions()
+        if (subCompanions.isNotEmpty()) {
+            subCompanions.forEach { subCompanion ->
+                formatCompanionRecursive(subCompanion, list, depth + 1)
+            }
+        }
+    }
+
+    /** 格式化 manager 标签（仅在不同 manager 时显示） */
+    private fun formatManagerTag(other: EntityInstance): String {
+        if (other.manager == entity.manager) return ""
+        val manager = other.manager ?: return " &c[无管理器]"
+        return when {
+            manager is PlayerManager -> " &e[@${manager.owner.name}]"
+            manager.isTemporary() -> " &e[临时]"
+            manager.isPublic() -> " &e[公共]"
+            else -> " &e[私有]"
+        }
     }
 
     /** 观察者描述 **/

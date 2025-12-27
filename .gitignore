@@ -17,3 +17,8 @@ hs_err_pid*
 target
 build
 bin
+
+# Agents
+.opencode
+openspec
+AGENTS.md

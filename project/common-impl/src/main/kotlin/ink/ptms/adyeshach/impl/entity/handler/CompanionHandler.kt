@@ -28,9 +28,7 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         val hostId = self.getPersistentTag(StandardTags.COMPANION_HOST) ?: return null
         val host = self.manager?.getEntityByUniqueId(hostId)
         // 更新缓存
-        if (host != null) {
-            self.cacheHostEntity = host
-        }
+        self.cacheHostEntity = host
         return host
     }
 
@@ -44,30 +42,22 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
 
     open fun setHost(entity: EntityInstance?) {
         val previousHost = getHost()
-
         // 相同宿主，无需操作
         if (previousHost?.uniqueId == entity?.uniqueId) return
-
         // 事件
         if (!AdyeshachEntityCompanionEvent(self, entity, previousHost).call()) {
             return
         }
-
         // 从旧宿主移除
         previousHost?.let { oldHost ->
             oldHost as DefaultEntityInstance
-            oldHost.companions.remove(self.uniqueId)
+            oldHost.companions.remove(self)
         }
-
         if (entity == null) {
             // 解除归属
             self.cacheHostEntity = null
             self.removePersistentTag(StandardTags.COMPANION_HOST)
         } else {
-            // 校验 manager 一致
-            if (entity.manager != self.manager) {
-                errorBy("error-entity-manager-not-match")
-            }
             // 避免循环归属
             var current: EntityInstance? = entity
             while (current != null) {
@@ -78,7 +68,7 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
             }
             // 设置归属
             entity as DefaultEntityInstance
-            entity.companions.add(self.uniqueId)
+            entity.companions.add(self)
             self.cacheHostEntity = entity
             self.setPersistentTag(StandardTags.COMPANION_HOST, entity.uniqueId)
             // 同步观察者列表
@@ -90,10 +80,12 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         return self.cacheHostEntity != null || self.hasPersistentTag(StandardTags.COMPANION_HOST)
     }
 
-    open fun isCompanion(): Boolean = hasHost()
+    open fun isCompanion(): Boolean {
+        return hasHost()
+    }
 
     open fun getCompanions(): List<EntityInstance> {
-        return self.companions.mapNotNull { self.manager?.getEntityByUniqueId(it) }
+        return self.companions.instances.toList()
     }
 
     open fun getAllCompanions(): List<EntityInstance> {
@@ -118,15 +110,29 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
         removeCompanion(*getCompanions().toTypedArray())
     }
 
+    open fun verifyCompanion() {
+        // 先解析待处理的 UUID
+        self.manager?.let { self.companions.resolve(it) }
+        // 验证并清理无效引用
+        self.companions.verify()
+        // 更新 cacheHostEntity
+        self.cacheHostEntity = getHost()
+    }
+
     /**
      * 从宿主同步观察者列表
      */
     protected open fun syncViewersFromHost(host: EntityInstance) {
+        // 私有 NPC 伴生到公共 NPC 时，不同步观察者（保持私有 NPC 的访问控制）
+        if (!self.isPublic() && host.isPublic()) {
+            return
+        }
         // 清空当前观察者
         self.viewPlayers.viewers.clear()
         self.viewPlayers.visible.clear()
         // 同步宿主的观察者列表
         self.viewPlayers.viewers.addAll(host.viewPlayers.viewers)
+        self.viewPlayers.visible.addAll(host.viewPlayers.visible)
     }
 
     /**

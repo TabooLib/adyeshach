@@ -42,25 +42,11 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
         val api = Adyeshach.api().getMinecraftAPI()
         return if (visible) {
             prepareSpawn(viewer) {
-                viewPlayers.visible += viewer.name
-                registerClientEntity(viewer)
-                // 添加到可见实体索引
-                updateVisibleEntityIndex(viewer, true)
                 api.getEntitySpawner().spawnEntityPainting(viewer, index, normalizeUniqueId, position.toLocation(), direction, painting)
-                // 同步伴生实体可见性
-                syncCompanionVisible(viewer, true)
             }
         } else {
             prepareDestroy(viewer) {
-                viewPlayers.visible -= viewer.name
-                // 从可见实体索引中移除
-                updateVisibleEntityIndex(viewer, false)
-                // 销毁实体
                 api.getEntityOperator().destroyEntity(viewer, index)
-                // 移除客户端对应表
-                unregisterClientEntity(viewer)
-                // 同步伴生实体可见性
-                syncCompanionVisible(viewer, false)
             }
         }
     }

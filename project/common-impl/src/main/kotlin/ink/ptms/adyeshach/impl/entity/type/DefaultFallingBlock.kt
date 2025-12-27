@@ -59,30 +59,15 @@ abstract class DefaultFallingBlock(entityTypes: EntityTypes) : DefaultEntity(ent
     override fun handleVisibleInternal(viewer: Player, visible: Boolean): Boolean {
         return if (visible) {
             prepareSpawn(viewer) {
-                viewPlayers.visible += viewer.name
-                // 创建客户端对应表
-                registerClientEntity(viewer)
-                // 添加到可见实体索引
-                updateVisibleEntityIndex(viewer, true)
-                // 生成实体
                 Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityFallingBlock(viewer, index, normalizeUniqueId, getLocation(), material, data)
                 // 修正向量
                 setNoGravity(true)
                 sendVelocity(Vector(0, 0, 0))
-                // 同步伴生实体可见性
-                syncCompanionVisible(viewer, true)
             }
         } else {
             prepareDestroy(viewer) {
-                viewPlayers.visible -= viewer.name
-                // 从可见实体索引中移除
-                updateVisibleEntityIndex(viewer, false)
                 // 销毁实体
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().destroyEntity(viewer, index)
-                // 移除客户端对应表
-                unregisterClientEntity(viewer)
-                // 同步伴生实体可见性
-                syncCompanionVisible(viewer, false)
             }
         }
     }

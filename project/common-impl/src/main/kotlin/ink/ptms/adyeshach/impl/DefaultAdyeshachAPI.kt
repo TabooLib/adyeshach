@@ -3,19 +3,17 @@ package ink.ptms.adyeshach.impl
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
+import ink.ptms.adyeshach.core.event.AdyeshachPlayerSetupEvent
 import ink.ptms.adyeshach.impl.manager.*
 import org.bukkit.entity.Player
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.PlatformFactory
-import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
 import taboolib.common.util.t
 import taboolib.platform.util.PlayerSessionMap
 import taboolib.platform.util.removeMeta
-import taboolib.platform.util.safely
 import taboolib.platform.util.setMeta
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach
@@ -79,6 +77,8 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities { it.visibleAfterLoaded }.forEach { it.viewPlayers.viewers += player.name }
+            // 已完成状态加载
+            AdyeshachPlayerSetupEvent(player).call()
         } else {
             // 重复执行警告
             warning(

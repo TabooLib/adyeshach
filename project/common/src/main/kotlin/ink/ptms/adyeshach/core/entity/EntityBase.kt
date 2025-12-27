@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.core.entity
 
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.path.PathType
+import ink.ptms.adyeshach.core.event.AdyeshachEntityCreateEvent
 import org.bukkit.Location
 import org.bukkit.World
 import java.util.*
@@ -64,6 +65,12 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
      * 是否被删除
      */
     val isRemoved: Boolean
+
+    /**
+     * 是否完成 [AdyeshachEntityCreateEvent] 事件以及 [create] 回调函数
+     * 在这之前进行 [setMetadata] 操作不会发送数据包
+     */
+    var isCreated: Boolean
 
     /**
      * 实体详细坐标信息: x

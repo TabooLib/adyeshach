@@ -57,12 +57,15 @@ open class BaseManager : Manager, ManagerService, TickService {
         entityInstance.manager = this
         // 添加观察者
         entityInstance.viewPlayers.viewers.addAll(player.map { it.name })
-        entityInstance.viewPlayers.visible.addAll(player.filter { it.location.safeDistanceIgnoreY(location) < entityInstance.visibleDistance }.map { it.name })
+        entityInstance.viewPlayers.visible.addAll(player.filter {
+            it.location.safeDistanceIgnoreY(location) < entityInstance.visibleDistance && it.hasMetadata("adyeshach_setup") // 未完成数据加载之前，不会存入 visible
+        }.map { it.name })
         function.accept(entityInstance)
         // 唤起事件
         val event = AdyeshachEntityCreateEvent(entityInstance, location)
         if (event.call()) {
             // 生成实体
+            entityInstance.isCreated = true
             entityInstance.spawn(event.location)
             // 注册实体
             add(entityInstance)

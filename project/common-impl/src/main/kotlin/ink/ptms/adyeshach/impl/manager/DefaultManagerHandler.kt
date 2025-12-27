@@ -19,6 +19,7 @@ import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.function.warning
 import taboolib.common.util.t
 import taboolib.platform.bukkit.Parallel
+import taboolib.platform.bukkit.parallel
 import taboolib.platform.util.onlinePlayers
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -34,6 +35,9 @@ import kotlin.time.measureTime
  */
 @OptIn(ExperimentalTime::class)
 object DefaultManagerHandler {
+
+    // MANAGER_INIT 的依赖项
+    var dependOn = listOf(AdyeshachParallelTask.GENERATE_ENTITY_CLASS)
 
     // 当前游戏刻的玩家列表
     var playersInGameTick: Collection<Player> = listOf()
@@ -88,7 +92,7 @@ object DefaultManagerHandler {
                         if (it.passengers.isNotEmpty()) {
                             append("     Passengers:\n")
                             val pt = measureTime {
-                                it.passengers.forEach { p ->
+                                it.passengers.forEachUuid { p ->
                                     val find = manager.getEntityByUniqueId(p)
                                     if (find == null) {
                                         append("     - $p\n")
@@ -106,20 +110,19 @@ object DefaultManagerHandler {
         }
     }
 
-    @Parallel(id = AdyeshachParallelTask.MANAGER_INIT, dependOn = [AdyeshachParallelTask.GENERATE_ENTITY_CLASS], runOn = LifeCycle.ACTIVE)
-    private fun onActive() {
+    fun startup() {
         // 公共管理器
         DefaultAdyeshachBooster.api.localPublicEntityManager.onEnable()
         // 私有管理器
         onlinePlayers.forEach { Adyeshach.api().setupEntityManager(it) }
         // 可见性更新
         submitAsync(period = AdyeshachSettings.visibleRefreshInterval.toLong()) {
-            playersInGameTick = Bukkit.getOnlinePlayers()
+            playersInGameTick = Bukkit.getOnlinePlayers().filter { it.hasMetadata("adyeshach_setup") }
             // 公共管理器
             DefaultAdyeshachBooster.api.localPublicEntityManager.checkVisible()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
             // 私有管理器
-            onlinePlayers.forEach { player ->
+            playersInGameTick.forEach { player ->
                 DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.checkVisible()
             }
         }
@@ -148,8 +151,13 @@ object DefaultManagerHandler {
         }
     }
 
+    @Awake(LifeCycle.ENABLE)
+    private fun onEnable() {
+        parallel(AdyeshachParallelTask.MANAGER_INIT, dependOn = dependOn, runOn = LifeCycle.ACTIVE, ::startup)
+    }
+
     @Awake(LifeCycle.DISABLE)
-    fun onDisable() {
+    private fun onDisable() {
         // 公共管理器
         DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onDisable()
         DefaultAdyeshachBooster.api.localPublicEntityManager.onDisable()

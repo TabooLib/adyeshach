@@ -62,7 +62,10 @@ open class MetaHandler(protected val self: DefaultEntityInstance) {
                 self.metadata[key] = meta.getMetadataParser().parse(event.value)
             }
             eventBus.postMetaUpdate(event)
-            meta.updateEntityMetadata(self)
+            // 在完成创建行为之前，不会发送元数据数据包（创建时会统一发送）
+            if (self.isCreated) {
+                meta.updateEntityMetadata(self)
+            }
             return true
         }
         return false

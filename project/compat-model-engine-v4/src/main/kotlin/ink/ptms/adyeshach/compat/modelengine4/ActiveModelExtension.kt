@@ -5,15 +5,9 @@ import com.ticxo.modelengine.api.animation.BlueprintAnimation
 import com.ticxo.modelengine.api.animation.handler.IStateMachineHandler
 import com.ticxo.modelengine.api.model.ActiveModel
 import com.ticxo.modelengine.api.model.ModeledEntity
-import com.ticxo.modelengine.api.nms.entity.HitboxEntity
-import com.ticxo.modelengine.core.animation.handler.PriorityHandler
-import com.ticxo.modelengine.core.animation.handler.StateMachineHandler
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.ModelEngine
 import ink.ptms.adyeshach.core.entity.ModelEngineOptions
-import org.bukkit.entity.Entity
-import taboolib.common.platform.function.warning
 import taboolib.common.util.orNull
 
 /**
@@ -62,6 +56,13 @@ fun ModelEngine.getActiveModel(modelId: String): ActiveModel? {
 }
 
 /**
+ * 尝试从 ActiveModel 中获取绑定的 EntityInstance 对象
+ */
+fun ActiveModel.getBaseEntityInstance(): EntityInstance? {
+    return modeledEntity.base.original as? EntityInstance
+}
+
+/**
  * 播放模型动画
  *
  * @param modelId 模型 ID
@@ -85,20 +86,36 @@ fun ModelEngine.playAnimation(
     loopMode: BlueprintAnimation.LoopMode = BlueprintAnimation.LoopMode.ONCE,
     priority: Int = 1,
 ) {
-    val activeModel = getActiveModel(modelId) ?: return
-    val handler = activeModel.animationHandler
-    if (handler is IStateMachineHandler) {
-        val property = handler.playAnimation(priority, animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
-        if (property != null) {
-            property.forceLoopMode = loopMode
-            property.isForceOverride = isForceOverride
+    val activeModel = getActiveModel(modelId)
+    if (activeModel != null) {
+        val handler = activeModel.animationHandler
+        if (handler is IStateMachineHandler) {
+            val property = handler.playAnimation(priority, animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
+            if (property != null) {
+                property.forceLoopMode = loopMode
+                property.isForceOverride = isForceOverride
+            }
+        } else {
+            val property = handler.playAnimation(animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
+            if (property != null) {
+                property.forceLoopMode = loopMode
+                property.isForceOverride = isForceOverride
+            }
         }
-    } else {
-        val property = handler.playAnimation(animationId, lerpIn * 0.05, lerpOut * 0.05, speed, isForceChange)
-        if (property != null) {
-            property.forceLoopMode = loopMode
-            property.isForceOverride = isForceOverride
-        }
+    }
+    // 如果是 HOLD 或 LOOP 模式，自动保存动画状态到持久化标签
+    if (loopMode == BlueprintAnimation.LoopMode.HOLD || loopMode == BlueprintAnimation.LoopMode.LOOP) {
+        val state = AnimationState(
+            animationId = animationId,
+            priority = priority,
+            lerpIn = lerpIn,
+            lerpOut = lerpOut,
+            speed = speed,
+            loopMode = loopMode.name,
+            isForceOverride = isForceOverride
+        )
+        this as EntityInstance
+        setPersistentTag("ModelEngine:Animation:$modelId", state.serialize())
     }
 }
 
@@ -116,67 +133,79 @@ fun ModelEngine.stopAnimation(
     ignoreLerp: Boolean = false,
     priority: Int = 1,
 ) {
-    val activeModel = getActiveModel(modelId) ?: return
-    val handler = activeModel.animationHandler
-    if (handler is IStateMachineHandler) {
-        if (ignoreLerp) {
-            handler.forceStopAnimation(priority, animationId)
+    val activeModel = getActiveModel(modelId)
+    if (activeModel != null) {
+        val handler = activeModel.animationHandler
+        if (handler is IStateMachineHandler) {
+            if (ignoreLerp) {
+                handler.forceStopAnimation(priority, animationId)
+            } else {
+                handler.stopAnimation(priority, animationId)
+            }
+        } else if (ignoreLerp) {
+            handler.forceStopAnimation(animationId)
         } else {
-            handler.stopAnimation(priority, animationId)
+            handler.stopAnimation(animationId)
         }
-    } else if (ignoreLerp) {
-        handler.forceStopAnimation(animationId)
-    } else {
-        handler.stopAnimation(animationId)
     }
+    // 停止动画时，清除对应的持久化状态
+    this as EntityInstance
+    removePersistentTag("ModelEngine:Animation:$modelId")
 }
 
-internal fun ModelEngine.createModel() {
-    this as EntityInstance
-    // 先销毁原始模型
-    destroyModelEngine()
-    // 没有观察者，不创建模型
-    if (!viewPlayers.hasVisiblePlayer()) return
-    // 获取配置
-    val options = modelEngineOptions ?: ModelEngineOptions()
-    // 创建模型对象
-    val activeModel = try {
-        ModelEngineAPI.createActiveModel(modelEngineName, null) {
-            if (options.useStateMachine) StateMachineHandler(it) else PriorityHandler(it)
+/**
+ * 更改模型部件
+ *
+ * @param fromModelId 源模型 ID
+ * @param fromPartId 源部件 ID
+ * @param toModelId 目标模型 ID
+ * @param toPartId 目标部件 ID
+ */
+fun ModelEngine.changePart(
+    fromModelId: String,
+    fromPartId: String,
+    toModelId: String,
+    toPartId: String,
+): Boolean {
+    val activeModel = getActiveModel(fromModelId) ?: return false
+    val fromBone = activeModel.getBone(fromPartId).orNull() ?: return false
+    if (fromBone.isRenderer) {
+        val toBlueprint = ModelEngineAPI.getBlueprint(toModelId) ?: return false
+        val toBone = toBlueprint.flatMap[toPartId] ?: return false
+        if (toBone.isRenderer) {
+            fromBone.setModelScale(toBone.scale)
+            fromBone.setModel(toBone)
+            return true
         }
-    } catch (ex: RuntimeException) {
-        // 没找到模型
-        warning("Cannot find model: $modelEngineName")
-        return
     }
-    // 创建代理实体
-    val entity = EntityModeled(this as EntityInstance)
-    setTag("ModelEngine:EntityModeled", entity)
-    entity.syncLocation(getLocation())
-    entity.isDetectingPlayers = false
-    entity.bodyRotationController.yBodyRot = entity.location.yaw
-    // 销毁原版实体
-    // despawn()
-    // 创建模型
-    modelEngineUniqueId = normalizeUniqueId
-    ModelEngineAPI.createModeledEntity(entity) { model ->
-        model.isBaseEntityVisible = false
-        // 设置是否强制显示
-        forViewers { t -> entity.setForceViewing(t, true) }
-        // 应用配置
-        options.apply(activeModel)
-        // 添加模型
-        model.addModel(activeModel, options.isOverrideHitbox)
-    }
-    // 更新名称
-    updateModelEngineNameTag()
+    return false
 }
 
-internal fun ModelEngine.getDummy(): EntityModeled? {
+/**
+ * 更改模型部件的可见性
+ *
+ * @param modelId 模型 ID
+ * @param partId 部件 ID
+ * @param visible 可见性
+ */
+fun ModelEngine.changePartVisible(
+    modelId: String,
+    partId: String,
+    visible: Boolean,
+): Boolean {
+    val activeModel = getActiveModel(modelId) ?: return false
+    val fromBone = activeModel.getBone(partId).orNull() ?: return false
+    if (fromBone.isRenderer) {
+        fromBone.isVisible = visible
+        return true
+    }
+    return false
+}
+
+/**
+ * 当模型动画播放完成时
+ */
+fun ModelEngine.whenAnimationEnd(callback: Runnable) {
     this as EntityInstance
-    return getTag("ModelEngine:EntityModeled") as? EntityModeled
-}
-
-internal fun Entity.asHitboxEntity(): HitboxEntity? {
-    return Adyeshach.api().getMinecraftAPI().getHelper().toMinecraft(this) as? HitboxEntity?
+    setTag("animation_end_callback", callback)
 }

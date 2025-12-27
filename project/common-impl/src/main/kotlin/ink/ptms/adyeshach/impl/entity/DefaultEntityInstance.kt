@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
+import ink.ptms.adyeshach.core.entity.EntityRefSet
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
@@ -15,8 +16,8 @@ import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
+import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.VisualTeam
-import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.entity.handler.*
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import ink.ptms.adyeshach.impl.util.Indexs
@@ -66,6 +67,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override val entityPathType = Adyeshach.api().getEntityTypeRegistry().getEntityPathType(entityType)
 
     override var isRemoved = false
+    override var isCreated = false
     @Expose override var isNitwit = false
     @Expose override var moveSpeed = 0.2
     override var brain: Brain = EntityHandlerFactory.createBrain(this)
@@ -149,10 +151,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // 关联实体数据
     // ═══════════════════════════════════════════════════════════════════════════════
 
-    @Expose var passengers = ConcurrentSkipListSet<String>()
-    @Expose var companions = ConcurrentSkipListSet<String>()
+    @Expose var passengers = EntityRefSet(this)
+    @Expose var companions = EntityRefSet(this)
     @Expose var controller = ConcurrentSkipListSet(Comparator.comparing(Controller::id))
-    @Transient var cacheHostEntity: EntityInstance? = null
+    var cacheHostEntity: EntityInstance? = null
     var cacheVehicleEntity: EntityInstance? = null
     val attachedEntity = ConcurrentHashMap<Int, Vector>()
 
@@ -355,8 +357,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override fun isVehicle() = passengerHandler.isVehicle()
     override fun hasVehicle() = passengerHandler.hasVehicle()
-    override fun getVehicle() = passengerHandler.getVehicle()
-    override fun getVehicleCache() = passengerHandler.getVehicleCache()
+    override fun getVehicle() = cacheVehicleEntity
     override fun hasPassengers() = passengerHandler.hasPassengers()
     override fun getPassengers() = passengerHandler.getPassengers()
     override fun addPassenger(vararg entity: EntityInstance) = passengerHandler.addPassenger(*entity)
@@ -434,6 +435,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun addCompanion(vararg entity: EntityInstance) = companionHandler.addCompanion(*entity)
     override fun removeCompanion(vararg entity: EntityInstance) = companionHandler.removeCompanion(*entity)
     override fun clearCompanions() = companionHandler.clearCompanions()
+    override fun verifyCompanion() = companionHandler.verifyCompanion()
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // 委托方法 - Metaable
@@ -489,6 +491,31 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
             hurt()
         } else {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+        }
+    }
+
+    /**
+     * 更新可见实体索引
+     */
+    fun updateVisibleEntityIndex(player: Player, visible: Boolean) {
+        val finder = Adyeshach.api().getEntityFinder()
+        if (visible) {
+            finder.addVisibleEntity(player, this)
+        } else {
+            finder.removeVisibleEntity(player, this)
+        }
+    }
+
+    fun registerClientEntity(viewer: Player) {
+        if (useClientEntityMap) {
+            val map = clientEntityMap.getOrCreate(viewer) { ConcurrentHashMap() } ?: return
+            map[index] = ClientEntity(this)
+        }
+    }
+
+    fun unregisterClientEntity(viewer: Player) {
+        if (useClientEntityMap) {
+            clientEntityMap[viewer]?.remove(index)
         }
     }
 }

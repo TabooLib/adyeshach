@@ -37,6 +37,8 @@ open class LocalPersistentManager : DefaultManager() {
         }
         // 关联实体合法性验证
         activeEntity.forEach { it.verifyPassenger() }
+        // 伴生实体合法性验证
+        activeEntity.forEach { it.verifyCompanion() }
     }
 
     override fun onSave() {
