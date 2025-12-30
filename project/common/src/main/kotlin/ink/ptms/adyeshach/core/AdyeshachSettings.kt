@@ -92,6 +92,12 @@ object AdyeshachSettings {
         get() = if (field == 0) 20 else field
 
     /**
+     * 禁用保存
+     */
+    @ConfigNode("Settings.disable-save")
+    var disableSave = false
+
+    /**
      * 是否为自动删除世界
      */
     fun isAutoDeleteWorld(world: String): Boolean {
