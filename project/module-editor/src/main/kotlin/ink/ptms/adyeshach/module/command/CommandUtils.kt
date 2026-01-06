@@ -17,6 +17,27 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
+ * 是否过滤衍生单位
+ * true = 过滤（默认），false = 显示全部
+ */
+var filterDerived = true
+
+/**
+ * 是否过滤不可编辑单位
+ * true = 过滤（默认），false = 显示全部
+ */
+var filterUneditable = true
+
+/**
+ * 根据过滤开关检查实体是否应该显示
+ */
+fun EntityInstance.passesFilter(): Boolean {
+    if (filterDerived && isDerived()) return false
+    if (filterUneditable && isUneditable()) return false
+    return true
+}
+
+/**
  * 格式化数字（保留两位小数）
  */
 fun format(value: Double): String {
@@ -42,14 +63,18 @@ fun EntityInstance.getName(): String {
 }
 
 fun CommandComponentDynamic.suggestEntityList() {
-    suggestion<CommandSender>(uncheck = true) { sender, _ -> Command.finder.getEntities(sender as? Player) { !it.isDerived() }.map { it.id } }
+    suggestion<CommandSender>(uncheck = true) { sender, _ ->
+        Command.finder.getEntities(sender as? Player) { it.passesFilter() }.map { it.id }
+    }
 }
 
 /**
  * 就近复选操作
  */
 inline fun <reified T : EntitySource> multiControl(sender: Player, action: String, singleAction: (EntityInstance) -> Unit = {}) {
-    val npcList = Command.finder.getEntities(sender) { it.getLocation().safeDistance(sender.location) < 16 && !it.isDerived() }
+    val npcList = Command.finder.getEntities(sender) {
+        it.getLocation().safeDistance(sender.location) < 16 && it.passesFilter()
+    }
     if (npcList.isEmpty()) {
         sender.sendLang("command-find-empty")
     } else if (npcList.size == 1) {
@@ -69,7 +94,7 @@ inline fun <reified T : EntitySource> multiControl(
     unified: Boolean = true,
     singleAction: (EntityInstance) -> Unit = {}
 ) {
-    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, sender as? Player).filter { !it.isDerived() }
+    val npcList = Command.finder.getEntitiesFromIdOrUniqueId(id, sender as? Player).filter { it.passesFilter() }
     when {
         // 空列表
         npcList.isEmpty() -> {

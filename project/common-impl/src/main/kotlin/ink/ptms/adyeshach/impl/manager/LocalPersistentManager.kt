@@ -42,6 +42,7 @@ open class LocalPersistentManager : DefaultManager() {
     }
 
     override fun onSave() {
+        if (AdyeshachSettings.disableSave) return
         activeEntity.forEach { entity ->
             // 不再保存衍生单位
             if (entity.isDerived()) {

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.core.entity
 
 import org.bukkit.entity.Player
 import java.util.*
+import java.util.function.Consumer
 
 /**
  * Adyeshach
@@ -67,4 +68,14 @@ interface ModelEngine {
      * 清除持久化的动画状态
      */
     fun clearAnimationState()
+
+    /**
+     * 注册模型创建回调
+     */
+    fun onModelCreate(handler: Consumer<UUID>)
+
+    /**
+     * 注册模型销毁回调
+     */
+    fun onModelDestroy(handler: Consumer<UUID>)
 }

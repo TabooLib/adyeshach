@@ -15,6 +15,8 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common.util.unsafeLazy
+import java.util.UUID
+import java.util.function.Consumer
 
 /**
  * Adyeshach
@@ -23,7 +25,21 @@ import taboolib.common.util.unsafeLazy
  * @author 坏黑
  * @since 2022/6/19 21:58
  */
+@Suppress("UNCHECKED_CAST")
 internal interface DefaultModelEngine : ModelEngine {
+
+    // 回调函数列表
+    private val modelCreateHandlers: List<Consumer<UUID>>
+        get() {
+            this as DefaultEntityInstance
+            return getTag("ModelEngine:CreateHandlers") as? List<Consumer<UUID>> ?: emptyList()
+        }
+
+    private val modelDestroyHandlers: List<Consumer<UUID>>
+        get() {
+            this as DefaultEntityInstance
+            return getTag("ModelEngine:DestroyHandlers") as? List<Consumer<UUID>> ?: emptyList()
+        }
 
     override fun showModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked) {
@@ -49,22 +65,35 @@ internal interface DefaultModelEngine : ModelEngine {
         return false
     }
 
+    override fun destroyModelEngine() {
+        if (isModelEngineHooked) {
+            this as DefaultEntityInstance
+            val modelManager = ModelEngineAPI.api.modelManager
+            if (modelEngineUniqueId != null) {
+                val uuid = modelEngineUniqueId!!
+                val modeledEntity = modelManager.getModeledEntity(uuid)
+                if (modeledEntity != null) {
+                    modeledEntity.clearModels()
+                    forViewers { modeledEntity.removePlayer(it) }
+                    modelManager.removeModeledEntity(uuid)
+                    modelEngineUniqueId = null
+                    // 触发销毁回调
+                    modelDestroyHandlers.forEach { it.accept(uuid) }
+                }
+            }
+        }
+    }
+
     override fun refreshModelEngine(): Boolean {
         if (isModelEngineHooked) {
             this as DefaultEntityInstance
             val modelManager = ModelEngineAPI.api.modelManager
             // 删除模型
             if (modelEngineUniqueId != null) {
-                val modeledEntity = modelManager.getModeledEntity(modelEngineUniqueId)
-                if (modeledEntity != null) {
-                    modeledEntity.clearModels()
-                    forViewers { modeledEntity.removePlayer(it) }
-                    modelManager.removeModeledEntity(modelEngineUniqueId)
-                    modelEngineUniqueId = null
-                    // 是否恢复单位
-                    if (modelEngineName.isBlank()) {
-                        respawn()
-                    }
+                destroyModelEngine()
+                // 是否恢复单位
+                if (modelEngineName.isBlank()) {
+                    respawn()
                 }
             }
             // 创建模型
@@ -94,6 +123,8 @@ internal interface DefaultModelEngine : ModelEngine {
                     modeledEntity.nametagHandler.setCustomNameVisibility(nameTag, isCustomNameVisible())
                 }
                 modelEngineUniqueId = entityModeled.modelUniqueId
+                // 触发创建回调
+                modelCreateHandlers.forEach { it.accept(entityModeled.modelUniqueId) }
                 // 首次加载模型的时候还不存在任何观察者，因此需要延迟添加
                 // 否则会出现模型消失的问题
                 // 于 2022-05-16 日由阿瑞（1484813603）反馈
@@ -121,6 +152,28 @@ internal interface DefaultModelEngine : ModelEngine {
 
     override fun hurt() {
         ModelEngineAPI.api.modelManager.getModeledEntity(modelEngineUniqueId)?.hurt()
+    }
+
+    override fun restoreAnimationState() {
+        // v2 不支持动画状态还原
+    }
+
+    override fun clearAnimationState() {
+        // v2 不支持动画状态清除
+    }
+
+    override fun onModelCreate(handler: Consumer<UUID>) {
+        this as DefaultEntityInstance
+        val newHandlers = modelCreateHandlers.toMutableList()
+        newHandlers += handler
+        setTag("ModelEngine:CreateHandlers", newHandlers)
+    }
+
+    override fun onModelDestroy(handler: Consumer<UUID>) {
+        this as DefaultEntityInstance
+        val newHandlers = modelDestroyHandlers.toMutableList()
+        newHandlers += handler
+        setTag("ModelEngine:DestroyHandlers", newHandlers)
     }
 
     companion object {

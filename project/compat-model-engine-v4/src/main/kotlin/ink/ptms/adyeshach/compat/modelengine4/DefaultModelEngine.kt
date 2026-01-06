@@ -14,6 +14,8 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.util.unsafeLazy
+import java.util.UUID
+import java.util.function.Consumer
 
 
 /**
@@ -23,7 +25,21 @@ import taboolib.common.util.unsafeLazy
  * @author 坏黑
  * @since 2022/6/19 21:58
  */
+@Suppress("UNCHECKED_CAST")
 internal interface DefaultModelEngine : ModelEngine {
+
+    // 回调函数列表
+    private val modelCreateHandlers: List<Consumer<UUID>>
+        get() {
+            this as DefaultEntityInstance
+            return getTag("ModelEngine:CreateHandlers") as? List<Consumer<UUID>> ?: emptyList()
+        }
+
+    private val modelDestroyHandlers: List<Consumer<UUID>>
+        get() {
+            this as DefaultEntityInstance
+            return getTag("ModelEngine:DestroyHandlers") as? List<Consumer<UUID>> ?: emptyList()
+        }
 
     override fun showModelEngine(viewer: Player): Boolean {
         if (isModelEngineHooked && modelEngineName.isNotBlank()) {
@@ -55,8 +71,11 @@ internal interface DefaultModelEngine : ModelEngine {
     override fun destroyModelEngine() {
         if (isModelEngineHooked && modelEngineUniqueId != null) {
             this as DefaultEntityInstance
-            ModelEngineAPI.removeModeledEntity(modelEngineUniqueId)
+            val uuid = modelEngineUniqueId!!
+            ModelEngineAPI.removeModeledEntity(uuid)
             modelEngineUniqueId = null
+            // 触发销毁回调
+            modelDestroyHandlers.forEach { it.accept(uuid) }
         }
     }
 
@@ -135,6 +154,24 @@ internal interface DefaultModelEngine : ModelEngine {
                 removePersistentTag(key)
             }
         }
+    }
+
+    override fun onModelCreate(handler: Consumer<UUID>) {
+        this as DefaultEntityInstance
+        val newHandlers = modelCreateHandlers.toMutableList()
+        newHandlers += handler
+        setTag("ModelEngine:CreateHandlers", newHandlers)
+    }
+
+    override fun onModelDestroy(handler: Consumer<UUID>) {
+        this as DefaultEntityInstance
+        val newHandlers = modelDestroyHandlers.toMutableList()
+        newHandlers += handler
+        setTag("ModelEngine:DestroyHandlers", newHandlers)
+    }
+
+    fun triggerModelCreateCallbacks(uuid: UUID) {
+        modelCreateHandlers.forEach { it.accept(uuid) }
     }
 
     companion object {
