@@ -67,6 +67,9 @@ object Command {
     val clone = cloneSubCommand
 
     @CommandBody
+    val filter = filterSubCommand
+
+    @CommandBody
     val edit = editSubCommand
 
     @CommandBody

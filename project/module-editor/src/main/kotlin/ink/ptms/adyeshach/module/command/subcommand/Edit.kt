@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.impl.entity.trait.impl.*
 import ink.ptms.adyeshach.module.command.Command
 import ink.ptms.adyeshach.module.command.EntitySource
 import ink.ptms.adyeshach.module.command.multiControl
+import ink.ptms.adyeshach.module.command.passesFilter
 import ink.ptms.adyeshach.module.command.suggestEntityList
 import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.controller.PresetController
@@ -157,7 +158,7 @@ val editSubCommand = subCommand {
     }
     // 就近编辑
     execute<Player> { sender, _, _ ->
-        val nearestEntity = Command.finder.getNearestEntity(sender) { !it.isDerived() && !it.isUneditable() }
+        val nearestEntity = Command.finder.getNearestEntity(sender) { it.passesFilter() }
         if (nearestEntity == null) {
             sender.sendLang("command-find-empty")
         } else {
