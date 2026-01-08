@@ -200,8 +200,16 @@ object CommandAPI {
             exec<CommandSender> {
                 val player = ctx.player("player").cast<Player>()
                 DefaultManagerHandler.dump(player)
-                sender.sendMessage("${ADYESHACH_PREFIX}Dumped to \"dump/${player.name}.log\".")
+                sender.sendMessage("${ADYESHACH_PREFIX}Dumped to \"dump/player_${player.name}.log\".")
             }
+        }
+    }
+
+    @CommandBody
+    val dumpPublic = subCommand {
+        exec<CommandSender> {
+            DefaultManagerHandler.dumpPublic()
+            sender.sendMessage("${ADYESHACH_PREFIX}Dumped to \"dump/public.log\" and \"dump/public_temporary.log\".")
         }
     }
 

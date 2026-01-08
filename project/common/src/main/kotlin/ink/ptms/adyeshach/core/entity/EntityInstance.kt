@@ -35,7 +35,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     /**
      * 控制器调度器
      */
-    var brain: Brain
+    var brain: Brain?
 
     /**
      * 客户端位置修正时间
@@ -85,9 +85,15 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 是否在 Tick 中禁用载具检查
-     * 这将会提升性能
+     * 特定场景下可以提升性能
      */
     var isDisableVehicleCheckOnTick: Boolean
+
+    /**
+     * 是否在 Tick 中禁用载具视角同步
+     * 特定场景下可以提升性能
+     */
+    var isDisableVehicleRotationSync: Boolean
 
     /**
      * 取决于是否被公开的单位管理器管理

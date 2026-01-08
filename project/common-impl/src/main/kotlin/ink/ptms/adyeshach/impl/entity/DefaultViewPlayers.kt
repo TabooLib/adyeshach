@@ -180,6 +180,10 @@ class DefaultViewPlayers(val entityInstance: DefaultEntityInstance) : ViewPlayer
         return hasVisiblePlayerState.get()
     }
 
+    override fun hasViewer(): Boolean {
+        return viewersDelegate.isNotEmpty()
+    }
+
     override fun onViewerAdded(handler: Consumer<String>) {
         viewerAddedHandlers.add(handler)
     }

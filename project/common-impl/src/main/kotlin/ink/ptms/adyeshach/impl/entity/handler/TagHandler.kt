@@ -25,16 +25,18 @@ open class TagHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 获取标签
+     * 优化：直接查询两个 map，避免创建临时 HashMap
      */
     open fun getTag(key: String): Any? {
-        return collectTagMap()[key]
+        return self.tag[key] ?: self.persistentTag[key]
     }
 
     /**
      * 是否持有标签
+     * 优化：直接查询两个 map，避免创建临时 HashMap
      */
     open fun hasTag(key: String): Boolean {
-        return collectTagMap().containsKey(key)
+        return self.tag.containsKey(key) || self.persistentTag.containsKey(key)
     }
 
     /**
