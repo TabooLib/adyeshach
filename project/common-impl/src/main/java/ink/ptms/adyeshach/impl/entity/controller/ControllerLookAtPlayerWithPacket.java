@@ -289,7 +289,7 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
         if (entity == null) {
             return false;
         }
-        return !entity.getViewPlayers().hasVisiblePlayer();
+        return entity.getViewPlayers().hasVisiblePlayer();
     }
 
     @Override
