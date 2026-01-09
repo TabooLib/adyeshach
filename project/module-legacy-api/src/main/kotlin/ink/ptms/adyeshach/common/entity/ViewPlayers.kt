@@ -37,6 +37,10 @@ open class ViewPlayers(val entityInstance: EntityInstance) {
         return entityInstance.v2.viewPlayers.hasVisiblePlayer()
     }
 
+    fun hasViewer(): Boolean {
+        return entityInstance.v2.viewPlayers.hasViewer()
+    }
+
     override fun toString(): String {
         return "ViewPlayers(viewers=$viewers, visible=$visible)"
     }

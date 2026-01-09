@@ -59,6 +59,11 @@ interface ViewPlayers {
     fun hasVisiblePlayer(): Boolean
 
     /**
+     * 是否存在任何观察者
+     */
+    fun hasViewer(): Boolean
+
+    /**
      * 注册观察者添加回调
      */
     fun onViewerAdded(handler: Consumer<String>)

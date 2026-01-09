@@ -29,6 +29,10 @@ open class SimpleBrain(val entity: DefaultEntityInstance) : Brain {
     protected val postponeAdd = arrayListOf<Controller>()
 
     override fun tick() {
+        // 快速路径：没有控制器时直接返回
+        if (entity.controller.isEmpty() && hold.isEmpty()) {
+            return
+        }
         interrupt.clear()
         postponeAdd.clear()
         // 检查所有控制器

@@ -18,6 +18,7 @@ import ink.ptms.adyeshach.core.util.*
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.VisualTeam
+import ink.ptms.adyeshach.impl.entity.controller.BionicSight
 import ink.ptms.adyeshach.impl.entity.handler.*
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import ink.ptms.adyeshach.impl.util.Indexs
@@ -70,13 +71,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override var isCreated = false
     @Expose override var isNitwit = false
     @Expose override var moveSpeed = 0.2
-    override var brain: Brain = EntityHandlerFactory.createBrain(this)
+    override var brain: Brain? = EntityHandlerFactory.createBrain(this)
 
     override var useClientEntityMap = true
     override var isRotationFixOnSpawn = true
     override var isPassengerRefreshOnSpawn = true
     override var isDisableVisibleEvent = false
     override var isDisableVehicleCheckOnTick = false
+    override var isDisableVehicleRotationSync = false
     override var clientPositionFixed = System.currentTimeMillis()
     override var clientPositionUpdateInterval: Baffle = Baffle.of(Adyeshach.api().getEntityTypeRegistry().getEntityClientUpdateInterval(entityType))
     override var isIgnoredClientPositionUpdateInterval = true
@@ -174,7 +176,7 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     val metaHandler = EntityHandlerFactory.createMetaHandler(this)
     val tagHandler = EntityHandlerFactory.createTagHandler(this)
     val serializationHandler = EntityHandlerFactory.createSerializationHandler(this)
-    var bionicSight = EntityHandlerFactory.createBionicSight(this)
+    var bionicSight: BionicSight? = EntityHandlerFactory.createBionicSight(this)
 
     // ═══════════════════════════════════════════════════════════════════════════════
     // 位置状态
@@ -274,8 +276,8 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun onTick() {
         if (allowSyncPosition()) {
             movementHandler.handleMove()
-            brain.tick()
-            bionicSight.tick()
+            brain?.tick()
+            bionicSight?.tick()
             movementHandler.syncPosition()
         }
     }

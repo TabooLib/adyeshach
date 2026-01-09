@@ -47,7 +47,6 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      */
     protected open fun handlePathWalking() {
         val moveFrames = self.moveFrames ?: return
-        
         // 是否已抵达目的地
         if (moveFrames.isArrived()) {
             // 同步朝向
@@ -55,46 +54,35 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
             self.moveTarget = null
             return
         }
-        
         // 首次移动
         // 在单位首次移动之前，会有 0.25 秒的时间用于调整视角
         // 在这期间，单位会保持原地不动，并持有 "IS_MOVING_START" 标签
-        if (!self.tag.containsKey(StandardTags.IS_MOVING)) {
-            if (!handleMovementStart(moveFrames)) {
-                return
-            }
-        }
-        
-        // 正在移动视角
-        if (self.bionicSight.isLooking) {
+        if (!self.tag.containsKey(StandardTags.IS_MOVING) && !handleMovementStart(moveFrames)) {
             return
         }
-        
+        // 正在移动视角
+        if (self.bionicSight?.isLooking == true) {
+            return
+        }
         self.tag.remove(StandardTags.IS_MOVING_START)
-        
         // 获取下一个移动点
         val next = moveFrames.next() ?: return
-        
         // 设置移动标签
         self.tag[StandardTags.IS_MOVING] = true
-        
         // 默认会看向移动方向
         val eyeLocation = self.clientPosition.toLocation().add(0.0, self.entitySize.height * 0.9, 0.0)
         eyeLocation.direction = Vector(next.x, eyeLocation.y, next.z).subtract(eyeLocation.toVector())
-        
         // 不会看向脚下
         if (eyeLocation.pitch < 90f) {
             next.yaw = EntityPosition.normalizeYaw(eyeLocation.yaw)
             next.pitch = EntityPosition.normalizePitch(eyeLocation.pitch)
         }
-        
         // 更新位置
         if (next.yaw.isNaN() || next.pitch.isNaN()) {
             self.teleport(next.x, next.y, next.z)
         } else {
             self.teleport(next)
         }
-        
         // 调试模式下显示路径
         if (AdyeshachSettings.debug) {
             self.world.spawnParticle(org.bukkit.Particle.VILLAGER_HAPPY, next.x, next.y, next.z, 2, 0.0, 0.0, 0.0, 0.0)
@@ -136,7 +124,6 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
         if (deltaMovement.lengthSquared() <= 1E-6) {
             return
         }
-        
         // 获取下一个移动位置
         val nextPosition = self.clientPosition.clone().add(deltaMovement.x, deltaMovement.y, deltaMovement.z)
         // 只有在向下移动的时候才会进行碰撞检测
@@ -150,7 +137,6 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
                 return
             }
         }
-        
         // 更新位置
         self.clientPosition = nextPosition
         // 更新速度（应用阻力和重力）
@@ -185,7 +171,7 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 同步载具中实体的视角
      */
     protected open fun syncVehicleRotation(updateRotation: Boolean) {
-        if (updateRotation) {
+        if (updateRotation && self.isDisableVehicleRotationSync) {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
                 player = self.getVisiblePlayers(),
                 entityId = self.index,

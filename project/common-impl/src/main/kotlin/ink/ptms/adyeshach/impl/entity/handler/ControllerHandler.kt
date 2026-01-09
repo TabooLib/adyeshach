@@ -70,23 +70,23 @@ open class ControllerHandler(protected val self: DefaultEntityInstance) : Contro
     }
 
     override fun controllerLookAt(entity: org.bukkit.entity.Entity) {
-        self.bionicSight.setLookAt(entity)
+        self.bionicSight?.setLookAt(entity)
     }
 
     override fun controllerLookAt(entity: org.bukkit.entity.Entity, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
-        self.bionicSight.setLookAt(entity, yMaxRotSpeed, xMaxRotAngle)
+        self.bionicSight?.setLookAt(entity, yMaxRotSpeed, xMaxRotAngle)
     }
 
     override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double) {
-        self.bionicSight.setLookAt(wantedX, wantedY, wantedZ)
+        self.bionicSight?.setLookAt(wantedX, wantedY, wantedZ)
     }
 
     override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float) {
-        self.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, 40f)
+        self.bionicSight?.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, 40f)
     }
 
     override fun controllerLookAt(wantedX: Double, wantedY: Double, wantedZ: Double, yMaxRotSpeed: Float, xMaxRotAngle: Float) {
-        self.bionicSight.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
+        self.bionicSight?.setLookAt(wantedX, wantedY, wantedZ, yMaxRotSpeed, xMaxRotAngle)
     }
 
     override fun controllerMoveTo(location: Location) {
@@ -112,7 +112,7 @@ open class ControllerHandler(protected val self: DefaultEntityInstance) : Contro
     }
 
     override fun random(): Random {
-        return self.brain.getRandom()
+        return self.brain?.getRandom() ?: random()
     }
 
     private fun unregister(controller: Controller): Boolean {
@@ -120,8 +120,8 @@ open class ControllerHandler(protected val self: DefaultEntityInstance) : Contro
         if (AdyeshachControllerRemoveEvent(self, controller).call()) {
             self.controller.remove(controller)
             // 从执行容器中移除
-            if (self.brain.getRunningControllers()[controller.group()] == controller) {
-                self.brain.getRunningControllers().remove(controller.group())
+            if (self.brain?.getRunningControllers()?.get(controller.group()) == controller) {
+                self.brain!!.getRunningControllers().remove(controller.group())
             }
             return true
         }

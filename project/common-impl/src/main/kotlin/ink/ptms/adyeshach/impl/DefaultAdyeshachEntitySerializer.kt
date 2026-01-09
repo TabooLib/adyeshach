@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.util.getEnum
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
+import taboolib.common.platform.function.warning
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
@@ -65,7 +66,13 @@ class DefaultAdyeshachEntitySerializer : AdyeshachEntitySerializer {
             }
         }
         // 加载单位
-        val type = EntityTypes::class.java.getEnum(output.getString("entityType")!!)
+        val type = try {
+            EntityTypes::class.java.getEnum(output.getString("entityType")!!)
+        } catch (ex: Throwable) {
+            warning("无法识别的实体类型: $ex")
+            warning(section)
+            EntityTypes.PIG
+        }
         val typeRegistry = Adyeshach.api().getEntityTypeRegistry()
         return Serializer.gson.fromJson(output.toString(), typeRegistry.getEntityClass(type)) as EntityInstance
     }

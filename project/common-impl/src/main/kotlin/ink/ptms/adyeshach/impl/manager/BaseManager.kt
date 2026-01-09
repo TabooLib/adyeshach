@@ -131,6 +131,7 @@ open class BaseManager : Manager, ManagerService, TickService {
         if (Adyeshach.api().getEntityTypeRegistry().getBukkitEntityTypeOrNull(entity.entityType) == null) {
             warning("Entity \"${entity.entityType.name}\" not supported this minecraft version.")
         } else {
+            entity.isCreated = true
             entity.manager = this
             add(entity)
             AdyeshachEntityLoadedEvent(entity).call()
