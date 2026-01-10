@@ -717,6 +717,9 @@ editor-meta-immune-zombification: '是否免疫僵化'
 editor-meta-llama-variant: '类型'
 editor-meta-wolf-variant: '变种类型'
 editor-meta-pig-variant: '变种类型'
+editor-meta-weathering-copper-state: '氧化状态'
+editor-meta-copper-golem-statue: '状态'
+editor-meta-cow-variant: '变种类型'
 
 trait-patrol:
   - type: TITLE
@@ -883,3 +886,5 @@ group-faider0: '袭击者 0'
 group-chicken0: '鸡 0'
 group-armadillo0: '犰狳 0'
 group-hoglin0: '疣猪兽 0'
+group-copper_golem0: '铜傀儡 0'
+group-cow0: '牛 0'

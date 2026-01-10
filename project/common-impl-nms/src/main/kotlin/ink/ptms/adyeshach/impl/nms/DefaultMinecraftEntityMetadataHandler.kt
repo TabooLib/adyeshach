@@ -78,6 +78,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
             addParser("Wolf.Variant", WolfVariantParser())
             addParser("Armadillo.State", ArmadilloStateParser())
             addParser("Chicken.Variant", ChickenVariantParser())
+            addParser("Cow.Variant", BukkitCowParser())
+        }
+        if (MinecraftVersion.versionId >= 12109) {
+            addParser("CopperGolem.WeatherState", CopperGolemWeatherStateParse())
+            addParser("CopperGolem.Statue", CopperGolemStatuePoseParser())
         }
         // 注册一个事件专门用来处理 generateMetadata 方法中的特殊实体
         @Suppress("UNCHECKED_CAST")
@@ -524,17 +529,18 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta {
         return if (majorLegacy >= 11903) {
+            val nmS21 = NMS21.instance
             val meta = when (type) {
                 is BukkitCatType -> try {
                     NMS19.instance.createCatVariantMeta(index, type)
                 } catch (_: NoSuchFieldError) {
-                    NMS21.instance.createCatVariantMeta(index, type)
+                    nmS21.createCatVariantMeta(index, type)
                 }
 
-                is BukkitChickenType -> NMS21.instance.createChickenMeta(index, type)
-                is BukkitArmadilloState -> NMS21.instance.createArmadilloMeta(index, type)
-                is BukkitWolfVariant -> NMS21.instance.createWolfVariantMeta(index, type)
-                is BukkitPigVariant -> NMS21.instance.createPigVariantMeta(index, type)
+                is BukkitChickenType -> nmS21.createChickenMeta(index, type)
+                is BukkitArmadilloState -> nmS21.createArmadilloMeta(index, type)
+                is BukkitWolfVariant -> nmS21.createWolfVariantMeta(index, type)
+                is BukkitPigVariant -> nmS21.createPigVariantMeta(index, type)
                 else -> object : MinecraftMeta {
                     override fun source(): Any {
                         TODO("Not yet implemented")
@@ -637,6 +643,18 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createPigVariantMeta(index: Int, value: BukkitPigVariant): MinecraftMeta {
         return DefaultMeta(NMS21.instance.createPigVariantMeta(index, value))
+    }
+
+    override fun createGolemWeatherState(index: Int, value: BukkitCopperWeatherState): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCopperGolemWeatherState(index, value))
+    }
+
+    override fun createGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCopperGolemStatuePose(index, value))
+    }
+
+    override fun createCowVariantMeta(index: Int, value: BukkitCowVariant): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCowVariant(index, value))
     }
 
     fun jsonToChatBaseComponent(message: String): Any? {

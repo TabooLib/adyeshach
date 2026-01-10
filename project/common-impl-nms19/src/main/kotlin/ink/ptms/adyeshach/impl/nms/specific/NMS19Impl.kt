@@ -124,7 +124,11 @@ class NMS19Impl : NMS19() {
                     // 添加玩家
                     ClientboundPlayerInfoUpdatePacket.a.ADD_PLAYER -> {
                         writeUtf(gameProfile.name, 16)
-                        writeGameProfileProperties(gameProfile.toMojang(uuid).properties)
+                        writeGameProfileProperties(try{
+                            gameProfile.toMojang(uuid).properties
+                        }catch (_: NoSuchMethodError){
+                            NMS21.instance.getProperties(uuid,gameProfile)
+                        })
                     }
                     // 游戏模式
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_GAME_MODE -> {

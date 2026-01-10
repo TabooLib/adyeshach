@@ -179,7 +179,7 @@ internal interface DefaultModelEngine : ModelEngine {
     companion object {
 
         val isModelEngineHooked by unsafeLazy {
-            Bukkit.getPluginManager().getPlugin("ModelEngine") != null  && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
+            Bukkit.getPluginManager().getPlugin("ModelEngine") != null && kotlin.runCatching { ModelEngineAPI.api.modelManager }.isSuccess
         }
 
         @Awake(LifeCycle.LOAD)

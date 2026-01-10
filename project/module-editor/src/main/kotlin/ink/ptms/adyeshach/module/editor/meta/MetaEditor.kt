@@ -130,6 +130,9 @@ interface MetaEditor {
                 entity is AdyArmadillo && key == "armadilloState" -> MetaEnum(key, BukkitArmadilloState::class.java).nameToKey()
                 entity is AdyWolf && key == "wolfVariant" -> MetaEnum(key, BukkitWolfVariant::class.java).nameToKey()
                 entity is AdyPig && key == "pigVariant" -> MetaEnum(key, BukkitPigVariant::class.java).nameToKey()
+                entity is AdyCopperGolem && key == "weatheringCopperState" -> MetaEnum(key, BukkitCopperWeatherState::class.java).nameToKey()
+                entity is AdyCopperGolem && key == "copperGolemStatue" -> MetaEnum(key, BukkitCopperGolemStatuePose::class.java).nameToKey()
+                entity is AdyCow && key == "cowVariant" -> MetaEnum(key, BukkitCowVariant::class.java).nameToKey()
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java).nameToKey()
                 // 不支持

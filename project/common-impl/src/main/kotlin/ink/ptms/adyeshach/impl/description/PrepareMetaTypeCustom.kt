@@ -61,6 +61,9 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.ARMADILLO_STATE -> PrepareMetaNatural(name, BukkitArmadilloState.IDLE, "Armadillo.State")
             CustomType.PIG_VARIANT -> PrepareMetaNatural(name, BukkitPigVariant.TEMPERATE, "Pig.Variant")
             CustomType.WOLF_VARIANT -> PrepareMetaNatural(name, BukkitWolfVariant.PALE, "Wolf.Variant")
+            CustomType.COPPER_WEATHERING_STATE -> PrepareMetaNatural(name, BukkitCopperWeatherState.UNAFFECTED, "CopperGolem.WeatherState")
+            CustomType.COPPER_GOLEM_STATUE_POSE -> PrepareMetaNatural(name, BukkitCopperGolemStatuePose.IDLE, "CopperGolem.Statue")
+            CustomType.COW_VARIANT -> PrepareMetaNatural(name, BukkitCowVariant.NORMAL, "Cow.Variant")
         }
     }
 

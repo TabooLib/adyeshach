@@ -9,7 +9,6 @@ import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.submit
 
 /**
  * Adyeshach

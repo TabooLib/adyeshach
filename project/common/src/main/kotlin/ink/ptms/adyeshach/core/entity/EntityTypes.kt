@@ -160,4 +160,5 @@ enum class EntityTypes {
     WIND_CHARGE, // 风弹
     CREAKING, // 嘎枝
     FISHING_BOBBER, // 浮漂
+    COPPER_GOLEM, // 铜傀儡
 }

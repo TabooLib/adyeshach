@@ -56,5 +56,11 @@ enum class CustomType(val id: String) {
 
     WOLF_VARIANT("WolfVariant"),
 
+    COW_VARIANT("CowVariant"),
+
+    COPPER_WEATHERING_STATE("WeatheringCopperState"),
+
+    COPPER_GOLEM_STATUE_POSE("CopperGolemStatuePose"),
+
     ;
 }

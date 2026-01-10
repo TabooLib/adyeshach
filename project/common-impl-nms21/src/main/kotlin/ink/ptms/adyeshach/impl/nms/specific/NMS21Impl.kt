@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
+import com.mojang.authlib.GameProfile
+import com.mojang.authlib.properties.Property
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.bukkit.*
@@ -18,6 +20,8 @@ import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
 import net.minecraft.world.entity.animal.armadillo.Armadillo
+import net.minecraft.world.entity.animal.coppergolem.CopperGolemState
+import net.minecraft.world.level.block.WeatheringCopper
 import net.minecraft.world.phys.Vec3D
 import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
@@ -32,12 +36,10 @@ import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftChicken
+import org.bukkit.craftbukkit.v1_21_R4.entity.CraftCow
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPig
 import org.bukkit.craftbukkit.v1_21_R4.entity.CraftWolf
-import org.bukkit.entity.Cat
-import org.bukkit.entity.Chicken
-import org.bukkit.entity.Pig
-import org.bukkit.entity.Wolf
+import org.bukkit.entity.*
 import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
@@ -45,6 +47,16 @@ import taboolib.module.nms.createDataSerializer
 import java.util.*
 
 class NMS21Impl : NMS21 {
+
+    override fun getProperties(uuid: UUID, gameProfile: ink.ptms.adyeshach.core.bukkit.data.GameProfile): com.mojang.authlib.properties.PropertyMap {
+        val profile = GameProfile(uuid, gameProfile.name)
+        if (gameProfile.texture.size == 2) {
+            profile.properties.put("textures", Property("textures", gameProfile.texture[0], gameProfile.texture[1]))
+        }
+        return profile.properties
+    }
+
+
     override fun createEntityHead(entityId: Int, yHeadRot: Byte): Any {
         return PacketPlayOutEntityHeadRotation::class.java.invokeConstructor(createDataSerializer {
             writeVarInt(entityId)
@@ -220,6 +232,24 @@ class NMS21Impl : NMS21 {
     override fun createCatVariantMeta(index: Int, value: BukkitCatType): Any {
         val variant = CraftCat.CraftType.bukkitToMinecraft(Cat.Type.valueOf(value.name))
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant.direct())
+    }
+
+    override fun createCopperGolemWeatherState(index: Int, value: BukkitCopperWeatherState): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.WEATHERING_COPPER_STATE), WeatheringCopper.a.valueOf(value.name))
+    }
+
+    override fun createCopperGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): Any {
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.COPPER_GOLEM_STATE), CopperGolemState.valueOf(value.name))
+    }
+
+    override fun createCowVariant(index: Int, value: BukkitCowVariant): Any {
+        val type = when (value) {
+            BukkitCowVariant.NORMAL -> Cow.Variant.TEMPERATE
+            BukkitCowVariant.COLD -> Cow.Variant.COLD
+            BukkitCowVariant.WARM -> Cow.Variant.WARM
+        }
+        val variant = CraftCow.CraftVariant.bukkitToMinecraft(type)
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.COW_VARIANT), variant.direct())
     }
 
     private fun <T> T.direct(): Holder<T> {

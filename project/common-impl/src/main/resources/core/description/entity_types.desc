@@ -1229,3 +1229,11 @@ ink.ptms.adyeshach.core.entity.type.AdyArmadillo
     ~
     ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
     2
+
+ink.ptms.adyeshach.core.entity.type.AdyCopperGolem
+    COPPER_GOLEM
+    1
+    0.49 0.98
+    ~
+    ink.ptms.adyeshach.impl.entity.type.DefaultEntityLiving@
+    2

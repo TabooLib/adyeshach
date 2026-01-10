@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.util.unsafeLazy
-import java.util.UUID
+import java.util.*
 import java.util.function.Consumer
 
 
@@ -89,6 +89,8 @@ internal interface DefaultModelEngine : ModelEngine {
             }
             // 销毁模型
             else if (ModelEngineAPI.removeModeledEntity(modelEngineUniqueId) != null) {
+                val modeled = (getTag("ModelEngine:EntityModeled") as? EntityModeled)
+                ModelEngineAPI.getModeledEntity(modeled?.uuid).isBaseEntityVisible = true
                 respawn()
             }
             return true

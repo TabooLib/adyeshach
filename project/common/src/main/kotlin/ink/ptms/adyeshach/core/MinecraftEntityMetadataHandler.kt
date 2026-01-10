@@ -200,4 +200,19 @@ interface MinecraftEntityMetadataHandler {
      * 生成 Pig 变种元数据,对应 Pig.Variant 字段
      */
     fun createPigVariantMeta(index: Int, value: BukkitPigVariant): MinecraftMeta
+
+    /**
+     * 生成 CopperGolem 氧化状态元数据,对应 CopperGolem.CopperWeatherState 字段
+     */
+    fun createGolemWeatherState(index: Int, value: BukkitCopperWeatherState): MinecraftMeta
+
+    /**
+     * 生成 CopperGolem 雕像姿态元数据,对应 CopperGolem.StatuePose 字段
+     */
+    fun createGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): MinecraftMeta
+
+     /**
+     * 生成 Cow 变种元数据,对应 Cow.Variant 字段
+     */
+    fun createCowVariantMeta(index: Int, value: BukkitCowVariant): MinecraftMeta
 }

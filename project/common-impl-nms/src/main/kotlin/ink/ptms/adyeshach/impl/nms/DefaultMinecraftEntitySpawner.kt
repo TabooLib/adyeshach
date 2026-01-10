@@ -121,7 +121,14 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
             9, 10, 11, 12, 13 -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createSpawnEntity(
-                        entityId, uuid, location, yaw.toFloat(), pitch.toFloat(), data, NMS19.instance.entityTypeGetId(helper.adapt(entityType)), yaw.toDouble()
+                        entityId,
+                        uuid,
+                        location,
+                        yaw.toFloat(),
+                        pitch.toFloat(),
+                        data,
+                        NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
+                        yaw.toDouble()
                     )
                 } else {
                     NMSPacketPlayOutSpawnEntity::class.java.invokeConstructor(createDataSerializer {

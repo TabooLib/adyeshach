@@ -1,8 +1,10 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
+import com.mojang.authlib.properties.PropertyMap
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.bukkit.*
+import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.impl.nms.NMSEntityPose
 import ink.ptms.adyeshach.impl.nms.NMSVillagerProfession
@@ -15,6 +17,11 @@ import taboolib.module.nms.nmsProxy
 import java.util.*
 
 interface NMS21 {
+
+    /**
+     * 获取玩家数据
+     */
+    fun getProperties(uuid: UUID, gameProfile: GameProfile): PropertyMap
 
     /**
      * 创建头颅转向数据包
@@ -115,6 +122,12 @@ interface NMS21 {
      * 创建猫变种类型数据
      */
     fun createCatVariantMeta(index: Int, value: BukkitCatType): Any
+
+    fun createCopperGolemWeatherState(index: Int, value: BukkitCopperWeatherState): Any
+
+    fun createCopperGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): Any
+
+    fun createCowVariant(index: Int, value: BukkitCowVariant): Any
 
     companion object {
         val instance by unsafeLazy { nmsProxy<NMS21>() }
