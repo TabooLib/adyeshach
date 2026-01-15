@@ -31,7 +31,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
     @Expose
     override var isDie = false
 
-    override var isEquipmentRefreshOnSpawn = false
+    override var isEquipmentRefreshOnSpawn = true
 
     override fun visible(viewer: Player, visible: Boolean): Boolean {
         // 伴生实体禁止外部直接操作可见性
