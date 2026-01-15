@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.manager
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachParallelTask
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.core.util.safeDistance
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
@@ -193,19 +194,48 @@ object DefaultManagerHandler {
                         .forEach { append("  ${it.key}: ${it.value}\n") }
                     append("\n")
 
-                    append("=== Visible Entities (hasVisiblePlayer) ===\n")
-                    activeEntity.filter { it.viewPlayers.hasVisiblePlayer() }.forEach {
+                    append("=== Tickable Entities ===\n")
+                    val ownerLocation = (manager as? DefaultPlayerManager)?.owner?.location
+                    val tickableSorted = if (ownerLocation != null) {
+                        manager.tickableEntities.sortedBy { it.getLocation().safeDistance(ownerLocation) }
+                    } else {
+                        manager.tickableEntities.sortedBy { it.id }
+                    }
+                    tickableSorted.forEach {
                         it as DefaultEntityInstance
+                        val distStr = if (ownerLocation != null) ", Distance: ${it.getLocation().safeDistance(ownerLocation)}" else ""
                         append("  [${it.entityType}] ${it.id}\n")
                         append("    - UniqueId: ${it.uniqueId}\n")
-                        append("    - Location: ${it.getLocation()}\n")
+                        append("    - Location: ${it.getLocation()}$distStr\n")
+                        append("    - Nitwit: ${it.isNitwit}, Controllers: ${it.controller.size}\n")
+                    }
+                    append("\n")
+
+                    append("=== Visible Entities (hasVisiblePlayer) ===\n")
+                    val visibleSorted = if (ownerLocation != null) {
+                        activeEntity.filter { it.viewPlayers.hasVisiblePlayer() }.sortedBy { it.getLocation().safeDistance(ownerLocation) }
+                    } else {
+                        activeEntity.filter { it.viewPlayers.hasVisiblePlayer() }.sortedBy { it.id }
+                    }
+                    visibleSorted.forEach {
+                        it as DefaultEntityInstance
+                        val distStr = if (ownerLocation != null) ", Distance: ${it.getLocation().safeDistance(ownerLocation)}" else ""
+                        append("  [${it.entityType}] ${it.id}\n")
+                        append("    - UniqueId: ${it.uniqueId}\n")
+                        append("    - Location: ${it.getLocation()}$distStr\n")
                         append("    - Nitwit: ${it.isNitwit}, Controllers: ${it.controller.size}\n")
                     }
                     append("\n")
 
                     append("=== All Entities ===\n")
-                    activeEntity.forEach {
+                    val allSorted = if (ownerLocation != null) {
+                        activeEntity.sortedBy { it.getLocation().safeDistance(ownerLocation) }
+                    } else {
+                        activeEntity.sortedBy { it.id }
+                    }
+                    allSorted.forEach {
                         it as DefaultEntityInstance
+                        val distStr = if (ownerLocation != null) ", Distance: ${it.getLocation().safeDistance(ownerLocation)}" else ""
                         val flags = mutableListOf<String>()
                         if (it.isNitwit) flags += "nitwit"
                         if (it.viewPlayers.hasVisiblePlayer()) flags += "visible"
@@ -218,7 +248,7 @@ object DefaultManagerHandler {
                         if (!it.isIgnoredClientPositionUpdateInterval) flags += "usePosInterval"
 
                         append("  [${it.entityType}] ${it.id} (${flags.joinToString(", ")})\n")
-                        append("    - Location: ${it.getLocation()}\n")
+                        append("    - Location: ${it.getLocation()}$distStr\n")
 
                         if (it.passengers.isNotEmpty()) {
                             append("    - Passengers:\n")
