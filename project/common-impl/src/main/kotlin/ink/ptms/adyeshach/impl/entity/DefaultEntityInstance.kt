@@ -30,6 +30,7 @@ import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common5.Baffle
 import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
@@ -492,8 +493,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE && modelEngineName.isNotBlank()) {
             hurt()
         } else {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+            if (animation == BukkitAnimation.TAKE_DAMAGE && MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_19)) {
+                sendHurtAnimation(0f)
+            } else {
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+            }
         }
+    }
+
+    override fun sendHurtAnimation(yaw: Float) {
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHurtAnimation(getVisiblePlayers(), index, yaw)
     }
 
     /**

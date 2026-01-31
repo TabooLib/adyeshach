@@ -40,6 +40,7 @@ typealias NMSPacketPlayOutMount = net.minecraft.network.protocol.game.PacketPlay
 typealias NMSPacketPlayOutEntityMetadata = net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata
 
 typealias NMSPacketPlayOutAnimation = net.minecraft.network.protocol.game.PacketPlayOutAnimation
+typealias NMSPacketPlayOutHurtAnimation = net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket
 
 typealias NMSPacketPlayOutAttachEntity = net.minecraft.network.protocol.game.PacketPlayOutAttachEntity
 

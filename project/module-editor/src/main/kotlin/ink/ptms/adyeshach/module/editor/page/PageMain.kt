@@ -32,18 +32,18 @@ class PageMain(editor: EditPanel) : Page(editor) {
                 // 发送半屏消息
                 player.sendNativeHalfMessage(json)
             }
-            // 衍生单位
-            derivedId != null -> {
-                // 对 derivedId 长度超过 20 的进行截断
-                val id = if (derivedId.length > 20) {
-                    derivedId.substring(0, 20) + "..."
-                } else {
-                    derivedId
-                }
-                json.append("  ").appendLang("editor-entity-is-derived", id, derivedId)
-                // 发送半屏消息
-                player.sendNativeHalfMessage(json)
-            }
+//            // 衍生单位
+//            derivedId != null -> {
+//                // 对 derivedId 长度超过 20 的进行截断
+//                val id = if (derivedId.length > 20) {
+//                    derivedId.substring(0, 20) + "..."
+//                } else {
+//                    derivedId
+//                }
+//                json.append("  ").appendLang("editor-entity-is-derived", id, derivedId)
+//                // 发送半屏消息
+//                player.sendNativeHalfMessage(json)
+//            }
             else -> {
                 json.append("  ")
                 // 观察者

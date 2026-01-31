@@ -163,7 +163,7 @@ interface MinecraftEntityOperator {
     }
 
     /**
-     * 更新数据包实体对动作
+     * 更新数据包实体的动作
      *
      * @param player 数据包接收人
      * @param entityId 实体序号
@@ -172,6 +172,14 @@ interface MinecraftEntityOperator {
     fun updateEntityAnimation(player: List<Player>, entityId: Int, animation: BukkitAnimation)
     fun updateEntityAnimation(player: Player, entityId: Int, animation: BukkitAnimation) {
         updateEntityAnimation(listOf(player), entityId, animation)
+    }
+
+    /**
+     * 更新数据包实体的受伤动画（1.19.4+）
+     */
+    fun updateHurtAnimation(player: List<Player>, entityId: Int, yaw: Float)
+    fun updateHurtAnimation(player: Player, entityId: Int, yaw: Float) {
+        updateHurtAnimation(listOf(player), entityId, yaw)
     }
 
     /**
