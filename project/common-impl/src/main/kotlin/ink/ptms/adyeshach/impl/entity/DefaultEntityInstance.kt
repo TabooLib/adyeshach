@@ -324,7 +324,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // ═══════════════════════════════════════════════════════════════════════════════
 
     open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
-        getCompanions().forEach { (it as DefaultEntityInstance).handleCompanionVisible(viewer, visible) }
+        getCompanions().forEach {
+            it as DefaultEntityInstance
+            // 校正 companion 的服务端位置，避免 TickService 延迟同步导致 spawn 坐标过期
+            if (visible && it.position != it.clientPosition) {
+                it.position = it.clientPosition
+            }
+            it.handleCompanionVisible(viewer, visible)
+        }
     }
 
     open fun handleCompanionVisible(viewer: Player, visible: Boolean) {}
