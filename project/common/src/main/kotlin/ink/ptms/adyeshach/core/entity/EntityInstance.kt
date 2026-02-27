@@ -175,10 +175,15 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
 
     /**
      * 播放动画数据包
-     *
      * @param animation [BukkitAnimation]
      */
     fun sendAnimation(animation: BukkitAnimation)
+
+    /**
+     * 播放受击动画（1.19.4+）
+     * @param yaw 控制实体受击时身体倾斜的方向。角度值决定实体向哪个方向"歪"，模拟被从某个方向击中的视觉效果。
+     */
+    fun sendHurtAnimation(yaw: Float)
 
     /**
      * 添加附着单位

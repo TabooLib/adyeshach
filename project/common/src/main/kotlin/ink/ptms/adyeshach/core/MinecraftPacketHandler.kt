@@ -34,4 +34,9 @@ interface MinecraftPacketHandler {
     fun flush(player: Player) {
         flush(listOf(player))
     }
+
+    /**
+     * 清理玩家的缓冲区（离线时调用）
+     */
+    fun cleanup(player: Player) {}
 }

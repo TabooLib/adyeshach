@@ -218,6 +218,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         }
     }
 
+    override fun updateHurtAnimation(player: List<Player>, entityId: Int, yaw: Float) {
+        packetHandler.sendPacket(player, NMSPacketPlayOutHurtAnimation(entityId, yaw))
+    }
+
     override fun updateEntityAttach(player: List<Player>, attached: Int, holding: Int) {
         if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutAttachEntity(createDataSerializer {

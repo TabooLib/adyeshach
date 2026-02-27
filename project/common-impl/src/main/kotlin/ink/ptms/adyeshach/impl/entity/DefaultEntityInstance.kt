@@ -30,6 +30,7 @@ import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 import taboolib.common5.Baffle
 import taboolib.library.configuration.ConfigurationSection
+import taboolib.module.nms.MinecraftVersion
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
@@ -323,7 +324,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // ═══════════════════════════════════════════════════════════════════════════════
 
     open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
-        getCompanions().forEach { (it as DefaultEntityInstance).handleCompanionVisible(viewer, visible) }
+        getCompanions().forEach {
+            it as DefaultEntityInstance
+            // 校正 companion 的服务端位置，避免 TickService 延迟同步导致 spawn 坐标过期
+            if (visible && it.position != it.clientPosition) {
+                it.position = it.clientPosition
+            }
+            it.handleCompanionVisible(viewer, visible)
+        }
     }
 
     open fun handleCompanionVisible(viewer: Player, visible: Boolean) {}
@@ -492,8 +500,16 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
         if (this is ModelEngine && animation == BukkitAnimation.TAKE_DAMAGE && modelEngineName.isNotBlank()) {
             hurt()
         } else {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+            if (animation == BukkitAnimation.TAKE_DAMAGE && MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_19)) {
+                sendHurtAnimation(0f)
+            } else {
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityAnimation(getVisiblePlayers(), index, animation)
+            }
         }
+    }
+
+    override fun sendHurtAnimation(yaw: Float) {
+        Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHurtAnimation(getVisiblePlayers(), index, yaw)
     }
 
     /**

@@ -77,6 +77,7 @@ internal object DefaultPlayerEvents {
     @SubscribeEvent
     fun onQuit(e: PlayerQuitEvent) {
         onlinePlayerSet -= e.player.name
+        Adyeshach.api().getMinecraftAPI().getPacketHandler().cleanup(e.player)
         Adyeshach.api().releaseEntityManager(e.player)
     }
 
