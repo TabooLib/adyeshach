@@ -27,8 +27,9 @@ class ActionTeleport(val location: ParsedAction<*>): ScriptAction<Void>() {
             }
             val entities = script.getEntities()
             val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null
-            if (AdyeshachScriptEvent.Teleport(entities, sender, it).call()) {
-                entities.forEach { e -> e.teleport(it) }
+            val event = AdyeshachScriptEvent.Teleport(entities, sender, it.clone())
+            if (event.call()) {
+                entities.forEach { e -> e.teleport(event.to) }
             }
         }
     }
