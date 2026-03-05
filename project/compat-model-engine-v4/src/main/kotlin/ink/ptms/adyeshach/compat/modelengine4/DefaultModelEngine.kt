@@ -85,6 +85,7 @@ internal interface DefaultModelEngine : ModelEngine {
             // 创建模型
             if (modelEngineName.isNotBlank()) {
                 // 初始化模型
+                despawn()
                 createModel()
             }
             // 销毁模型

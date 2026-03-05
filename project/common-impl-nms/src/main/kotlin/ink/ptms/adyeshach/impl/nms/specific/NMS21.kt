@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.impl.nms.NMSVillagerProfession
 import ink.ptms.adyeshach.impl.nms.NMSVillagerType
 import org.bukkit.Art
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
 import taboolib.common.util.unsafeLazy
 import taboolib.module.nms.nmsProxy
@@ -128,6 +129,8 @@ interface NMS21 {
     fun createCopperGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): Any
 
     fun createCowVariant(index: Int, value: BukkitCowVariant): Any
+
+    fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean
 
     companion object {
         val instance by unsafeLazy { nmsProxy<NMS21>() }

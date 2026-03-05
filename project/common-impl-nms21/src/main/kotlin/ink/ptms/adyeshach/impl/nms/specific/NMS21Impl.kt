@@ -35,10 +35,7 @@ import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
-import org.bukkit.craftbukkit.v1_21_R4.entity.CraftChicken
-import org.bukkit.craftbukkit.v1_21_R4.entity.CraftCow
-import org.bukkit.craftbukkit.v1_21_R4.entity.CraftPig
-import org.bukkit.craftbukkit.v1_21_R4.entity.CraftWolf
+import org.bukkit.craftbukkit.v1_21_R4.entity.*
 import org.bukkit.entity.*
 import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
@@ -250,6 +247,10 @@ class NMS21Impl : NMS21 {
         }
         val variant = CraftCow.CraftVariant.bukkitToMinecraft(type)
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.COW_VARIANT), variant.direct())
+    }
+
+    override fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean {
+        return (player as CraftPlayer).handle.chunkTrackingView.isInViewDistance(chunkX, chunkZ)
     }
 
     private fun <T> T.direct(): Holder<T> {

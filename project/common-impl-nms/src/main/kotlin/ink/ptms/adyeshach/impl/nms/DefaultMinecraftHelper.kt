@@ -9,7 +9,9 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.nms.specific.NMS19p
 import ink.ptms.adyeshach.impl.nms.specific.NMS20p
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import ink.ptms.adyeshach.minecraft.ChunkPos
+import net.minecraft.network.chat.IChatBaseComponent
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
@@ -139,7 +141,11 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun craftChatSerializerToJson(compound: Any): String {
         return if (MinecraftVersion.isUniversal) {
-            NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+            try {
+                NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+            } catch (_: NoClassDefFoundError) {
+                org.bukkit.craftbukkit.v1_21_R7.util.CraftChatMessage.toJSON(compound as IChatBaseComponent)
+            }
         } else {
             NMS16ChatSerializer.a(compound as NMS16IChatBaseComponent)
         }
@@ -152,6 +158,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
     // 版本适配：isChunkVisible 的实现策略
     // 首次调用时通过 try-catch 确定可用的 NMS API，后续直接调用缓存的实现
     val chunkVisibleImpl = versionAdaptor<(Player, Int, Int) -> Boolean>(
+        {{ player,chunkX,chunkZ->NMS21.instance.isChunkSent(player, chunkX, chunkZ)}},
         // 你改你妈个🥚，我爱说实话
         { { player, chunkX, chunkZ -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) } },
         // 你改你妈个🥚，我爱说实话

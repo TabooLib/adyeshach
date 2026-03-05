@@ -11,7 +11,6 @@ ink.ptms.adyeshach.core.entity.type.AdyFireworkRocket
 ink.ptms.adyeshach.core.entity.type.AdyFishingHook
 ink.ptms.adyeshach.core.entity.type.AdyLeashKnot
 ink.ptms.adyeshach.core.entity.type.AdyLlamaSpit
-ink.ptms.adyeshach.core.entity.type.AdyPainting
 ink.ptms.adyeshach.core.entity.type.AdyShulkerBullet
 ink.ptms.adyeshach.core.entity.type.AdySmallFireball
 ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
@@ -256,7 +255,6 @@ ink.ptms.adyeshach.core.entity.type.AdyMinecart
 ink.ptms.adyeshach.core.entity.type.AdyMule
 ink.ptms.adyeshach.core.entity.type.AdyMushroom
 ink.ptms.adyeshach.core.entity.type.AdyOcelot
-ink.ptms.adyeshach.core.entity.type.AdyPainting
 ink.ptms.adyeshach.core.entity.type.AdyPanda
 ink.ptms.adyeshach.core.entity.type.AdyParrot
 ink.ptms.adyeshach.core.entity.type.AdyPhantom

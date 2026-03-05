@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.core.bukkit
 
+import org.bukkit.Art
+
 /**
  * @author Arasple
  * @date 2020/8/6 18:19
@@ -67,4 +69,8 @@ enum class BukkitPaintings(val index: Char? = null, val legacy: String? = null) 
     WATER,
 
     FIRE;
+
+    fun toBukkit(): Art{
+        return Art.valueOf(name)
+    }
 }
