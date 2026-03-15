@@ -33,10 +33,10 @@ sealed class AdyeshachScriptEvent {
         val entity: List<EntityInstance>,
         val sender: Player?,
         val smooth: Boolean,
-        val to: Location?,
-        val x: Double?,
-        val y: Double?,
-        val z: Double?,
+        var to: Location?,
+        var x: Double?,
+        var y: Double?,
+        var z: Double?,
     ) : BukkitProxyEvent()
 
     /**
@@ -45,6 +45,6 @@ sealed class AdyeshachScriptEvent {
     class Teleport(
         val entity: List<EntityInstance>,
         val sender: Player?,
-        val to: Location
+        var to: Location
     ) : BukkitProxyEvent()
 }

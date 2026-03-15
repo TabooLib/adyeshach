@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.script
 
+import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.event.AdyeshachScriptEvent
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.core.util.submitRepeat
@@ -30,16 +31,21 @@ private fun actionLook() = combinationParser {
             }
             val sender = if (script.sender?.isPlayer() == true) script.sender!!.cast<Player>() else null
             val entities = script.getEntities()
-            if (AdyeshachScriptEvent.Look(entities, sender, smooth != null, to as? Location, x, y, z).call()) {
+            val event = AdyeshachScriptEvent.Look(entities, sender, smooth != null, (to as? Location)?.clone(), x, y, z)
+            if (event.call()) {
+                // to 优先；to 为 null 时用 xyz，xyz 为 null 时回退到 entity 自身坐标
+                fun resolveLookAt(e: EntityInstance): Location {
+                    return event.to ?: Location(e.world, event.x ?: e.x, event.y ?: e.y, event.z ?: e.z)
+                }
                 if (smooth != null) {
                     submitRepeat(5) {
                         entities.forEach { e ->
-                            val lookAt = to as? Location ?: Location(e.world, x ?: e.x, y ?: e.y, z ?: e.z)
+                            val lookAt = resolveLookAt(e)
                             e.controllerLookAt(lookAt.x, lookAt.y, lookAt.z, 35f, 40f)
                         }
                     }
                 } else {
-                    entities.forEach { e -> e.setHeadRotation(to as? Location ?: Location(e.world, x ?: e.x, y ?: e.y, z ?: e.z)) }
+                    entities.forEach { e -> e.setHeadRotation(resolveLookAt(e)) }
                 }
             }
         }
