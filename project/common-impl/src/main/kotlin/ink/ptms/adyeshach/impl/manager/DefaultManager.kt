@@ -20,6 +20,7 @@ open class DefaultManager : BaseManager() {
     /** 所有实体 */
     val activeEntity: MutableSet<EntityInstance> = ConcurrentHashMap.newKeySet()
     val activeEntityByUniqueId = ConcurrentHashMap<String, EntityInstance>()
+    val activeEntityByIndex = ConcurrentHashMap<Int, EntityInstance>()
 
     /** 
      * 可 tick 的实体索引（有可见玩家的实体）
@@ -33,6 +34,7 @@ open class DefaultManager : BaseManager() {
     override fun add(entity: EntityInstance) {
         activeEntity.add(entity)
         activeEntityByUniqueId[entity.uniqueId] = entity
+        activeEntityByIndex[entity.index] = entity
         // 注册可见性变化回调，维护 tickableEntities 索引
         setupTickableCallback(entity)
         // 如果已有可见玩家，立即加入 tickable 列表
@@ -44,6 +46,7 @@ open class DefaultManager : BaseManager() {
     override fun remove(entityInstance: EntityInstance) {
         activeEntity.remove(entityInstance)
         activeEntityByUniqueId.remove(entityInstance.uniqueId)
+        activeEntityByIndex.remove(entityInstance.index)
         tickableEntities.remove(entityInstance)
     }
 
@@ -69,6 +72,10 @@ open class DefaultManager : BaseManager() {
 
     override fun getEntityByUniqueId(id: String): EntityInstance? {
         return activeEntityByUniqueId[id]
+    }
+
+    override fun getEntityByIndex(index: Int): EntityInstance? {
+        return activeEntityByIndex[index]
     }
 
     override fun isPublic(): Boolean {
