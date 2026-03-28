@@ -158,11 +158,14 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
     open fun despawn(destroyPacket: Boolean = true, removeFromManager: Boolean = false) {
         if (destroyPacket) {
             rememberSpawnViewers()
+            // 永久移除时使用 getPlayers() 确保所有 viewer 都收到 destroy 包
+            // companion 系统可能已清空 visible，导致 forViewers（getViewPlayers）遍历空集合
+            val viewers = if (removeFromManager) self.viewPlayers.getPlayers() else self.viewPlayers.getViewPlayers()
             // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
             if (self.isCompanion()) {
-                self.forViewers { self.handleCompanionVisible(it, false) }
+                viewers.forEach { self.handleCompanionVisible(it, false) }
             } else {
-                self.forViewers { self.visible(it, false) }
+                viewers.forEach { self.visible(it, false) }
             }
             AdyeshachEntityDestroyEvent(self).call()
         }
