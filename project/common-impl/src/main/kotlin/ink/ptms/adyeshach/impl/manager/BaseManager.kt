@@ -103,6 +103,10 @@ open class BaseManager : Manager, ManagerService, TickService {
         return null
     }
 
+    override fun getEntityByIndex(index: Int): EntityInstance? {
+        return null
+    }
+
     override fun isPublic(): Boolean {
         return true
     }

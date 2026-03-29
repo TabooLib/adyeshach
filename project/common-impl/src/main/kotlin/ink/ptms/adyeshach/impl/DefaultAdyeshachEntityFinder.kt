@@ -84,7 +84,7 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     override fun getVisibleEntities(player: Player, filter: Predicate<EntityInstance>): List<EntityInstance> {
         // 优化：直接从索引中获取该玩家的可见实体,避免遍历所有管理器
         val visibleSet = playerVisibleEntitiesIndex[player]
-        if (visibleSet == null || visibleSet.isEmpty()) {
+        if (visibleSet.isNullOrEmpty()) {
             return emptyList()
         }
         val pLoc = player.location
@@ -114,15 +114,25 @@ class DefaultAdyeshachEntityFinder : AdyeshachEntityFinder {
     }
 
     override fun getEntityFromEntityId(id: Int, player: Player?): EntityInstance? {
-        return getEntity(player) { it.index == id }
+        api.getPublicEntityManager(ManagerType.PERSISTENT).getEntityByIndex(id)?.let { return it }
+        api.getPublicEntityManager(ManagerType.TEMPORARY).getEntityByIndex(id)?.let { return it }
+        if (player != null) {
+            api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntityByIndex(id)?.let { return it }
+        }
+        return null
     }
 
     override fun getEntityFromUniqueId(id: String, player: Player?): EntityInstance? {
-        return getEntity(player) { it.uniqueId == id }
+        api.getPublicEntityManager(ManagerType.PERSISTENT).getEntityByUniqueId(id)?.let { return it }
+        api.getPublicEntityManager(ManagerType.TEMPORARY).getEntityByUniqueId(id)?.let { return it }
+        if (player != null) {
+            api.getPrivateEntityManager(player, ManagerType.TEMPORARY).getEntityByUniqueId(id)?.let { return it }
+        }
+        return null
     }
 
     override fun getEntityFromClientEntityId(id: Int, player: Player): EntityInstance? {
-        return clientEntityMap[player]?.values?.firstOrNull { it.entityId == id }?.entity
+        return clientEntityMap[player]?.get(id)?.entity
     }
 
     override fun getEntityFromClientUniqueId(id: UUID, player: Player): EntityInstance? {

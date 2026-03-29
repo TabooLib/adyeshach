@@ -108,6 +108,11 @@ interface Manager {
     fun getEntityByUniqueId(id: String): EntityInstance?
 
     /**
+     * 根据实体序号（index）获取单位
+     */
+    fun getEntityByIndex(index: Int): EntityInstance?
+
+    /**
      * 从文件中加载单位
      */
     fun loadEntityFromFile(file: File): EntityInstance

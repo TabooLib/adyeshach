@@ -43,7 +43,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
         return if (visible) {
             prepareSpawn(viewer) {
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, normalizeUniqueId, position.toLocation())
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntityLiving(viewer, entityType, index, normalizeUniqueId, clientPosition.toLocation())
                 // 更新装备
                 if (isEquipmentRefreshOnSpawn) {
                     submit(delay = 1) { updateEquipment() }
