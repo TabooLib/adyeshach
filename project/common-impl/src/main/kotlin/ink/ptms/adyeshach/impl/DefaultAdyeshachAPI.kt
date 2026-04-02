@@ -96,17 +96,14 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
             // 公共管理器
             getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.removeViewer(player) }
             getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
-            // 移除缓存
-            playerEntityTemporaryManagerMap.remove(player)
-        } else {
-            // 重复执行警告
-            warning(
-                """
-                    玩家 ${player.name} 没有可供释放的实体管理器。
-                    Player ${player.name} has no entity manager to release.
-                """.t()
-            )
         }
+        // 无论 metadata 是否存在，都尝试清理私有管理器
+        // 避免因 metadata 被外部移除而跳过清理导致内存泄漏
+        val manager = playerEntityTemporaryManagerMap[player.uniqueId]
+        manager?.getEntities()?.toList()?.forEach { it.despawn(removeFromManager = true) }
+        playerEntityTemporaryManagerMap.remove(player)
+        // 清理玩家的可见实体索引（兜底）
+        localEntityFinder.clearPlayerVisibleEntities(player)
     }
 
     override fun refreshEntityManager(player: Player) {
