@@ -19,6 +19,14 @@ import org.bukkit.inventory.ItemStack
 @Suppress("SpellCheckingInspection")
 interface DefaultEquipable : EntityEquipable {
 
+    companion object {
+        val SUPPORTED_SLOTS = setOf(
+            EquipmentSlot.HAND, EquipmentSlot.OFF_HAND,
+            EquipmentSlot.FEET, EquipmentSlot.LEGS,
+            EquipmentSlot.CHEST, EquipmentSlot.HEAD,
+        )
+    }
+
     override fun clearEquipment() {
         this as DefaultEntityLiving
         equipment.clear()
@@ -29,7 +37,7 @@ interface DefaultEquipable : EntityEquipable {
         this as DefaultEntityLiving
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
         val players = getVisiblePlayers()
-        val equipment = EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
+        val equipment = SUPPORTED_SLOTS.associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
         AdyeshachEntityEquipmentUpdateEvent(players, this, equipment).call()
         operator.updateEquipment(players, index, equipment)
     }
@@ -37,7 +45,7 @@ interface DefaultEquipable : EntityEquipable {
     override fun updateEquipment(player: Player) {
         this as DefaultEntityLiving
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
-        val equipment = EquipmentSlot.values().associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
+        val equipment = SUPPORTED_SLOTS.associateWith { getEquipment(it) ?: ItemStack(Material.AIR) }.toMutableMap()
         AdyeshachEntityEquipmentUpdateEvent(listOf(player), this, equipment).call()
         operator.updateEquipment(player, index, equipment)
     }
