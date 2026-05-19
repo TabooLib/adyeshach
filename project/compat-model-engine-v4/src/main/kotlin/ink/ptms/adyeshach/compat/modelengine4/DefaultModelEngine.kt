@@ -69,13 +69,17 @@ internal interface DefaultModelEngine : ModelEngine {
     }
 
     override fun destroyModelEngine() {
-        if (isModelEngineHooked && modelEngineUniqueId != null) {
+        if (isModelEngineHooked) {
             this as DefaultEntityInstance
-            val uuid = modelEngineUniqueId!!
-            ModelEngineAPI.removeModeledEntity(uuid)
-            modelEngineUniqueId = null
-            // 触发销毁回调
-            modelDestroyHandlers.forEach { it.accept(uuid) }
+            // EntityModeled 由实体 tag 持有，销毁模型时必须同步断开 DummyEntityData 引用链。
+            removeTag("ModelEngine:EntityModeled")
+            val uuid = modelEngineUniqueId
+            if (uuid != null) {
+                ModelEngineAPI.removeModeledEntity(uuid)
+                modelEngineUniqueId = null
+                // 触发销毁回调
+                modelDestroyHandlers.forEach { it.accept(uuid) }
+            }
         }
     }
 
@@ -88,8 +92,12 @@ internal interface DefaultModelEngine : ModelEngine {
                 createModel()
             }
             // 销毁模型
-            else if (ModelEngineAPI.removeModeledEntity(modelEngineUniqueId) != null) {
-                respawn()
+            else {
+                val hasModel = modelEngineUniqueId != null
+                destroyModelEngine()
+                if (hasModel) {
+                    respawn()
+                }
             }
             return true
         }
