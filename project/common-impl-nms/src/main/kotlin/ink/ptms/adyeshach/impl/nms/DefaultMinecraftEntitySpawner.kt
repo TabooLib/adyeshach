@@ -7,14 +7,15 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.fixYaw
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
 import ink.ptms.adyeshach.impl.nms.specific.NMS21
+import org.bukkit.Art
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_12_R1.CraftArt
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
 import taboolib.common.util.unsafeLazy
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.UnsafeAccess
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
@@ -381,7 +382,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         // 获取 ID
         val id = motiveCache.getOrPut(painting) {
             try {
-                NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(painting))
+                CraftArt.BukkitToNotch(Art.valueOf(painting.legacy!!.uppercase())).C
             } catch (_: Exception) {
                 NMS21.instance.getArtType(painting)
             }
@@ -429,7 +430,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
                     writeUUID(uuid)
-                    writeString(painting.name)
+                    writeString(painting.legacy!!)
                     writeBlockPosition(location.blockX, location.blockY, location.blockZ)
                     writeByte(direction.get2DRotationValue().toByte())
                 }.build() as NMS9PacketDataSerializer)

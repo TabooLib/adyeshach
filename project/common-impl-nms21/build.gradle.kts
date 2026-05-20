@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 configurations.all {
     dependencies.removeIf {
         it.name == "v11604"
@@ -12,10 +14,22 @@ dependencies {
     compileOnly("io.netty:netty-all:4.1.86.Final")
     compileOnly("com.mojang:brigadier:1.0.500")
     compileOnly("net.md-5:bungeecord-chat:1.17")
-    compileOnly("com.mojang:authlib:7.1.61")
+    compileOnly("com.mojang:authlib:7.0.61")
     compileOnly(project(":project:common"))
     compileOnly(project(":project:common-impl"))
     compileOnly(project(":project:common-impl-nms"))
 }
 
 taboolib { subproject = true }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf("-Xjvm-default=all", "-Xextended-compiler-checks")
+    }
+}
+
+configure<JavaPluginConvention> {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}

@@ -411,7 +411,6 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): MinecraftMeta {
         return DefaultMeta(
             if (majorLegacy >= 11900) {
-                NMS21.instance.getVillagerType(villagerData.type)
                 val villagerType = try {
                     when (villagerData.type) {
                         VillagerData.Type.DESERT -> NMSVillagerType.DESERT
@@ -424,7 +423,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                     }
                 } catch (_: NoSuchFieldError) {
                     // 监视你
-                    NMS21.instance.getVillagerType(villagerData.type)
+                    NMS21.instance.getVillagerType(villagerData.type) as NMSVillagerType
                 }
                 val villagerProfession = try {
                     when (villagerData.profession) {
@@ -445,7 +444,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         VillagerData.Profession.WEAPONSMITH -> NMSVillagerProfession.WEAPONSMITH
                     }
                 } catch (_: NoSuchFieldError) {
-                    NMS21.instance.getVillagerProfession(villagerData.profession)
+                    NMS21.instance.getVillagerProfession(villagerData.profession) as NMSVillagerProfession
                 }
                 val data = try {
                     NMSVillagerData(villagerType, villagerProfession, 1)

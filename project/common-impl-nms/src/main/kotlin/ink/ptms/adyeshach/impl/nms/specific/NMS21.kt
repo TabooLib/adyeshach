@@ -7,8 +7,6 @@ import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.impl.nms.NMSEntityPose
-import ink.ptms.adyeshach.impl.nms.NMSVillagerProfession
-import ink.ptms.adyeshach.impl.nms.NMSVillagerType
 import org.bukkit.Art
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -77,12 +75,12 @@ interface NMS21 {
     /**
      * 获取村民类型
      */
-    fun getVillagerType(type: VillagerData.Type): NMSVillagerType
+    fun getVillagerType(type: VillagerData.Type): Any
 
     /**
      * 获取村民职业
      */
-    fun getVillagerProfession(profession: VillagerData.Profession): NMSVillagerProfession
+    fun getVillagerProfession(profession: VillagerData.Profession): Any
 
     /**
      * 获取画的类型id

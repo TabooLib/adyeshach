@@ -20,9 +20,9 @@ import taboolib.platform.util.nextChat
 class MetaText(val key: String) : MetaEditor {
 
     override fun open(entity: EntityInstance, player: Player, def: String) {
-        val plainMessage = Components.toLegacyText(def).takeIf { it.uncolored().isNotEmpty() } ?: ""
+        val plainMessage = Components.toLegacyText(def).takeIf { it.uncolored().isNotEmpty() }?.replace("§", "&") ?: ""
         player.clearScreen()
-        player.sendLang("editor-input-chat-component", plainMessage, plainMessage.replace('§', '&'), def.replace('§', '&'))
+        player.sendLang("editor-input-chat-component", plainMessage, plainMessage, def.replace('§', '&'))
         player.nextChat {
             submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
         }

@@ -20,6 +20,7 @@ import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.common5.cbool
 import taboolib.common5.cint
+import taboolib.module.chat.Components
 import taboolib.module.chat.colored
 import taboolib.platform.util.onlinePlayers
 import java.util.*
@@ -150,7 +151,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     }
 
     override fun setName(name: String) {
-        gameProfile.name = name.colored()
+        gameProfile.name = Components.parseSimpleToRaw(name.colored())
         refreshPlayer()
     }
 

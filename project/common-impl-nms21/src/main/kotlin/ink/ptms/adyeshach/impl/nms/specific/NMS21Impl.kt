@@ -1,14 +1,18 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
+import com.google.common.collect.LinkedHashMultimap
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
+import com.mojang.authlib.properties.PropertyMap
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftScoreboardOperator
 import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.BukkitChickenType.*
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.util.ifloor
-import ink.ptms.adyeshach.impl.nms.*
+import ink.ptms.adyeshach.impl.nms.NMSEntityPose
+import ink.ptms.adyeshach.impl.nms.NMSIChatBaseComponent
+import ink.ptms.adyeshach.impl.nms.NMSPacketDataSerializer
 import net.minecraft.EnumChatFormat
 import net.minecraft.core.Holder
 import net.minecraft.core.registries.BuiltInRegistries
@@ -26,10 +30,7 @@ import net.minecraft.world.phys.Vec3D
 import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
 import net.minecraft.world.scores.ScoreboardTeamBase
-import org.bukkit.Art
-import org.bukkit.Location
-import org.bukkit.NamespacedKey
-import org.bukkit.Registry
+import org.bukkit.*
 import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
@@ -42,13 +43,17 @@ import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
 import java.util.*
+import kotlin.math.abs
 
 class NMS21Impl : NMS21 {
 
-    override fun getProperties(uuid: UUID, gameProfile: ink.ptms.adyeshach.core.bukkit.data.GameProfile): com.mojang.authlib.properties.PropertyMap {
-        val profile = GameProfile(uuid, gameProfile.name)
+    override fun getProperties(uuid: UUID, gameProfile: ink.ptms.adyeshach.core.bukkit.data.GameProfile): PropertyMap {
+        var profile = GameProfile(uuid, gameProfile.name)
         if (gameProfile.texture.size == 2) {
-            profile.properties.put("textures", Property("textures", gameProfile.texture[0], gameProfile.texture[1]))
+            val map = LinkedHashMultimap.create<String, Property>()
+            val property = Property("textures", gameProfile.texture[0], gameProfile.texture[1])
+            map.put("textures", property)
+            profile = GameProfile(uuid, gameProfile.name, PropertyMap(map))
         }
         return profile.properties
     }
@@ -166,14 +171,22 @@ class NMS21Impl : NMS21 {
         }
     }
 
-    override fun getVillagerType(type: VillagerData.Type): NMSVillagerType {
+    override fun getVillagerType(type: VillagerData.Type): Any {
         val a = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(type.name.lowercase()))
-        return CraftVillager.CraftType.bukkitToMinecraft(a)
+        return try {
+            CraftVillager.CraftType.bukkitToMinecraft(a)
+        } catch (_: NoSuchMethodError) {
+            org.bukkit.craftbukkit.v1_21_R4.entity.CraftVillager.CraftType.bukkitToMinecraftHolder(a).value()
+        }
     }
 
-    override fun getVillagerProfession(profession: VillagerData.Profession): NMSVillagerProfession {
+    override fun getVillagerProfession(profession: VillagerData.Profession): Any {
         val a = Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(profession.name.lowercase()))
-        return CraftVillager.CraftProfession.bukkitToMinecraft(a)
+        return try {
+            CraftVillager.CraftProfession.bukkitToMinecraft(a)
+        } catch (_: NoSuchMethodError) {
+            org.bukkit.craftbukkit.v1_21_R4.entity.CraftVillager.CraftProfession.bukkitToMinecraftHolder(a).value()
+        }
     }
 
     override fun getArtType(art: BukkitPaintings): Int {
@@ -250,6 +263,12 @@ class NMS21Impl : NMS21 {
     }
 
     override fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean {
+        if (MinecraftVersion.isUniversalCraftBukkit) {
+            if (!player.world.isChunkLoaded(chunkX, chunkZ)) return false
+            val px = player.location.blockX shr 4
+            val pz = player.location.blockZ shr 4
+            return maxOf(abs(chunkX - px), abs(chunkZ - pz)) <= Bukkit.getViewDistance()
+        }
         return (player as CraftPlayer).handle.chunkTrackingView.isInViewDistance(chunkX, chunkZ)
     }
 
