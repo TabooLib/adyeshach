@@ -90,6 +90,7 @@ open class CustomMetaHandler(protected val self: DefaultEntityInstance) {
             "modelenginescale", "modelengine_scale", "model_engine_scale" -> {
                 val options = self.modelEngineOptions ?: ModelEngineOptions()
                 options.scale = value?.cdouble ?: 0.0
+                self.modelEngineOptions = options
                 true
             }
             // 冻结
