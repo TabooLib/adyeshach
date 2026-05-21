@@ -13,6 +13,7 @@ import taboolib.module.kether.*
 /**
  * modelengine animation add {token} [speed {double} [lerpin {int} [lerpout {int} [priority {int}]]]]
  * modelengine animation remove {token} [ingorelerp {boolean} [priority {int}]]
+ * modelengine animation remove-all
  */
 @Awake(LifeCycle.LOAD)
 internal fun init() {
@@ -20,8 +21,8 @@ internal fun init() {
         KetherLoader.registerParser(combinationParser {
             it.group(
                 symbol(), // animation
-                symbol(), // add, remove
-                text(), // {token}
+                symbol(), // add, remove, remove-all
+                text().option().defaultsTo(""), // {token}
                 command("speed", then = double()).option().defaultsTo(1.0), // speed {double}
                 command("lerpin", then = int()).option().defaultsTo(0), // lerpin {int}
                 command("lerpout", then = int()).option().defaultsTo(0), // lerpout {int}
@@ -44,6 +45,9 @@ internal fun init() {
                                     when (method.lowercase()) {
                                         // 添加
                                         "add", "play" -> {
+                                            if (token.isEmpty()) {
+                                                error("Missing token: modelengine animation $method <token>")
+                                            }
                                             e.playAnimation(
                                                 modelId = e.modelEngineName,
                                                 animationId = token,
@@ -58,6 +62,9 @@ internal fun init() {
                                         }
                                         // 删除
                                         "remove" -> {
+                                            if (token.isEmpty()) {
+                                                error("Missing token: modelengine animation remove <token>")
+                                            }
                                             e.stopAnimation(
                                                 modelId = e.modelEngineName,
                                                 animationId = token,
@@ -65,8 +72,12 @@ internal fun init() {
                                                 priority = priority
                                             )
                                         }
+                                        // 删除全部
+                                        "remove-all" -> {
+                                            e.stopAllAnimations(e.modelEngineName)
+                                        }
                                         // 其他
-                                        else -> error("Unknown method: $method (play, remove)")
+                                        else -> error("Unknown method: $method (play, remove, remove-all)")
                                     }
                                 }
                                 // 其他

@@ -154,6 +154,18 @@ fun ModelEngine.stopAnimation(
 }
 
 /**
+ * 停止模型的全部动画
+ *
+ * @param modelId 模型 ID
+ */
+fun ModelEngine.stopAllAnimations(modelId: String) {
+    val activeModel = getActiveModel(modelId)
+    activeModel?.animationHandler?.forceStopAllAnimations()
+    this as EntityInstance
+    removePersistentTag("ModelEngine:Animation:$modelId")
+}
+
+/**
  * 更改模型部件
  *
  * @param fromModelId 源模型 ID
