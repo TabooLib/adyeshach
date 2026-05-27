@@ -883,8 +883,8 @@ ink.ptms.adyeshach.core.entity.type.AdyZombieVillager
 ink.ptms.adyeshach.core.entity.type.AdyHuman
     skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
         &human0
-        12109 !
-        17 17
+        12109 16
+        17 +
         15 -
         14 -
         10 --

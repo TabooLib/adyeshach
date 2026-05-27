@@ -118,12 +118,12 @@ internal object DefaultPlayerEvents {
                     // 1.21+的字段变为c了,太操蛋了
                     // nm的缓存傻逼玩意,换了就必须清缓存
                     val action = if (MinecraftVersion.versionId >= 12005) {
-                        e.packet.source.getProperty<Any>("action", remap = true)
+                        e.packet.source.getProperty<Any>("action")
                     } else {
-                        e.packet.source.getProperty("b", remap = true)
+                        e.packet.source.getProperty("b")
                     }!!
 
-                    val actionOrdinal = (action.invokeMethod<Any>("getType", remap = true) as Enum<*>).ordinal
+                    val actionOrdinal = (action.invokeMethod<Any>("getType") as Enum<*>).ordinal
 
                     when (actionOrdinal) {
                         // 左键
@@ -131,10 +131,10 @@ internal object DefaultPlayerEvents {
                             submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
                         }
                         // 右键
-                        0, 2 -> {
-                            val location = kotlin.runCatching { action.getProperty<Any>("location", remap = true) }.getOrNull()
-                            val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = action.getProperty<Any>("hand", remap = true).toString() == "MAIN_HAND"
+                        2 -> {
+                            val location = kotlin.runCatching { action.getProperty<Any>("location") }.getOrNull()!!
+                            val vector = Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(location)
+                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
                             submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
                         }
                     }

@@ -151,7 +151,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     }
 
     override fun setName(name: String) {
-        gameProfile.name = Components.parseSimpleToRaw(name.colored())
+        gameProfile.name = Components.parseSimpleToLegacyRaw(name).toLegacyText().colored()
         refreshPlayer()
     }
 
