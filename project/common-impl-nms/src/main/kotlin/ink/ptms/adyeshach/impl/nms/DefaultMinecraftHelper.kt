@@ -22,6 +22,7 @@ import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.versionAdaptor
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Adyeshach
@@ -48,7 +49,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     val blockIdCache = ConcurrentHashMap<MaterialData, Int>()
 
-    var isChunkCheckError = false
+    val chunkCheckDisabledUntil = AtomicLong(0)
 
     override fun adapt(type: EntityTypes): Any {
         return entityTypeCache.getOrPut(type) {
@@ -187,14 +188,20 @@ class DefaultMinecraftHelper : MinecraftHelper {
     )
 
     override fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean {
-        if (isChunkCheckError) return false
+        val now = System.currentTimeMillis()
+        if (now < chunkCheckDisabledUntil.get()) {
+            return true
+        }
         return try {
             chunkVisibleImpl()(player, chunkX, chunkZ)
         } catch (ex: Throwable) {
-            isChunkCheckError = true
-            warning("Unable to check chunk visibility. Please report this issue to the developer.")
-            ex.printStackTrace()
-            false
+            val disabledUntil = now + 60000
+            if (chunkCheckDisabledUntil.getAndSet(disabledUntil) <= now) {
+                warning("Unable to check chunk visibility. Disabled this check for 60 seconds.")
+                ex.printStackTrace()
+            }
+            // 区块发送状态偶发读失败时只短暂熔断，熔断期间退回到调用方已有的距离判断。
+            true
         }
     }
 
