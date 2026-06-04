@@ -21,7 +21,7 @@ subprojects {
             install(BukkitNMSDataSerializer)
             // repoTabooLib = project.repositories.mavenLocal().url.toString()
         }
-        version { taboolib = "6.2.4-2dd72ca" }
+        version { taboolib = "6.3.0-b0ee24a" }
     }
     repositories {
         mavenLocal()
