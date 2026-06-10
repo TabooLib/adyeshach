@@ -1,17 +1,18 @@
 package ink.ptms.adyeshach.impl.nms
 
 import com.mojang.datafixers.util.Pair
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
-import ink.ptms.adyeshach.core.util.fixYaw
 import ink.ptms.adyeshach.core.util.ifloor
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.createDataSerializer
 
 /**
  * Adyeshach
@@ -55,19 +56,26 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                     writeBoolean(onGround)
                 }.build() as NMS9PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19, 1.20
+            // 1.17, 1.18, 1.19, 1.20, 1.21
             // 使用带有 DataSerializer 的构造函数生成数据包
-            9, 10, 11, 12 -> NMSPacketPlayOutEntityTeleport(createDataSerializer {
-                writeVarInt(entityId)
-                writeDouble(location.x)
-                writeDouble(location.y)
-                writeDouble(location.z)
-                writeByte(yaw)
-                writeByte(pitch)
-                writeBoolean(onGround)
-            }.build() as NMSPacketDataSerializer)
-            // 1.21
-            13 -> error("还不支持")
+            9, 10, 11, 12, 13 -> {
+                val data = createDataSerializer {
+                    writeVarInt(entityId)
+                    writeDouble(location.x)
+                    writeDouble(location.y)
+                    writeDouble(location.z)
+                    writeByte(yaw)
+                    writeByte(pitch)
+                    writeBoolean(onGround)
+                }.build() as NMSPacketDataSerializer
+                if (MinecraftVersion.versionId >= 12103) {
+                    NMS21.instance.createTeleport(entityId, location, yaw, pitch, onGround)
+                } else if (MinecraftVersion.versionId >= 12005) {
+                    NMSPacketPlayOutEntityTeleport::class.java.invokeConstructor(data)
+                } else {
+                    NMSPacketPlayOutEntityTeleport(data)
+                }
+            }
             // 不支持
             else -> error("Unsupported version.")
         }
@@ -75,6 +83,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         packetHandler.sendPacket(player, packet)
         // 同步头部朝向
         updateHeadRotation(player, entityId, location.yaw)
+        // 同步位置
+        syncPosition(player, entityId, location, onGround)
     }
 
     override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
@@ -128,16 +138,21 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
     }
 
     override fun updateHeadRotation(player: List<Player>, entityId: Int, yaw: Float) {
+        val yHeadRot = ifloor(yaw * 256.0 / 360.0).toByte()
         if (isUniversal) {
-            packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
-                writeVarInt(entityId)
-                writeByte(ifloor(yaw * 256.0 / 360.0).toByte())
-            }.build() as NMSPacketDataSerializer))
+            if (MinecraftVersion.versionId >= 12005) {
+                packetHandler.sendPacket(player, NMS21.instance.createEntityHead(entityId, yHeadRot))
+            } else {
+                packetHandler.sendPacket(player, NMSPacketPlayOutEntityHeadRotation(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeByte(yHeadRot)
+                }.build() as NMSPacketDataSerializer))
+            }
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutEntityHeadRotation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(ifloor(yaw * 256.0 / 360.0).toByte())
+                    writeByte(yHeadRot)
                 }.build() as NMS16PacketDataSerializer)
             })
         }
@@ -165,10 +180,14 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updatePassengers(player: List<Player>, entityId: Int, vararg passengers: Int) {
         if (isUniversal) {
-            packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {
-                writeVarInt(entityId)
-                writeVarIntArray(passengers)
-            }.build() as NMSPacketDataSerializer))
+            if (MinecraftVersion.versionId >= 12005) {
+                packetHandler.sendPacket(player, NMS21.instance.createPassengers(entityId, *passengers))
+            } else {
+                packetHandler.sendPacket(player, NMSPacketPlayOutMount(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeVarIntArray(passengers)
+                }.build() as NMSPacketDataSerializer))
+            }
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutMount().also {
                 it.a(createDataSerializer {
@@ -228,6 +247,12 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         })
     }
 
+    private fun syncPosition(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
+        if (MinecraftVersion.versionId >= 12102) {
+            packetHandler.sendPacket(player, NMS21.instance.createSyncPosition(entityId, location, onGround))
+        }
+    }
+
     fun EquipmentSlot.toNMSEnumItemSlot(): NMSEnumItemSlot {
         return when (this) {
             EquipmentSlot.HAND -> NMSEnumItemSlot.MAINHAND
@@ -236,6 +261,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
             EquipmentSlot.LEGS -> NMSEnumItemSlot.LEGS
             EquipmentSlot.CHEST -> NMSEnumItemSlot.CHEST
             EquipmentSlot.HEAD -> NMSEnumItemSlot.HEAD
+            EquipmentSlot.valueOf("BODY") -> NMSEnumItemSlot.valueOf("BODY")
+            EquipmentSlot.valueOf("SADDLE") -> NMSEnumItemSlot.valueOf("SADDLE")
             else -> error("Unknown EquipmentSlot: $this")
         }
     }

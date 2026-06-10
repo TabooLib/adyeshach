@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
-import ink.ptms.adyeshach.impl.nms.specific.NMS20p
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer
 import org.bukkit.entity.Player

@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.Art
 import org.bukkit.entity.Player
-import taboolib.module.nms.MinecraftVersion
 
 /**
  * Adyeshach
@@ -35,9 +34,6 @@ abstract class DefaultPainting(entityTypes: EntityTypes) : DefaultEntity(entityT
     }
 
     override fun handleVisibleInternal(viewer: Player, visible: Boolean): Boolean {
-        if (MinecraftVersion.majorLegacy >= 11900) {
-            return super.handleVisibleInternal(viewer, visible)
-        }
         // 低版本使用独立的 Painting 包生成实体
         val api = Adyeshach.api().getMinecraftAPI()
         return if (visible) {

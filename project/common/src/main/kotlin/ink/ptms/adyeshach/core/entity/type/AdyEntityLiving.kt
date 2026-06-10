@@ -68,6 +68,7 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
 
     /**
      * 设置实体药水颜色
+     * 1.21未解决
      */
     fun setPotionEffectColor(value: Color) {
         setMetadata("potionEffectColor", value.asRGB())
@@ -78,5 +79,19 @@ interface AdyEntityLiving : AdyEntity, EntityEquipable {
      */
     fun getPotionEffectColor(): Color {
         return Color.fromRGB(getMetadata<Int>("potionEffectColor").coerceAtLeast(0))
+    }
+
+    /**
+     * 设置药水是否在制作,将产生的粒子减少到正常的1/5
+     */
+    fun setPotionEffectAmbient(value: Boolean) {
+        setMetadata("potionEffectAmbient", value)
+    }
+
+    /**
+     * 获取药水是否在制作
+     */
+    fun getPotionEffectAmbient(): Boolean {
+        return getMetadata("potionEffectAmbient")
     }
 }

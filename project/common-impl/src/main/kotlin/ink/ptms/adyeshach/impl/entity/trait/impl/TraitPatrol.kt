@@ -12,11 +12,7 @@ import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.*
 import org.bukkit.entity.Player
-import org.bukkit.event.player.PlayerDropItemEvent
-import org.bukkit.event.player.PlayerEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerQuitEvent
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.EquipmentSlot
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent

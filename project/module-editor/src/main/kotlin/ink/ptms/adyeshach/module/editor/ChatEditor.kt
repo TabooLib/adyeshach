@@ -10,10 +10,12 @@ import ink.ptms.adyeshach.module.editor.page.Page
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.function.submit
 import taboolib.common.util.resettableLazy
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.util.mapListAs
+import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.getMetaFirstOrNull
 
 /**
@@ -56,6 +58,8 @@ object ChatEditor : AdyeshachEditor {
     fun refresh(player: Player) {
         val page = player.getMetaFirstOrNull("adyeshach_last_open")?.value() as? Page
         val index = player.getMetaFirstOrNull("adyeshach_last_open_index")?.value() as? Int
-        page?.open(index ?: 0)
+        submit(MinecraftVersion.major <= 12, delay = 1) {
+            page?.open(index ?: 0)
+        }
     }
 }

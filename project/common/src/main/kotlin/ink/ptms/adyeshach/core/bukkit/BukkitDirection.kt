@@ -6,19 +6,19 @@ import ink.ptms.adyeshach.core.util.ifloor
  * @author Arasple
  * @date 2020/8/6 17:49
  */
-enum class BukkitDirection {
+enum class BukkitDirection(val legacyDirection:Int,val direction: Int) {
 
-    DOWN,
+    DOWN(-1,-1),
 
-    UP,
+    UP(-1,-1),
 
-    NORTH,
+    NORTH(2,2),
 
-    SOUTH,
+    SOUTH(0,3),
 
-    WEST,
+    WEST(1,4),
 
-    EAST;
+    EAST(3,5);
 
     companion object {
 

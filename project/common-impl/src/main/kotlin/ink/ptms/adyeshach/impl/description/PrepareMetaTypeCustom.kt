@@ -1,16 +1,13 @@
 package ink.ptms.adyeshach.impl.description
 
 import com.eatthepath.uuid.FastUUID
-import ink.ptms.adyeshach.core.bukkit.BukkitParticles
-import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.core.util.getEnumOrNull
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Art
 import org.bukkit.Material
-import org.bukkit.entity.Cat
-import org.bukkit.entity.Frog
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
@@ -54,10 +51,19 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
             CustomType.QUATERNION -> PrepareMetaNatural(name, parseQuat(args), "Quaternion")
             // 特殊版本约定
             CustomType.PAINTING -> PrepareMetaNatural(name, Art.KEBAB, "Art")
-            CustomType.CAT_TYPE -> PrepareMetaNatural(name, Cat.Type.TABBY, "Cat.Type")
-            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, Frog.Variant.TEMPERATE, "Frog.Variant")
+            CustomType.CAT_TYPE -> PrepareMetaNatural(name, parseCatType(args), "Cat.Type")
+            CustomType.FROG_VARIANT -> PrepareMetaNatural(name, BukkitFrogVariant.TEMPERATE, "Frog.Variant")
             // 1.20 新增
             CustomType.SNIFFER_STATE -> PrepareMetaNatural(name, AdySniffer.State.IDLING, "SnifferState")
+            // 1.21 新增
+            CustomType.DIRECTION -> PrepareMetaNatural(name, BukkitDirection.SOUTH, "BukkitDirection")
+            CustomType.CHICKEN_VARIANT -> PrepareMetaNatural(name, BukkitChickenType.TEMPERATE, "Chicken.Variant")
+            CustomType.ARMADILLO_STATE -> PrepareMetaNatural(name, BukkitArmadilloState.IDLE, "Armadillo.State")
+            CustomType.PIG_VARIANT -> PrepareMetaNatural(name, BukkitPigVariant.TEMPERATE, "Pig.Variant")
+            CustomType.WOLF_VARIANT -> PrepareMetaNatural(name, BukkitWolfVariant.PALE, "Wolf.Variant")
+            CustomType.COPPER_WEATHERING_STATE -> PrepareMetaNatural(name, BukkitCopperWeatherState.UNAFFECTED, "CopperGolem.WeatherState")
+            CustomType.COPPER_GOLEM_STATUE_POSE -> PrepareMetaNatural(name, BukkitCopperGolemStatuePose.IDLE, "CopperGolem.Statue")
+            CustomType.COW_VARIANT -> PrepareMetaNatural(name, BukkitCowVariant.NORMAL, "Cow.Variant")
         }
     }
 
@@ -78,6 +84,10 @@ class PrepareMetaTypeCustom(val type: CustomType) : PrepareMetaType {
     }
 
     private fun parseParticle(args: List<String>): BukkitParticles {
-        return BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.VILLAGER_HAPPY
+        return BukkitParticles::class.java.getEnumOrNull(args[1]) ?: BukkitParticles.HAPPY_VILLAGER
+    }
+
+    private fun parseCatType(args: List<String>): BukkitCatType {
+        return BukkitCatType::class.java.getEnumOrNull(args[1]) ?: BukkitCatType.TABBY
     }
 }

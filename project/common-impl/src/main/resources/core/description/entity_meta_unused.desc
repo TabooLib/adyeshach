@@ -11,7 +11,6 @@ ink.ptms.adyeshach.core.entity.type.AdyFireworkRocket
 ink.ptms.adyeshach.core.entity.type.AdyFishingHook
 ink.ptms.adyeshach.core.entity.type.AdyLeashKnot
 ink.ptms.adyeshach.core.entity.type.AdyLlamaSpit
-ink.ptms.adyeshach.core.entity.type.AdyPainting
 ink.ptms.adyeshach.core.entity.type.AdyShulkerBullet
 ink.ptms.adyeshach.core.entity.type.AdySmallFireball
 ink.ptms.adyeshach.core.entity.type.AdyThrownEgg
@@ -55,7 +54,6 @@ ink.ptms.adyeshach.core.entity.type.AdyCaveSpider
     isClimbing
 
 ink.ptms.adyeshach.core.entity.type.AdyCod
-ink.ptms.adyeshach.core.entity.type.AdySalmon
 ink.ptms.adyeshach.core.entity.type.AdyTropicalFish
     fromBucket
     isSprinting
@@ -130,11 +128,6 @@ ink.ptms.adyeshach.core.entity.type.AdySnowGolem
 ink.ptms.adyeshach.core.entity.type.AdyThrownTrident
     loyaltyLevel
 
-ink.ptms.adyeshach.core.entity.type.AdyTurtle
-    layingEgg
-    isGoingHome
-    isTraveling
-
 ink.ptms.adyeshach.core.entity.type.AdyWanderingTrader
     isBaby
 
@@ -176,7 +169,6 @@ ink.ptms.adyeshach.core.entity.type.AdyEvokerFangs
 ink.ptms.adyeshach.core.entity.type.AdyExperienceOrb
 ink.ptms.adyeshach.core.entity.type.AdyEyeOfEnder
 ink.ptms.adyeshach.core.entity.type.AdyFallingBlock
-ink.ptms.adyeshach.core.entity.type.AdyFireball
 ink.ptms.adyeshach.core.entity.type.AdyFireworkRocket
 ink.ptms.adyeshach.core.entity.type.AdyFishingHook
 ink.ptms.adyeshach.core.entity.type.AdyMinecart
@@ -233,9 +225,7 @@ ink.ptms.adyeshach.core.entity.type.AdyBat
 ink.ptms.adyeshach.core.entity.type.AdyBoat
 ink.ptms.adyeshach.core.entity.type.AdyCat
 ink.ptms.adyeshach.core.entity.type.AdyCaveSpider
-ink.ptms.adyeshach.core.entity.type.AdyChicken
 ink.ptms.adyeshach.core.entity.type.AdyCod
-ink.ptms.adyeshach.core.entity.type.AdyCow
 ink.ptms.adyeshach.core.entity.type.AdyCreeper
 ink.ptms.adyeshach.core.entity.type.AdyDolphin
 ink.ptms.adyeshach.core.entity.type.AdyDonkey
@@ -253,7 +243,6 @@ ink.ptms.adyeshach.core.entity.type.AdyFishingHook
 ink.ptms.adyeshach.core.entity.type.AdyFox
 ink.ptms.adyeshach.core.entity.type.AdyGhast
 ink.ptms.adyeshach.core.entity.type.AdyGuardian
-ink.ptms.adyeshach.core.entity.type.AdyHoglin
 ink.ptms.adyeshach.core.entity.type.AdyHorseBase
 ink.ptms.adyeshach.core.entity.type.AdyIronGolem
 ink.ptms.adyeshach.core.entity.type.AdyItem
@@ -266,7 +255,6 @@ ink.ptms.adyeshach.core.entity.type.AdyMinecart
 ink.ptms.adyeshach.core.entity.type.AdyMule
 ink.ptms.adyeshach.core.entity.type.AdyMushroom
 ink.ptms.adyeshach.core.entity.type.AdyOcelot
-ink.ptms.adyeshach.core.entity.type.AdyPainting
 ink.ptms.adyeshach.core.entity.type.AdyPanda
 ink.ptms.adyeshach.core.entity.type.AdyParrot
 ink.ptms.adyeshach.core.entity.type.AdyPhantom
@@ -275,7 +263,6 @@ ink.ptms.adyeshach.core.entity.type.AdyPiglin
 ink.ptms.adyeshach.core.entity.type.AdyPiglinBrute
 ink.ptms.adyeshach.core.entity.type.AdyPillager
 ink.ptms.adyeshach.core.entity.type.AdyPolarBear
-ink.ptms.adyeshach.core.entity.type.AdySalmon
 ink.ptms.adyeshach.core.entity.type.AdySheep
 ink.ptms.adyeshach.core.entity.type.AdyShulkerBullet
 ink.ptms.adyeshach.core.entity.type.AdySilverfish
@@ -284,7 +271,6 @@ ink.ptms.adyeshach.core.entity.type.AdySlime
 ink.ptms.adyeshach.core.entity.type.AdySmallFireball
 ink.ptms.adyeshach.core.entity.type.AdySnowGolem
 ink.ptms.adyeshach.core.entity.type.AdyTropicalFish
-ink.ptms.adyeshach.core.entity.type.AdyTurtle
 ink.ptms.adyeshach.core.entity.type.AdyVex
 ink.ptms.adyeshach.core.entity.type.AdyWitherSkull
 ink.ptms.adyeshach.core.entity.type.AdyWolf
@@ -304,3 +290,24 @@ ink.ptms.adyeshach.core.entity.EntityInstance
     isHandActive
     activeHand
     isSwimming
+
+ink.ptms.adyeshach.core.entity.type.AdyBambooRaft
+ink.ptms.adyeshach.core.entity.type.AdyAcaciaBoat
+ink.ptms.adyeshach.core.entity.type.AdyBirchBoat
+ink.ptms.adyeshach.core.entity.type.AdyCherryBoat
+ink.ptms.adyeshach.core.entity.type.AdyDarkOakBoat
+ink.ptms.adyeshach.core.entity.type.AdyJungleBoat
+ink.ptms.adyeshach.core.entity.type.AdyOakBoat
+ink.ptms.adyeshach.core.entity.type.AdyPaleOakBoat
+ink.ptms.adyeshach.core.entity.type.AdySpruceBoat
+ink.ptms.adyeshach.core.entity.type.AdyMangroveBoat
+ink.ptms.adyeshach.core.entity.type.AdyBambooChestRaft
+ink.ptms.adyeshach.core.entity.type.AdyAcaciaChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyBirchChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyCherryChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyDarkOakChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyJungleChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyOakChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyPaleOakChestBoat
+ink.ptms.adyeshach.core.entity.type.AdySpruceChestBoat
+ink.ptms.adyeshach.core.entity.type.AdyMangroveChestBoat

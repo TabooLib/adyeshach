@@ -1,21 +1,24 @@
 package ink.ptms.adyeshach.impl.nms
 
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitDirection
 import ink.ptms.adyeshach.core.bukkit.BukkitPaintings
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.fixYaw
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
+import org.bukkit.Art
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.craftbukkit.v1_12_R1.CraftArt
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
 import taboolib.common.util.unsafeLazy
 import taboolib.library.reflex.Reflex.Companion.getProperty
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.library.reflex.UnsafeAccess
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.createDataSerializer
 import java.lang.invoke.MethodHandle
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -115,50 +118,67 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                 }.build() as NMS16PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19, 1.12
-            9, 10, 11, 12 -> NMSPacketPlayOutSpawnEntity(createDataSerializer {
-                writeVarInt(entityId)
-                writeUUID(uuid)
-                // 类型
-                when (major) {
-                    // 1.17, 1.18 写法相同
-                    // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
-                    // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
-                    9, 10 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
-                    // 1.19 写法不同
-                    11 -> {
-                        when (minor) {
-                            // 1.19, 1.19.1, 1.19.2 -> this.type = (EntityTypes)var0.readById(IRegistry.ENTITY_TYPE);
-                            0, 1, 2 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
-                            // 1.19.3, 1.19.4       -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
-                            // 注意从该版本开始 RegistryBlocks 的类型发生变化，无法在同一个模块内向下兼容
-                            3, 4 -> writeVarInt(NMS19.instance.entityTypeGetId(helper.adapt(entityType)))
-                            // 其他版本 -> error
-                            else -> error("Unsupported version.")
-                        }
-                    }
-                    // 1.12
-                    12 -> writeVarInt(NMS19.instance.entityTypeGetId(helper.adapt(entityType)))
-                }
-                writeDouble(location.x)
-                writeDouble(location.y)
-                writeDouble(location.z)
-                // xRot     -> pitch -> 纵向视角
-                writeByte(pitch)
-                // yRot     -> yaw -> 普通实体没效果
-                writeByte(yaw)
-                // yHeadRot -> yaw -> 横向视角
-                // 1.19 才有这个
-                if (major >= 11) {
-                    writeByte(yaw)
-                    writeVarInt(data)
+            // 1.17, 1.18, 1.19, 1.20, 1.21
+            9, 10, 11, 12, 13 -> {
+                if (MinecraftVersion.versionId >= 12005) {
+                    NMS21.instance.createSpawnEntity(
+                        entityId,
+                        uuid,
+                        location,
+                        yaw.toFloat(),
+                        pitch.toFloat(),
+                        data,
+                        NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
+                        yaw.toDouble()
+                    )
                 } else {
-                    writeInt(data)
+                    NMSPacketPlayOutSpawnEntity::class.java.invokeConstructor(createDataSerializer {
+                        writeVarInt(entityId)
+                        writeUUID(uuid)
+                        // 类型
+                        when (major) {
+                            // 1.17, 1.18 写法相同
+                            // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
+                            // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
+                            9, 10 -> writeVarInt(
+                                NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>)
+                            )
+                            // 1.19 写法不同
+                            11 -> {
+                                when (minor) {
+                                    // 1.19, 1.19.1, 1.19.2 -> this.type = (EntityTypes)var0.readById(IRegistry.ENTITY_TYPE);
+                                    0, 1, 2 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                                    // 1.19.3, 1.19.4       -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
+                                    // 注意从该版本开始 RegistryBlocks 的类型发生变化，无法在同一个模块内向下兼容
+                                    3, 4 -> writeVarInt(NMS19.instance.entityTypeGetId(helper.adapt(entityType)))
+                                    // 其他版本 -> error
+                                    else -> error("Unsupported version.")
+                                }
+                            }
+                            // 1.12
+                            12 -> writeVarInt(NMS19.instance.entityTypeGetId(helper.adapt(entityType)))
+                        }
+                        writeDouble(location.x)
+                        writeDouble(location.y)
+                        writeDouble(location.z)
+                        // xRot     -> pitch -> 纵向视角
+                        writeByte(pitch)
+                        // yRot     -> yaw -> 普通实体没效果
+                        writeByte(yaw)
+                        // yHeadRot -> yaw -> 横向视角
+                        // 1.19 才有这个
+                        if (major >= 11) {
+                            writeByte(yaw)
+                            writeVarInt(data)
+                        } else {
+                            writeInt(data)
+                        }
+                        writeShort(0)
+                        writeShort(0)
+                        writeShort(0)
+                    }.build() as NMSPacketDataSerializer)
                 }
-                writeShort(0)
-                writeShort(0)
-                writeShort(0)
-            }.build() as NMSPacketDataSerializer)
+            }
             // 不支持
             else -> error("Unsupported version.")
         }
@@ -241,7 +261,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeShort(0)
                     // 1.14, 1.15 仍需要读取 DataWatcher
                     if (major != 8) {
-                        NMS14DataWatcher(null).also { dw -> livingDataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }.a(build() as NMS14PacketDataSerializer)
+                        NMS14DataWatcher(null).also { dw -> livingDataWatcherSetterM.bindTo(it).invokeWithArguments(dw) }
+                            .a(build() as NMS14PacketDataSerializer)
                     }
                 }.build() as NMS16PacketDataSerializer)
             }
@@ -358,14 +379,31 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnEntityPainting(player: Player, entityId: Int, uuid: UUID, location: Location, direction: BukkitDirection, painting: BukkitPaintings) {
-        if (MinecraftVersion.majorLegacy >= 11900) {
-            error("spawnEntityPainting() is not supported in this version")
-        }
         // 获取 ID
-        val id = motiveCache.getOrPut(painting) { NMS16IRegistry::class.java.getProperty<Any>("MOTIVE", isStatic = true)!!.invokeMethod<Int>("a", helper.adapt(painting)) }
+        val id = motiveCache.getOrPut(painting) {
+            try {
+                CraftArt.BukkitToNotch(Art.valueOf(painting.legacy!!.uppercase())).C
+            } catch (_: Exception) {
+                NMS21.instance.getArtType(painting)
+            }
+        }
+        if (MinecraftVersion.majorLegacy >= 11900) {
+            packetHandler.sendPacket(
+                player, NMS21.instance.createSpawnEntity(
+                    entityId,
+                    uuid,
+                    location,
+                    0.0F,
+                    0.0F,
+                    direction.get2DRotationValue(),
+                    NMS19.instance.entityTypeGetId(helper.adapt(EntityTypes.PAINTING)),
+                    0.0
+                )
+            )
+        }
         // 使用带有 DataSerializer 的构造函数生成数据包
         // 使用 IRegistry.MOTIVE
-        if (isUniversal) {
+        else if (isUniversal) {
             packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityPainting(createDataSerializer {
                 writeVarInt(entityId)
                 writeUUID(uuid)
@@ -392,7 +430,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
                     writeUUID(uuid)
-                    writeString(painting.name)
+                    writeString(painting.legacy!!)
                     writeBlockPosition(location.blockX, location.blockY, location.blockZ)
                     writeByte(direction.get2DRotationValue().toByte())
                 }.build() as NMS9PacketDataSerializer)
@@ -401,12 +439,11 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     fun BukkitDirection.get2DRotationValue(): Int {
-        return when (this) {
-            BukkitDirection.SOUTH -> 0
-            BukkitDirection.WEST -> 1
-            BukkitDirection.NORTH -> 2
-            BukkitDirection.EAST -> 3
-            else -> error("Unsupported direction.")
+        if (legacyDirection == -1 || direction == -1) error("Unsupported direction.")
+        return if (MinecraftVersion.versionId >= 12000) {
+            direction
+        } else {
+            legacyDirection
         }
     }
 

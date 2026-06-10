@@ -1,26 +1,29 @@
 package ink.ptms.adyeshach.impl.nms
 
-import taboolib.module.nms.createDataSerializer
 import ink.ptms.adyeshach.core.*
-import ink.ptms.adyeshach.core.bukkit.BukkitParticles
-import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.bukkit.*
 import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
+import net.minecraft.core.Holder
+import net.minecraft.world.entity.decoration.PaintingVariant
 import org.bukkit.Art
-import org.bukkit.entity.Cat
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
 import org.bukkit.util.EulerAngle
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.warning
 import taboolib.common5.Quat
+import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.MinecraftVersion.isUniversal
+import taboolib.module.nms.createDataSerializer
 import java.util.*
 import java.util.function.Consumer
 
@@ -71,6 +74,17 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         if (MinecraftVersion.majorLegacy >= 12000) {
             addParser("SnifferState", SnifferStateParser())
         }
+        if (MinecraftVersion.majorLegacy >= 12105) {
+            addParser("Pig.Variant", PigVariantParser())
+            addParser("Wolf.Variant", WolfVariantParser())
+            addParser("Armadillo.State", ArmadilloStateParser())
+            addParser("Chicken.Variant", ChickenVariantParser())
+            addParser("Cow.Variant", BukkitCowParser())
+        }
+        if (MinecraftVersion.versionId >= 12109) {
+            addParser("CopperGolem.WeatherState", CopperGolemWeatherStateParse())
+            addParser("CopperGolem.Statue", CopperGolemStatuePoseParser())
+        }
         // 注册一个事件专门用来处理 generateMetadata 方法中的特殊实体
         @Suppress("UNCHECKED_CAST")
         Adyeshach.api().getEventBus().prepareMetaUpdate { e ->
@@ -79,6 +93,25 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 record += e.key
             }
             true
+        }
+        Adyeshach.api().getEventBus().postMetaUpdate { e ->
+            if (minecraftVersion < 12100) return@postMetaUpdate
+            val entity = e.entity
+            if (entity.hasTag("update_meta")) {
+                return@postMetaUpdate
+            }
+            val pose = when (e.key) {
+                "isCrouched" -> if (e.value == true) BukkitPose.SNEAKING else BukkitPose.STANDING
+                "isSwimming" -> if (e.value == true) BukkitPose.SWIMMING else BukkitPose.STANDING
+                "isFlyingElytra" -> if (e.value == true) BukkitPose.FALL_FLYING else BukkitPose.STANDING
+                else -> return@postMetaUpdate
+            }
+            try {
+                entity.setTag("update_meta", true)
+                entity.setPose(pose)
+            } finally {
+                entity.removeTag("update_meta")
+            }
         }
     }
 
@@ -100,8 +133,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     override fun createMetadataPacket(entityId: Int, metaList: List<MinecraftMeta>): Any {
-        // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
-        return if (majorLegacy >= 11903) {
+        // 1.21取消了DataSerializer,改用构造函数实例化
+        return if (MinecraftVersion.versionId >= 12005) {
+            NMS21.instance.createEntityMetadata(entityId, metaList)
+        } else if (majorLegacy >= 11903) {
+            // 1.19.3 变更为 record 类型，因此无法兼容之前的写法
             NMS19.instance.createPacketPlayOutEntityMetadata(entityId, metaList)
         } else if (isUniversal) {
             NMSPacketPlayOutEntityMetadata(createDataSerializer {
@@ -255,6 +291,9 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createOptBlockStateMeta(index: Int, blockData: MaterialData?): MinecraftMeta {
         return DefaultMeta(
             when {
+                // TODO("未解决,客户端会掉线,报错是客户端要求byte,但minecraft.wiki说的字段是OptionalBlockState")
+//                majorLegacy >= 12100 -> NMS21.instance.createOptBlockStateMeta(index, blockData)
+
                 // 在 1.19.4 版本中，BLOCK_STATE 表示 IBlockData ———— 由 OPTIONAL_BLOCK_STATE 代替 Optional<IBlockData>
                 majorLegacy >= 11904 -> NMS19.instance.createOptBlockStateMeta(index, blockData)
                 // 在 1.19.3 版本中，BLOCK_STATE 表示 Optional<IBlockData>
@@ -316,11 +355,11 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 }
             )
         } catch (ex: ClassCastException) {
-            if (particle == BukkitParticles.VILLAGER_HAPPY) {
-                error("Particle \"VILLAGER_HAPPY\" is not supported in this version")
+            if (particle == BukkitParticles.HAPPY_VILLAGER) {
+                error("Particle \"HAPPY_VILLAGER\" is not supported in this version")
             }
             warning("Particle \"$particle\" is not supported in this version")
-            return createParticleMeta(index, BukkitParticles.VILLAGER_HAPPY)
+            return createParticleMeta(index, BukkitParticles.HAPPY_VILLAGER)
         }
     }
 
@@ -328,9 +367,18 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(
             when {
                 majorLegacy >= 11900 -> {
+                    val position = if (vector == null || vector is EmptyVector) {
+                        null
+                    } else {
+                        try {
+                            NMSBlockPosition(vector.x, vector.y, vector.z)
+                        } catch (_: NoSuchMethodError) {
+                            NMSBlockPosition(vector.x.toInt(), vector.y.toInt(), vector.z.toInt())
+                        }
+                    }
                     NMSDataWatcherItem(
                         NMSDataWatcherObject(index, NMSDataWatcherRegistry.OPTIONAL_BLOCK_POS),
-                        Optional.ofNullable(if (vector == null || vector is EmptyVector) null else NMSBlockPosition(vector.x, vector.y, vector.z))
+                        Optional.ofNullable(position)
                     )
                 }
 
@@ -383,33 +431,47 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): MinecraftMeta {
         return DefaultMeta(
             if (majorLegacy >= 11900) {
-                val villagerType = when (villagerData.type) {
-                    VillagerData.Type.DESERT -> NMSVillagerType.DESERT
-                    VillagerData.Type.JUNGLE -> NMSVillagerType.JUNGLE
-                    VillagerData.Type.PLAINS -> NMSVillagerType.PLAINS
-                    VillagerData.Type.SAVANNA -> NMSVillagerType.SAVANNA
-                    VillagerData.Type.SNOW -> NMSVillagerType.SNOW
-                    VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
-                    VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
+                val villagerType = try {
+                    when (villagerData.type) {
+                        VillagerData.Type.DESERT -> NMSVillagerType.DESERT
+                        VillagerData.Type.JUNGLE -> NMSVillagerType.JUNGLE
+                        VillagerData.Type.PLAINS -> NMSVillagerType.PLAINS
+                        VillagerData.Type.SAVANNA -> NMSVillagerType.SAVANNA
+                        VillagerData.Type.SNOW -> NMSVillagerType.SNOW
+                        VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
+                        VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
+                    }
+                } catch (_: NoSuchFieldError) {
+                    // 监视你
+                    NMS21.instance.getVillagerType(villagerData.type) as NMSVillagerType
                 }
-                val villagerProfession = when (villagerData.profession) {
-                    VillagerData.Profession.NONE -> NMSVillagerProfession.NONE
-                    VillagerData.Profession.ARMORER -> NMSVillagerProfession.ARMORER
-                    VillagerData.Profession.BUTCHER -> NMSVillagerProfession.BUTCHER
-                    VillagerData.Profession.CARTOGRAPHER -> NMSVillagerProfession.CARTOGRAPHER
-                    VillagerData.Profession.CLERIC -> NMSVillagerProfession.CLERIC
-                    VillagerData.Profession.FARMER -> NMSVillagerProfession.FARMER
-                    VillagerData.Profession.FISHERMAN -> NMSVillagerProfession.FISHERMAN
-                    VillagerData.Profession.FLETCHER -> NMSVillagerProfession.FLETCHER
-                    VillagerData.Profession.LEATHERWORKER -> NMSVillagerProfession.LEATHERWORKER
-                    VillagerData.Profession.LIBRARIAN -> NMSVillagerProfession.LIBRARIAN
-                    VillagerData.Profession.MASON -> NMSVillagerProfession.MASON
-                    VillagerData.Profession.NITWIT -> NMSVillagerProfession.NITWIT
-                    VillagerData.Profession.SHEPHERD -> NMSVillagerProfession.SHEPHERD
-                    VillagerData.Profession.TOOLSMITH -> NMSVillagerProfession.TOOLSMITH
-                    VillagerData.Profession.WEAPONSMITH -> NMSVillagerProfession.WEAPONSMITH
+                val villagerProfession = try {
+                    when (villagerData.profession) {
+                        VillagerData.Profession.NONE -> NMSVillagerProfession.NONE
+                        VillagerData.Profession.ARMORER -> NMSVillagerProfession.ARMORER
+                        VillagerData.Profession.BUTCHER -> NMSVillagerProfession.BUTCHER
+                        VillagerData.Profession.CARTOGRAPHER -> NMSVillagerProfession.CARTOGRAPHER
+                        VillagerData.Profession.CLERIC -> NMSVillagerProfession.CLERIC
+                        VillagerData.Profession.FARMER -> NMSVillagerProfession.FARMER
+                        VillagerData.Profession.FISHERMAN -> NMSVillagerProfession.FISHERMAN
+                        VillagerData.Profession.FLETCHER -> NMSVillagerProfession.FLETCHER
+                        VillagerData.Profession.LEATHERWORKER -> NMSVillagerProfession.LEATHERWORKER
+                        VillagerData.Profession.LIBRARIAN -> NMSVillagerProfession.LIBRARIAN
+                        VillagerData.Profession.MASON -> NMSVillagerProfession.MASON
+                        VillagerData.Profession.NITWIT -> NMSVillagerProfession.NITWIT
+                        VillagerData.Profession.SHEPHERD -> NMSVillagerProfession.SHEPHERD
+                        VillagerData.Profession.TOOLSMITH -> NMSVillagerProfession.TOOLSMITH
+                        VillagerData.Profession.WEAPONSMITH -> NMSVillagerProfession.WEAPONSMITH
+                    }
+                } catch (_: NoSuchFieldError) {
+                    NMS21.instance.getVillagerProfession(villagerData.profession) as NMSVillagerProfession
                 }
-                NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), NMSVillagerData(villagerType, villagerProfession, 1))
+                val data = try {
+                    NMSVillagerData(villagerType, villagerProfession, 1)
+                } catch (_: NoSuchMethodError) {
+                    NMSVillagerData::class.java.invokeConstructor(Holder.direct(villagerType), Holder.direct(villagerProfession), 1)
+                }
+                NMSDataWatcherItem(NMSDataWatcherObject(index, NMSDataWatcherRegistry.VILLAGER_DATA), data)
             } else {
                 val villagerType = when (villagerData.type) {
                     VillagerData.Type.DESERT -> NMS16VillagerType.DESERT
@@ -462,10 +524,8 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         BukkitPose.SNIFFING -> NMSEntityPose.SNIFFING
                         BukkitPose.DIGGING -> NMSEntityPose.DIGGING
                         BukkitPose.EMERGING -> NMSEntityPose.EMERGING
-                        BukkitPose.SITTING -> TODO()
-                        BukkitPose.SLIDING -> TODO()
-                        BukkitPose.SHOOTING -> TODO()
-                        BukkitPose.INHALING -> TODO()
+                        BukkitPose.SITTING, BukkitPose.SLIDING,
+                        BukkitPose.SHOOTING, BukkitPose.INHALING -> NMS21.instance.getPose(pose)
                     }
                 )
             } else {
@@ -488,7 +548,25 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createCatVariantMeta(index: Int, type: Any): MinecraftMeta {
         return if (majorLegacy >= 11903) {
-            DefaultMeta(NMS19.instance.createCatVariantMeta(index, type as Cat.Type))
+            val nmS21 = NMS21.instance
+            val meta = when (type) {
+                is BukkitCatType -> try {
+                    NMS19.instance.createCatVariantMeta(index, type)
+                } catch (_: NoSuchFieldError) {
+                    nmS21.createCatVariantMeta(index, type)
+                }
+
+                is BukkitChickenType -> nmS21.createChickenMeta(index, type)
+                is BukkitArmadilloState -> nmS21.createArmadilloMeta(index, type)
+                is BukkitWolfVariant -> nmS21.createWolfVariantMeta(index, type)
+                is BukkitPigVariant -> nmS21.createPigVariantMeta(index, type)
+                else -> object : MinecraftMeta {
+                    override fun source(): Any {
+                        TODO("Not yet implemented")
+                    }
+                }
+            }
+            DefaultMeta(meta)
         } else {
             DefaultMeta(
                 NMSDataWatcherItem(
@@ -526,11 +604,16 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun createPaintingVariantMeta(index: Int, type: Any): MinecraftMeta {
         return DefaultMeta(
             NMSDataWatcherItem(
                 NMSDataWatcherObject(index, NMSDataWatcherRegistry.PAINTING_VARIANT),
-                CraftArt19.BukkitToNotch(type as Art)
+                try {
+                    CraftArt19.BukkitToNotch(type as Art)
+                } catch (_: NoSuchMethodError) {
+                    NMS21.instance.artBukkitToNotch(type as Art) as Holder<PaintingVariant>
+                }
             )
         )
     }
@@ -565,7 +648,61 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         return DefaultMeta(NMS19.instance.createSnifferStateMeta(index, state))
     }
 
+    override fun createChickenVariantMeta(index: Int, value: BukkitChickenType): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createChickenMeta(index, value))
+    }
+
+    override fun createArmadilloStateMeta(index: Int, value: BukkitArmadilloState): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createArmadilloMeta(index, value))
+    }
+
+    override fun createWolfVariantMeta(index: Int, value: BukkitWolfVariant): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createWolfVariantMeta(index, value))
+    }
+
+    override fun createPigVariantMeta(index: Int, value: BukkitPigVariant): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createPigVariantMeta(index, value))
+    }
+
+    override fun createGolemWeatherState(index: Int, value: BukkitCopperWeatherState): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCopperGolemWeatherState(index, value))
+    }
+
+    override fun createGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCopperGolemStatuePose(index, value))
+    }
+
+    override fun createCowVariantMeta(index: Int, value: BukkitCowVariant): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createCowVariant(index, value))
+    }
+
     fun jsonToChatBaseComponent(message: String): Any? {
         return if (isUniversal) CraftChatMessage19.fromJSON(message) else NMS16ChatSerializer.a(message)
     }
+
+//    fun getResource(type:VillagerData.Type):NMSVillagerType{
+//        if(MinecraftVersion.versionId>=12105){
+//            when (type) {
+//                VillagerData.Type.DESERT -> {
+//                    info( NMSVillagerType.DESERT.javaClass.genericInterfaces)
+//                }
+//                VillagerData.Type.JUNGLE -> NMSVillagerType.JUNGLE
+//                VillagerData.Type.PLAINS -> NMSVillagerType.PLAINS
+//                VillagerData.Type.SAVANNA -> NMSVillagerType.SAVANNA
+//                VillagerData.Type.SNOW -> NMSVillagerType.SNOW
+//                VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
+//                VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
+//            }
+//        }else{
+//            when (type) {
+//                VillagerData.Type.DESERT -> NMSVillagerType.DESERT
+//                VillagerData.Type.JUNGLE -> NMSVillagerType.JUNGLE
+//                VillagerData.Type.PLAINS -> NMSVillagerType.PLAINS
+//                VillagerData.Type.SAVANNA -> NMSVillagerType.SAVANNA
+//                VillagerData.Type.SNOW -> NMSVillagerType.SNOW
+//                VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
+//                VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
+//            }
+//        }
+//    }
 }

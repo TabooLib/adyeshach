@@ -2,11 +2,13 @@ package ink.ptms.adyeshach.impl.nms.specific
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftMeta
+import ink.ptms.adyeshach.core.bukkit.BukkitCatType
 import ink.ptms.adyeshach.core.bukkit.data.GameProfile
 import ink.ptms.adyeshach.core.bukkit.data.GameProfileAction
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
 import ink.ptms.adyeshach.impl.nms.NMSDataWatcherItem
 import ink.ptms.adyeshach.impl.nms.NMSDataWatcherObject
+import net.minecraft.core.Holder
 import net.minecraft.core.IRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.IChatBaseComponent
@@ -19,7 +21,6 @@ import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
-import org.bukkit.entity.Cat
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import org.joml.Quaternionf
@@ -84,11 +85,15 @@ class NMS19Impl : NMS19() {
         )
     }
 
-    override fun createCatVariantMeta(index: Int, type: Cat.Type): Any {
+    override fun createCatVariantMeta(index: Int, type: BukkitCatType): Any {
         val ir = BuiltInRegistries.CAT_VARIANT as IRegistry<CatVariant>
         val texture = "textures/entity/cat/${type.name.lowercase()}.png"
         val variant = ir.first { it.texture.path == texture }
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
+        return kotlin.runCatching {
+            DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
+        }.getOrElse {
+            DataWatcher.Item::class.java.invokeConstructor(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), Holder.direct(variant))
+        }
     }
 
     override fun createSnifferStateMeta(index: Int, type: AdySniffer.State): Any {
@@ -119,7 +124,11 @@ class NMS19Impl : NMS19() {
                     // 添加玩家
                     ClientboundPlayerInfoUpdatePacket.a.ADD_PLAYER -> {
                         writeUtf(gameProfile.name, 16)
-                        writeGameProfileProperties(gameProfile.toMojang(uuid).properties)
+                        writeGameProfileProperties(try{
+                            gameProfile.toMojang(uuid).properties
+                        }catch (_: NoSuchMethodError){
+                            NMS21.instance.getProperties(uuid,gameProfile)
+                        })
                     }
                     // 游戏模式
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_GAME_MODE -> {
@@ -158,6 +167,7 @@ class NMS19Impl : NMS19() {
 //                            }
                         }
                     }
+
                     else -> error("Unsupported action: $action")
                 }
             }
@@ -185,13 +195,7 @@ class NMS19Impl : NMS19() {
         val gameMode = if (gameProfile.spectator) EnumGamemode.SPECTATOR else EnumGamemode.CREATIVE
         val displayName = Adyeshach.api().getMinecraftAPI().getHelper().literalChatBaseComponent(gameProfile.name) as IChatBaseComponent
         return ClientboundPlayerInfoUpdatePacket.b(
-            uuid,
-            gameProfile.toMojang(uuid),
-            listed,
-            latency,
-            gameMode,
-            displayName,
-            null
+            uuid, gameProfile.toMojang(uuid), listed, latency, gameMode, displayName, null
         )
     }
 }

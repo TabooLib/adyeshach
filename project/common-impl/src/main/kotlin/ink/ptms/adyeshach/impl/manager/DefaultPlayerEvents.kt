@@ -19,6 +19,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 import taboolib.platform.util.bukkitPlugin
@@ -104,44 +105,54 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent
     fun onReceive(e: PacketReceiveEvent) {
-        if (e.packet.name == "PacketPlayInPosition" && e.player.name !in onlinePlayerSet) {
-            onlinePlayerSet += e.player.name
-            AdyeshachPlayerJoinEvent(e.player).call()
+        val packet = e.packet
+        val player = e.player
+        if (packet.name in listOf("PacketPlayInPosition", "Pos") && player.name !in onlinePlayerSet) {
+            onlinePlayerSet += player.name
+            AdyeshachPlayerJoinEvent(player).call()
         }
-        if (e.packet.name == "PacketPlayInUseEntity") {
-            val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(e.packet.read("a")!!, e.player) ?: return
+        if (packet.name in listOf("PacketPlayInUseEntity", "ServerboundInteractPacket")) {
+            val id = packet.read<Int>(if (MinecraftVersion.versionId < 12005) "a" else "entityId") ?: return
+            val entity = Adyeshach.api().getEntityFinder().getEntityFromEntityId(id, player) ?: return
             // 判定观察者并检测作弊
-            if (entity.isViewer(e.player) && entity.getLocation().safeDistance(e.player.location) < 10) {
+            if (entity.isViewer(player) && entity.getLocation().safeDistance(player.location) < 10) {
                 if (MinecraftVersion.isUniversal) {
-                    val action = e.packet.source.getProperty<Any>("b", remap = false)!!
-                    // 高版本 EnumEntityUseAction 不再是枚举类型
-                    // 通过类名判断点击方式
-                    val name = action.javaClass.name
-                    when {
+                    // 1.21+的字段变为c了,太操蛋了
+                    // nm的缓存傻逼玩意,换了就必须清缓存
+                    val action = if (MinecraftVersion.versionId >= 12005) {
+                        packet.read<Any>("action")
+                    } else {
+                        packet.read("b")
+                    }!!
+
+                    val actionOrdinal = (action.invokeMethod<Any>("getType") as Enum<*>).ordinal
+
+                    when (actionOrdinal) {
                         // 左键
-                        name.endsWith("PacketPlayInUseEntity\$1") -> {
-                            submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
+                        1 -> {
+                            submit { AdyeshachEntityDamageEvent(entity, player).call() }
                         }
                         // 右键
-                        name.endsWith("PacketPlayInUseEntity\$e") -> {
-                            val location = action.getProperty<Any>("b", remap = false)
-                            val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = action.getProperty<Any>("a", remap = false).toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
+                        2 -> {
+                            val location = kotlin.runCatching { action.getProperty<Any>("location") }.getOrNull()!!
+                            val vector = Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(location)
+                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
+                            submit { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
                         }
                     }
                 } else {
                     // 低版本 EnumEntityUseAction 为枚举类型
                     // 通过字符串判断点击方式
-                    when (e.packet.source.getProperty<Any>("action")!!.toString()) {
+                    when (packet.read<Any>("action")!!.toString()) {
                         "ATTACK" -> {
-                            submit { AdyeshachEntityDamageEvent(entity, e.player).call() }
+                            submit { AdyeshachEntityDamageEvent(entity, player).call() }
                         }
+
                         "INTERACT_AT" -> {
-                            val location = e.packet.read<Any>("c")
+                            val location = packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
-                            val hand = e.packet.read<Any>("d").toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, e.player, hand, vector).call() }
+                            val hand = packet.read<Any>("d").toString() == "MAIN_HAND"
+                            submit { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
                         }
                     }
                 }

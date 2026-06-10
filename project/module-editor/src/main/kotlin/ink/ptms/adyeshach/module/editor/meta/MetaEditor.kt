@@ -10,7 +10,6 @@ import ink.ptms.adyeshach.module.editor.meta.impl.*
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
-import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.material.MaterialData
@@ -81,7 +80,7 @@ interface MetaEditor {
                 entity is AdyLlama && key == "carpetColor" -> MetaEnum(key, DyeColor::class.java)
                 entity is AdyLlama && key == "color" -> MetaEnum(key, Llama.Color::class.java)
                 // 猫
-                entity is AdyCat && key == "type" -> MetaEnum(key, Cat.Type::class.java).nameToKey()
+                entity is AdyCat && key == "type" -> MetaEnum(key, BukkitCatType::class.java).nameToKey()
                 entity is AdyCat && key == "color" -> MetaEnum(key, DyeColor::class.java)
                 // 船
                 entity is AdyBoat && key == "type" -> MetaEnum(key, BukkitBoat::class.java)
@@ -121,12 +120,19 @@ interface MetaEditor {
                 // 水晶
                 entity is AdyEndCrystal && key == "beamTarget" -> MetaVector(key)
                 // 青蛙
-                entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, Frog.Variant::class.java).nameToKey()
+                entity is AdyFrog && key == "frogVariant" -> MetaEnum(key, BukkitFrogVariant::class.java).nameToKey()
                 // 展示实体
                 entity is AdyDisplay && key == "glowColorOverride" -> MetaColor(key)
                 entity is AdyTextDisplay && key == "backgroundColor" -> MetaColor(key)
                 // 嗅探兽
                 entity is AdySniffer && key == "snifferState" -> MetaEnum(key, AdySniffer.State::class.java).nameToKey()
+                entity is AdyChicken && key == "chickenType" -> MetaEnum(key, BukkitChickenType::class.java).nameToKey()
+                entity is AdyArmadillo && key == "armadilloState" -> MetaEnum(key, BukkitArmadilloState::class.java).nameToKey()
+                entity is AdyWolf && key == "wolfVariant" -> MetaEnum(key, BukkitWolfVariant::class.java).nameToKey()
+                entity is AdyPig && key == "pigVariant" -> MetaEnum(key, BukkitPigVariant::class.java).nameToKey()
+                entity is AdyCopperGolem && key == "weatheringCopperState" -> MetaEnum(key, BukkitCopperWeatherState::class.java).nameToKey()
+                entity is AdyCopperGolem && key == "copperGolemStatue" -> MetaEnum(key, BukkitCopperGolemStatuePose::class.java).nameToKey()
+                entity is AdyCow && key == "cowVariant" -> MetaEnum(key, BukkitCowVariant::class.java).nameToKey()
                 // 实体
                 key == "pose" -> MetaEnum(key, BukkitPose::class.java).nameToKey()
                 // 不支持

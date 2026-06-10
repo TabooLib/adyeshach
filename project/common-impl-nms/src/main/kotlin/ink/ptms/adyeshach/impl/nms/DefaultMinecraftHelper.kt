@@ -9,7 +9,9 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.util.errorBy
 import ink.ptms.adyeshach.impl.nms.specific.NMS19p
 import ink.ptms.adyeshach.impl.nms.specific.NMS20p
+import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import ink.ptms.adyeshach.minecraft.ChunkPos
+import net.minecraft.network.chat.IChatBaseComponent
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.Entity
@@ -19,7 +21,10 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.library.reflex.Reflex.Companion.invokeMethod
+import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.nmsClass
 import taboolib.module.nms.versionAdaptor
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
@@ -140,7 +145,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
 
     override fun craftChatSerializerToJson(compound: Any): String {
         return if (MinecraftVersion.isUniversal) {
-            NMSChatSerializer.toJson(compound as NMSIChatBaseComponent)
+            org.bukkit.craftbukkit.v1_21_R7.util.CraftChatMessage.toJSON(compound as IChatBaseComponent)
         } else {
             NMS16ChatSerializer.a(compound as NMS16IChatBaseComponent)
         }
@@ -153,11 +158,19 @@ class DefaultMinecraftHelper : MinecraftHelper {
     // 版本适配：isChunkVisible 的实现策略
     // 首次调用时通过 try-catch 确定可用的 NMS API，后续直接调用缓存的实现
     val chunkVisibleImpl = versionAdaptor<(Player, Int, Int) -> Boolean>(
+        {
+            val test = nmsClass("EntityPlayer").unsafeInstance().invokeMethod<Any>("getChunkTrackingView");
+            { player, chunkX, chunkZ -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
+        },
         // 你改你妈个🥚，我爱说实话
-        { { player, chunkX, chunkZ -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) } },
+        {
+            val test = nmsClass("WorldServer").unsafeInstance().getProperty<Any>("playerChunkLoader");
+            { player, chunkX, chunkZ -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) }
+        },
         // 你改你妈个🥚，我爱说实话
         {
             val test = CraftWorld19::class.java
+            val test1 = nmsClass("WorldServer").unsafeInstance().invokeMethod<Any>("getChunkSource");
             { player, chunkX, chunkZ ->
                 val craftWorld = player.world as CraftWorld19
                 NMS19p.instance.isChunkSent(player, craftWorld.handle.chunkSource.chunkMap, chunkX, chunkZ)

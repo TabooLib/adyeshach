@@ -1,14 +1,11 @@
 package ink.ptms.adyeshach.impl.entity.type
 
 import ink.ptms.adyeshach.core.Adyeshach
-import ink.ptms.adyeshach.core.entity.ClientEntity
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
-import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Adyeshach

@@ -87,11 +87,20 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                         val checkMajorLegacy = idx.startsWith("@!")
                         // 当前版本
                         val version = if (checkMajorLegacy) majorLegacy else major
+                        val versionIndex = idx.substring(if (checkMajorLegacy) 2 else 1, idx.length - 1)
                         // 检查版本
-                        val check = if (checkMajorLegacy) idx.substring(2, idx.length - 1).toInt() else toMajor(idx.substring(1, idx.length - 1).toInt())
+                        val check = try {
+                            if (checkMajorLegacy) versionIndex.toInt() else toMajor(versionIndex.toInt())
+                        } catch (_: NumberFormatException) {
+                            -1
+                        }
                         when {
                             idx.endsWith('+') -> isSupported = version >= check
                             idx.endsWith('-') -> isSupported = version < check
+                            idx.contains('~') -> {
+                                val range = idx.substring(if (checkMajorLegacy) 2 else 1).split('~', limit = 2).map { it.trim().toInt() }
+                                isSupported = version in range.min()..range.max()
+                            }
                         }
                     }
                     // 索引
@@ -111,6 +120,10 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                                 // 减少
                                 args[1].startsWith('-') -> {
                                     index.add(args[0].toInt() to index[i - 1].second - args[1].count { it == '-' })
+                                }
+
+                                args[1].startsWith('+') -> {
+                                    index.add(args[0].toInt() to index[i - 1].second + args[1].count { it == '+' })
                                 }
                                 // 不变
                                 args[1] == "~" -> {
@@ -144,7 +157,8 @@ class DescEntityMeta(input: InputStream) : Description(input) {
                         // 在这里直接过滤掉
                         try {
                             parseMeta(it.trim())
-                        } catch (_: NoClassDefFoundError) {
+                        } catch (e: NoClassDefFoundError) {
+                            e.printStackTrace()
                             null
                         }
                     }

@@ -1,7 +1,6 @@
 package ink.ptms.adyeshach.impl.nms.specific
 
-import ink.ptms.adyeshach.impl.nms.specific.NMS19p
-import net.minecraft.server.level.PlayerChunkMap
+import net.minecraft.server.level.WorldServer
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 
@@ -14,9 +13,9 @@ import org.bukkit.entity.Player
  */
 class NMS19pImpl : NMS19p() {
 
-    override fun isChunkSent(player: Player, playerChunkMap: Any, chunkX: Int, chunkZ: Int): Boolean {
+    override fun isChunkSent(player: Player, worldServer: Any, chunkX: Int, chunkZ: Int): Boolean {
         player as CraftPlayer
-        playerChunkMap as PlayerChunkMap
-        return playerChunkMap.playerChunkManager.isChunkSent(player.handle, chunkX, chunkZ)
+        worldServer as WorldServer
+        return worldServer.k().b(chunkX, chunkZ)
     }
 }

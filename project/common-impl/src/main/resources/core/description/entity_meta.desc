@@ -11,15 +11,18 @@ ink.ptms.adyeshach.core.entity.type.AdyAreaEffectCloud
     color i
         &area_effect_cloud0
         # 继承上，表示为：17 9
+        21 !
         ~
     ignoreRadius z
         &area_effect_cloud0
         # 继承上，表示为：17 10
-        ~
+        21 9
+        17 +
     particle !Particle EFFECT
         &area_effect_cloud0
         # 继承上，表示为：17 11
-        ~
+        21 10
+        17 +
 
 ink.ptms.adyeshach.core.entity.type.AdyArmorStand
     isSmall 1b | hasArms 4b | noBasePlate 8b | isMarker 16b
@@ -63,10 +66,6 @@ ink.ptms.adyeshach.core.entity.type.AdyArrow
         16 -
         10 -
         09 -
-    noclip 2b
-        &arrow0
-        17 8
-        14 -
     piercingLevel b
         &arrow0
         17 9
@@ -74,13 +73,20 @@ ink.ptms.adyeshach.core.entity.type.AdyArrow
         15 9
     color i -1
         &arrow1
-        17 10
+        21 11
+        17 -
         16 -
+    ground z
+        &arrow1
+        10
 
 ink.ptms.adyeshach.core.entity.type.AdyAxolotl
     color i 2
         &axolotl0
         17 17
+    playingDead z false
+        &axolotl0
+        ~
 
 ink.ptms.adyeshach.core.entity.type.AdyBat
     isHanging 1b
@@ -91,7 +97,7 @@ ink.ptms.adyeshach.core.entity.type.AdyBat
         09 -
 
 ink.ptms.adyeshach.core.entity.type.AdyBee
-    unUsed 1b | isFlip 1b | hasStung 4b | hasNectar 8b
+    unUsed 1b | isFlip 2b | hasStung 4b | hasNectar 8b
         &bee0
         17 17
         15 -
@@ -122,22 +128,26 @@ ink.ptms.adyeshach.core.entity.type.AdyBoat
         ~
     type i 0
         &boat2
+        @21-
         ~
     leftPaddleTurning z
         &boat0
-        17 12
+        21 11
+        17 +
         16 -
         10 ~
         09 -
     rightPaddleTurning z
         &boat0
-        17 13
+        21 12
+        17 +
         16 -
         11 --
         09 -
     splashTimer i
         &boat1
-        17 14
+        21 13
+        17 +
         16 -
         13 -
 
@@ -150,7 +160,7 @@ ink.ptms.adyeshach.core.entity.type.AdyCamel
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyCat
-    type !Cat.Type
+    type !Cat.Type TABBY
         &cat1
         17 19
         15 -
@@ -187,8 +197,12 @@ ink.ptms.adyeshach.core.entity.type.AdyDolphin
         15 -
         14 -
         13 --
+    moistureLevel i
+        &dolphin0
+        21 18
     hasFish z
         &dolphin0
+        21 !
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyEndCrystal
@@ -247,6 +261,7 @@ ink.ptms.adyeshach.core.entity.type.AdyFox
         17 18
         15 -
         14 -
+    # 后面三个高版本疑似没效果
     isInterested 8b | isPouncing 16b | isFaceplanted 64b | isDefending 128b
         &fox0
         17 18
@@ -332,9 +347,11 @@ ink.ptms.adyeshach.core.entity.type.AdyItem
         09 -
 
 ink.ptms.adyeshach.core.entity.type.AdyItemFrame
+# Direction
     item !ItemStack
         &item_frame0
-        17 8
+        12109 9
+        17 -
         13 -
         10 -
         09 -
@@ -346,16 +363,22 @@ ink.ptms.adyeshach.core.entity.type.AdyFireball
     item !ItemStack
         &item_frame0
         16 7
+        21 +
 
 ink.ptms.adyeshach.core.entity.type.AdyLlama
+    llamaVariant i 0
+        &llama0
+        20
     carpetColor i -1
         &llama0
+        21 !
         17 21
         15 -
         14 -
         10 --
     color i
         &llama0
+        21 !
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyMinecart
@@ -368,22 +391,34 @@ ink.ptms.adyeshach.core.entity.type.AdyMinecart
     shakingDirection i
         &minecart0
         ~
+    shakingMultiplier f
+        &minecart0
+        21 10
     shakingMultiplier i
         &minecart0
+        21 !
         ~
+#    自定义方块(未解决)
+#    customBlockState !OptBlockID
+#        &minecart1
+#        ~
     customBlock i
         &minecart1
+        21 !
         ~
     customBlockPosition i 6
         &minecart1
+        21 12
         ~
     showCustomBlock z
         &minecart1
+        21 !
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyMinecartFurnace
     hasFuel z
         &furnace_minecart0
+        21 13
         17 14
         14 -
         10 -
@@ -418,8 +453,14 @@ ink.ptms.adyeshach.core.entity.type.AdyPainting
     paintingVariant !Painting
         &painting0
         19 8
+        12107 +
+    direction !Direction
+        &painting0
+        @!12106+
+        21 8
 
 ink.ptms.adyeshach.core.entity.type.AdyPanda
+    # 很乱,1.21.5写的是10 back,这里10就变成了坐下
     isSneezing 2b | isEating 4b | isSitting 8b | isOnBack 16b
         &panda0
         17 22
@@ -443,8 +484,12 @@ ink.ptms.adyeshach.core.entity.type.AdyPhantom
         13 --
 
 ink.ptms.adyeshach.core.entity.type.AdyPig
+    pigVariant !PigVariant
+        &pig0
+        21 18
     hasSaddle z
         &pig0
+        21 !
         17 17
         15 -
         14 -
@@ -490,7 +535,8 @@ ink.ptms.adyeshach.core.entity.type.AdyPrimedTNT
 ink.ptms.adyeshach.core.entity.type.AdyPufferfish
     puffState i
         &pufferfish0
-        17 17
+        21 16
+        17 +
         15 -
         14 -
         13 --
@@ -524,9 +570,9 @@ ink.ptms.adyeshach.core.entity.type.AdyShulker
 #    attachPosition !Vector
 #        &shulker0
 #        ~
-#    shieldHeight b
-#        &shulker0
-#        ~
+    shieldHeight b 0
+        &shulker0
+        17
 #    color i 10
 #        &shulker0
 #        17 19
@@ -593,6 +639,7 @@ ink.ptms.adyeshach.core.entity.type.AdyStrider
         17 18
     hasSaddle z
         &strider0
+        21 !
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyTextDisplay
@@ -653,12 +700,17 @@ ink.ptms.adyeshach.core.entity.type.AdyThrownPotion
         16 -
 
 ink.ptms.adyeshach.core.entity.type.AdyThrownTrident
+    loyaltyLevel b
+        &trident0
+        21 11
     loyaltyLevel i
         &trident0
+        21 !
         13 10
     hasEnchantmentGlint z
         &trident0
-        15 11
+        21 12
+        15 -
 
 ink.ptms.adyeshach.core.entity.type.AdyTropicalFish
     variant i
@@ -668,25 +720,34 @@ ink.ptms.adyeshach.core.entity.type.AdyTropicalFish
         14 -
         13 --
 
- ink.ptms.adyeshach.core.entity.type.AdyTurtle
+ink.ptms.adyeshach.core.entity.type.AdyTurtle
     hasEgg z
         &turtle0
-        15 18
+        21 17
+        15 +
         14 -
         13 --
+    # 疑似没效果,不知道具体动画
     layingEgg z
         &turtle0
+        21 18
         ~
     isGoingHome z
         &turtle0
+        21 !
         ~
     isTraveling z
         &turtle0
+        21 !
         ~
 
 ink.ptms.adyeshach.core.entity.type.AdyVex
+    attackMode 1b
+        &vex0
+        21 16
     attackMode z
         &vex0
+        21 !
         17 16
         15 -
         14 -
@@ -759,6 +820,9 @@ ink.ptms.adyeshach.core.entity.type.AdyWolf
     collarColor i 14
         &wolf0
         ~
+    wolfVariant !WolfVariant
+        &wolf0
+        21 22
 
 ink.ptms.adyeshach.core.entity.type.AdyZombie
     isBaby z
@@ -819,7 +883,8 @@ ink.ptms.adyeshach.core.entity.type.AdyZombieVillager
 ink.ptms.adyeshach.core.entity.type.AdyHuman
     skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
         &human0
-        17 17
+        12109 16
+        17 +
         15 -
         14 -
         10 --
@@ -877,7 +942,8 @@ ink.ptms.adyeshach.core.entity.type.AdyMob
 ink.ptms.adyeshach.core.entity.type.AdyHorseChested
     hasChest z
         &horse1
-        17 19
+        21 18
+        17 -
         15 -
         14 -
         11 --
@@ -922,6 +988,10 @@ ink.ptms.adyeshach.core.entity.type.AdyEntityLiving
      potionEffectColor i
         &living1
         ~
+#     疑似放错位置了
+#     beeStingersEntity i 0
+#        &living1
+#        13
 
 ink.ptms.adyeshach.core.entity.EntityInstance
     onFire 1b | isCrouched 2b | unUsedRiding 4b | isSprinting 8b | isSwimming 16b | isInvisible 32b | isGlowing 64b | isFlyingElytra 128b
@@ -990,3 +1060,72 @@ ink.ptms.adyeshach.core.entity.type.AdyDisplay
      glowColorOverride i -1
         &display3
         ~
+
+
+ink.ptms.adyeshach.core.entity.type.AdySkeleton
+    convertedStray z
+        &mob0
+        10 16
+
+
+ink.ptms.adyeshach.core.entity.type.AdyAllay
+    dancing z false
+        &mob0
+        16
+    duplicate z true
+        &mob0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyOminousItemSpawner
+    item !ItemStack
+        &item0
+        8
+
+ink.ptms.adyeshach.core.entity.type.AdyCreaking
+    move z true
+        &mob0
+        16
+    active z false
+        &mob0
+        17
+    tearing z false
+        &mob0
+        18
+
+ink.ptms.adyeshach.core.entity.type.AdyBogged
+    sheared z
+        &mob0
+        16
+
+ink.ptms.adyeshach.core.entity.type.AdySalmon
+    salmonSize i
+        &fish0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyChicken
+    chickenType !ChickenVariant
+        &chicken0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyArmadillo
+    armadilloState !ArmadilloState
+        &armadillo0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyHoglin
+    immuneZombification z
+        &hoglin0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyCopperGolem
+    weatheringCopperState !WeatheringCopperState
+        &copper_golem0
+        16
+    copperGolemStatue !CopperGolemStatuePose
+        &copper_golem0
+        17
+
+ink.ptms.adyeshach.core.entity.type.AdyCow
+    cowVariant !CowVariant
+        &cow0
+        17
