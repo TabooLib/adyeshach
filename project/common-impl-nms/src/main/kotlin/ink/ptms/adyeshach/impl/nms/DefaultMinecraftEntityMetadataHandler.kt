@@ -6,6 +6,7 @@ import ink.ptms.adyeshach.core.bukkit.data.EmptyVector
 import ink.ptms.adyeshach.core.bukkit.data.VillagerData
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.AdySniffer
+import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.nms.parser.*
 import ink.ptms.adyeshach.impl.nms.specific.NMS19
@@ -92,6 +93,25 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 record += e.key
             }
             true
+        }
+        Adyeshach.api().getEventBus().postMetaUpdate { e ->
+            if (minecraftVersion < 12100) return@postMetaUpdate
+            val entity = e.entity
+            if (entity.hasTag("update_meta")) {
+                return@postMetaUpdate
+            }
+            val pose = when (e.key) {
+                "isCrouched" -> if (e.value == true) BukkitPose.SNEAKING else BukkitPose.STANDING
+                "isSwimming" -> if (e.value == true) BukkitPose.SWIMMING else BukkitPose.STANDING
+                "isFlyingElytra" -> if (e.value == true) BukkitPose.FALL_FLYING else BukkitPose.STANDING
+                else -> return@postMetaUpdate
+            }
+            try {
+                entity.setTag("update_meta", true)
+                entity.setPose(pose)
+            } finally {
+                entity.removeTag("update_meta")
+            }
         }
     }
 
