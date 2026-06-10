@@ -14,7 +14,7 @@ import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.util.unsafeLazy
-import java.util.*
+import java.util.UUID
 import java.util.function.Consumer
 
 
@@ -69,13 +69,17 @@ internal interface DefaultModelEngine : ModelEngine {
     }
 
     override fun destroyModelEngine() {
-        if (isModelEngineHooked && modelEngineUniqueId != null) {
+        if (isModelEngineHooked) {
             this as DefaultEntityInstance
-            val uuid = modelEngineUniqueId!!
-            ModelEngineAPI.removeModeledEntity(uuid)
-            modelEngineUniqueId = null
-            // 触发销毁回调
-            modelDestroyHandlers.forEach { it.accept(uuid) }
+            // EntityModeled 由实体 tag 持有，销毁模型时必须同步断开 DummyEntityData 引用链。
+            removeTag("ModelEngine:EntityModeled")
+            val uuid = modelEngineUniqueId
+            if (uuid != null) {
+                ModelEngineAPI.removeModeledEntity(uuid)
+                modelEngineUniqueId = null
+                // 触发销毁回调
+                modelDestroyHandlers.forEach { it.accept(uuid) }
+            }
         }
     }
 
@@ -85,14 +89,15 @@ internal interface DefaultModelEngine : ModelEngine {
             // 创建模型
             if (modelEngineName.isNotBlank()) {
                 // 初始化模型
-                despawn()
                 createModel()
             }
             // 销毁模型
-            else if (ModelEngineAPI.removeModeledEntity(modelEngineUniqueId) != null) {
-                val modeled = (getTag("ModelEngine:EntityModeled") as? EntityModeled)
-                ModelEngineAPI.getModeledEntity(modeled?.uuid).isBaseEntityVisible = true
-                respawn()
+            else {
+                val hasModel = modelEngineUniqueId != null
+                destroyModelEngine()
+                if (hasModel) {
+                    respawn()
+                }
             }
             return true
         }

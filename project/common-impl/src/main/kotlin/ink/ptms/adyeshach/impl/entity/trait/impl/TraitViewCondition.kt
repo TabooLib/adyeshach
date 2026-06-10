@@ -153,14 +153,13 @@ fun EntityInstance.updateTraitViewCondition() {
                 ).bool { cond ->
                     if (cond) {
                         // 看不见但是满足可视条件
-                        if (player.name !in viewPlayers.visible) {
+                        if (player.name !in viewPlayers.visible && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ)) {
                             visible(player, true)
                         }
                     } else {
                         // 看得见但不满足可视条件
                         if (player.name in viewPlayers.visible) {
                             visible(player, false)
-                            viewPlayers.visible.remove(player.name)
                         }
                     }
                 }

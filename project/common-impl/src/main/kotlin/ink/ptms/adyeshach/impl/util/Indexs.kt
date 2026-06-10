@@ -17,8 +17,10 @@ object Indexs {
      * tr hologram               119,789 + (0~7763)
      * lib hologram          449,599,702
      * adyeshach npc             449,599 + (0~702)
+     *
+     * 客户端只需要同一次会话内唯一的实体 ID，使用负数可以避开服务端真实实体 ID。
      */
     fun nextIndex(): Int {
-        return index.getAndIncrement()
+        return -index.getAndIncrement()
     }
 }

@@ -2,6 +2,7 @@ package ink.ptms.adyeshach.impl.entity.handler
 
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
+import ink.ptms.adyeshach.core.entity.ModelEngineOptions
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.ChatColor
@@ -83,6 +84,13 @@ open class CustomMetaHandler(protected val self: DefaultEntityInstance) {
             // 模型引擎
             "modelenginename", "modelengine_name", "modelengine", "model_engine" -> {
                 self.modelEngineName = value ?: ""
+                true
+            }
+            // 模型引擎缩放
+            "modelenginescale", "modelengine_scale", "model_engine_scale" -> {
+                val options = self.modelEngineOptions ?: ModelEngineOptions()
+                options.scale = value?.cdouble ?: 0.0
+                self.modelEngineOptions = options
                 true
             }
             // 冻结
