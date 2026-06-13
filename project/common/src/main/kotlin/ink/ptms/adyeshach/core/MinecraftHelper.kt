@@ -86,6 +86,12 @@ interface MinecraftHelper {
     fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean
 
     /**
+     * 获取当前区块可见性检测策略名称
+     * 用于诊断 versionAdaptor 最终选择了哪个 NMS 实现分支。
+     */
+    fun getChunkVisibleStrategy(): String
+
+    /**
      * obc 转 nms
      */
     fun toMinecraft(entity: Entity): Any

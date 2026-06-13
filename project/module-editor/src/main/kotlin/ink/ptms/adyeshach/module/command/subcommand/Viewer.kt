@@ -1,6 +1,8 @@
 package ink.ptms.adyeshach.module.command.subcommand
 
+import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.util.sendLang
+import ink.ptms.adyeshach.core.util.safeDistanceIgnoreY
 import ink.ptms.adyeshach.module.command.*
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -56,6 +58,31 @@ val viewerSubCommand = subCommand {
                             val inVisible = name in entity.viewPlayers.visible
                             val status = if (inVisible) "§a可见" else "§c不可见"
                             sender.sendMessage("§5§l‹ ›§f §7    - §f$name §7[$status§7]")
+                            // 未进入 visible 时输出无副作用的硬门槛，避免为了诊断触发可见事件或生成流程。
+                            val player = Bukkit.getPlayerExact(name)
+                            if (!inVisible && player != null) {
+                                val distance = player.location.safeDistanceIgnoreY(entity.getLocation())
+                                val setup = player.hasMetadata("adyeshach_setup")
+                                val sameWorld = player.world.name == entity.world.name
+                                val inDistance = entity.isInVisibleDistance(player)
+                                val chunkVisible = if (sameWorld) {
+                                    Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, entity.chunkX, entity.chunkZ)
+                                } else {
+                                    false
+                                }
+                                val chunkStrategy = Adyeshach.api().getMinecraftAPI().getHelper().getChunkVisibleStrategy()
+                                val blockers = ArrayList<String>()
+                                if (!setup) blockers += "未完成 adyeshach_setup"
+                                if (!sameWorld) blockers += "世界不一致"
+                                if (!inDistance) blockers += "超出可视距离"
+                                if (!chunkVisible) blockers += "客户端区块不可见"
+                                if (blockers.isEmpty()) blockers += "硬条件已通过，可能被可见事件或本地 spawn bus 拦截"
+                                sender.sendMessage("§5§l‹ ›§f §7      距离: §f$distance§7 / §f${entity.visibleDistance}")
+                                sender.sendMessage("§5§l‹ ›§f §7      条件: setup=$setup, world=$sameWorld, distance=$inDistance, chunk=$chunkVisible, chunkStrategy=$chunkStrategy")
+                                sender.sendMessage("§5§l‹ ›§f §7      原因: §c${blockers.joinToString("、")}")
+                            } else if (!inVisible) {
+                                sender.sendMessage("§5§l‹ ›§f §7      原因: §c玩家不在线，无法进入 visible")
+                            }
                         }
                         if (viewers.size > 10) {
                             sender.sendMessage("§5§l‹ ›§f §7    §8... 还有 ${viewers.size - 10} 个")

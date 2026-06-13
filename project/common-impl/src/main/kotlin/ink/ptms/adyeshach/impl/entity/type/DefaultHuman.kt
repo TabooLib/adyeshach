@@ -12,6 +12,7 @@ import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.core.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerUUIDGenerateEvent
 import ink.ptms.adyeshach.core.util.getEnum
+import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.network.NetworkMineskin
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
@@ -80,7 +81,13 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 // 创建玩家信息
                 addPlayerInfo(viewer)
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(viewer, index, pid, clientPosition.toLocation())
+                // 玩家实体的身体朝向在生成包内初始化，坐标仍沿用客户端位置以匹配可见性状态。
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnNamedEntity(
+                    player = viewer,
+                    entityId = index,
+                    uuid = pid,
+                    location = clientPosition.toLocation().modify(yaw = position.yaw, pitch = position.pitch),
+                )
                 // 启用皮肤
                 setSkinEnabled(true)
                 // 修复装备无法正常显示的问题

@@ -26,6 +26,7 @@ import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.versionAdaptor
+import taboolib.module.nms.versionStrategy
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
@@ -158,47 +159,49 @@ class DefaultMinecraftHelper : MinecraftHelper {
     // 版本适配：isChunkVisible 的实现策略
     // 首次调用时通过 try-catch 确定可用的 NMS API，后续直接调用缓存的实现
     val chunkVisibleImpl = versionAdaptor<(Player, Int, Int) -> Boolean>(
-        {
-            val test = nmsClass("EntityPlayer").unsafeInstance().invokeMethod<Any>("getChunkTrackingView");
-            { player, chunkX, chunkZ -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
+        versionStrategy("nms21-tracking-view", guard = { MinecraftVersion.versionId >= 12005 }) {
+            nmsClass("EntityPlayer").unsafeInstance().invokeMethod<Any>("getChunkTrackingView")
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
         },
         // 你改你妈个🥚，我爱说实话
-        {
-            val test = nmsClass("WorldServer").unsafeInstance().getProperty<Any>("playerChunkLoader");
-            { player, chunkX, chunkZ -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) }
+        versionStrategy("nms20-player-chunk-loader", guard = { MinecraftVersion.versionId >= 12002 }) {
+            nmsClass("WorldServer").unsafeInstance().getProperty<Any>("playerChunkLoader")
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) }
         },
         // 你改你妈个🥚，我爱说实话
-        {
-            val test = CraftWorld19::class.java
-            val test1 = nmsClass("WorldServer").unsafeInstance().invokeMethod<Any>("getChunkSource");
-            { player, chunkX, chunkZ ->
+        versionStrategy("nms19-chunk-map") {
+            CraftWorld19::class.java
+            nmsClass("WorldServer").unsafeInstance().invokeMethod<Any>("getChunkSource")
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int ->
                 val craftWorld = player.world as CraftWorld19
                 NMS19p.instance.isChunkSent(player, craftWorld.handle.chunkSource.chunkMap, chunkX, chunkZ)
             }
         },
-        {
-            // 从 1.18 开始 getVisibleChunk  -> getVisibleChunkIfPresent
-            //             getChunkProvider -> getChunkSource
-            if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18)) {
-                { player, chunkX, chunkZ ->
-                    val craftWorld = player.world as CraftWorld19
-                    craftWorld.handle.chunkSource.chunkMap.visibleChunkMap.get(ChunkPos.asLong(chunkX, chunkZ)) != null
-                }
-            } else if (MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_14)) {
-                // 从 1.14 开始，PlayerChunkMap 改版
-                { player, chunkX, chunkZ ->
-                    val craftWorld = player.world as CraftWorld16
-                    craftWorld.handle.chunkProvider.playerChunkMap.getVisibleChunk(ChunkPos.asLong(chunkX, chunkZ)) != null
-                }
-            } else {
-                // 早期版本
-                { player, chunkX, chunkZ ->
-                    val craftWorld = player.world as CraftWorld12
-                    craftWorld.handle.playerChunkMap.isChunkInUse(chunkX, chunkZ)
-                }
+        // 从 1.18 开始 getVisibleChunk -> getVisibleChunkIfPresent，getChunkProvider -> getChunkSource。
+        versionStrategy("legacy-visible-chunk-map-1_18", guard = { MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_18) }) {
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int ->
+                val craftWorld = player.world as CraftWorld19
+                craftWorld.handle.chunkSource.chunkMap.visibleChunkMap.get(ChunkPos.asLong(chunkX, chunkZ)) != null
+            }
+        },
+        // 从 1.14 开始，PlayerChunkMap 改版。
+        versionStrategy("legacy-visible-chunk-map-1_14", guard = { MinecraftVersion.isHigherOrEqual(MinecraftVersion.V1_14) }) {
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int ->
+                val craftWorld = player.world as CraftWorld16
+                craftWorld.handle.chunkProvider.playerChunkMap.getVisibleChunk(ChunkPos.asLong(chunkX, chunkZ)) != null
+            }
+        },
+        versionStrategy("legacy-player-chunk-map") {
+            return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int ->
+                val craftWorld = player.world as CraftWorld12
+                craftWorld.handle.playerChunkMap.isChunkInUse(chunkX, chunkZ)
             }
         }
     )
+
+    override fun getChunkVisibleStrategy(): String {
+        return chunkVisibleImpl.selectedName
+    }
 
     override fun isChunkVisible(player: Player, chunkX: Int, chunkZ: Int): Boolean {
         val now = System.currentTimeMillis()
