@@ -34,6 +34,9 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
     /** 仅 setHead/controllerLookAt 触发身体自然跟随，手动 body_yaw 会关闭该状态。 */
     var bodyFollowHeadActive = false
 
+    /** 发包看向控制器按观察者写入角度时，本帧不再广播统一旋转。 */
+    var rotationSyncSuppressed = false
+
     /**
      * 传送实体到指定位置
      */
@@ -159,7 +162,7 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
      * @return 运行时身体 yaw 是否发生变化
      */
     open fun advanceRuntimeBodyYawTowardHead(): Boolean {
-        if (!bodyFollowHeadActive) {
+        if (!bodyFollowHeadActive || rotationSyncSuppressed) {
             return false
         }
         val currentBodyYaw = runtimeBodyYaw()

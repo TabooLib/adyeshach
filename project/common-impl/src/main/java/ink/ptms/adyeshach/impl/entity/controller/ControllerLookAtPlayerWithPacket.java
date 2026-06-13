@@ -8,6 +8,7 @@ import ink.ptms.adyeshach.core.entity.controller.Controller;
 import ink.ptms.adyeshach.core.entity.manager.event.ControllerLookEvent;
 import ink.ptms.adyeshach.core.util.YawFixerKt;
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI;
+import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -324,6 +325,11 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
                     }
                 }
             }
+        }
+        if (entity instanceof DefaultEntityInstance) {
+            // 发包看向控制器已经按观察者写头部包，不能再让 tick 校准或通用旋转包覆盖玩家各自的结果。
+            ((DefaultEntityInstance) entity).getPositionHandler().setBodyFollowHeadActive(false);
+            ((DefaultEntityInstance) entity).getPositionHandler().setRotationSyncSuppressed(true);
         }
     }
 

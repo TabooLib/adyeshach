@@ -11,7 +11,6 @@ import ink.ptms.adyeshach.core.util.ifloor
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.util.Vector
-import taboolib.common.util.random
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
@@ -22,6 +21,9 @@ import kotlin.math.absoluteValue
  * 负责实体的移动处理和位置同步
  */
 open class MovementHandler(protected val self: DefaultEntityInstance) {
+
+    /** 上一次原地旋转兜底同步时间，用于替代每 tick 随机发包。 */
+    var rotationFallbackSyncAt = 0L
 
     /**
      * 处理移动逻辑
@@ -150,8 +152,13 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 同步位置到客户端
      */
     open fun syncPosition() {
+        val rotationSyncSuppressed = self.positionHandler.rotationSyncSuppressed
         val bodyYawChanged = self.positionHandler.advanceRuntimeBodyYawTowardHead()
-        val updateRotation = shouldUpdateRotation() || bodyYawChanged
+        if (rotationSyncSuppressed) {
+            self.positionHandler.rotationSyncSuppressed = false
+        }
+        // 发包看向控制器已经按观察者写入角度，本帧只同步位置，避免通用旋转包覆盖专属角度。
+        val updateRotation = !rotationSyncSuppressed && (shouldUpdateRotation() || bodyYawChanged)
         // 乘坐实体
         if (self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
             syncVehicleRotation(updateRotation)
@@ -164,7 +171,16 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 判断是否需要更新视角
      */
     protected open fun shouldUpdateRotation(): Boolean {
-        return (self.yaw - self.position.yaw).absoluteValue >= 1 || (self.pitch - self.position.pitch).absoluteValue >= 1 || random(0.2)
+        if ((self.yaw - self.position.yaw).absoluteValue >= 1 || (self.pitch - self.position.pitch).absoluteValue >= 1) {
+            return true
+        }
+        val now = System.currentTimeMillis()
+        if (rotationFallbackSyncAt + TimeUnit.SECONDS.toMillis(5) > now) {
+            return false
+        }
+        // 原地无角度变化时只低频补一次旋转包，避免高频兜底覆盖按观察者发包的控制器。
+        rotationFallbackSyncAt = now
+        return true
     }
 
     /**
