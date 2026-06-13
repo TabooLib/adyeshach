@@ -186,8 +186,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     @Expose
     var clientPosition: EntityPosition = position
         set(value) {
+            // 平移时同步 xyz，clientBodyPosition.yaw 保持身体朝向（headYaw 在 clientPosition）
             if (field.x != value.x || field.y != value.y || field.z != value.z) {
-                clientBodyPosition = value.clone()
+                clientBodyPosition = clientBodyPosition.clone().also {
+                    it.x = value.x
+                    it.y = value.y
+                    it.z = value.z
+                }
             }
             field = value.clone()
         }
@@ -316,7 +321,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     }
 
     override fun getLocation(): Location = clientPosition.toLocation()
-    override fun getBodyLocation(): Location = clientBodyPosition.toLocation()
+
+    /**
+     * 生成包与外部 API 用的身体位置，yaw 由 [PositionHandler.spawnBodyLocation] 统一计算
+     */
+    override fun getBodyLocation(): Location {
+        return positionHandler.spawnBodyLocation()
+    }
+
     override fun getEyeLocation(): Location = clientPosition.toLocation().plus(y = entitySize.height)
 
     // ═══════════════════════════════════════════════════════════════════════════════
@@ -358,7 +370,13 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun setVelocity(x: Double, y: Double, z: Double) = positionHandler.setVelocity(x, y, z)
     override fun getVelocity() = positionHandler.getVelocity()
     override fun setHeadRotation(location: Location, forceUpdate: Boolean) = positionHandler.setHeadRotation(location, forceUpdate)
+    override fun setHeadAndBodyRotation(location: Location) = positionHandler.setHeadAndBodyRotation(location)
+    override fun setHeadAndBodyRotation(yaw: Float, pitch: Float) = positionHandler.setHeadAndBodyRotation(yaw, pitch)
     override fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean) = positionHandler.setHeadRotation(yaw, pitch, forceUpdate)
+    override fun setBodyRotation(yaw: Float) = positionHandler.setBodyRotation(yaw)
+    override fun displayBodyYaw(): Float {
+        return EntityPosition.normalizeYaw(positionHandler.runtimeBodyYaw())
+    }
     override fun refreshPosition() = positionHandler.refreshPosition()
 
     // ═══════════════════════════════════════════════════════════════════════════════

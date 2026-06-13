@@ -32,7 +32,15 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                 // 修正掉落物信息
                 setMetadata("item", getItem())
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, clientPosition.toLocation())
+                val bodyLoc = positionHandler.spawnBodyLocation()
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(
+                    player = viewer,
+                    entityType = entityType,
+                    entityId = index,
+                    uuid = normalizeUniqueId,
+                    location = bodyLoc,
+                    headYaw = positionHandler.headYaw(),
+                )
                 // 修正向量
                 submit(delay = 1) {
                     setNoGravity(true)

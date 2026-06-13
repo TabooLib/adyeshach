@@ -42,10 +42,11 @@ interface MinecraftEntityOperator {
 
     /**
      * 向客户端发送 PacketPlayOutEntity.PacketPlayOutEntityLook 数据包
+     * 该包只负责身体 yaw 和 pitch；需要头部 yaw 时应额外发送 [updateHeadRotation]。
      *
      * @param player 数据包接收人
      * @param entityId 实体序号
-     * @param yaw yaw 轴移动量
+     * @param yaw 身体 yaw
      * @param pitch pitch 轴移动量
      * @param onGround 是否在地面
      */
@@ -71,13 +72,14 @@ interface MinecraftEntityOperator {
 
     /**
      * 向客户端发送 PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook 数据包
+     * 该包只负责身体 yaw 和 pitch；需要头部 yaw 时应额外发送 [updateHeadRotation]。
      *
      * @param player 数据包接收人
      * @param entityId 实体序号
      * @param x x 轴移动量
      * @param y y 轴移动量
      * @param z z 轴移动量
-     * @param yaw yaw 轴移动量
+     * @param yaw 身体 yaw
      * @param pitch pitch 轴移动量
      * @param onGround 是否在地面
      */

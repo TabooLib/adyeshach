@@ -52,6 +52,12 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     var position: EntityPosition
 
     /**
+     * 实体身体 yaw
+     * 空值表示沿用旧位置 yaw，保证旧数据向下兼容。
+     */
+    var bodyYaw: Float?
+
+    /**
      * 测试状态
      */
     val isTesting: Boolean
@@ -118,9 +124,10 @@ interface EntityBase : Metaable, TagContainer, EntitySerializable {
     fun getLocation(): Location
 
     /**
-     * 实体身体所在未知
+     * 实体身体所在位置
+     * 生成和传送数据包使用该位置写入身体 yaw，旧位置 yaw 语义保持不变。
      */
-     fun getBodyLocation(): Location
+    fun getBodyLocation(): Location
 
     /**
      * 实体眼部所在位置

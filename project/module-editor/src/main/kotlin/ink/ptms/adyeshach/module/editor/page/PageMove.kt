@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.editor.page
 
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.action.Action
@@ -21,13 +22,18 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
     override fun subpage() = "move"
 
     override fun groups(): List<ActionGroup> {
-        return listOf(
+        val bodyYawDisplay = entity.displayBodyYaw()
+        val groups = mutableListOf<ActionGroup>(
             SimpleGroup(
-                "move-position", 8, listOf(
+                "move-position",
+                7,
+                listOf(
                     SimpleAction.Literal("&a${entity.x.format()}"),
                     SimpleAction.Literal("&a${entity.y.format()}"),
                     SimpleAction.Literal("&a${entity.z.format()}"),
-                    SimpleAction.Literal("&a${entity.yaw.format()}&7, &a${entity.pitch.format()}"),
+                    SimpleAction.Literal("&a${entity.yaw.format()}"),
+                    SimpleAction.Literal("&a${entity.pitch.format()}"),
+                    SimpleAction.Literal("&a${bodyYawDisplay.format()}"),
                     object : SimpleAction.Literal("&7COPY") {
 
                         override fun clickCommand(player: Player, entity: EntityInstance, page: Page, index: Int): String {
@@ -37,20 +43,24 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
                         override fun isRefreshPage(): Boolean {
                             return false
                         }
-                    }
-                )
+                    },
+                ),
             ),
-            SimpleGroup("move-xyz", 8, listOf(Type.X.actions(), Type.Y.actions(), Type.Z.actions()).flatten()),
-            SimpleGroup("move-yp", 8, listOf(Type.YAW.actions(), Type.PITCH.actions()).flatten()),
         )
+        // 身体 yaw 是显式编辑字段，不依赖 nitwit 实体的移动 tick。
+        groups += SimpleGroup("move-body-yaw", 8, Type.BODY_YAW.actions())
+        groups += SimpleGroup("move-yaw", 8, Type.YAW.actions())
+        groups += SimpleGroup("move-pitch", 8, Type.PITCH.actions())
+        groups += SimpleGroup("move-xyz", 8, listOf(Type.X.actions(), Type.Y.actions(), Type.Z.actions()).flatten())
+        return groups
     }
 
     enum class Type {
 
-        X, Y, Z, YAW, PITCH;
+        X, Y, Z, YAW, PITCH, BODY_YAW;
 
         fun actions(): List<Action> {
-            return listOf(1.0, 0.5, 0.1, 0.01, -1.00, -0.50, -0.10, -0.01).map { Move(it, this) }
+            return listOf(10.0, 1.0, 0.1, 0.01, -0.01, -0.1, -1.0, -10.0).map { Move(it, this) }
         }
     }
 
@@ -67,6 +77,11 @@ class PageMove(editor: EditPanel) : MultiplePage(editor) {
                 Type.Z -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~$value ~ ~"
                 Type.YAW -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~$value ~"
                 Type.PITCH -> "adyeshach tp ${entity.uniqueId} to ~ ~ ~ ~ ~ ~$value"
+                Type.BODY_YAW -> {
+                    val base = entity.displayBodyYaw()
+                    val next = EntityPosition.normalizeYaw(base + value.toFloat())
+                    "adyeshach edit ${entity.uniqueId} m:body_yaw->$next"
+                }
             }
         }
     }

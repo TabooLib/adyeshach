@@ -171,15 +171,8 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
             pitch = 0;
         }
 
-        float fixYaw = YawFixerKt.fixYaw(entity.getEntityType(), (float) yaw);
         // 发送朝向更新包
-        INSTANCE.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
-                player,
-                entity.getIndex(),
-                fixYaw,
-                (float) pitch,
-                true
-        );
+        sendPerPlayerLook(player, entity, (float) yaw, (float) pitch);
         // 记录最后的朝向角度
         LAST_LOOK_ANGLES.computeIfAbsent(player.getName(), k -> new ConcurrentHashMap<>()).put(entity.getUniqueId(), new Angle(yaw, pitch));
     }
@@ -218,19 +211,30 @@ public class ControllerLookAtPlayerWithPacket extends Controller {
         double yaw = interpolateAngle(config.getStartYaw(), targetYaw, config.getFactor());
         double pitch = config.getStartPitch() + (targetPitch - config.getStartPitch()) * config.getFactor();
 
-        float fixYaw = YawFixerKt.fixYaw(entity.getEntityType(), (float) yaw);
+        // 发送朝向更新包
+        sendPerPlayerLook(player, entity, (float) yaw, (float) pitch);
+        // 当插值完成时（factor >= 1.0），更新 LAST_LOOK_ANGLES
+        if (config.getFactor() >= 1.0) {
+            LAST_LOOK_ANGLES.computeIfAbsent(player.getName(), k -> new ConcurrentHashMap<>()).put(entity.getUniqueId(), new Angle(yaw, pitch));
+        }
+    }
+
+    private static void sendPerPlayerLook(Player player, EntityInstance entity, float yaw, float pitch) {
+        float fixYaw = YawFixerKt.fixYaw(entity.getEntityType(), yaw);
         // 发送朝向更新包
         INSTANCE.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
                 player,
                 entity.getIndex(),
                 fixYaw,
-                (float) pitch,
+                pitch,
                 true
         );
-        // 当插值完成时（factor >= 1.0），更新 LAST_LOOK_ANGLES
-        if (config.getFactor() >= 1.0) {
-            LAST_LOOK_ANGLES.computeIfAbsent(player.getName(), k -> new ConcurrentHashMap<>()).put(entity.getUniqueId(), new Angle(yaw, pitch));
-        }
+        // Entity Look 只写身体 yaw，按玩家看向还需要单独写头部 yaw。
+        INSTANCE.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
+                player,
+                entity.getIndex(),
+                fixYaw
+        );
     }
 
     /**

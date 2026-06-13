@@ -25,12 +25,20 @@ interface MinecraftEntitySpawner {
      * @param uuid 实体 UUID
      * @param location 生成坐标
      * @param data 特殊数据
+     * @param headYaw 头部 yaw，生成包支持时与身体 yaw 分开写入
      */
-    fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int = 0)
+    fun spawnEntity(
+        player: Player,
+        entityType: EntityTypes,
+        entityId: Int,
+        uuid: UUID,
+        location: Location,
+        data: Int = 0,
+        headYaw: Float = location.yaw,
+    )
 
     /**
      * 在 1.18 及以下版本生成 EntityLiving 类型的数据包实体，在 1.19 版本中被 [spawnEntity] 取代。
-     *
      * 在 1.19 及以上版本调用时会产生异常。
      *
      * @param player 数据包接收人
@@ -38,8 +46,16 @@ interface MinecraftEntitySpawner {
      * @param entityId 实体序号
      * @param uuid 实体 UUID
      * @param location 实体坐标
+     * @param headYaw 头部 yaw，生成包支持时与身体 yaw 分开写入
      */
-    fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location)
+    fun spawnEntityLiving(
+        player: Player,
+        entityType: EntityTypes,
+        entityId: Int,
+        uuid: UUID,
+        location: Location,
+        headYaw: Float = location.yaw,
+    )
 
     /**
      * 生成玩家类型的数据包实体
@@ -48,8 +64,9 @@ interface MinecraftEntitySpawner {
      * @param entityId 实体序号
      * @param uuid 实体 UUID
      * @param location 实体坐标
+     * @param headYaw 头部 yaw，1.20.2+ 玩家生成包支持时与身体 yaw 分开写入
      */
-    fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location)
+    fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location, headYaw: Float = location.yaw)
 
     /**
      * 生成坠落的方块类型的数据包实体

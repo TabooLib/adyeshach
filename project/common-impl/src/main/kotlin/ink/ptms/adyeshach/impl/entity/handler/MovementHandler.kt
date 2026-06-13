@@ -2,7 +2,6 @@ package ink.ptms.adyeshach.impl.entity.handler
 
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
-import ink.ptms.adyeshach.core.MinecraftEntityOperator
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
@@ -151,7 +150,8 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 同步位置到客户端
      */
     open fun syncPosition() {
-        val updateRotation = shouldUpdateRotation()
+        val bodyYawChanged = self.positionHandler.advanceRuntimeBodyYawTowardHead()
+        val updateRotation = shouldUpdateRotation() || bodyYawChanged
         // 乘坐实体
         if (self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
             syncVehicleRotation(updateRotation)
@@ -172,13 +172,7 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      */
     protected open fun syncVehicleRotation(updateRotation: Boolean) {
         if (updateRotation && self.isDisableVehicleRotationSync) {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
-                player = self.getVisiblePlayers(),
-                entityId = self.index,
-                yaw = self.entityType.fixYaw(self.yaw),
-                pitch = self.pitch,
-                onGround = true
-            )
+            syncEntityLookWithHead()
         }
     }
 
@@ -186,8 +180,11 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 同步自由移动实体的位置
      */
     protected open fun syncFreeMovement(updateRotation: Boolean) {
-        // 是否需要更新位置
         if (self.clientPosition == self.position) {
+            // 无位置差异时仍需同步旋转，保证运行时身体跟随不依赖位移包。
+            if (updateRotation) {
+                syncEntityLookWithHead()
+            }
             return
         }
         // 计算差值
@@ -211,15 +208,13 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      */
     protected open fun syncByTeleport() {
         self.clientPositionFixed = System.currentTimeMillis()
-        val toLocation = self.clientPosition.toLocation().apply {
-            yaw = self.entityType.fixYaw(self.clientPosition.yaw)
+        val bodyLoc = self.positionHandler.runtimeBodyLocation().apply {
+            x = self.clientPosition.x
+            y = self.clientPosition.y
+            z = self.clientPosition.z
+            pitch = self.clientPosition.pitch
         }
-        Adyeshach.api().getMinecraftAPI().getEntityOperator().teleportEntity(
-            player = self.getVisiblePlayers(),
-            entityId = self.index,
-            location = toLocation,
-            onGround = !self.entityPathType.isFly()
-        )
+        self.positionHandler.broadcastTeleportAndHead(bodyLoc, self.yaw)
         self.position = self.clientPosition
     }
 
@@ -240,15 +235,22 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
                 return
             }
             if (updateRotation) {
+                val bodyYaw = self.entityType.fixYaw(self.positionHandler.runtimeBodyYaw())
+                val headYaw = self.entityType.fixYaw(self.yaw)
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMoveLook(
                     player = self.getVisiblePlayers(),
                     entityId = self.index,
                     x = x.toShort(),
                     y = y.toShort(),
                     z = z.toShort(),
-                    yaw = self.entityType.fixYaw(self.yaw),
+                    yaw = bodyYaw,
                     pitch = self.pitch,
                     onGround = !self.entityPathType.isFly()
+                )
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
+                    player = self.getVisiblePlayers(),
+                    entityId = self.index,
+                    yaw = headYaw
                 )
             } else {
                 Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMove(
@@ -260,15 +262,16 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
                     onGround = !self.entityPathType.isFly()
                 )
             }
-        } else {
-            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateEntityLook(
-                player = self.getVisiblePlayers(),
-                entityId = self.index,
-                yaw = self.entityType.fixYaw(self.yaw),
-                pitch = self.pitch,
-                onGround = !self.entityPathType.isFly()
-            )
+        } else if (updateRotation) {
+            syncEntityLookWithHead()
         }
         self.position = self.clientPosition
+    }
+
+    /**
+     * Entity Look 用运行时身体 yaw，头部单独 Head Rotation
+     */
+    protected open fun syncEntityLookWithHead() {
+        self.positionHandler.syncLookToClients(self.positionHandler.runtimeBodyYaw(), self.pitch, self.yaw)
     }
 }

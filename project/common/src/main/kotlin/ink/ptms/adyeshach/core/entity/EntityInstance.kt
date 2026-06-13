@@ -146,7 +146,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     /**
      * 修改实体动量
      */
-    fun setVelocity(vector: org.bukkit.util.Vector)
+    fun setVelocity(vector: Vector)
 
     /**
      * 修改实体动量
@@ -156,7 +156,7 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     /**
      * 获取实体动量
      */
-    fun getVelocity(): org.bukkit.util.Vector
+    fun getVelocity(): Vector
 
     /**
      * 修改实体视角
@@ -166,12 +166,41 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     fun setHeadRotation(location: Location, forceUpdate: Boolean = false)
 
     /**
+     * 修改实体头部和身体朝向
+     * 显式看向目标位置时使用该入口，保证当帧身体 yaw 与头部 yaw 对齐。
+     *
+     * @param location 看向目标位置
+     */
+    fun setHeadAndBodyRotation(location: Location)
+
+    /**
+     * 修改实体头部和身体朝向
+     * 显式写入角度时使用该入口，保证当帧身体 yaw 与头部 yaw 对齐。
+     *
+     * @param yaw 偏航角
+     * @param pitch 俯仰角
+     */
+    fun setHeadAndBodyRotation(yaw: Float, pitch: Float)
+
+    /**
      * 修改实体视角
      * @param yaw 偏航角
      * @param pitch 俯仰角
      * @param forceUpdate 强制更新
      */
     fun setHeadRotation(yaw: Float, pitch: Float, forceUpdate: Boolean = false)
+
+    /**
+     * 修改实体身体朝向
+     *
+     * @param yaw 身体偏航角
+     */
+    fun setBodyRotation(yaw: Float)
+
+    /**
+     * 微调页展示的身体 yaw（运行时 clientBodyPosition，与画面一致；非仅存档 bodyYaw）
+     */
+    fun displayBodyYaw(): Float
 
     /**
      * 播放动画数据包

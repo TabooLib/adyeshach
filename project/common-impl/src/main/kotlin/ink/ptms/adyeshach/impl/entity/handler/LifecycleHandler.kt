@@ -44,9 +44,11 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
                 self.syncCompanionVisible(viewer, true)
                 // 更新单位属性
                 self.updateEntityMetadata(viewer)
-                // 更新单位视角
+                // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
+                // 矿车，凋零头
+                // 生成包的头身字段在不同版本和实体类型上不一致，生成完成后统一校准一次 Look/Head。
                 if (self.isRotationFixOnSpawn) {
-                    self.setHeadRotation(self.position.yaw, self.position.pitch, forceUpdate = true)
+                    self.positionHandler.syncLookToClients(self.positionHandler.runtimeBodyYaw(), self.pitch, self.yaw)
                 }
                 // 关联实体初始化
                 if (self.isPassengerRefreshOnSpawn) {
@@ -101,6 +103,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
     open fun spawn(location: Location) {
         self.position = EntityPosition.fromLocation(location)
         self.clientPosition = self.position
+        self.positionHandler.prepareSpawnBodyFromArchive()
         val viewers = getSpawnViewers()
         // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
         if (self.isCompanion()) {

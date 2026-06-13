@@ -68,6 +68,9 @@ object Command {
     val clone = cloneSubCommand
 
     @CommandBody
+    val respawn = respawnSubCommand
+
+    @CommandBody
     val filter = filterSubCommand
 
     @CommandBody

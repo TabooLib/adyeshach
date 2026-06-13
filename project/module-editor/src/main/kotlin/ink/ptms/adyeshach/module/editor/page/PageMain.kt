@@ -72,23 +72,36 @@ class PageMain(editor: EditPanel) : Page(editor) {
                 json.appendLang("entity-move")
                     .hoverText(player.lang("entity-move-help"))
                     .runCommand("/adyeshach edit ${entity.uniqueId} move")
-                    .newLine().newLine()
+                json.append(" §8| ")
+                json.appendLang("entity-tools-respawn")
+                    .hoverText(player.lang("entity-tools-respawn-help"))
+                    .runCommand("/adyeshach respawn ${entity.uniqueId}")
+                json.append(" ")
+                json.appendLang("entity-tools-clone")
+                    .hoverText(player.lang("entity-tools-clone-help"))
+                    .runCommand("/adyeshach api se adyeshach clone ${entity.uniqueId}")
+                json.append(" ")
+                json.appendLang("entity-tools-remove")
+                    .hoverText(player.lang("entity-tools-remove-help"))
+                    .runCommand("/adyeshach api se adyeshach remove ${entity.uniqueId}")
+                json.newLine().newLine()
 
                 // 操作
                 json.append("  ")
-                (0..6).forEach { i ->
-                    val command = when (i) {
-                        0 -> "tp ${entity.uniqueId}"
-                        1 -> "tp ${entity.uniqueId} here"
-                        2 -> "move ${entity.uniqueId} here"
-                        3 -> "look ${entity.uniqueId} here"
-                        4 -> "look ${entity.uniqueId} like"
-                        5 -> "clone ${entity.uniqueId}"
-                        6 -> "remove ${entity.uniqueId}"
-                        else -> error("Unknown command $i")
-                    }
-                    json.appendLang("entity-tools-$i")
-                        .hoverText(player.lang("entity-tools-$i-help"))
+                val entityTools = listOf(
+                    "entity-tools-tp-to" to "tp ${entity.uniqueId}",
+                    "entity-tools-tp-here" to "tp ${entity.uniqueId} here",
+                    "entity-tools-move-here" to "move ${entity.uniqueId} here",
+                    "entity-tools-look-here-a" to "look ${entity.uniqueId} here-a",
+                    "entity-tools-look-here-b" to "look ${entity.uniqueId} here-b",
+                    "entity-tools-look-here-c" to "look ${entity.uniqueId} here-c",
+                    "entity-tools-look-like-a" to "look ${entity.uniqueId} like-a",
+                    "entity-tools-look-like-b" to "look ${entity.uniqueId} like-b",
+                    "entity-tools-look-like-c" to "look ${entity.uniqueId} like-c",
+                )
+                entityTools.forEach { (langKey, command) ->
+                    json.appendLang(langKey)
+                        .hoverText(player.lang("$langKey-help"))
                         .runCommand("/adyeshach api se adyeshach $command")
                     json.append(" ")
                 }

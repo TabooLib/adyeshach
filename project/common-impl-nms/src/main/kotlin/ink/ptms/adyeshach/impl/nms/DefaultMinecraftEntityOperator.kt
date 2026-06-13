@@ -39,8 +39,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun teleportEntity(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {
         // 计算视角
-        val yaw = (location.yaw * 256 / 360).toInt().toByte()
-        val pitch = (location.pitch * 256 / 360).toInt().toByte()
+        val yaw = (location.yaw * 256f / 360f).toInt().toByte()
+        val pitch = (location.pitch * 256f / 360f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16
@@ -89,14 +89,13 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateEntityLook(player: List<Player>, entityId: Int, yaw: Float, pitch: Float, onGround: Boolean) {
         // 计算视角
-        val y = (yaw * 256 / 360).toInt().toByte()
-        val p = (pitch * 256 / 360).toInt().toByte()
+        val y = (yaw * 256f / 360f).toInt().toByte()
+        val p = (pitch * 256f / 360f).toInt().toByte()
         if (majorLegacy >= 11400) {
             packetHandler.sendPacket(player, NMSPacketPlayOutEntityLook(entityId, y, p, onGround))
         } else {
             packetHandler.sendPacket(player, NMS13PacketPlayOutEntityLook(entityId, y, p, onGround))
         }
-        updateHeadRotation(player, entityId, yaw)
     }
 
     override fun updateRelEntityMove(player: List<Player>, entityId: Int, x: Short, y: Short, z: Short, onGround: Boolean) {
@@ -118,15 +117,14 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
         onGround: Boolean,
     ) {
         // 计算视角
-        val yRot = (yaw * 256 / 360).toInt().toByte()
-        val xRot = (pitch * 256 / 360).toInt().toByte()
+        val yRot = (yaw * 256f / 360f).toInt().toByte()
+        val xRot = (pitch * 256f / 360f).toInt().toByte()
         // 版本判断
         if (majorLegacy >= 11400) {
             packetHandler.sendPacket(player, NMSPacketPlayOutRelEntityMoveLook(entityId, x, y, z, yRot, xRot, onGround))
         } else {
             packetHandler.sendPacket(player, NMS13PacketPlayOutRelEntityMoveLook(entityId, x.toLong(), y.toLong(), z.toLong(), yRot, xRot, onGround))
         }
-        updateHeadRotation(player, entityId, yaw)
     }
 
     override fun updateEntityVelocity(player: List<Player>, entityId: Int, vector: Vector) {

@@ -38,6 +38,16 @@ open class CustomMetaHandler(protected val self: DefaultEntityInstance) {
                 self.isNitwit = value?.cbool ?: false
                 true
             }
+            // 身体朝向 yaw，空或 @RESET 表示跟随头部 position.yaw
+            "body_yaw", "bodyyaw" -> {
+                if (value == null || value.equals("@RESET", true)) {
+                    self.positionHandler.resetBodyYawToFollowHead()
+                } else {
+                    val yaw = value.toFloatOrNull() ?: return false
+                    self.setBodyRotation(yaw)
+                }
+                true
+            }
             // 移动速度
             "movespeed", "move_speed" -> {
                 self.moveSpeed = value?.cdouble ?: 0.2

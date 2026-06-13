@@ -59,9 +59,11 @@ fun String.toLocaleKey(): String {
 }
 
 fun Double.format(): String {
-    return String.format("%.2f", this)
+    val text = String.format("%.2f", this)
+    return if (text == "-0.00") "0" else text.trimEnd('0').trimEnd('.')
 }
 
 fun Float.format(): String {
-    return String.format("%.2f", this)
+    val text = String.format("%.2f", this)
+    return if (text == "-0.00") "0" else text.trimEnd('0').trimEnd('.')
 }

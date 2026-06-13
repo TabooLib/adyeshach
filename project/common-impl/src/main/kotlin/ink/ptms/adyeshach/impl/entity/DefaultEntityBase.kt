@@ -58,6 +58,13 @@ abstract class DefaultEntityBase(@Expose final override val entityType: EntityTy
         get() = field.clone()
 
     /**
+     * 实体身体 yaw 存档；null 表示与头部 [position].yaw 一致
+     * 运行时身体 yaw 与落盘由 [ink.ptms.adyeshach.impl.entity.handler.PositionHandler] 维护
+     */
+    @Expose
+    override var bodyYaw: Float? = null
+
+    /**
      * 将实体唯一 ID 转换为 UUID 类型
      * 历史遗留问题
      */

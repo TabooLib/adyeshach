@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.submit
 
 /**
  * Adyeshach
@@ -29,12 +28,15 @@ abstract class DefaultEntity(entityType: EntityTypes) : DefaultEntityInstance(en
         return if (visible) {
             prepareSpawn(viewer) {
                 // 生成实体
-                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(viewer, entityType, index, normalizeUniqueId, clientPosition.toLocation())
-                // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
-                // 矿车，凋零头
-                if (isRotationFixOnSpawn) {
-                    submit(delay = 5) { setHeadRotation(yaw, pitch, forceUpdate = true) }
-                }
+                val bodyLoc = positionHandler.spawnBodyLocation()
+                Adyeshach.api().getMinecraftAPI().getEntitySpawner().spawnEntity(
+                    player = viewer,
+                    entityType = entityType,
+                    entityId = index,
+                    uuid = normalizeUniqueId,
+                    location = bodyLoc,
+                    headYaw = positionHandler.headYaw(),
+                )
             }
         } else {
             prepareDestroy(viewer) {

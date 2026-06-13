@@ -70,10 +70,19 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         UnsafeAccess.lookup.unreflectSetter(field)
     }
 
-    override fun spawnEntity(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location, data: Int) {
-        // 计算视角
-        val yaw = (entityType.fixYaw(location.yaw) * 256.0f / 360.0f).toInt().toByte()
-        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+    override fun spawnEntity(
+        player: Player,
+        entityType: EntityTypes,
+        entityId: Int,
+        uuid: UUID,
+        location: Location,
+        data: Int,
+        headYaw: Float,
+    ) {
+        // 身体 yaw 来自 location；头 yaw 单独传，避免 1.19+ 生成包 yHeadRot 与身体相同
+        val bodyYawByte = (entityType.fixYaw(location.yaw) * 256f / 360f).toInt().toByte()
+        val headYawByte = (entityType.fixYaw(headYaw) * 256f / 360f).toInt().toByte()
+        val pitch = (location.pitch * 256f / 360f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13
@@ -93,7 +102,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.y)
                     writeDouble(location.z)
                     writeByte(pitch)
-                    writeByte(yaw)
+                    writeByte(bodyYawByte)
                     writeInt(data)
                     writeShort(0)
                     writeShort(0)
@@ -111,7 +120,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.y)
                     writeDouble(location.z)
                     writeByte(pitch)
-                    writeByte(yaw)
+                    writeByte(bodyYawByte)
                     writeInt(data)
                     writeShort(0)
                     writeShort(0)
@@ -125,11 +134,11 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                         entityId,
                         uuid,
                         location,
-                        yaw.toFloat(),
-                        pitch.toFloat(),
+                        entityType.fixYaw(location.yaw),
+                        location.pitch,
                         data,
                         NMS19.instance.entityTypeGetId(helper.adapt(entityType)),
-                        yaw.toDouble()
+                        entityType.fixYaw(headYaw).toDouble(),
                     )
                 } else {
                     NMSPacketPlayOutSpawnEntity::class.java.invokeConstructor(createDataSerializer {
@@ -164,11 +173,11 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                         // xRot     -> pitch -> 纵向视角
                         writeByte(pitch)
                         // yRot     -> yaw -> 普通实体没效果
-                        writeByte(yaw)
+                        writeByte(bodyYawByte)
                         // yHeadRot -> yaw -> 横向视角
                         // 1.19 才有这个
                         if (major >= 11) {
-                            writeByte(yaw)
+                            writeByte(headYawByte)
                             writeVarInt(data)
                         } else {
                             writeInt(data)
@@ -186,14 +195,30 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         packetHandler.sendPacket(player, packet)
     }
 
-    override fun spawnEntityLiving(player: Player, entityType: EntityTypes, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnEntityLiving(
+        player: Player,
+        entityType: EntityTypes,
+        entityId: Int,
+        uuid: UUID,
+        location: Location,
+        headYaw: Float,
+    ) {
         // 1.13 以下版本盔甲架子不是 EntityLiving 类型，1.19 以上版本所有实体使用 PacketPlayOutSpawnEntity 数据包生成
         if ((entityType == EntityTypes.ARMOR_STAND && majorLegacy < 11300) || majorLegacy >= 11900) {
-            return spawnEntity(player, entityType, entityId, uuid, location)
+            return spawnEntity(
+                player = player,
+                entityType = entityType,
+                entityId = entityId,
+                uuid = uuid,
+                location = location,
+                data = 0,
+                headYaw = headYaw,
+            )
         }
         // 计算视角
-        val yaw = (entityType.fixYaw(location.yaw) * 256.0f / 360.0f).toInt().toByte()
-        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (entityType.fixYaw(location.yaw) * 256f / 360f).toInt().toByte()
+        val pitch = (location.pitch * 256f / 360f).toInt().toByte()
+        val headYawByte = (entityType.fixYaw(headYaw) * 256f / 360f).toInt().toByte()
         // 版本判断
         val packet: Any = when (major) {
             // 1.9, 1.10
@@ -210,7 +235,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yaw)
                     writeByte(pitch)
-                    writeByte(yaw)
+                    writeByte(headYawByte)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -236,7 +261,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yaw)
                     writeByte(pitch)
-                    writeByte(yaw)
+                    writeByte(headYawByte)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -255,7 +280,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeDouble(location.z)
                     writeByte(yaw)
                     writeByte(pitch)
-                    writeByte(yaw)
+                    writeByte(headYawByte)
                     writeShort(0)
                     writeShort(0)
                     writeShort(0)
@@ -283,7 +308,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 // xRot -> pitch
                 writeByte(pitch)
                 // yHeadRot -> yaw
-                writeByte(yaw)
+                writeByte(headYawByte)
                 writeShort(0)
                 writeShort(0)
                 writeShort(0)
@@ -295,14 +320,22 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
         packetHandler.sendPacket(player, packet)
     }
 
-    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location) {
+    override fun spawnNamedEntity(player: Player, entityId: Int, uuid: UUID, location: Location, headYaw: Float) {
         // 1.20.2 开始，玩家实体使用 PacketPlayOutSpawnEntity 数据包生成
         if (majorLegacy >= 12002) {
-            return spawnEntity(player, EntityTypes.PLAYER, entityId, uuid, location)
+            return spawnEntity(
+                player = player,
+                entityType = EntityTypes.PLAYER,
+                entityId = entityId,
+                uuid = uuid,
+                location = location,
+                data = 0,
+                headYaw = headYaw,
+            )
         }
         // 计算视角
-        val yaw = (location.yaw * 256.0f / 360.0f).toInt().toByte()
-        val pitch = (location.pitch * 256.0f / 360.0f).toInt().toByte()
+        val yaw = (location.yaw * 256f / 360f).toInt().toByte()
+        val pitch = (location.pitch * 256f / 360f).toInt().toByte()
         // 判断版本
         val packet: Any = when (major) {
             // 1.9, 1.10, 1.11, 1.12, 1.13, 1.14
@@ -350,9 +383,25 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
 
     override fun spawnEntityFallingBlock(player: Player, entityId: Int, uuid: UUID, location: Location, material: Material, data: Byte) {
         if (majorLegacy >= 11300) {
-            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, helper.getBlockId(MaterialData(material, data)))
+            spawnEntity(
+                player = player,
+                entityType = EntityTypes.FALLING_BLOCK,
+                entityId = entityId,
+                uuid = uuid,
+                location = location,
+                data = helper.getBlockId(MaterialData(material, data)),
+                headYaw = location.yaw,
+            )
         } else {
-            spawnEntity(player, EntityTypes.FALLING_BLOCK, entityId, uuid, location, material.id + (data.toInt() shl 12))
+            spawnEntity(
+                player = player,
+                entityType = EntityTypes.FALLING_BLOCK,
+                entityId = entityId,
+                uuid = uuid,
+                location = location,
+                data = material.id + (data.toInt() shl 12),
+                headYaw = location.yaw,
+            )
         }
     }
 

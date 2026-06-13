@@ -11,6 +11,7 @@ import ink.ptms.adyeshach.core.entity.type.AdyHuman
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
 import ink.ptms.adyeshach.core.event.AdyeshachGameProfileGenerateEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerUUIDGenerateEvent
+import ink.ptms.adyeshach.core.util.fixYaw
 import ink.ptms.adyeshach.core.util.getEnum
 import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.network.NetworkMineskin
@@ -86,7 +87,14 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                     player = viewer,
                     entityId = index,
                     uuid = pid,
-                    location = clientPosition.toLocation().modify(yaw = position.yaw, pitch = position.pitch),
+                    location = positionHandler.spawnBodyLocation().modify(pitch = pitch),
+                    headYaw = positionHandler.headYaw(),
+                )
+                // 旧版本 NamedEntitySpawn 没有独立 headYaw 字段，生成后立刻补头部 yaw，避免玩家头部先按身体 yaw 显示一帧。
+                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
+                    player = viewer,
+                    entityId = index,
+                    yaw = entityType.fixYaw(positionHandler.headYaw()),
                 )
                 // 启用皮肤
                 setSkinEnabled(true)
