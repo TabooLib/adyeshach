@@ -5,7 +5,6 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.module.editor.ChatEditor
-import ink.ptms.adyeshach.module.editor.format
 import ink.ptms.adyeshach.module.editor.lang
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -47,11 +46,36 @@ open class PresetController(val root: ConfigurationSection) {
         return cg?.type?.invokeConstructor(entity, *args)
     }
 
+    /**
+     * 与实体上 Controller#toString 对齐（Java 控制器浮点用两位小数，不用编辑器 format 去尾零）
+     */
+    open fun matches(controller: Controller): Boolean {
+        return controller.toString() == toString()
+    }
+
     override fun toString(): String {
-        return root.getString("instance").toString().substringBefore(':') + ":" + args.joinToString(",") { if (it is Double) it.format() else it.toString() }
+        return instanceKey(root.getString("instance").orEmpty())
     }
 
     companion object {
+
+        fun instanceKey(instance: String): String {
+            val type = instance.substringBefore(':')
+            val argsPart = instance.substringAfter(':', "")
+            if (argsPart.isBlank()) {
+                return type
+            }
+            val parsed = argsPart.split(',').filter { it.isNotBlank() }.map { it.toPrimitive() }
+            return type + ":" + parsed.joinToString(",") { formatControllerArg(it) }
+        }
+
+        fun formatControllerArg(arg: Any): String {
+            return when (arg) {
+                is Double -> String.format("%.2f", arg)
+                is Float -> String.format("%.2f", arg.toDouble())
+                else -> arg.toString()
+            }
+        }
 
         fun String.toPrimitive(): Any {
             return when {
@@ -75,7 +99,7 @@ open class PresetController(val root: ConfigurationSection) {
                         }
                     }
                     // 存在该控制器
-                    else if (entity.getController().any { it.toString() == element.toString() }) {
+                    else if (entity.getController().any { element.matches(it) }) {
                         buildItem(element.icon) {
                             shiny()
                             hideAll()
@@ -90,7 +114,7 @@ open class PresetController(val root: ConfigurationSection) {
                         return@onClick
                     }
                     // 存在该控制器
-                    val find = entity.getController().firstOrNull { it.toString() == element.toString() }
+                    val find = entity.getController().firstOrNull { element.matches(it) }
                     if (find != null) {
                         entity.unregisterController(find)
                     } else {

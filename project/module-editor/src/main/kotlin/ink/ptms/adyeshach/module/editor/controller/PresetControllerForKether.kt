@@ -32,4 +32,8 @@ class PresetControllerForKether(val id: String, val generator: KetherControllerG
     override fun toString(): String {
         return id.uppercase()
     }
+
+    override fun matches(controller: Controller): Boolean {
+        return controller.id().equals(id, ignoreCase = true)
+    }
 }
