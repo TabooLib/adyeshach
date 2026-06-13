@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.bundling.Jar
+
 plugins {
     `maven-publish`
 }
@@ -34,18 +36,21 @@ dependencies {
     taboo("org.spongepowered:math:2.0.1")
 }
 
+val distDir = rootProject.layout.projectDirectory.dir("dist")
+
 tasks {
     jar {
-        // 构件名
         archiveBaseName.set(rootProject.name)
-        // 打包子项目源代码
+        destinationDirectory.set(distDir)
         rootProject.subprojects.forEach { from(it.sourceSets["main"].output) }
     }
     kotlinSourcesJar {
-        // 构件名
         archiveBaseName.set(rootProject.name)
-        // 打包子项目源代码
+        destinationDirectory.set(distDir)
         rootProject.subprojects.forEach { from(it.sourceSets["main"].allSource) }
+    }
+    withType<Jar>().configureEach {
+        destinationDirectory.set(distDir)
     }
 }
 
@@ -69,7 +74,7 @@ publishing {
             groupId = "ink.ptms.adyeshach"
             artifactId = "api"
             // 使用 taboolibBuildApi 任务的输出
-            artifact("${project.buildDir}/libs/${rootProject.name}-${rootProject.version}-api.jar")
+            artifact(distDir.asFile.resolve("${rootProject.name}-${rootProject.version}-api.jar"))
             // 添加 sources jar
             artifact(tasks.named("kotlinSourcesJar")) {
                 classifier = "sources"

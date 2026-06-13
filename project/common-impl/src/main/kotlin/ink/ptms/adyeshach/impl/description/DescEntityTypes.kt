@@ -1,14 +1,16 @@
 package ink.ptms.adyeshach.impl.description
 
 import ink.ptms.adyeshach.core.entity.EntitySize
+import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.entity.type.minecraftVersion
+import ink.ptms.adyeshach.core.util.getEnumOrNull
 import taboolib.common.platform.function.info
 import java.io.InputStream
 
 /**
- * Adyeshach
- * ink.ptms.adyeshach.impl.entity.description.EntityTypesDesc
+ * 解析 entity_types.desc，并构建 EntityTypes 到 Entity 的查询表
+ * 主记录名与别名行中可解析为 EntityTypes 的字符串都会映射到同一条 Entity，代理类仍只按主记录生成一份
  *
  * @author 坏黑
  * @since 2022/6/19 18:07
@@ -59,5 +61,22 @@ class DescEntityTypes(input: InputStream) : Description(input) {
 
     override fun loaded() {
         info("Loaded ${types.size} entity type(s) from the \"$name\"")
+    }
+
+    /**
+     * 将每条 desc 主记录及其别名行里能识别的 EntityTypes 枚举项都指向同一 Entity
+     * 后写入的键覆盖先前的，便于同文件内显式修正
+     *
+     * @return EntityTypes 查询表
+     */
+    fun entityTypeMap(): Map<EntityTypes, Entity> {
+        val map = HashMap<EntityTypes, Entity>()
+        types.forEach { entity ->
+            map[entity.adyeshachType] = entity
+            entity.aliases.forEach { alias ->
+                EntityTypes::class.java.getEnumOrNull(alias)?.let { map[it] = entity }
+            }
+        }
+        return map
     }
 }

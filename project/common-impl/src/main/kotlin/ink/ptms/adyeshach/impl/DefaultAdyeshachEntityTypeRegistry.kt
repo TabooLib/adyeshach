@@ -10,6 +10,7 @@ import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.path.PathType
 import ink.ptms.adyeshach.core.entity.type.AdyEntity
 import ink.ptms.adyeshach.core.entity.type.errorBy
+import ink.ptms.adyeshach.core.util.getEnumOrNull
 import ink.ptms.adyeshach.impl.bytecode.SimpleEntityGenerator
 import ink.ptms.adyeshach.impl.description.DescEntityTypes
 import ink.ptms.adyeshach.impl.description.Entity
@@ -47,15 +48,21 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
         DescEntityTypes(releaseResourceFile("core/description/entity_types.desc", true).readBytes().inputStream())
     }
 
-    /** 描述文件中的实体数据 */
+    /** 描述文件中的实体数据，含别名行注册的 EntityTypes 枚举键 */
     val descriptionEntityMap = HashMap<EntityTypes, Entity>()
         get() {
+            ensureEntityTypesDescriptionLoaded()
             if (field.isEmpty()) {
-                description.init()
-                description.types.forEach { field[it.adyeshachType] = it }
+                field.putAll(description.entityTypeMap())
             }
             return field
         }
+
+    fun ensureEntityTypesDescriptionLoaded() {
+        if (description.types.isEmpty()) {
+            description.init()
+        }
+    }
 
     /** 所有实体对象的原件，用于克隆实体 */
     val originEntityBaseMap = HashMap<EntityTypes, EntityBase>()
@@ -104,7 +111,14 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
     }
 
     override fun getBukkitEntityAliases(entityType: EntityTypes): List<String> {
-        return descriptionEntityMap[entityType]!!.aliases
+        val entity = descriptionEntityMap[entityType] ?: errorBy("error-entity-type-not-supported", entityType.name)
+        if (entity.adyeshachType == entityType) {
+            return entity.aliases
+        }
+        val names = ArrayList<String>()
+        names += entity.adyeshachType.name
+        names += entity.aliases
+        return names
     }
 
     override fun getEntitySize(entityType: EntityTypes): EntitySize {
@@ -149,20 +163,26 @@ class DefaultAdyeshachEntityTypeRegistry : AdyeshachEntityTypeRegistry {
     }
 
     fun generateEntityBase(): Map<EntityTypes, EntityBase> {
+        ensureEntityTypesDescriptionLoaded()
         val map = HashMap<EntityTypes, EntityBase>()
-        descriptionEntityMap.forEach { (k, v) ->
-            val name = "adyeshach.Proxy${v.adyeshachInterface.simpleName}"
-            val interfaces = if (v.instanceWithInterface) arrayListOf(v.namespace) else arrayListOf()
-            // 执行回调函数
-            callback.forEach { interfaces += it(k, interfaces) }
-            // 生成类
-            val newClass = kotlin.runCatching {
-                AsmClassLoader.createNewClass(name, generator.generate(name, v.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
-            }.getOrElse {
-                AsmClassLoader.loadClass(name)
+        val proxyByPrimary = HashMap<EntityTypes, EntityBase>()
+        description.types.forEach { entity ->
+            val primary = entity.adyeshachType
+            val proxy = proxyByPrimary.computeIfAbsent(primary) {
+                val name = "adyeshach.Proxy${entity.adyeshachInterface.simpleName}"
+                val interfaces = if (entity.instanceWithInterface) arrayListOf(entity.namespace) else arrayListOf()
+                callback.forEach { interfaces += it(primary, interfaces) }
+                val newClass = kotlin.runCatching {
+                    AsmClassLoader.createNewClass(name, generator.generate(name, entity.instance.replace('.', '/'), interfaces.map { it.replace('.', '/') }))
+                }.getOrElse {
+                    AsmClassLoader.loadClass(name)
+                }
+                newClass.invokeConstructor(primary) as EntityBase
             }
-            // 生成实例
-            map[k] = newClass.invokeConstructor(k) as EntityBase
+            map[primary] = proxy
+            entity.aliases.forEach { alias ->
+                EntityTypes::class.java.getEnumOrNull(alias)?.let { map[it] = proxy }
+            }
         }
         return map
     }
