@@ -151,6 +151,10 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         bodyFollowHeadActive = !forceUpdate
         val headYaw = self.yaw
         val headPitch = self.pitch
+        if (forceUpdate) {
+            // 强制头部同步用于逐帧回放等场景，不 respawn，但必须让身体 yaw 承载同一帧的 pitch 基准。
+            applyRuntimeBodyYaw(headYaw)
+        }
         val bodyYaw = runtimeBodyYaw()
         syncLookToClients(bodyYaw, headPitch, headYaw)
     }
