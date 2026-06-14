@@ -148,7 +148,7 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
             return
         }
         commitPersistedHead(yaw, pitch)
-        bodyFollowHeadActive = true
+        bodyFollowHeadActive = !forceUpdate
         val headYaw = self.yaw
         val headPitch = self.pitch
         val bodyYaw = runtimeBodyYaw()
