@@ -98,6 +98,14 @@ object AdyeshachSettings {
     var disableSave = false
 
     /**
+     * 是否使用负数虚拟实体 ID
+     * 负数可彻底避开与服务端真实实体 ID 的冲突，但部分客户端 mod（如 DragonCore）无法处理负数实体 ID，
+     * 此时可设为 false 改用正数 ID（基数自动抬到 15 亿，尽量避免与真实实体冲突）。
+     */
+    @ConfigNode("Settings.negative-entity-id")
+    var negativeEntityId = true
+
+    /**
      * 是否为自动删除世界
      */
     fun isAutoDeleteWorld(world: String): Boolean {

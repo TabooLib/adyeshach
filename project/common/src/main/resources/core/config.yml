@@ -31,3 +31,9 @@ Settings:
   # 是否禁用保存功能
   # 使用自定义保存策略时开启
   disable-save: false
+  # 是否使用负数虚拟实体 ID（默认 true）
+  # 负数 ID 可彻底避开与服务端真实实体 ID 的冲突。
+  # 但部分客户端 mod（如 DragonCore 龙核）无法处理负数实体 ID，
+  # 会导致这些 mod 无法在 Adyeshach 单位上渲染模型（只显示原始实体）。
+  # 遇到此类兼容问题可设为 false，改用正数 ID（基数自动抬到 15 亿，尽量避免与真实实体 ID 冲突）。
+  negative-entity-id: true
