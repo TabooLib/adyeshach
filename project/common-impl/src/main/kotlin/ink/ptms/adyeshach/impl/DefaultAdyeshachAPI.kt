@@ -94,13 +94,17 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
         if (player.hasMetadata("adyeshach_setup")) {
             player.removeMeta("adyeshach_setup")
             // 公共管理器
-            getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.removeViewer(player) }
-            getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.removeViewer(player) }
+            getPublicEntityManager(ManagerType.PERSISTENT).getEntities().forEach { it.releaseViewerCache(player) }
+            getPublicEntityManager(ManagerType.TEMPORARY).getEntities().forEach { it.releaseViewerCache(player) }
         }
         // 无论 metadata 是否存在，都尝试清理私有管理器
         // 避免因 metadata 被外部移除而跳过清理导致内存泄漏
         val manager = playerEntityTemporaryManagerMap[player.uniqueId]
-        manager?.getEntities()?.toList()?.forEach { it.despawn(removeFromManager = true) }
+        // 玩家退出时连接已断开，私有实体只需要释放服务端缓存和管理器索引，不再向该玩家发送 destroy 包。
+        manager?.getEntities()?.toList()?.forEach {
+            it.releaseViewerCache(player)
+            manager.remove(it)
+        }
         playerEntityTemporaryManagerMap.remove(player)
         // 清理玩家的可见实体索引（兜底）
         localEntityFinder.clearPlayerVisibleEntities(player)

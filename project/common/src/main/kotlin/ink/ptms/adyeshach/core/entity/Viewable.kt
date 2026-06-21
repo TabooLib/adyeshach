@@ -70,6 +70,24 @@ interface Viewable {
     }
 
     /**
+     * 释放观察者缓存，不向玩家发送 destroy 包
+     * 玩家退出时连接已断开，只需要清理服务端可见性状态，避免对离线连接执行无意义发包。
+     */
+    fun releaseViewerCache(viewer: Player) {
+        // 伴生实体禁止直接操作观察者
+        if (this is Companionable && this.isCompanion()) return
+        viewPlayers.viewers.remove(viewer.name)
+        viewPlayers.visible.remove(viewer.name)
+        // 同步到伴生实体
+        if (this is Companionable) {
+            getCompanions().forEach {
+                it.viewPlayers.viewers.remove(viewer.name)
+                it.viewPlayers.visible.remove(viewer.name)
+            }
+        }
+    }
+
+    /**
      * 清空观察者
      */
     fun clearViewer() {
