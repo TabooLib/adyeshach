@@ -75,6 +75,8 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         }
         // 是否发生实质性位置变更
         val isMoved = self.position.x != newPosition.x || self.position.y != newPosition.y || self.position.z != newPosition.z
+        // teleport 是整体位姿写入，目标 yaw 必须覆盖身体 yaw，避免头身分离。
+        applyRuntimeBodyYaw(newPosition.yaw)
         // 是否切换世界
         if (self.position.world != newPosition.world) {
             self.position = newPosition
