@@ -164,7 +164,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
         },
         // 你改你妈个🥚，我爱说实话
-        versionStrategy("nms20-player-chunk-loader", guard = { MinecraftVersion.versionId >= 12002 }) {
+        versionStrategy("nms20-player-chunk-loader", guard = { MinecraftVersion.versionId >= 12000 }) {
             nmsClass("WorldServer").unsafeInstance().getProperty<Any>("playerChunkLoader")
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) }
         },

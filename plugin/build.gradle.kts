@@ -1,5 +1,3 @@
-import org.gradle.api.tasks.bundling.Jar
-
 plugins {
     `maven-publish`
 }
@@ -41,16 +39,16 @@ val distDir = rootProject.layout.projectDirectory.dir("dist")
 tasks {
     jar {
         archiveBaseName.set(rootProject.name)
-        destinationDirectory.set(distDir)
+//        destinationDirectory.set(distDir)
         rootProject.subprojects.forEach { from(it.sourceSets["main"].output) }
     }
     kotlinSourcesJar {
         archiveBaseName.set(rootProject.name)
-        destinationDirectory.set(distDir)
+//        destinationDirectory.set(distDir)
         rootProject.subprojects.forEach { from(it.sourceSets["main"].allSource) }
     }
     withType<Jar>().configureEach {
-        destinationDirectory.set(distDir)
+//        destinationDirectory.set(distDir)
     }
 }
 
