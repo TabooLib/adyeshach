@@ -31,3 +31,6 @@ Settings:
   # 是否禁用保存功能
   # 使用自定义保存策略时开启
   disable-save: false
+  # 是否使用负数虚拟实体 ID
+  # 默认关闭，保留正数 ID
+  negative-entity-id: false

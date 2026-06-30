@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.util
 
+import ink.ptms.adyeshach.core.AdyeshachSettings
 import taboolib.common.util.random
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -19,8 +20,10 @@ object Indexs {
      * adyeshach npc             449,599 + (0~702)
      *
      * 客户端只需要同一次会话内唯一的实体 ID，使用负数可以避开服务端真实实体 ID。
+     * 默认保留正数，仅在需要规避服务端真实实体 ID 冲突时启用负数。
      */
     fun nextIndex(): Int {
-        return -index.getAndIncrement()
+        val next = index.getAndIncrement()
+        return if (AdyeshachSettings.negativeEntityId) -next else next
     }
 }

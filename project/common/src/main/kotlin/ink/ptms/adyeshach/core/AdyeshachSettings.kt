@@ -98,6 +98,12 @@ object AdyeshachSettings {
     var disableSave = false
 
     /**
+     * 是否使用负数虚拟实体 ID
+     */
+    @ConfigNode("Settings.negative-entity-id")
+    var negativeEntityId = false
+
+    /**
      * 是否为自动删除世界
      */
     fun isAutoDeleteWorld(world: String): Boolean {
