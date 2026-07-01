@@ -202,15 +202,20 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
 
     override fun updateEntityAnimation(player: List<Player>, entityId: Int, animation: BukkitAnimation) {
         if (isUniversal) {
-            packetHandler.sendPacket(player, NMSPacketPlayOutAnimation(createDataSerializer {
-                writeVarInt(entityId)
-                writeByte(animation.ordinal.toByte())
-            }.build() as NMSPacketDataSerializer))
+            val packet = if (MinecraftVersion.versionId >= 12005) {
+                NMS21.instance.createAnimation(entityId, animation)
+            } else {
+                NMSPacketPlayOutAnimation(createDataSerializer {
+                    writeVarInt(entityId)
+                    writeByte(animation.id.toByte())
+                }.build() as NMSPacketDataSerializer)
+            }
+            packetHandler.sendPacket(player, packet)
         } else {
             packetHandler.sendPacket(player, NMS16PacketPlayOutAnimation().also {
                 it.a(createDataSerializer {
                     writeVarInt(entityId)
-                    writeByte(animation.ordinal.toByte())
+                    writeByte(animation.id.toByte())
                 }.build() as NMS16PacketDataSerializer)
             })
         }

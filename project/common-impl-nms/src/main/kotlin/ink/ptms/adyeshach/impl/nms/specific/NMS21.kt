@@ -23,6 +23,11 @@ interface NMS21 {
     fun getProperties(uuid: UUID, gameProfile: GameProfile): PropertyMap
 
     /**
+     * 创建实体动画数据包（挥手等）
+     */
+    fun createAnimation(entityId: Int, animation: BukkitAnimation): Any
+
+    /**
      * 创建头颅转向数据包
      */
     fun createEntityHead(entityId: Int, yHeadRot: Byte): Any

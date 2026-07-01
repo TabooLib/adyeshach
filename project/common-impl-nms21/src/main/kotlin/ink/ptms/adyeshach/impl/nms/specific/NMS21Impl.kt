@@ -59,6 +59,19 @@ class NMS21Impl : NMS21 {
     }
 
 
+    override fun createAnimation(entityId: Int, animation: BukkitAnimation): Any {
+        val action = when (animation) {
+            BukkitAnimation.SWING_MAIN_HAND -> PacketPlayOutAnimation.SWING_MAIN_HAND
+            BukkitAnimation.SWING_OFFHAND -> PacketPlayOutAnimation.SWING_OFF_HAND
+            else -> animation.id
+        }
+        val buffer = createDataSerializer {
+            writeVarInt(entityId)
+            writeByte(action.toByte())
+        }.build() as NMSPacketDataSerializer
+        return PacketPlayOutAnimation.STREAM_CODEC.decode(buffer)
+    }
+
     override fun createEntityHead(entityId: Int, yHeadRot: Byte): Any {
         return PacketPlayOutEntityHeadRotation::class.java.invokeConstructor(createDataSerializer {
             writeVarInt(entityId)
