@@ -282,6 +282,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     override fun createBlockStateMeta(index: Int, blockData: MaterialData): MinecraftMeta {
         return DefaultMeta(
             when {
+                majorLegacy >= 12100 -> NMS21.instance.createBlockStateMeta(index, blockData)
                 majorLegacy >= 11904 -> NMS19.instance.createBlockStateMeta(index, blockData)
                 else -> error("Unsupported version: $majorLegacy")
             }

@@ -33,6 +33,7 @@ import net.minecraft.world.scores.ScoreboardTeamBase
 import org.bukkit.*
 import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
+import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
@@ -208,6 +209,13 @@ class NMS21Impl : NMS21 {
 
     override fun artBukkitToNotch(art: Art): Any {
         return CraftArt.bukkitToMinecraft(art).direct()
+    }
+
+    override fun createBlockStateMeta(index: Int, material: MaterialData): Any {
+        return DataWatcher.Item(
+            DataWatcherObject(index, DataWatcherRegistry.BLOCK_STATE),
+            CraftBlockData.newData(material.itemType.asBlockType(), null).state
+        )
     }
 
     override fun createOptBlockStateMeta(index: Int, material: MaterialData?): Any {

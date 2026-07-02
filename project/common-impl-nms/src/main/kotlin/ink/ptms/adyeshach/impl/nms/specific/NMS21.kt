@@ -98,6 +98,11 @@ interface NMS21 {
     fun artBukkitToNotch(art: Art): Any
 
     /**
+     * 创建方块状态数据
+     */
+    fun createBlockStateMeta(index: Int, material: MaterialData): Any
+
+    /**
      * 创建空的方块数据(解析有问题了)
      */
     fun createOptBlockStateMeta(index: Int, material: MaterialData?): Any
