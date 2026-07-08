@@ -896,6 +896,9 @@ ink.ptms.adyeshach.core.entity.type.AdyHuman
     beeStingersInEntity i
         &human1
         ~
+    score b
+        &human1
+        12005 18
 
 #################################
 #                               #

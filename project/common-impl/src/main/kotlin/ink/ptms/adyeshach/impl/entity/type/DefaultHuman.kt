@@ -21,9 +21,12 @@ import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.common5.cbool
+import taboolib.common5.cdouble
 import taboolib.common5.cint
+import taboolib.library.xseries.XAttribute
 import taboolib.module.chat.Components
 import taboolib.module.chat.colored
+import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.onlinePlayers
 import java.util.*
 
@@ -53,6 +56,9 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     /** 是否睡眠 */
     @Expose
     internal var isSleepingLegacy = false
+
+    @Expose
+    internal var size = 1.0
 
     /**
      * 是否从玩家列表中移除
@@ -111,6 +117,9 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 if (isHideFromTabList && !GameProfile.isListedSupported) {
                     submit(delay = 10) { removePlayerInfo(viewer) }
                 }
+                if (MinecraftVersion.versionId >= 12005) {
+                    Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(viewer, index, listOf(XAttribute.SCALE), size)
+                }
                 spawned = true
             }
         } else {
@@ -161,6 +170,11 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 true
             }
 
+            "size", "score" -> {
+                setSize(value?.cdouble ?: 1.0)
+                true
+            }
+
             else -> false
         }
     }
@@ -182,6 +196,16 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     override fun setPingBar(pingBar: PingBar) {
         gameProfile.setPingBar(pingBar)
         refreshPlayer(false)
+    }
+
+    override fun setSize(size: Double) {
+        this.size = size
+        if (MinecraftVersion.versionId < 12005) return
+        forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(it, index, listOf(XAttribute.SCALE), size) }
+    }
+
+    override fun getSize(): Double {
+        return size
     }
 
     override fun getPing(): Int {

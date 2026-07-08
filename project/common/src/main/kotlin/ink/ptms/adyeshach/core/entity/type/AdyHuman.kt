@@ -63,6 +63,10 @@ interface AdyHuman : AdyEntityLiving {
 
     fun isSleeping(): Boolean
 
+    fun setSize(size: Double)
+
+    fun getSize(): Double
+
     fun setSkinEnabled(value: Boolean) {
         setMetadata("skinCape", value)
         setMetadata("skinHat", value)

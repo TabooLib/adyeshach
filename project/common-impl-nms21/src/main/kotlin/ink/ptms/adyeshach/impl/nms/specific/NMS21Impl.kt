@@ -41,6 +41,7 @@ import org.bukkit.craftbukkit.v1_21_R4.entity.*
 import org.bukkit.entity.*
 import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
+import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
 import java.util.*
@@ -291,6 +292,14 @@ class NMS21Impl : NMS21 {
             return maxOf(abs(chunkX - px), abs(chunkZ - pz)) <= Bukkit.getViewDistance()
         }
         return (player as CraftPlayer).handle.chunkTrackingView.isInViewDistance(chunkX, chunkZ)
+    }
+
+    override fun createAttribute(
+        entityId: Int,
+        attributes: List<XAttribute>,
+        value: Double
+    ): Any {
+        TODO("Not yet implemented")
     }
 
     private fun <T> T.direct(): Holder<T> {

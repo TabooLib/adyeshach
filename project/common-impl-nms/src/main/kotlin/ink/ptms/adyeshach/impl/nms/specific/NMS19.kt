@@ -9,6 +9,7 @@ import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import taboolib.common.util.unsafeLazy
 import taboolib.common5.Quat
+import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.nmsProxy
 import java.util.*
 
@@ -43,6 +44,8 @@ abstract class NMS19 {
     abstract fun createClientboundPlayerInfoUpdatePacketAction(action: GameProfileAction): Any
 
     abstract fun createClientboundPlayerInfoUpdatePacketProfile(uuid: UUID, gameProfile: GameProfile): Any
+
+    abstract fun createAttribute(entityId: Int, attribute: List<XAttribute>, value: Double): Any
 
     companion object {
 

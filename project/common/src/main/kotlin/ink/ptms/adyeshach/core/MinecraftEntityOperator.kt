@@ -6,6 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import taboolib.library.xseries.XAttribute
 
 /**
  * Adyeshach
@@ -207,5 +208,10 @@ interface MinecraftEntityOperator {
     fun updatePlayerSleeping(player: List<Player>, entityId: Int, location: Location)
     fun updatePlayerSleeping(player: Player, entityId: Int, location: Location) {
         updatePlayerSleeping(listOf(player), entityId, location)
+    }
+
+    fun updateAttribute(player: List<Player>, entityId: Int, attribute: List<XAttribute>, value: Double)
+    fun updateAttribute(player: Player, entityId: Int, attribute: List<XAttribute>, value: Double) {
+        updateAttribute(listOf(player), entityId, attribute, value)
     }
 }

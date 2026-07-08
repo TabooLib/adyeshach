@@ -731,6 +731,7 @@ editor-meta-pig-variant: '变种类型'
 editor-meta-weathering-copper-state: '氧化状态'
 editor-meta-copper-golem-statue: '状态'
 editor-meta-cow-variant: '变种类型'
+editor-meta-score: '大小'
 
 trait-patrol:
   - type: TITLE

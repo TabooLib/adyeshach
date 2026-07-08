@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair
 import ink.ptms.adyeshach.core.*
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.util.ifloor
+import ink.ptms.adyeshach.impl.nms.specific.NMS19
 import ink.ptms.adyeshach.impl.nms.specific.NMS21
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -11,6 +12,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
+import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
 
@@ -248,6 +250,10 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
                 writeBlockPosition(location.blockX, location.blockY, location.blockZ)
             }.build() as NMS13PacketDataSerializer)
         })
+    }
+
+    override fun updateAttribute(player: List<Player>, entityId: Int, attribute: List<XAttribute>, value: Double) {
+        packetHandler.sendPacket(player, NMS19.instance.createAttribute(entityId, attribute, value))
     }
 
     private fun syncPosition(player: List<Player>, entityId: Int, location: Location, onGround: Boolean) {

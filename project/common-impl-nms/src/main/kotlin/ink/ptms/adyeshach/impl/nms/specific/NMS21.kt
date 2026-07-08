@@ -12,6 +12,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.material.MaterialData
 import taboolib.common.util.unsafeLazy
+import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.nmsProxy
 import java.util.*
 
@@ -139,6 +140,8 @@ interface NMS21 {
     fun createCowVariant(index: Int, value: BukkitCowVariant): Any
 
     fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean
+
+    fun createAttribute(entityId: Int, attributes: List<XAttribute>, value: Double): Any
 
     companion object {
         val instance by unsafeLazy { nmsProxy<NMS21>() }

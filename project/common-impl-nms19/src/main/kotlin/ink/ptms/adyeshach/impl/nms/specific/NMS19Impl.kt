@@ -15,12 +15,15 @@ import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata
+import net.minecraft.network.protocol.game.PacketPlayOutUpdateAttributes
 import net.minecraft.network.syncher.DataWatcher
 import net.minecraft.network.syncher.DataWatcherObject
 import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
+import org.bukkit.craftbukkit.v1_20_R3.attribute.CraftAttribute
 import org.bukkit.material.MaterialData
 import org.bukkit.util.Vector
 import org.joml.Quaternionf
@@ -28,8 +31,10 @@ import org.joml.Vector3f
 import taboolib.common5.Quat
 import taboolib.common5.cfloat
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
+import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.dataSerializerBuilder
 import java.util.*
+import java.util.function.Consumer
 
 /**
  * @author 坏黑
@@ -59,22 +64,19 @@ class NMS19Impl : NMS19() {
 
     override fun createVector3Meta(index: Int, value: Vector): Any {
         return NMSDataWatcherItem(
-            NMSDataWatcherObject(index, DataWatcherRegistry.VECTOR3),
-            Vector3f(value.x.cfloat, value.y.cfloat, value.z.cfloat)
+            NMSDataWatcherObject(index, DataWatcherRegistry.VECTOR3), Vector3f(value.x.cfloat, value.y.cfloat, value.z.cfloat)
         )
     }
 
     override fun createQuaternionMeta(index: Int, quat: Quat): Any {
         return NMSDataWatcherItem(
-            NMSDataWatcherObject(index, DataWatcherRegistry.QUATERNION),
-            Quaternionf(quat.x(), quat.y(), quat.z(), quat.w())
+            NMSDataWatcherObject(index, DataWatcherRegistry.QUATERNION), Quaternionf(quat.x(), quat.y(), quat.z(), quat.w())
         )
     }
 
     override fun createBlockStateMeta(index: Int, materialData: MaterialData): Any {
         return NMSDataWatcherItem(
-            NMSDataWatcherObject(index, DataWatcherRegistry.BLOCK_STATE),
-            CraftBlockData.newData(materialData.itemType, null).state
+            NMSDataWatcherObject(index, DataWatcherRegistry.BLOCK_STATE), CraftBlockData.newData(materialData.itemType, null).state
         )
     }
 
@@ -98,8 +100,7 @@ class NMS19Impl : NMS19() {
 
     override fun createSnifferStateMeta(index: Int, type: AdySniffer.State): Any {
         return NMSDataWatcherItem(
-            NMSDataWatcherObject(index, DataWatcherRegistry.SNIFFER_STATE),
-            net.minecraft.world.entity.animal.sniffer.Sniffer.State.values()[type.ordinal]
+            NMSDataWatcherObject(index, DataWatcherRegistry.SNIFFER_STATE), net.minecraft.world.entity.animal.sniffer.Sniffer.State.values()[type.ordinal]
         )
     }
 
@@ -124,11 +125,13 @@ class NMS19Impl : NMS19() {
                     // 添加玩家
                     ClientboundPlayerInfoUpdatePacket.a.ADD_PLAYER -> {
                         writeUtf(gameProfile.name, 16)
-                        writeGameProfileProperties(try{
-                            gameProfile.toMojang(uuid).properties
-                        }catch (_: NoSuchMethodError){
-                            NMS21.instance.getProperties(uuid,gameProfile)
-                        })
+                        writeGameProfileProperties(
+                            try {
+                                gameProfile.toMojang(uuid).properties
+                            } catch (_: NoSuchMethodError) {
+                                NMS21.instance.getProperties(uuid, gameProfile)
+                            }
+                        )
                     }
                     // 游戏模式
                     ClientboundPlayerInfoUpdatePacket.a.UPDATE_GAME_MODE -> {
@@ -197,6 +200,18 @@ class NMS19Impl : NMS19() {
         return ClientboundPlayerInfoUpdatePacket.b(
             uuid, gameProfile.toMojang(uuid), listed, latency, gameMode, displayName, null
         )
+    }
+
+    override fun createAttribute(entityId: Int, attribute: List<XAttribute>, value: Double): Any {
+        val attr = attribute.map { CraftAttribute.bukkitToMinecraft(it.get()) }
+        val modifiable = attr.map {
+            try {
+                AttributeModifiable(it) {}
+            } catch (_: NoSuchMethodError) {
+                AttributeModifiable::class.java.invokeConstructor(Holder.direct(it), Consumer<AttributeModifiable> {})
+            }.apply { baseValue = value }
+        }
+        return PacketPlayOutUpdateAttributes(entityId, modifiable)
     }
 }
 
