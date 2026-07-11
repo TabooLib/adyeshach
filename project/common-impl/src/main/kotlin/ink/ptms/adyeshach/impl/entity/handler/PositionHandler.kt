@@ -66,25 +66,29 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         }
         eventBus.postTeleport(self, location)
         val newPosition = EntityPosition.fromLocation(location)
+        val previousPosition = self.position
+        val previousClientPosition = self.clientPosition
         // 强制传送
         if (self.tag.containsKey(StandardTags.FORCE_TELEPORT)) {
             self.tag.remove(StandardTags.FORCE_TELEPORT)
-        } else if (newPosition == self.position) {
+        } else if (newPosition == previousPosition) {
             // 如果坐标没变则不做处理
             return
         }
+        // 是否切换世界
+        val worldChanged = previousPosition.world != newPosition.world
         // 是否发生实质性位置变更
-        val isMoved = self.position.x != newPosition.x || self.position.y != newPosition.y || self.position.z != newPosition.z
+        val isMoved = worldChanged || previousPosition.x != newPosition.x || previousPosition.y != newPosition.y || previousPosition.z != newPosition.z
         // teleport 是整体位姿写入，目标 yaw 必须覆盖身体 yaw，避免头身分离。
         applyRuntimeBodyYaw(newPosition.yaw)
-        // 是否切换世界
-        if (self.position.world != newPosition.world) {
+        if (worldChanged) {
             self.position = newPosition
             self.despawn()
             self.respawn()
         }
+        val syncPositionByMovement = self.manager is TickService && self.allowSyncPosition()
         // 无管理器 || 孤立管理器 || 不允许进行位置同步
-        if (self.manager == null || self.manager !is TickService || !self.allowSyncPosition()) {
+        if (!syncPositionByMovement) {
             self.position = newPosition
             self.clientPosition = self.position
             val headYaw = EntityPosition.normalizeYaw(location.yaw)
@@ -105,8 +109,33 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         }
         // 只有在位置发生变更时才进行 passengers 同步
         if (isMoved) {
-            // 同步 passengers 位置
-            self.getPassengers().forEach { it.teleport(location) }
+            // nitwit + else 分支已通过 syncPassengersAfterMove 同步 IS_IN_VEHICLE 乘客，此处跳过避免双重位移
+            val skipInVehicle = syncPositionByMovement && self.isNitwit
+            val requireDirectPassengerTeleport = worldChanged || !syncPositionByMovement
+            val passengers = self.getPassengers()
+            if (passengers.isNotEmpty()) {
+                val vehiclePosition = if (requireDirectPassengerTeleport) previousClientPosition else self.clientPosition
+                val destination = self.clientPosition.toLocation()
+                passengers.forEach {
+                    it as DefaultEntityInstance
+                    if (it.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
+                        if (skipInVehicle) return@forEach
+                        // 只有 Movement 不会继续补同步时，才修正原 diff 的远距离传送基准，不改变正常移动时序
+                        // IS_IN_VEHICLE 乘客保留与载具的相对偏移，传送到载具新位置 + 原偏移
+                        val passengerPosition = it.clientPosition
+                        val dest = destination.clone().add(passengerPosition.x - vehiclePosition.x, passengerPosition.y - vehiclePosition.y, passengerPosition.z - vehiclePosition.z)
+                        if (requireDirectPassengerTeleport) {
+                            it.teleport(dest)
+                        } else {
+                            it.clientPosition = EntityPosition.fromLocation(dest)
+                            it.positionHandler.broadcastTeleportAndHead(dest, it.yaw)
+                            it.position = it.clientPosition
+                        }
+                    } else {
+                        it.teleport(location)
+                    }
+                }
+            }
             // 更新 passengers 信息
             self.refreshPassenger()
         }

@@ -223,6 +223,7 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 通过传送同步位置
      */
     protected open fun syncByTeleport() {
+        val offset = self.clientPosition.clone().subtract(self.position)
         self.clientPositionFixed = System.currentTimeMillis()
         val bodyLoc = self.positionHandler.runtimeBodyLocation().apply {
             x = self.clientPosition.x
@@ -231,6 +232,7 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
             pitch = self.clientPosition.pitch
         }
         self.positionHandler.broadcastTeleportAndHead(bodyLoc, self.yaw)
+        syncPassengersAfterMove(offset.x, offset.y, offset.z)
         self.position = self.clientPosition
     }
 
@@ -250,38 +252,76 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
             if (!self.isIgnoredClientPositionUpdateInterval && !self.clientPositionUpdateInterval.hasNext()) {
                 return
             }
-            if (updateRotation) {
-                val bodyYaw = self.entityType.fixYaw(self.positionHandler.runtimeBodyYaw())
-                val headYaw = self.entityType.fixYaw(self.yaw)
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMoveLook(
-                    player = self.getVisiblePlayers(),
-                    entityId = self.index,
-                    x = x.toShort(),
-                    y = y.toShort(),
-                    z = z.toShort(),
-                    yaw = bodyYaw,
-                    pitch = self.pitch,
-                    onGround = !self.entityPathType.isFly()
-                )
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
-                    player = self.getVisiblePlayers(),
-                    entityId = self.index,
-                    yaw = headYaw
-                )
-            } else {
-                Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMove(
-                    player = self.getVisiblePlayers(),
-                    entityId = self.index,
-                    x = x.toShort(),
-                    y = y.toShort(),
-                    z = z.toShort(),
-                    onGround = !self.entityPathType.isFly()
-                )
-            }
+            broadcastRelativeMove(x, y, z, updateRotation)
         } else if (updateRotation) {
             syncEntityLookWithHead()
         }
+        syncPassengersAfterMove(offset.x, offset.y, offset.z)
         self.position = self.clientPosition
+    }
+
+    /**
+     * 广播相对移动包，可选同步身体与头部朝向
+     */
+    protected open fun broadcastRelativeMove(x: Long, y: Long, z: Long, updateRotation: Boolean) {
+        if (updateRotation) {
+            val bodyYaw = self.entityType.fixYaw(self.positionHandler.runtimeBodyYaw())
+            val headYaw = self.entityType.fixYaw(self.yaw)
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMoveLook(
+                player = self.getVisiblePlayers(),
+                entityId = self.index,
+                x = x.toShort(),
+                y = y.toShort(),
+                z = z.toShort(),
+                yaw = bodyYaw,
+                pitch = self.pitch,
+                onGround = !self.entityPathType.isFly()
+            )
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
+                player = self.getVisiblePlayers(),
+                entityId = self.index,
+                yaw = headYaw
+            )
+        } else {
+            Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMove(
+                player = self.getVisiblePlayers(),
+                entityId = self.index,
+                x = x.toShort(),
+                y = y.toShort(),
+                z = z.toShort(),
+                onGround = !self.entityPathType.isFly()
+            )
+        }
+    }
+
+    /**
+     * 载具位置同步后，给有 IS_IN_VEHICLE 标签的乘客按载具 delta 补发相对移动包。
+     * 1.21.8 客户端不再从载具的 RelEntityMove 包自动同步乘客位置，需要手动补发。
+     * 乘客不独立计算 delta，直接用载具的位移量发相同的 RelEntityMove 包并平移 position。
+     */
+    protected open fun syncPassengersAfterMove(deltaX: Double, deltaY: Double, deltaZ: Double) {
+        if (!self.passengerHandler.hasPassengers() || (deltaX == 0.0 && deltaY == 0.0 && deltaZ == 0.0)) {
+            return
+        }
+        val x = encodePos(deltaX)
+        val y = encodePos(deltaY)
+        val z = encodePos(deltaZ)
+        val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
+        self.getPassengers().forEach { passenger ->
+            passenger as DefaultEntityInstance
+            if (!passenger.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
+                return@forEach
+            }
+            // 平移乘客的 clientPosition，保持与载具的相对偏移
+            passenger.clientPosition = passenger.clientPosition.clone().add(deltaX, deltaY, deltaZ)
+            // delta 超出 short 范围（远距离传送），直接发 Teleport 包，不走 passenger.teleport() 以免被 IS_IN_VEHICLE 逻辑跳过
+            if (requireTeleport) {
+                passenger.positionHandler.broadcastTeleportAndHead(passenger.clientPosition.toLocation(), passenger.yaw)
+            } else {
+                passenger.movementHandler.broadcastRelativeMove(x, y, z, false)
+            }
+            passenger.position = passenger.clientPosition
+        }
     }
 
     /**
