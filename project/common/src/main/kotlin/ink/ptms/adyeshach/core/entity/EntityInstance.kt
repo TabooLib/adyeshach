@@ -28,7 +28,11 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
     var manager: Manager?
 
     /**
-     * 是否傻子（即禁用 AI）
+     * 是否傻子（禁用 AI / 控制器 / 路径推进，不影响位置同步）
+     *
+     * 为 true 时跳过 brain、bionicSight 与 moveFrames 推进。
+     * 1.21.8 起客户端对实体传送与相对移动的插值/动画判定更严，nitwit 实体若每帧硬传送会表现为平移；
+     * 因此 nitwit 仍走 clientPosition 的相对移动同步，仅关闭 AI。
      */
     var isNitwit: Boolean
 
