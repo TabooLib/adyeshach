@@ -97,6 +97,11 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
             broadcastTeleportAndHead(bodyLoc, headYaw)
         } else {
             self.clientPosition = newPosition
+            // nitwit 实体由外部线程（如 Horizon 播放）驱动位置写入，主线程 tick 与写入线程不同步。
+            // 立即在当前线程同步，避免 offset 跨帧累积或 position 被设为未同步的 clientPosition 导致漂移瞬移。
+            if (self.isNitwit) {
+                self.movementHandler.syncPosition()
+            }
         }
         // 只有在位置发生变更时才进行 passengers 同步
         if (isMoved) {
