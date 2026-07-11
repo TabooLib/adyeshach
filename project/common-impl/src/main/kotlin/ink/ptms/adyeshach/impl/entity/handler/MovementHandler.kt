@@ -157,8 +157,10 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
         if (rotationSyncSuppressed) {
             self.positionHandler.rotationSyncSuppressed = false
         }
+        // nitwit 的录像位移必须每帧携带 Look，否则客户端会按移动方向自行扭转玩家身体
+        val forceNitwitRotation = self.isNitwit && self.clientPosition != self.position
         // 发包看向控制器已经按观察者写入角度，本帧只同步位置，避免通用旋转包覆盖专属角度。
-        val updateRotation = !rotationSyncSuppressed && (shouldUpdateRotation() || bodyYawChanged)
+        val updateRotation = !rotationSyncSuppressed && (forceNitwitRotation || shouldUpdateRotation() || bodyYawChanged)
         // 乘坐实体
         if (self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
             syncVehicleRotation(updateRotation)

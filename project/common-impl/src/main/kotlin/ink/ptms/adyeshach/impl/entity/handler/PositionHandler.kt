@@ -326,7 +326,7 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
      * 获取运行时身体 yaw，供发包与外部读取统一使用
      */
     open fun runtimeBodyYaw(): Float {
-        return self.clientBodyPosition.yaw
+        return effectiveBodyYaw(self.clientBodyPosition.yaw, self.yaw)
     }
 
     /**
@@ -340,7 +340,18 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
      * 存档身体 yaw；null 时与当前头 yaw 一致，身体跟随 tick 会写入当前身体状态
      */
     open fun bodyYawForSpawn(): Float {
-        return EntityPosition.normalizeYaw(self.bodyYaw ?: self.yaw)
+        return EntityPosition.normalizeYaw(effectiveBodyYaw(self.bodyYaw ?: self.yaw, self.yaw))
+    }
+
+    /**
+     * 获取最终使用的身体 yaw；nitwit 实体始终让身体与头部保持一致
+     *
+     * @param bodyYaw 原始身体 yaw
+     * @param headYaw 当前头部 yaw
+     * @return 最终使用的身体 yaw
+     */
+    open fun effectiveBodyYaw(bodyYaw: Float, headYaw: Float): Float {
+        return if (self.isNitwit) EntityPosition.normalizeYaw(headYaw) else bodyYaw
     }
 
     /**
@@ -377,7 +388,7 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         operator.updateEntityLook(
             player = visible,
             entityId = self.index,
-            yaw = self.entityType.fixYaw(bodyYaw),
+            yaw = self.entityType.fixYaw(effectiveBodyYaw(bodyYaw, headYaw)),
             pitch = pitch,
             onGround = !self.entityPathType.isFly(),
         )
@@ -394,10 +405,15 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
     open fun broadcastTeleportAndHead(bodyLocation: Location, headYaw: Float) {
         val visible = self.getVisiblePlayers()
         val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
+        val effectiveBodyLocation = if (self.isNitwit) {
+            bodyLocation.clone().also { it.yaw = self.entityType.fixYaw(effectiveBodyYaw(it.yaw, headYaw)) }
+        } else {
+            bodyLocation
+        }
         operator.teleportEntity(
             player = visible,
             entityId = self.index,
-            location = bodyLocation,
+            location = effectiveBodyLocation,
             onGround = !self.entityPathType.isFly(),
         )
         operator.updateHeadRotation(
