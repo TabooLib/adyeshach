@@ -29,6 +29,16 @@ interface AdyHuman : AdyEntityLiving {
             setMetadata("beeStingersInEntity", value)
         }
 
+
+    /**
+     * 实体大小
+     */
+    var score: Int
+        get() = getMetadata("score")
+        set(value) {
+            setMetadata("score", value)
+        }
+
     fun refreshPlayerInfo(viewer: Player)
 
     fun setName(name: String)
@@ -63,9 +73,19 @@ interface AdyHuman : AdyEntityLiving {
 
     fun isSleeping(): Boolean
 
-    fun setSize(size: Double)
+    fun setSize(size: Int)
 
-    fun getSize(): Double
+    fun getSize(): Int
+
+    fun initSkin() {
+        setSkinCapeEnabled(isSkinCapeEnabled())
+        setSkinHatEnabled(isSkinHatEnabled())
+        setSkinJacketEnabled(isSkinJacketEnabled())
+        setSkinLeftSleeveEnabled(isSkinLeftSleeveEnabled())
+        setSkinRightSleeveEnabled(isSkinRightSleeveEnabled())
+        setSkinLeftPantsEnabled(isSkinLeftPantsEnabled())
+        setSkinRightPantsEnabled(isSkinRightPantsEnabled())
+    }
 
     fun setSkinEnabled(value: Boolean) {
         setMetadata("skinCape", value)
@@ -81,7 +101,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinCape", value)
     }
 
-    fun isSkinCapeEnabled() {
+    fun isSkinCapeEnabled(): Boolean {
         return getMetadata("skinCape")
     }
 
@@ -89,7 +109,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinJacket", value)
     }
 
-    fun isSkinJacketEnabled() {
+    fun isSkinJacketEnabled(): Boolean {
         return getMetadata("skinJacket")
     }
 
@@ -97,7 +117,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinLeftSleeve", value)
     }
 
-    fun isSkinLeftSleeveEnabled() {
+    fun isSkinLeftSleeveEnabled(): Boolean {
         return getMetadata("skinLeftSleeve")
     }
 
@@ -105,7 +125,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinRightSleeve", value)
     }
 
-    fun isSkinRightSleeveEnabled() {
+    fun isSkinRightSleeveEnabled(): Boolean {
         return getMetadata("skinRightSleeve")
     }
 
@@ -113,7 +133,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinLeftPants", value)
     }
 
-    fun isSkinLeftPantsEnabled() {
+    fun isSkinLeftPantsEnabled(): Boolean {
         return getMetadata("skinLeftPants")
     }
 
@@ -121,7 +141,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinRightPants", value)
     }
 
-    fun isSkinRightPantsEnabled() {
+    fun isSkinRightPantsEnabled(): Boolean {
         return getMetadata("skinRightPants")
     }
 
@@ -129,7 +149,7 @@ interface AdyHuman : AdyEntityLiving {
         setMetadata("skinHat", value)
     }
 
-    fun isSkinHatEnabled() {
+    fun isSkinHatEnabled(): Boolean {
         return getMetadata("skinHat")
     }
 }

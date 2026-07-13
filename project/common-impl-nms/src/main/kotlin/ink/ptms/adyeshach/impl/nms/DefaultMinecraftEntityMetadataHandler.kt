@@ -442,7 +442,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                         VillagerData.Type.SWAMP -> NMSVillagerType.SWAMP
                         VillagerData.Type.TAIGA -> NMSVillagerType.TAIGA
                     }
-                } catch (_: NoSuchFieldError) {
+                } catch (_: Error) {
                     // 监视你
                     NMS21.instance.getVillagerType(villagerData.type) as NMSVillagerType
                 }

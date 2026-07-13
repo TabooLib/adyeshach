@@ -141,7 +141,7 @@ interface NMS21 {
 
     fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean
 
-    fun createAttribute(entityId: Int, attributes: List<XAttribute>, value: Double): Any
+    fun createAttribute(entityId: Int, attributes: List<XAttribute>, vararg value: Double): Any
 
     companion object {
         val instance by unsafeLazy { nmsProxy<NMS21>() }

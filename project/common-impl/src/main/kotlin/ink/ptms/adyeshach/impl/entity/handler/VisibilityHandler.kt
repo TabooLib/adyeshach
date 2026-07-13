@@ -78,8 +78,8 @@ open class VisibilityHandler(protected val self: DefaultEntityInstance) {
                 self.visible(player, false)
             }
         } else {
-            // 是否在可视范围内 && 所在区块是否可见 && 显示实体
-            if (self.isInVisibleDistance(player) && isChunkVisible(player)) {
+            // 是否在可视范围内 && 所在区块是否可见 && 实体未被隐藏 && 显示实体
+            if (self.isInVisibleDistance(player) && isChunkVisible(player) && !self.isHide()) {
                 self.visible(player, true)
             }
         }

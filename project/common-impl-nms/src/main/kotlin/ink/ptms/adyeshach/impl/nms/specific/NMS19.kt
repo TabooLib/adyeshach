@@ -45,7 +45,7 @@ abstract class NMS19 {
 
     abstract fun createClientboundPlayerInfoUpdatePacketProfile(uuid: UUID, gameProfile: GameProfile): Any
 
-    abstract fun createAttribute(entityId: Int, attribute: List<XAttribute>, value: Double): Any
+    abstract fun createAttribute(entityId: Int, attribute: List<XAttribute>, vararg value: Double): Any
 
     companion object {
 

@@ -34,7 +34,6 @@ import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.dataSerializerBuilder
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * @author 坏黑
@@ -202,14 +201,10 @@ class NMS19Impl : NMS19() {
         )
     }
 
-    override fun createAttribute(entityId: Int, attribute: List<XAttribute>, value: Double): Any {
+    override fun createAttribute(entityId: Int, attribute: List<XAttribute>, vararg value: Double): Any {
         val attr = attribute.map { CraftAttribute.bukkitToMinecraft(it.get()) }
-        val modifiable = attr.map {
-            try {
-                AttributeModifiable(it) {}
-            } catch (_: NoSuchMethodError) {
-                AttributeModifiable::class.java.invokeConstructor(Holder.direct(it), Consumer<AttributeModifiable> {})
-            }.apply { baseValue = value }
+        val modifiable = attr.mapIndexed { index, holder ->
+            AttributeModifiable(holder) {}.apply { baseValue = value[index] }
         }
         return PacketPlayOutUpdateAttributes(entityId, modifiable)
     }

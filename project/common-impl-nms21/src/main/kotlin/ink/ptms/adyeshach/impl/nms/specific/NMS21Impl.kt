@@ -23,6 +23,7 @@ import net.minecraft.network.syncher.DataWatcherRegistry
 import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
+import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.animal.armadillo.Armadillo
 import net.minecraft.world.entity.animal.coppergolem.CopperGolemState
 import net.minecraft.world.level.block.WeatheringCopper
@@ -31,6 +32,7 @@ import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
 import net.minecraft.world.scores.ScoreboardTeamBase
 import org.bukkit.*
+import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
 import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData
@@ -38,6 +40,7 @@ import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R4.entity.*
+import org.bukkit.craftbukkit.v1_21_R6.attribute.CraftAttribute
 import org.bukkit.entity.*
 import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
@@ -297,9 +300,13 @@ class NMS21Impl : NMS21 {
     override fun createAttribute(
         entityId: Int,
         attributes: List<XAttribute>,
-        value: Double
+        vararg value: Double
     ): Any {
-        TODO("Not yet implemented")
+        val attr = attributes.map { CraftAttribute.bukkitToMinecraftHolder(Attribute.valueOf(it.name())) }
+        val modifiable = attr.mapIndexed { index, holder ->
+            AttributeModifiable(holder) {}.apply { baseValue = value[index] }
+        }
+        return PacketPlayOutUpdateAttributes(entityId, modifiable)
     }
 
     private fun <T> T.direct(): Holder<T> {

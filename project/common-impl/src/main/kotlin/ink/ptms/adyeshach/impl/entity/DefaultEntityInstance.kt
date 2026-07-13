@@ -7,19 +7,21 @@ import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
 import ink.ptms.adyeshach.core.bukkit.BukkitPose
 import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
-import ink.ptms.adyeshach.core.entity.EntityRefSet
 import ink.ptms.adyeshach.core.entity.*
 import ink.ptms.adyeshach.core.entity.controller.Controller
 import ink.ptms.adyeshach.core.entity.manager.Manager
 import ink.ptms.adyeshach.core.entity.path.InterpolatedLocation
 import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
-import ink.ptms.adyeshach.core.util.*
+import ink.ptms.adyeshach.core.util.errorBy
+import ink.ptms.adyeshach.core.util.plus
+import ink.ptms.adyeshach.core.util.safeDistanceIgnoreY
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachEntityFinder.Companion.clientEntityMap
 import ink.ptms.adyeshach.impl.VisualTeam
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
-import ink.ptms.adyeshach.impl.entity.handler.*
+import ink.ptms.adyeshach.impl.entity.handler.EntityHandlerFactory
+import ink.ptms.adyeshach.impl.entity.handler.PositionHandler
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import ink.ptms.adyeshach.impl.util.Indexs
 import org.bukkit.ChatColor
@@ -280,24 +282,17 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun isTemporary() = manager?.isTemporary() == true
 
     override fun onTick() {
-        // 1.21.8 客户端对传送/相对移动判定更严：nitwit 若跳过 syncPosition，外部 teleport 会每帧硬传、表现为平移
-        if (!allowSyncPosition()) {
-            return
-        }
-        if (!isNitwit) {
+        if (allowSyncPosition()) {
             movementHandler.handleMove()
             brain?.tick()
             bionicSight?.tick()
+            movementHandler.syncPosition()
         }
-        movementHandler.syncPosition()
     }
 
-    /**
-     * 是否允许本 tick 做位置同步（可见玩家 + 区块已加载）
-     *
-     * 与 [isNitwit] 解耦。1.21.8 起客户端逻辑变化后，nitwit 实体也必须走相对移动同步，
-     * 否则每帧 Entity Teleport 无法触发正确的移动插值/行走表现。
-     */
+    override fun isHide() = getPersistentTag("hide").toBoolean()
+    override fun hide(value: Boolean) = setPersistentTag("hide", value.toString())
+
     fun allowSyncPosition(): Boolean {
         return viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
     }

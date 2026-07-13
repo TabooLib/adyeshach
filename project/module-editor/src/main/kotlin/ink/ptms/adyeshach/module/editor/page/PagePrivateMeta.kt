@@ -3,7 +3,9 @@ package ink.ptms.adyeshach.module.editor.page
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.bukkit.BukkitRotation
-import ink.ptms.adyeshach.core.entity.*
+import ink.ptms.adyeshach.core.entity.EntityTypes
+import ink.ptms.adyeshach.core.entity.Meta
+import ink.ptms.adyeshach.core.entity.isBool
 import ink.ptms.adyeshach.core.entity.type.*
 import ink.ptms.adyeshach.module.editor.EditPanel
 import ink.ptms.adyeshach.module.editor.EditType
@@ -11,7 +13,6 @@ import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.action.SimpleAction
 import ink.ptms.adyeshach.module.editor.action.SimpleGroup
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
-import taboolib.common.platform.function.info
 import taboolib.common.platform.function.warning
 import java.util.concurrent.ConcurrentHashMap
 

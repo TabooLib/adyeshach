@@ -21,7 +21,6 @@ import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.common5.cbool
-import taboolib.common5.cdouble
 import taboolib.common5.cint
 import taboolib.library.xseries.XAttribute
 import taboolib.module.chat.Components
@@ -56,9 +55,6 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
     /** 是否睡眠 */
     @Expose
     internal var isSleepingLegacy = false
-
-    @Expose
-    internal var size = 1.0
 
     /**
      * 是否从玩家列表中移除
@@ -103,7 +99,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                     yaw = entityType.fixYaw(positionHandler.headYaw()),
                 )
                 // 启用皮肤
-                setSkinEnabled(true)
+                initSkin()
                 // 修复装备无法正常显示的问题
                 submit(delay = 1) {
                     updateEquipment(viewer)
@@ -118,7 +114,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                     submit(delay = 10) { removePlayerInfo(viewer) }
                 }
                 if (MinecraftVersion.versionId >= 12005) {
-                    Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(viewer, index, listOf(XAttribute.SCALE), size)
+                    Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(viewer, index, listOf(XAttribute.SCALE), score.toDouble())
                 }
                 spawned = true
             }
@@ -170,8 +166,8 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 true
             }
 
-            "size", "score" -> {
-                setSize(value?.cdouble ?: 1.0)
+            "size", "score", "player_score" -> {
+                setSize(value?.cint ?: 1)
                 true
             }
 
@@ -198,14 +194,14 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         refreshPlayer(false)
     }
 
-    override fun setSize(size: Double) {
-        this.size = size
+    override fun setSize(size: Int) {
+        score = size
         if (MinecraftVersion.versionId < 12005) return
-        forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(it, index, listOf(XAttribute.SCALE), size) }
+        forViewers { Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(it, index, listOf(XAttribute.SCALE), size.toDouble()) }
     }
 
-    override fun getSize(): Double {
-        return size
+    override fun getSize(): Int {
+        return score
     }
 
     override fun getPing(): Int {

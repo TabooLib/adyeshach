@@ -257,4 +257,14 @@ interface EntityInstance : EntityBase, Controllable, GenericEntity, Rideable, Vi
      * 重新校准位置
      */
     fun refreshPosition()
+
+    /**
+     * 是否为销毁实体状态
+     */
+    fun isHide(): Boolean
+
+    /**
+     * 设置销毁实体状态
+     */
+    fun hide(value: Boolean = true)
 }
