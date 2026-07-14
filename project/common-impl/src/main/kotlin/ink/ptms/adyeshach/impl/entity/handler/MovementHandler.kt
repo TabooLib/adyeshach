@@ -300,8 +300,28 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 载具位置同步后，给有 IS_IN_VEHICLE 标签的乘客按载具 delta 补发相对移动包。
      * 1.21.8 客户端不再从载具的 RelEntityMove 包自动同步乘客位置，需要手动补发。
      * 乘客不独立计算 delta，直接用载具的位移量发相同的 RelEntityMove 包并平移 position。
+     * 1.21.8 客户端源码中的处理顺序：
+     * - net.minecraft.client.network.ClientPlayNetworkHandler.onEntity(EntityS2CPacket) 解析 RelEntityMove，
+     *   先通过 Entity.getTrackedPosition() 更新协议增量基准，再调用 Entity.updateTrackedPositionAndAngles()；
+     * - Entity.updateTrackedPositionAndAngles() 会进入 PositionInterpolator.refreshPositionAndAngles()，
+     *   LivingEntity（如名牌中间层 Silverfish）默认按 3 tick 插值；
+     * - net.minecraft.entity.Entity.tickRiding() 同一 tick 还会调用 vehicle.updatePassengerPosition(this)，
+     *   Entity.updatePassengerPosition() 根据 getPassengerRidingPos() 和 getVehicleAttachmentPos() 计算 attachment，
+     *   最后通过 Entity.setPosition() 再写一次乘客位置；
+     * - net.minecraft.entity.decoration.DisplayEntity.setPosition() 会调用 updateVisibilityBoundingBox()，
+     *   DisplayEntity.shouldRender(distance) 也使用当前实体位置判断 viewRange，因此 TextDisplay 后代由骑乘链更新即可。
+     *
+     * 对 NPC -> Silverfish -> TextDisplay 这类嵌套骑乘，第一层 Silverfish 仍需要 b6936516 引入的补包；
+     * TextDisplay 等后代则由客户端骑乘 tick 跟随。若递归发送 RelEntityMove，协议插值和 attachment 跟随会在同一 tick
+     * 重复写入位置，表现为文字抽搐。这里仍递归平移后代的 clientPosition/position，供服务端后续可见性、传送和 delta
+     * 计算使用，但通过 broadcastMove=false 禁止向第二层及更深层发送独立移动包。
+     *
+     * @param deltaX 载具本次同步的 X 位移
+     * @param deltaY 载具本次同步的 Y 位移
+     * @param deltaZ 载具本次同步的 Z 位移
+     * @param broadcastMove 是否向本层乘客发送移动包，仅最外层调用为 true
      */
-    protected open fun syncPassengersAfterMove(deltaX: Double, deltaY: Double, deltaZ: Double) {
+    protected open fun syncPassengersAfterMove(deltaX: Double, deltaY: Double, deltaZ: Double, broadcastMove: Boolean = true) {
         if (!self.passengerHandler.hasPassengers() || (deltaX == 0.0 && deltaY == 0.0 && deltaZ == 0.0)) {
             return
         }
@@ -316,13 +336,16 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
             }
             // 平移乘客的 clientPosition，保持与载具的相对偏移
             passenger.clientPosition = passenger.clientPosition.clone().add(deltaX, deltaY, deltaZ)
-            // delta 超出 short 范围（远距离传送），直接发 Teleport 包，不走 passenger.teleport() 以免被 IS_IN_VEHICLE 逻辑跳过
-            if (requireTeleport) {
-                passenger.positionHandler.broadcastTeleportAndHead(passenger.clientPosition.toLocation(), passenger.yaw)
-            } else {
-                passenger.movementHandler.broadcastRelativeMove(x, y, z, false)
+            if (broadcastMove) {
+                // delta 超出 short 范围（远距离传送），直接发 Teleport 包，不走 passenger.teleport() 以免被 IS_IN_VEHICLE 逻辑跳过
+                if (requireTeleport) {
+                    passenger.positionHandler.broadcastTeleportAndHead(passenger.clientPosition.toLocation(), passenger.yaw)
+                } else {
+                    passenger.movementHandler.broadcastRelativeMove(x, y, z, false)
+                }
             }
             passenger.position = passenger.clientPosition
+            passenger.movementHandler.syncPassengersAfterMove(deltaX, deltaY, deltaZ, false)
         }
     }
 
