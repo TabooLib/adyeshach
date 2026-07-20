@@ -22,13 +22,37 @@ import taboolib.module.kether.KetherShell
 import taboolib.module.kether.bool
 import taboolib.module.kether.runKether
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 object TraitViewCondition : Trait() {
 
     /** 检查标签 */
     const val CHECK_TAG = "VIEW_CONDITION_NEXT_CHECK"
 
-    @Schedule(period = 20, async = true)
+    /** 每个实体当前可见条件检查版本，旧 Future 结果不得覆盖新检查。 */
+    val checkVersions = ConcurrentHashMap<String, Long>()
+
+    /** Kether 异步结果的主线程提交队列，避免为每个实体和玩家分别创建调度任务。 */
+    val pendingVisibilityUpdates = ConcurrentLinkedQueue<Runnable>()
+
+    /**
+     * 在主线程批量提交已完成的可见条件结果
+     */
+    @Schedule(period = 1)
+    fun flushVisibilityUpdates() {
+        while (true) {
+            val update = pendingVisibilityUpdates.poll() ?: return
+            try {
+                update.run()
+            } catch (ex: Throwable) {
+                // 单个脚本结果异常不能阻断后续队列，也不能让周期任务被调度器取消。
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    @Schedule(period = 20)
     fun update() {
         Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities { !it.isDerived() }.forEach { it.updateTraitViewCondition() }
     }
@@ -36,6 +60,7 @@ object TraitViewCondition : Trait() {
     @SubscribeEvent
     private fun onRemove(e: AdyeshachEntityRemoveEvent) {
         data[e.entity.uniqueId] = null
+        checkVersions.remove(e.entity.uniqueId)
     }
 
     @SubscribeEvent(EventPriority.LOWEST)
@@ -112,6 +137,7 @@ object TraitViewCondition : Trait() {
  */
 fun EntityInstance.setTraitViewCondition(condition: List<String>?) {
     removeTag(TraitViewCondition.CHECK_TAG)
+    TraitViewCondition.checkVersions.compute(uniqueId) { _, version -> (version ?: 0L) + 1 }
     if (condition == null || condition.all { line -> line.isBlank() }) {
         TraitViewCondition.data[uniqueId] = null
     } else {
@@ -140,6 +166,7 @@ fun EntityInstance.updateTraitViewCondition() {
     if (TraitViewCondition.data.contains(uniqueId)) {
         // 获取条件
         val script = TraitViewCondition.data.getStringList(uniqueId)
+        val checkVersion = TraitViewCondition.checkVersions.compute(uniqueId) { _, version -> (version ?: 0L) + 1 }!!
         // 设置冷却
         setTag(TraitViewCondition.CHECK_TAG, System.currentTimeMillis() + (AdyeshachSettings.viewConditionInterval * 50))
         // 获取玩家
@@ -151,17 +178,25 @@ fun EntityInstance.updateTraitViewCondition() {
                     player,
                     listOf(this@updateTraitViewCondition)
                 ).bool { cond ->
-                    if (cond) {
-                        // 看不见但是满足可视条件
-                        if (player.name !in viewPlayers.visible && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ)) {
-                            visible(player, true)
+                    // Kether Future 的回调线程不固定，可见集合与发包只能回主线程提交
+                    TraitViewCondition.pendingVisibilityUpdates.add(Runnable {
+                        if (TraitViewCondition.checkVersions[uniqueId] != checkVersion) {
+                            return@Runnable
                         }
-                    } else {
-                        // 看得见但不满足可视条件
-                        if (player.name in viewPlayers.visible) {
-                            visible(player, false)
+                        if (cond) {
+                            // 看不见但是满足可视条件
+                            if (player.isOnline && player.name in viewPlayers.viewers && player.name !in viewPlayers.visible
+                                && isInVisibleDistance(player) && !isHide()
+                                && Adyeshach.api().getMinecraftAPI().getHelper().isChunkVisible(player, chunkX, chunkZ)) {
+                                visible(player, true)
+                            }
+                        } else {
+                            // 看得见但不满足可视条件
+                            if (player.name in viewPlayers.visible) {
+                                visible(player, false)
+                            }
                         }
-                    }
+                    })
                 }
             }
         }

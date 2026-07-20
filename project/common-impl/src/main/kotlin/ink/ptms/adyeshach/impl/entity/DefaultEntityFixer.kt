@@ -25,7 +25,7 @@ internal object DefaultEntityFixer {
     @SubscribeEvent
     fun onRespawn(e: PlayerRespawnEvent) {
         submit(delay = 20) {
-            Adyeshach.api().getEntityFinder().getVisibleEntities(e.player).forEach { it.visible(e.player, true) }
+            Adyeshach.api().refreshEntityManager(e.player)
         }
     }
 

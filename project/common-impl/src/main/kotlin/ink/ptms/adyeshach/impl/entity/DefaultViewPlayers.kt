@@ -1,7 +1,7 @@
 package ink.ptms.adyeshach.impl.entity
 
 import ink.ptms.adyeshach.core.entity.ViewPlayers
-import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler.playersInGameTick
+import ink.ptms.adyeshach.impl.manager.VisibilityRefreshCoordinator.playersInGameTick
 import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean

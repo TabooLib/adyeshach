@@ -266,11 +266,13 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
      * 广播相对移动包，可选同步身体与头部朝向
      */
     protected open fun broadcastRelativeMove(x: Long, y: Long, z: Long, updateRotation: Boolean) {
+        // nitwit 连续移动每帧同时发送身体与头部包，观察者列表只解析一次。
+        val visible = self.getVisiblePlayers()
         if (updateRotation) {
             val bodyYaw = self.entityType.fixYaw(self.positionHandler.runtimeBodyYaw())
             val headYaw = self.entityType.fixYaw(self.yaw)
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMoveLook(
-                player = self.getVisiblePlayers(),
+                player = visible,
                 entityId = self.index,
                 x = x.toShort(),
                 y = y.toShort(),
@@ -280,13 +282,13 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
                 onGround = !self.entityPathType.isFly()
             )
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateHeadRotation(
-                player = self.getVisiblePlayers(),
+                player = visible,
                 entityId = self.index,
                 yaw = headYaw
             )
         } else {
             Adyeshach.api().getMinecraftAPI().getEntityOperator().updateRelEntityMove(
-                player = self.getVisiblePlayers(),
+                player = visible,
                 entityId = self.index,
                 x = x.toShort(),
                 y = y.toShort(),
@@ -329,7 +331,8 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
         val y = encodePos(deltaY)
         val z = encodePos(deltaZ)
         val requireTeleport = x < -32768L || x > 32767L || y < -32768L || y > 32767L || z < -32768L || z > 32767L
-        self.getPassengers().forEach { passenger ->
+        // 递归直接遍历引用集，避免嵌套乘客链每层各创建一次列表快照。
+        self.passengers.instances.forEach { passenger ->
             passenger as DefaultEntityInstance
             if (!passenger.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
                 return@forEach

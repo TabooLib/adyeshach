@@ -98,7 +98,10 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 operator.updateEntityMetadata(viewer, index, listOf(metadataHandler.createFloatMeta(healthMeta.index, -1f)))
             }
         } else {
-            visible(viewer, true)
+            // 客户端死亡动画会清除实体，必须走明确的 destroy + spawn 强制重显
+            if (visible(viewer, false)) {
+                visible(viewer, true)
+            }
         }
     }
 

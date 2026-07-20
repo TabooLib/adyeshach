@@ -35,27 +35,36 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      * @return 是否成功
      */
     open fun prepareSpawn(viewer: Player, impl: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || (AdyeshachEntityVisibleEvent(self, viewer, true).call())) {
-            if (DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)) {
-                impl.run()
-                commitSpawnState(viewer)
-                DefaultAdyeshachAPI.localEventBus.postSpawn(self, viewer)
-                // 同步伴生实体可见性
-                self.syncCompanionVisible(viewer, true)
-                // 更新单位属性
-                self.updateEntityMetadata(viewer)
-                // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
-                // 矿车，凋零头
-                // 生成包的头身字段在不同版本和实体类型上不一致，生成完成后统一校准一次 Look/Head。
-                if (self.isRotationFixOnSpawn) {
-                    self.positionHandler.syncLookToClients(self.positionHandler.runtimeBodyYaw(), self.pitch, self.yaw)
-                }
-                // 关联实体初始化
-                if (self.isPassengerRefreshOnSpawn) {
-                    self.refreshPassenger(viewer)
-                }
-                return true
+        // 已 visible 不重复 spawn
+        if (viewer.name in self.viewPlayers.visible) {
+            return false
+        }
+        val visibleEventAllowed = self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, true).call()
+        val spawnEventAllowed = if (visibleEventAllowed || self.isCompanion()) {
+            DefaultAdyeshachAPI.localEventBus.callSpawn(self, viewer)
+        } else {
+            false
+        }
+        // 伴生是宿主的视觉组成，生成不能被独立取消后永久缺失
+        if (self.isCompanion() || (visibleEventAllowed && spawnEventAllowed)) {
+            impl.run()
+            commitSpawnState(viewer)
+            DefaultAdyeshachAPI.localEventBus.postSpawn(self, viewer)
+            // 宿主提交后再同步伴生（spawn 顺序：宿主先、伴生后）
+            self.syncCompanionVisible(viewer, true)
+            // 更新单位属性
+            self.updateEntityMetadata(viewer)
+            // 强制更新一次视角朝向，确保让一些特殊的实体看向正确的位置
+            // 矿车，凋零头
+            // 生成包的头身字段在不同版本和实体类型上不一致，生成完成后统一校准一次 Look/Head。
+            if (self.isRotationFixOnSpawn) {
+                self.positionHandler.syncLookToClients(self.positionHandler.runtimeBodyYaw(), self.pitch, self.yaw)
             }
+            // 关联实体初始化
+            if (self.isPassengerRefreshOnSpawn) {
+                self.refreshPassenger(viewer)
+            }
+            return true
         }
         return false
     }
@@ -68,15 +77,24 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
      * @return 是否成功
      */
     open fun prepareDestroy(viewer: Player, impl: Runnable): Boolean {
-        if (self.isDisableVisibleEvent || (AdyeshachEntityVisibleEvent(self, viewer, false).call())) {
-            if (DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)) {
-                impl.run()
-                commitDestroyState(viewer)
-                DefaultAdyeshachAPI.localEventBus.postDestroy(self, viewer)
-                // 同步伴生实体可见性
-                self.syncCompanionVisible(viewer, false)
-                return true
-            }
+        // 未 visible 不重复 destroy
+        if (viewer.name !in self.viewPlayers.visible) {
+            return false
+        }
+        val visibleEventAllowed = self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, false).call()
+        val destroyEventAllowed = if (visibleEventAllowed || self.isCompanion()) {
+            DefaultAdyeshachAPI.localEventBus.callDestroy(self, viewer)
+        } else {
+            false
+        }
+        // 伴生是宿主的视觉组成，销毁不能被独立取消后残留在客户端
+        if (self.isCompanion() || (visibleEventAllowed && destroyEventAllowed)) {
+            // destroy 顺序：伴生先、宿主后（在宿主 destroy 包之前同步）
+            self.syncCompanionVisible(viewer, false)
+            impl.run()
+            commitDestroyState(viewer)
+            DefaultAdyeshachAPI.localEventBus.postDestroy(self, viewer)
+            return true
         }
         return false
     }
@@ -104,11 +122,16 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
         self.position = EntityPosition.fromLocation(location)
         self.clientPosition = self.position
         self.positionHandler.prepareSpawnBodyFromArchive()
-        val viewers = getSpawnViewers()
         // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
         if (self.isCompanion()) {
-            viewers.forEach { self.handleCompanionVisible(it, true) }
+            // 伴生不独立计算距离和区块，首次创建也必须直接收敛到宿主已经提交的 visible
+            val host = self.getHost()
+            host?.viewPlayers?.visible?.forEach {
+                val viewer = Bukkit.getPlayerExact(it) ?: return@forEach
+                self.companionHandler.syncVisibleFromHost(viewer, true)
+            }
         } else {
+            val viewers = getSpawnViewers()
             viewers.forEach { self.visible(it, true) }
         }
         AdyeshachEntitySpawnEvent(self).call()
@@ -166,7 +189,7 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
             val viewers = if (removeFromManager) self.viewPlayers.getPlayers() else self.viewPlayers.getViewPlayers()
             // 伴生实体需要使用内部方法（visible 接口会拒绝伴生实体的操作）
             if (self.isCompanion()) {
-                viewers.forEach { self.handleCompanionVisible(it, false) }
+                viewers.forEach { self.companionHandler.syncVisibleFromHost(it, false) }
             } else {
                 viewers.forEach { self.visible(it, false) }
             }

@@ -94,6 +94,19 @@ open class DefaultManager : BaseManager() {
         activeEntity.forEach { it.checkVisible() }
     }
 
+    /**
+     * 仅重新检查指定玩家的实体可见性
+     * 用于玩家传送后的即时收敛，避免公共管理器为其他在线玩家重复计算。
+     *
+     * @param player 需要重新检查的玩家
+     */
+    open fun checkVisible(player: Player) {
+        activeEntity.forEach {
+            it as DefaultEntityInstance
+            it.visibilityHandler.checkVisible(player)
+        }
+    }
+
     override fun onTick() {
         // 优化：只遍历有可见玩家的实体，而不是全部实体
         tickableEntities.forEach {

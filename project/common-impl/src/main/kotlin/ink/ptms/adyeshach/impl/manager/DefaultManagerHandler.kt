@@ -7,7 +7,6 @@ import ink.ptms.adyeshach.core.util.safeDistance
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.function.throttle
@@ -38,9 +37,6 @@ object DefaultManagerHandler {
     // MANAGER_INIT 的依赖项
     var dependOn = listOf(AdyeshachParallelTask.GENERATE_ENTITY_CLASS)
 
-    // 当前游戏刻的玩家列表
-    var playersInGameTick: Collection<Player> = listOf()
-
     // 是否首次触发（通常视为预热）
     var isFirstReport = true
 
@@ -66,16 +62,9 @@ object DefaultManagerHandler {
         DefaultAdyeshachBooster.api.localPublicEntityManager.onEnable()
         // 私有管理器
         onlinePlayers.forEach { Adyeshach.api().setupEntityManager(it) }
-        // 可见性更新
-        submitAsync(period = AdyeshachSettings.visibleRefreshInterval.toLong()) {
-            playersInGameTick = Bukkit.getOnlinePlayers().filter { it.hasMetadata("adyeshach_setup") }
-            // 公共管理器
-            DefaultAdyeshachBooster.api.localPublicEntityManager.checkVisible()
-            DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible()
-            // 私有管理器
-            playersInGameTick.forEach { player ->
-                DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.checkVisible()
-            }
+        // 可见性更新：主线程只抓轻量快照，实体 × 玩家候选异步计算，结果回主线程复核提交。
+        submit(period = AdyeshachSettings.visibleRefreshInterval.toLong()) {
+            VisibilityRefreshCoordinator.startVisibilityCycle()
         }
         // Tick
         submit(period = 1) {
@@ -115,6 +104,8 @@ object DefaultManagerHandler {
 
     @Awake(LifeCycle.DISABLE)
     private fun onDisable() {
+        // 使尚未回到主线程的候选立即过期。
+        VisibilityRefreshCoordinator.invalidate()
         // 公共管理器
         DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onDisable()
         DefaultAdyeshachBooster.api.localPublicEntityManager.onDisable()

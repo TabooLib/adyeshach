@@ -7,7 +7,10 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
+import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -87,7 +90,8 @@ internal object DefaultPlayerEvents {
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerTeleportEvent) {
         if (e.from.world == e.to.world && e.from.distance(e.to) > AdyeshachSettings.visibleDistance) {
-            submit(delay = 20) { Adyeshach.api().refreshEntityManager(e.player) }
+            // 下一主线程 tick 再 checkVisible，避免与传送当帧状态竞态
+            submit(delay = 1) { syncVisibleAfterTeleport(e.player) }
         }
     }
 
@@ -96,7 +100,19 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerChangedWorldEvent) {
-        submit(delay = 20) { Adyeshach.api().refreshEntityManager(e.player) }
+        // 下一主线程 tick 再 checkVisible，避免与传送当帧状态竞态
+        submit(delay = 1) { syncVisibleAfterTeleport(e.player) }
+    }
+
+    /**
+     * 玩家完成传送后按当前位置重新收敛管理器可见状态
+     *
+     * @param player 已完成传送的玩家
+     */
+    fun syncVisibleAfterTeleport(player: Player) {
+        DefaultAdyeshachBooster.api.localPublicEntityManager.checkVisible(player)
+        DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.checkVisible(player)
+        DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.checkVisible(player)
     }
 
     /**

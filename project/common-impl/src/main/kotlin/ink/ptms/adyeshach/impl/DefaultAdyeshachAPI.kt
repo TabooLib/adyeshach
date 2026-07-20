@@ -112,7 +112,11 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun refreshEntityManager(player: Player) {
         // 对范围内可视且在观察者列表的实体进行刷新
-        localEntityFinder.getVisibleEntities(player).forEach { it.visible(player, true) }
+        localEntityFinder.getVisibleEntities(player).filter { !it.isCompanion() }.forEach {
+            if (it.visible(player, false)) {
+                it.visible(player, true)
+            }
+        }
     }
 
     override fun refreshPublicEntityManager() {

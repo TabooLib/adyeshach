@@ -189,12 +189,14 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     var clientPosition: EntityPosition = position
         set(value) {
             // 平移时同步 xyz，clientBodyPosition.yaw 保持身体朝向（headYaw 在 clientPosition）
-            if (field.x != value.x || field.y != value.y || field.z != value.z) {
-                clientBodyPosition = clientBodyPosition.clone().also {
-                    it.x = value.x
-                    it.y = value.y
-                    it.z = value.z
-                }
+            // 跨世界时同时替换 world，避免身体位置 API 残留旧世界
+            if (field.world != value.world || field.x != value.x || field.y != value.y || field.z != value.z) {
+                clientBodyPosition = clientBodyPosition.copy(
+                    world = value.world,
+                    x = value.x,
+                    y = value.y,
+                    z = value.z,
+                )
             }
             field = value.clone()
         }
@@ -341,13 +343,11 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     // ═══════════════════════════════════════════════════════════════════════════════
 
     open fun syncCompanionVisible(viewer: Player, visible: Boolean) {
-        getCompanions().forEach {
+        companions.instances.forEach {
             it as DefaultEntityInstance
-            // 校正 companion 的服务端位置，避免 TickService 延迟同步导致 spawn 坐标过期
-            if (visible && it.position != it.clientPosition) {
-                it.position = it.clientPosition
-            }
-            it.handleCompanionVisible(viewer, visible)
+            // 同步到伴生实体
+            // 伴生可见性经 CompanionHandler 做 ACL 与 viewers 继承，禁止直接改写 visible
+            it.companionHandler.syncVisibleFromHost(viewer, visible)
         }
     }
 

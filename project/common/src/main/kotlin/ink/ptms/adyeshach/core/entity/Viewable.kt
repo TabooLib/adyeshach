@@ -43,12 +43,11 @@ interface Viewable {
         // 伴生实体禁止直接操作观察者
         if (this is Companionable && this.isCompanion()) return
         viewPlayers.viewers.add(viewer.name)
-        visible(viewer, true)
         // 同步到伴生实体
-        if (this is Companionable) {
-            getCompanions().forEach {
-                it.viewPlayers.viewers.add(viewer.name)
-            }
+        // 伴生 visible 由宿主 visible 生命周期同步，禁止在此直接改写
+        if (!visible(viewer, true)) {
+            // 宿主未实际 spawn 时单独传播 ACL，避免成功 spawn 已遍历整棵伴生树后再次重复遍历。
+            syncCompanionViewer(viewer, true)
         }
     }
 
@@ -60,13 +59,38 @@ interface Viewable {
         // 伴生实体禁止直接操作观察者
         if (this is Companionable && this.isCompanion()) return
         viewPlayers.viewers.remove(viewer.name)
-        visible(viewer, false)
         // 同步到伴生实体
-        if (this is Companionable) {
-            getCompanions().forEach {
-                it.viewPlayers.viewers.remove(viewer.name)
+        // 伴生 visible 由宿主 visible 生命周期同步，禁止在此直接改写
+        if (!visible(viewer, false)) {
+            // 宿主未实际 destroy 时仍需单独释放 ACL；成功 destroy 已沿伴生树完成清理。
+            syncCompanionViewer(viewer, false)
+        }
+    }
+
+    /**
+     * 沿伴生树同步观察者授权，遇到“公共宿主 -> 私有伴生”时截断整棵子树
+     *
+     * @param viewer 观察者
+     * @param viewing 是否加入观察者授权
+     */
+    fun syncCompanionViewer(viewer: Player, viewing: Boolean) {
+        if (this !is EntityInstance) {
+            return
+        }
+        fun sync(host: EntityInstance) {
+            host.getCompanions().forEach { companion ->
+                if (!companion.isPublic() && host.isPublic()) {
+                    return@forEach
+                }
+                if (viewing) {
+                    companion.viewPlayers.viewers.add(viewer.name)
+                } else {
+                    companion.viewPlayers.viewers.remove(viewer.name)
+                }
+                sync(companion)
             }
         }
+        sync(this)
     }
 
     /**
@@ -79,11 +103,16 @@ interface Viewable {
         viewPlayers.viewers.remove(viewer.name)
         viewPlayers.visible.remove(viewer.name)
         // 同步到伴生实体
-        if (this is Companionable) {
-            getCompanions().forEach {
-                it.viewPlayers.viewers.remove(viewer.name)
-                it.viewPlayers.visible.remove(viewer.name)
+        if (this is EntityInstance) {
+            fun release(host: EntityInstance) {
+                host.getCompanions().forEach {
+                    it.viewPlayers.viewers.remove(viewer.name)
+                    it.viewPlayers.visible.remove(viewer.name)
+                    release(it)
+                }
             }
+            // 退出清理不受 ACL 截断，确保历史残留的深层状态也被释放。
+            release(this)
         }
     }
 
