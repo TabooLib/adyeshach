@@ -284,17 +284,27 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
     override fun isTemporary() = manager?.isTemporary() == true
 
     override fun onTick() {
-        if (allowSyncPosition()) {
+        // 1.21.8 客户端对传送/相对移动判定更严：nitwit 若跳过 syncPosition，外部 teleport 会每帧硬传、表现为平移
+        if (!allowSyncPosition()) {
+            return
+        }
+        if (!isNitwit) {
             movementHandler.handleMove()
             brain?.tick()
             bionicSight?.tick()
-            movementHandler.syncPosition()
         }
+        movementHandler.syncPosition()
     }
 
     override fun isHide() = getPersistentTag("hide").toBoolean()
     override fun hide(value: Boolean) = setPersistentTag("hide", value.toString())
 
+    /**
+     * 是否允许本 tick 做位置同步（可见玩家 + 区块已加载）
+     *
+     * 与 [isNitwit] 解耦。1.21.8 起客户端逻辑变化后，nitwit 实体也必须走相对移动同步，
+     * 否则每帧 Entity Teleport 无法触发正确的移动插值/行走表现。
+     */
     fun allowSyncPosition(): Boolean {
         return viewPlayers.hasVisiblePlayer() && ChunkAccess.getChunkAccess(world).isChunkLoaded(chunkX, chunkZ)
     }

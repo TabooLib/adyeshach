@@ -30,21 +30,17 @@ open class VisibilityHandler(protected val self: DefaultEntityInstance) {
 
     /**
      * 在主线程准备一次可见性检查
-     * 所有实体先同步载具位置；伴生实体只做位置自愈，不独立参与玩家距离扫描。
+     * 伴生实体完全由宿主传播显隐与移动，不独立校准位置或参与玩家距离扫描。
      *
      * @return 是否需要继续计算该实体的玩家可见性
      */
     open fun prepareVisibilityCycle(): Boolean {
-        // 同步到载具位置
-        val clientPositionChanged = syncVehiclePosition()
         // 伴生实体跳过独立的可见性检查（由宿主驱动）
         if (self.isCompanion()) {
-            // 伴生仍需执行载具位置校准，避免一次乘客 delta 漏同步后永久停在旧位置
-            if (clientPositionChanged && self.viewPlayers.hasVisiblePlayer()) {
-                self.positionHandler.broadcastTeleportAndHead(self.clientPosition.toLocation(), self.yaw)
-            }
             return false
         }
+        // 同步到载具位置
+        syncVehiclePosition()
         return true
     }
 

@@ -11,10 +11,8 @@ import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.submit
 
 /**
  * Adyeshach
@@ -57,12 +55,6 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
      * 传送实体到指定位置
      */
     open fun teleport(location: Location) {
-        // Bukkit 实体状态、可见集合与发包顺序统一由主线程提交
-        if (!Bukkit.isPrimaryThread()) {
-            val destination = location.clone()
-            submit { teleport(destination) }
-            return
-        }
         // 异常角度警告
         if (location.yaw.isNaN() || location.pitch.isNaN()) {
             IllegalStateException("Invalid head rotation (yaw=${location.yaw}, pitch=${location.pitch})").printStackTrace()
@@ -89,15 +81,14 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         val isMoved = worldChanged || previousPosition.x != newPosition.x || previousPosition.y != newPosition.y || previousPosition.z != newPosition.z
         // teleport 是整体位姿写入，目标 yaw 必须覆盖身体 yaw，避免头身分离。
         applyRuntimeBodyYaw(newPosition.yaw)
-        val movementManaged = self.manager is TickService
-        var syncPositionByMovement = false
+        val syncPositionByMovement = !worldChanged && self.manager is TickService && self.allowSyncPosition()
         if (worldChanged) {
             // 跨世界：先销毁旧世界状态，再同时写 position/clientPosition 为目标，随后在目标世界重新 spawn
             // 不能先用旧 clientPosition respawn，也不能发送跨世界 teleport 包
             self.despawn()
             self.position = newPosition
             self.clientPosition = newPosition
-        } else if (!movementManaged) {
+        } else if (!syncPositionByMovement) {
             // 无管理器 || 孤立管理器 || 不允许进行位置同步
             self.position = newPosition
             self.clientPosition = self.position
@@ -111,36 +102,16 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
             broadcastTeleportAndHead(bodyLoc, headYaw)
         } else {
             self.clientPosition = newPosition
-            if (!self.viewPlayers.hasVisiblePlayer()) {
-                // 没有可见玩家时只提交服务端位置，后续首次 spawn 会直接使用最新坐标
-                self.position = self.clientPosition
-            } else if (self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)) {
-                // 乘客由客户端 attachment 跟随载具；这里只提交服务端基准，并继续递归更新更深层乘客
-                self.position = self.clientPosition
-            } else if (self.isNitwit) {
-                // nitwit 由外部模拟器逐 tick 驱动；已有可见玩家时直接走相对移动，不受服务端 ChunkAccess 门禁影响。
+            if (self.isNitwit) {
                 // nitwit 实体由外部线程（如 Horizon 播放）驱动位置写入，主线程 tick 与写入线程不同步。
                 // 立即在当前线程同步，避免 offset 跨帧累积或 position 被设为未同步的 clientPosition 导致漂移瞬移。
-                syncPositionByMovement = true
                 self.movementHandler.syncPosition()
-            } else if (!self.allowSyncPosition()) {
-                // 目标区块未加载且仍有旧追踪者时补绝对位置，后续乘客链走直接传送
-                val bodyLoc = runtimeBodyLocation().apply {
-                    x = location.x
-                    y = location.y
-                    z = location.z
-                    pitch = location.pitch
-                }
-                broadcastTeleportAndHead(bodyLoc, EntityPosition.normalizeYaw(location.yaw))
-                self.position = self.clientPosition
-            } else {
-                syncPositionByMovement = true
             }
         }
         // 只有在位置发生变更时才进行 passengers 同步
         if (isMoved) {
-            // Movement 接管时由 syncPassengersAfterMove 统一补第一层相对包，此处跳过避免额外绝对包与双重位移
-            val skipInVehicle = syncPositionByMovement
+            // nitwit + else 分支已通过 syncPassengersAfterMove 同步 IS_IN_VEHICLE 乘客，此处跳过避免双重位移
+            val skipInVehicle = syncPositionByMovement && self.isNitwit
             val requireDirectPassengerTeleport = worldChanged || !syncPositionByMovement
             // 直接遍历并发引用集，避免连续移动每 tick 为乘客创建列表快照。
             val passengers = self.passengers.instances
