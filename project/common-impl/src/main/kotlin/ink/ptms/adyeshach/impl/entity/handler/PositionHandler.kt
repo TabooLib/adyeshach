@@ -110,8 +110,9 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         }
         // 只有在位置发生变更时才进行 passengers 同步
         if (isMoved) {
-            // nitwit + else 分支已通过 syncPassengersAfterMove 同步 IS_IN_VEHICLE 乘客，此处跳过避免双重位移
-            val skipInVehicle = syncPositionByMovement && self.isNitwit
+            // 只有自由移动的 nitwit 会通过 syncPassengersAfterMove 同步子乘客；
+            // 自身正在乘车时 syncPosition 只处理载具旋转，NameTag 等子乘客仍需在此补位置。
+            val skipInVehicle = syncPositionByMovement && self.isNitwit && !self.hasPersistentTag(StandardTags.IS_IN_VEHICLE)
             val requireDirectPassengerTeleport = worldChanged || !syncPositionByMovement
             // 直接遍历并发引用集，避免连续移动每 tick 为乘客创建列表快照。
             val passengers = self.passengers.instances

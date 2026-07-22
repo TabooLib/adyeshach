@@ -1,6 +1,7 @@
 package ink.ptms.adyeshach.impl.entity.handler
 
 import ink.ptms.adyeshach.core.Adyeshach
+import ink.ptms.adyeshach.core.bukkit.data.EntityPosition
 import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager
 import ink.ptms.adyeshach.impl.ServerTours
@@ -35,12 +36,15 @@ open class VisibilityHandler(protected val self: DefaultEntityInstance) {
      * @return 是否需要继续计算该实体的玩家可见性
      */
     open fun prepareVisibilityCycle(): Boolean {
+        // 每层伴生按直接载具独立校准，避免父层漂移时把已经正确的后代再次平移。
+        val clientPositionChanged = syncVehiclePosition()
         // 伴生实体跳过独立的可见性检查（由宿主驱动）
         if (self.isCompanion()) {
+            if (clientPositionChanged && self.viewPlayers.hasVisiblePlayer()) {
+                self.positionHandler.broadcastTeleportAndHead(self.clientPosition.toLocation(), self.yaw)
+            }
             return false
         }
-        // 同步到载具位置
-        syncVehiclePosition()
         return true
     }
 
@@ -99,18 +103,17 @@ open class VisibilityHandler(protected val self: DefaultEntityInstance) {
             val clientPosition = self.clientPosition
             val positionTolerance = self.entitySize.height + vehicle.entitySize.height + 2.0
             val positionToleranceSquared = positionTolerance * positionTolerance
-            val serverPositionChanged = serverPosition.world != vehiclePosition.world || run {
-                val deltaX = serverPosition.x - vehiclePosition.x
-                val deltaY = serverPosition.y - vehiclePosition.y
-                val deltaZ = serverPosition.z - vehiclePosition.z
-                deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > positionToleranceSquared
+            fun isPositionDrifted(position: EntityPosition): Boolean {
+                if (position.world != vehiclePosition.world) {
+                    return true
+                }
+                val deltaX = position.x - vehiclePosition.x
+                val deltaY = position.y - vehiclePosition.y
+                val deltaZ = position.z - vehiclePosition.z
+                return deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > positionToleranceSquared
             }
-            val clientPositionChanged = clientPosition.world != vehiclePosition.world || run {
-                val deltaX = clientPosition.x - vehiclePosition.x
-                val deltaY = clientPosition.y - vehiclePosition.y
-                val deltaZ = clientPosition.z - vehiclePosition.z
-                deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > positionToleranceSquared
-            }
+            val serverPositionChanged = isPositionDrifted(serverPosition)
+            val clientPositionChanged = isPositionDrifted(clientPosition)
             if (serverPositionChanged) {
                 self.position = vehiclePosition.copy(yaw = serverPosition.yaw, pitch = serverPosition.pitch)
             }
