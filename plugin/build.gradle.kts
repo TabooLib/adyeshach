@@ -48,7 +48,7 @@ tasks {
         rootProject.subprojects.forEach { from(it.sourceSets["main"].allSource) }
     }
     withType<Jar>().configureEach {
-//        destinationDirectory.set(distDir)
+        destinationDirectory.set(distDir)
     }
 }
 
