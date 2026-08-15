@@ -4,10 +4,12 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.util.resettableLazy
+import taboolib.common5.Baffle
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigNode
 import taboolib.module.configuration.Configuration
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /**
  * Adyeshach
@@ -39,7 +41,8 @@ object AdyeshachSettings {
     var debug = false
 
     /**
-     * 单位可视距离
+     * 单位可视半径（格）。进入后发包生成，离开后回收。
+     * 建议小于 server.properties 的 view-distance × 16。
      */
     @ConfigNode("Settings.visible-distance")
     var visibleDistance = 64.0
@@ -102,6 +105,21 @@ object AdyeshachSettings {
      */
     @ConfigNode("Settings.negative-entity-id")
     var negativeEntityId = false
+
+    /**
+     * 玩家与单位的交互冷却（毫秒）
+     * 0 表示关闭
+     */
+    @ConfigNode("Settings.interact-cooldown")
+    var interactCooldown = 1000
+
+    /**
+     * 交互冷却闸门，reload 后重建
+     */
+    val interactCooldownBaffle by resettableLazy {
+        val time = interactCooldown.toLong()
+        if (time <= 0L) null else Baffle.of(time, TimeUnit.MILLISECONDS)
+    }
 
     /**
      * 是否为自动删除世界
