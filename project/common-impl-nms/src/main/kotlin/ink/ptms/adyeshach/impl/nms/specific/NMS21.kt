@@ -44,6 +44,12 @@ interface NMS21 {
     fun createSpawnEntity(entityId: Int, uuid: UUID, location: Location, yaw: Float, pitch: Float, data: Int, entityType: Int, yhead: Double): Any
 
     /**
+     * 创建经验球生成数据包
+     * 1.21 起服务端类更名为 ClientboundAddExperienceOrbPacket 并改为 record，无 PacketDataSerializer 构造，需通过 STREAM_CODEC 解码创建
+     */
+    fun createSpawnExperienceOrb(entityId: Int, location: Location, amount: Int): Any
+
+    /**
      * 创建实体元数据数据包
      */
     fun createEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any

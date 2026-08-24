@@ -47,6 +47,8 @@ import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.library.xseries.XAttribute
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.createDataSerializer
+import taboolib.module.nms.remap.DynamicOpcode
+import taboolib.module.nms.remap.dynamic
 import java.util.*
 import kotlin.math.abs
 
@@ -104,6 +106,28 @@ class NMS21Impl : NMS21 {
             BuiltInRegistries.ENTITY_TYPE.get(entityType).get().value()
         }
         return PacketPlayOutSpawnEntity(entityId, uuid, location.x, location.y, location.z, pitch, yaw, type, data, Vec3D.ZERO, yhead)
+    }
+
+    override fun createSpawnExperienceOrb(entityId: Int, location: Location, amount: Int): Any {
+        // 1.21 起该数据包仅有 (ExperienceOrb, ServerEntity) 构造，只能通过 STREAM_CODEC 从序列化数据解码
+        val serializer = createDataSerializer {
+            writeVarInt(entityId)
+            writeDouble(location.x)
+            writeDouble(location.y)
+            writeDouble(location.z)
+            writeShort(amount.toShort())
+        }.build() as NMSPacketDataSerializer
+        // Spigot 映射名 PacketPlayOutSpawnEntityExperienceOrb 在 1.21 已被移除，需通过 dynamic 在字节码阶段绑定 Mojang 映射名
+        val codec = dynamic(
+            DynamicOpcode.GETSTATIC,
+            "net.minecraft.network.protocol.game.ClientboundAddExperienceOrbPacket#STREAM_CODEC:net.minecraft.network.codec.StreamCodec"
+        )
+        return dynamic(
+            DynamicOpcode.INVOKEVIRTUAL,
+            "net.minecraft.network.codec.StreamCodec#decode(java.lang.Object;)java.lang.Object;",
+            codec,
+            serializer
+        )!!
     }
 
     override fun createEntityMetadata(entityId: Int, packedItems: List<MinecraftMeta>): Any {
