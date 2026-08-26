@@ -430,6 +430,9 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
     }
 
     override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): MinecraftMeta {
+        if (majorLegacy >= 12111) {
+            return DefaultMeta(NMS21.instance.createVillagerDataMeta(index, villagerData))
+        }
         return DefaultMeta(
             if (majorLegacy >= 11900) {
                 val villagerType = try {

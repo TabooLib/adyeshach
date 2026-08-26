@@ -95,6 +95,15 @@ interface NMS21 {
     fun getVillagerProfession(profession: VillagerData.Profession): Any
 
     /**
+     * 创建使用注册表 Holder 的村民元数据
+     *
+     * @param index 元数据索引
+     * @param villagerData Bukkit 村民数据
+     * @return NMS 元数据项
+     */
+    fun createVillagerDataMeta(index: Int, villagerData: VillagerData): Any
+
+    /**
      * 获取画的类型id
      */
     fun getArtType(art: BukkitPaintings): Int

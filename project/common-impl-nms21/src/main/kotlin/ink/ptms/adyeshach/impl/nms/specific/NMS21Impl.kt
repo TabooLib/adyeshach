@@ -20,6 +20,7 @@ import net.minecraft.network.protocol.game.*
 import net.minecraft.network.syncher.DataWatcher
 import net.minecraft.network.syncher.DataWatcherObject
 import net.minecraft.network.syncher.DataWatcherRegistry
+import net.minecraft.network.syncher.DataWatcherSerializer
 import net.minecraft.world.entity.EntityPose
 import net.minecraft.world.entity.PositionMoveRotation
 import net.minecraft.world.entity.Relative
@@ -231,6 +232,25 @@ class NMS21Impl : NMS21 {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun createVillagerDataMeta(index: Int, villagerData: VillagerData): Any {
+        val type = Registry.VILLAGER_TYPE.get(NamespacedKey.minecraft(villagerData.type.name.lowercase()))
+        val profession = Registry.VILLAGER_PROFESSION.get(NamespacedKey.minecraft(villagerData.profession.name.lowercase()))
+        val minecraftType = org.bukkit.craftbukkit.v1_21_R4.entity.CraftVillager.CraftType.bukkitToMinecraftHolder(type)
+        val minecraftProfession = org.bukkit.craftbukkit.v1_21_R4.entity.CraftVillager.CraftProfession.bukkitToMinecraftHolder(profession)
+        // 1.21.11 起村民注册表类型整体移入 npc.villager 包，编译期映射中没有新类名，需在字节码阶段绑定构造器
+        val data = dynamic(
+            DynamicOpcode.INVOKESPECIAL,
+            "net.minecraft.world.entity.npc.villager.VillagerData(net.minecraft.core.Holder;net.minecraft.core.Holder;I)V",
+            minecraftType,
+            minecraftProfession,
+            1,
+        )!!
+        // 序列化器的运行时值类型已同步迁移，泛型擦除后可直接承载动态构造的新版 VillagerData
+        val serializer = DataWatcherRegistry.VILLAGER_DATA as DataWatcherSerializer<Any>
+        return DataWatcher.Item(DataWatcherObject(index, serializer), data)
+    }
+
     override fun getArtType(art: BukkitPaintings): Int {
         return CraftArt.bukkitToMinecraft(Registry.ART.get(NamespacedKey.minecraft(art.legacy.toString().lowercase())))!!.area()
     }
@@ -289,8 +309,8 @@ class NMS21Impl : NMS21 {
     }
 
     override fun createCatVariantMeta(index: Int, value: BukkitCatType): Any {
-        val variant = CraftCat.CraftType.bukkitToMinecraft(Cat.Type.valueOf(value.name))
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant.direct())
+        val variant = CraftCat.CraftType.bukkitToMinecraftHolder(Cat.Type.valueOf(value.name))
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.CAT_VARIANT), variant)
     }
 
     override fun createCopperGolemWeatherState(index: Int, value: BukkitCopperWeatherState): Any {
