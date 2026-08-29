@@ -10,6 +10,7 @@ typealias NMSPacketPlayOutSpawnEntityLiving = net.minecraft.network.protocol.gam
 
 typealias NMSPacketPlayOutSpawnEntityPlayer = net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn
 
+// 从 1.21+ 移除（Mojang 映射下更名为 ClientboundAddExperienceOrbPacket 并改为 record）
 typealias NMSPacketPlayOutSpawnEntityExperienceOrb = net.minecraft.network.protocol.game.PacketPlayOutSpawnEntityExperienceOrb
 
 // 从 1.19+ 移除

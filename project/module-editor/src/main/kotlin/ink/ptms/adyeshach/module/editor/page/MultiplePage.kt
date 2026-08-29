@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.module.editor.*
 import ink.ptms.adyeshach.module.editor.action.ActionGroup
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.chat.colored
 import taboolib.module.chat.uncolored
 
@@ -146,6 +147,11 @@ abstract class MultiplePage(editor: EditPanel) : Page(editor) {
     }
 
     protected fun autoActionPerLine(): Int {
-        return if (player.locale.startsWith("zh_")) 5 else 4
+        // 1.11 没有 Player.getLocale()，走 TabooLib 跨版本 locale；取失败按中文密度回退到 5
+        return try {
+            if (adaptPlayer(player).locale.startsWith("zh_")) 5 else 4
+        } catch (_: Throwable) {
+            5
+        }
     }
 }

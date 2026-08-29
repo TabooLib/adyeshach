@@ -144,6 +144,11 @@ internal object DefaultPlayerEvents {
                     val actionOrdinal = (action.invokeMethod<Any>("getType") as Enum<*>).ordinal
 
                     when (actionOrdinal) {
+                        // 冒险与生存模式可能只发送不携带命中位置的普通 INTERACT
+                        0 -> {
+                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
+                            submit { AdyeshachEntityInteractEvent(entity, player, hand, Vector(0, 0, 0)).call() }
+                        }
                         // 左键
                         1 -> {
                             submit { AdyeshachEntityDamageEvent(entity, player).call() }

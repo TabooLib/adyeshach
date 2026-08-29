@@ -406,8 +406,22 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     }
 
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
-        if (isUniversal) {
-            packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityExperienceOrb(createDataSerializer {
+        // 1.21.8 起 ClientboundAddExperienceOrbPacket 被移除，经验球与其他实体统一走 ClientboundAddEntityPacket 生成
+        if (majorLegacy >= 12107) {
+            packetHandler.sendPacket(player, NMS21.instance.createSpawnEntity(
+                entityId,
+                UUID.randomUUID(),
+                location,
+                0f,
+                0f,
+                0,
+                NMS19.instance.entityTypeGetId(helper.adapt(EntityTypes.EXPERIENCE_ORB)),
+                0.0,
+            ))
+        } else if (majorLegacy >= 12100) {
+            packetHandler.sendPacket(player, NMS21.instance.createSpawnExperienceOrb(entityId, location, amount))
+        } else if (isUniversal) {
+            packetHandler.sendPacket(player, NMSPacketPlayOutSpawnEntityExperienceOrb::class.java.invokeConstructor(createDataSerializer {
                 writeVarInt(entityId)
                 writeDouble(location.x)
                 writeDouble(location.y)

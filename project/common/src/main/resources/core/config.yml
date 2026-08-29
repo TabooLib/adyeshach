@@ -5,7 +5,9 @@
 
 Settings:
   debug: false
-  # 必须小于 server.properties 中的 "view-distance"
+  # 玩家与单位的可视半径，单位是格（不是区块）
+  # 进入范围才发包生成，离开后回收；默认 64 格 ≈ 4 个区块
+  # 建议小于 server.properties 的 view-distance × 16（视距 8 区块 ≈ 128 格）
   visible-distance: 64
   # JOIN: 当玩家加入服务器时
   # KEEP_ALIVE: 当玩家发送第一个位置数据包时
@@ -34,3 +36,6 @@ Settings:
   # 是否使用负数虚拟实体 ID
   # 默认关闭，保留正数 ID
   negative-entity-id: false
+  # 玩家与单位的交互冷却（毫秒）
+  # 左键、右键共用，按玩家计算；0 表示关闭
+  interact-cooldown: 1000
