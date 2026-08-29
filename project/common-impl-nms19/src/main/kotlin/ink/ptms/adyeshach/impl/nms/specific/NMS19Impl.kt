@@ -201,10 +201,9 @@ class NMS19Impl : NMS19() {
         )
     }
 
-    override fun createAttribute(entityId: Int, attribute: List<XAttribute>, vararg value: Double): Any {
-        val attr = attribute.map { CraftAttribute.bukkitToMinecraft(it.get()) }
-        val modifiable = attr.mapIndexed { index, holder ->
-            AttributeModifiable(holder) {}.apply { baseValue = value[index] }
+    override fun createAttribute(entityId: Int, attributes: Map<XAttribute, Double>): Any {
+        val modifiable = attributes.map {
+            AttributeModifiable(CraftAttribute.bukkitToMinecraft(it.key.get())) {}.apply { baseValue = it.value }
         }
         return PacketPlayOutUpdateAttributes(entityId, modifiable)
     }

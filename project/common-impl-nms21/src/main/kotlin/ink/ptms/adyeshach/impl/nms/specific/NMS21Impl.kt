@@ -32,15 +32,14 @@ import net.minecraft.world.scores.Scoreboard
 import net.minecraft.world.scores.ScoreboardTeam
 import net.minecraft.world.scores.ScoreboardTeamBase
 import org.bukkit.*
-import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_21_R3.CraftArt
 import org.bukkit.craftbukkit.v1_21_R3.CraftChunk
-import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftCat
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftVillager
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage
 import org.bukkit.craftbukkit.v1_21_R4.entity.*
 import org.bukkit.craftbukkit.v1_21_R6.attribute.CraftAttribute
+import org.bukkit.craftbukkit.v1_21_R6.block.data.CraftBlockData
 import org.bukkit.entity.*
 import org.bukkit.material.MaterialData
 import taboolib.library.reflex.Reflex.Companion.invokeConstructor
@@ -297,14 +296,9 @@ class NMS21Impl : NMS21 {
         return (player as CraftPlayer).handle.chunkTrackingView.isInViewDistance(chunkX, chunkZ)
     }
 
-    override fun createAttribute(
-        entityId: Int,
-        attributes: List<XAttribute>,
-        vararg value: Double
-    ): Any {
-        val attr = attributes.map { CraftAttribute.bukkitToMinecraftHolder(Attribute.valueOf(it.name())) }
-        val modifiable = attr.mapIndexed { index, holder ->
-            AttributeModifiable(holder) {}.apply { baseValue = value[index] }
+    override fun createAttribute(entityId: Int, attributes: Map<XAttribute, Double>): Any {
+        val modifiable = attributes.map {
+            AttributeModifiable(CraftAttribute.bukkitToMinecraftHolder(it.key.get())) {}.apply { baseValue = it.value }
         }
         return PacketPlayOutUpdateAttributes(entityId, modifiable)
     }
