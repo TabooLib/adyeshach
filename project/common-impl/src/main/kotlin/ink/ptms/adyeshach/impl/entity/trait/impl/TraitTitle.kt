@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.AdyeshachHologram
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
+import ink.ptms.adyeshach.core.event.AdyeshachEntityTitleEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
@@ -70,6 +71,7 @@ object TraitTitle : Trait() {
     private fun onDelete(e: AdyeshachEntityRemoveEvent) {
         e.entity.setTraitTitle(null)
         e.entity.setTraitTitleHeight(null)
+        TraitTitle.data["hide.${e.entity.uniqueId}"] = null
     }
 
     @SubscribeEvent
@@ -97,15 +99,20 @@ object TraitTitle : Trait() {
         if (data.contains(entity.uniqueId)) {
             // 先移除
             remove(viewer, entity)
-            // 再创建
-            val loc = entity.getLocation().add(0.0, entity.entitySize.height + entity.getTraitTitleHeight(), 0.0)
             val message = data.getStringListColored(entity.uniqueId).map {
                 runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
             }
-            if (message.isEmpty()) {
+            // 触发事件允许外部拦截或接管
+            val event = AdyeshachEntityTitleEvent(entity, viewer, message, entity.getTraitTitleHeight())
+            if (!event.call()) {
                 return
             }
-            val hologram = Adyeshach.api().getHologramHandler().createHologram(viewer, loc, message)
+            if (event.title.isEmpty()) {
+                return
+            }
+            // 再创建
+            val loc = entity.getLocation().add(0.0, entity.entitySize.height + event.height, 0.0)
+            val hologram = Adyeshach.api().getHologramHandler().createHologram(viewer, loc, event.title)
             // 写入 playerLookup 并删除之前存在的全息对象
             val playerHologramMap = playerLookup.computeIfAbsent(viewer.name) { ConcurrentHashMap() }
             playerHologramMap.put(entity.uniqueId, hologram)?.remove()
@@ -135,13 +142,18 @@ object TraitTitle : Trait() {
                 val newMessage = message.map {
                     runKether { KetherFunction.parse(it, namespace = listOf("adyeshach"), sender = adaptCommandSender(viewer)) }.toString()
                 }
+                // 触发事件允许外部在更新时拦截或接管内容
+                val event = AdyeshachEntityTitleEvent(entity, viewer, newMessage, entity.getTraitTitleHeight(), isUpdate = true)
+                if (!event.call()) {
+                    return
+                }
                 // 如果长度不变，则更新内容
-                if (hologram.contents().size == newMessage.size) {
+                if (hologram.contents().size == event.title.size) {
                     hologram.contents().mapIndexed { index, item ->
-                        (item as AdyeshachHologram.ItemByText).text = newMessage[index]
+                        (item as AdyeshachHologram.ItemByText).text = event.title[index]
                     }
                 } else {
-                    hologram.update(newMessage.map { Adyeshach.api().getHologramHandler().createHologramItem(it) })
+                    hologram.update(event.title.map { Adyeshach.api().getHologramHandler().createHologramItem(it) })
                 }
             }
         }
