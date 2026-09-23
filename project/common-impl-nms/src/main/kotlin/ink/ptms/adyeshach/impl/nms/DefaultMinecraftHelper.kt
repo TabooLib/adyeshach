@@ -165,7 +165,10 @@ class DefaultMinecraftHelper : MinecraftHelper {
     // 首次调用时通过 try-catch 确定可用的 NMS API，后续直接调用缓存的实现
     val chunkVisibleImpl = versionAdaptor<(Player, Int, Int) -> Boolean>(
         versionStrategy("nms21-tracking-view", guard = { MinecraftVersion.versionId >= 12005 }) {
-            nmsClass("EntityPlayer").unsafeInstance().invokeMethod<Any>("getChunkTrackingView")
+            val key = if (MinecraftVersion.isUnobfuscated) {
+                "server.level.ServerPlayer"
+            } else "EntityPlayer"
+            nmsClass(key).unsafeInstance().invokeMethod<Any>("getChunkTrackingView")
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
         },
         // 你改你妈个🥚，我爱说实话

@@ -19,7 +19,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutUpdateAttributes
 import net.minecraft.network.syncher.DataWatcher
 import net.minecraft.network.syncher.DataWatcherObject
 import net.minecraft.network.syncher.DataWatcherRegistry
-import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.animal.CatVariant
 import net.minecraft.world.level.EnumGamemode
@@ -41,6 +40,7 @@ import java.util.*
  */
 class NMS19Impl : NMS19() {
 
+    @Suppress("UNCHECKED_CAST")
     override fun entityTypeGetId(any: Any): Int {
         /*
             TODO TabooLib NMSProxy 已知问题：
@@ -57,8 +57,8 @@ class NMS19Impl : NMS19() {
             结论：
             调用对象中「仅在父类」声明的方法或字段无法被 TabooLib NMSProxy 重定向
          */
-        val ir = BuiltInRegistries.ENTITY_TYPE as IRegistry<EntityTypes<*>>
-        return ir.getId(any as EntityTypes<*>)
+        val ir = BuiltInRegistries.ENTITY_TYPE as IRegistry<Any>
+        return ir.getId(any)
     }
 
     override fun createVector3Meta(index: Int, value: Vector): Any {

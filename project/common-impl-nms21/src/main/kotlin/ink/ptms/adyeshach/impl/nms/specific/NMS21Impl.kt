@@ -95,12 +95,15 @@ class NMS21Impl : NMS21 {
     override fun createSpawnEntity(
         entityId: Int, uuid: UUID, location: Location, yaw: Float, pitch: Float, data: Int, entityType: Int, yhead: Double
     ): Any {
-        val type = if (MinecraftVersion.versionId >= 12005) {
-            BuiltInRegistries.ENTITY_TYPE.byId(entityType)
+        @Suppress("UNCHECKED_CAST")
+        val type: Any? = if (MinecraftVersion.versionId >= 12005) {
+            (BuiltInRegistries.ENTITY_TYPE as net.minecraft.core.Registry<Any>).byId(entityType)
         } else {
             BuiltInRegistries.ENTITY_TYPE.get(entityType).get().value()
         }
-        return PacketPlayOutSpawnEntity(entityId, uuid, location.x, location.y, location.z, pitch, yaw, type, data, Vec3D.ZERO, yhead)
+        return PacketPlayOutSpawnEntity::class.java.invokeConstructor(
+            entityId, uuid, location.x, location.y, location.z, pitch, yaw, type, data, Vec3D.ZERO, yhead
+        )
     }
 
     override fun createSpawnExperienceOrb(entityId: Int, location: Location, amount: Int): Any {

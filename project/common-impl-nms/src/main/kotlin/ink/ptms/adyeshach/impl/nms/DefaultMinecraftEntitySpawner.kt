@@ -96,7 +96,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     } else {
                         // 1.13 使用 NMS 的实体 ID, 同时 1.13 版本的 IRegistry.ENTITY_TYPE 无法与 1.14, 1.15, 1.16 版本兼容
                         // 1.13 -> interface IRegistry<T>
-                        writeByte(NMS13IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS13EntityTypes<*>).toByte())
+                        writeByte((NMS13IRegistry.ENTITY_TYPE as NMS13IRegistry<Any>).a(helper.adapt(entityType)).toByte())
                     }
                     writeDouble(location.x)
                     writeDouble(location.y)
@@ -115,7 +115,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeVarInt(entityId)
                     writeUUID(uuid)
                     // 1.14, 1.15, 1.16 -> abstract class IRegistry<T> -> IRegistry 类型发生变化
-                    writeVarInt(NMS16IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS16EntityTypes<*>))
+                    writeVarInt((NMS16IRegistry.ENTITY_TYPE as NMS16IRegistry<Any>).a(helper.adapt(entityType)))
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
@@ -128,7 +128,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 }.build() as NMS16PacketDataSerializer)
             }
             // 1.17, 1.18, 1.19, 1.20, 1.21
-            9, 10, 11, 12, 13 -> {
+            9, 10, 11, 12, 13, 14, 15 -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createSpawnEntity(
                         entityId,
@@ -150,13 +150,13 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                             // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
                             // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
                             9, 10 -> writeVarInt(
-                                NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>)
+                                (NMSIRegistry.ENTITY_TYPE as NMSIRegistry<Any>).getId(helper.adapt(entityType))
                             )
                             // 1.19 写法不同
                             11 -> {
                                 when (minor) {
                                     // 1.19, 1.19.1, 1.19.2 -> this.type = (EntityTypes)var0.readById(IRegistry.ENTITY_TYPE);
-                                    0, 1, 2 -> writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                                    0, 1, 2 -> writeVarInt((NMSIRegistry.ENTITY_TYPE as NMSIRegistry<Any>).getId(helper.adapt(entityType)))
                                     // 1.19.3, 1.19.4       -> this.type = (EntityTypes)var0.readById(BuiltInRegistries.ENTITY_TYPE);
                                     // 注意从该版本开始 RegistryBlocks 的类型发生变化，无法在同一个模块内向下兼容
                                     3, 4 -> writeVarInt(NMS19.instance.entityTypeGetId(helper.adapt(entityType)))
@@ -254,7 +254,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     } else {
                         // 1.13 使用 NMS 的实体 ID, 同时 1.13 版本的 IRegistry.ENTITY_TYPE 无法与 1.14, 1.15, 1.16 版本兼容
                         // 1.13 -> interface IRegistry<T> -> 从 Bukkit 实体 ID 转变为 NMS 实体 ID
-                        writeVarInt(NMS13IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS13EntityTypes<*>))
+                        writeVarInt((NMS13IRegistry.ENTITY_TYPE as NMS13IRegistry<Any>).a(helper.adapt(entityType)))
                     }
                     writeDouble(location.x)
                     writeDouble(location.y)
@@ -274,7 +274,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                     writeVarInt(entityId)
                     writeUUID(uuid)
                     // 1.14, 1.15, 1.16 -> abstract class IRegistry<T> -> IRegistry 类型发生变化
-                    writeVarInt(NMS16IRegistry.ENTITY_TYPE.a(helper.adapt(entityType) as NMS16EntityTypes<*>))
+                    writeVarInt((NMS16IRegistry.ENTITY_TYPE as NMS16IRegistry<Any>).a(helper.adapt(entityType)))
                     writeDouble(location.x)
                     writeDouble(location.y)
                     writeDouble(location.z)
@@ -299,7 +299,7 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 // 1.17, 1.18 写法相同
                 // 1.17 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.fromId(var0.j());
                 // 1.18 -> this.type = (EntityTypes)IRegistry.ENTITY_TYPE.byId(var0.readVarInt());
-                writeVarInt(NMSIRegistry.ENTITY_TYPE.getId(helper.adapt(entityType) as NMSEntityTypes<*>))
+                writeVarInt((NMSIRegistry.ENTITY_TYPE as NMSIRegistry<Any>).getId(helper.adapt(entityType)))
                 writeDouble(location.x)
                 writeDouble(location.y)
                 writeDouble(location.z)
@@ -408,16 +408,18 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
     override fun spawnEntityExperienceOrb(player: Player, entityId: Int, location: Location, amount: Int) {
         // 1.21.8 起 ClientboundAddExperienceOrbPacket 被移除，经验球与其他实体统一走 ClientboundAddEntityPacket 生成
         if (majorLegacy >= 12107) {
-            packetHandler.sendPacket(player, NMS21.instance.createSpawnEntity(
-                entityId,
-                UUID.randomUUID(),
-                location,
-                0f,
-                0f,
-                0,
-                NMS19.instance.entityTypeGetId(helper.adapt(EntityTypes.EXPERIENCE_ORB)),
-                0.0,
-            ))
+            packetHandler.sendPacket(
+                player, NMS21.instance.createSpawnEntity(
+                    entityId,
+                    UUID.randomUUID(),
+                    location,
+                    0f,
+                    0f,
+                    0,
+                    NMS19.instance.entityTypeGetId(helper.adapt(EntityTypes.EXPERIENCE_ORB)),
+                    0.0,
+                )
+            )
         } else if (majorLegacy >= 12100) {
             packetHandler.sendPacket(player, NMS21.instance.createSpawnExperienceOrb(entityId, location, amount))
         } else if (isUniversal) {

@@ -1,6 +1,5 @@
 package ink.ptms.adyeshach.impl.nms.parser
 
-import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.MinecraftMeta
 import ink.ptms.adyeshach.core.MinecraftMetadataParser
 import ink.ptms.adyeshach.impl.nms.DefaultMeta
