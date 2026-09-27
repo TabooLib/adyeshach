@@ -83,6 +83,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 }
             }
         } else {
+            despawn()
             respawn()
         }
     }
