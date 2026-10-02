@@ -4,6 +4,7 @@ import ink.ptms.adyeshach.core.ADYESHACH_PREFIX
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachNetworkAPI
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.impl.entity.trait.impl.TraitCommand
 import ink.ptms.adyeshach.impl.manager.DefaultManagerHandler
 import ink.ptms.adyeshach.module.editor.ChatEditor
 import ink.ptms.adyeshach.module.editor.meta.impl.MetaPrimitive
@@ -17,12 +18,15 @@ import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 import taboolib.expansion.createHelper
 import taboolib.library.xseries.XMaterial
+import taboolib.module.chat.Components
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Type
 import taboolib.platform.util.hasMeta
+import taboolib.platform.util.nextChat
 import taboolib.platform.util.removeMeta
 import taboolib.platform.util.setMeta
 import java.io.File
+import java.util.concurrent.CompletableFuture
 
 @CommandHeader(name = "adyeshachapi", aliases = ["aapi"], permission = "adyeshach.command")
 object CommandAPI {
@@ -239,6 +243,44 @@ object CommandAPI {
             sender.sendMessage("${ADYESHACH_PREFIX}Skin §f\"${file.name}\"§7 not found.")
         }
     }
+
+    @CommandBody
+    val worker = subCommand {
+        dynamic("type") {
+            exec<Player> {
+                val worker = TraitCommand.workers[sender.uniqueId] ?: return@exec
+                val complete = CompletableFuture<Void>()
+                when (ctx["type"].substringBefore(" ")) {
+                    "append" -> {
+                        sender.nextChat {
+                            worker.append(it)
+                            complete.complete(null)
+                        }
+                    }
+
+                    "minus" -> {
+                        worker.take(args.substringAfter(' ').toInt())
+                        complete.complete(null)
+                    }
+
+                    "modify" -> {
+                        val arg = args.substringAfter(' ')
+                        val text = arg.substringAfter('=')
+                        Components.text("当前指令: ").color(java.awt.Color.GRAY)
+                            .append(Components.text(text).color(java.awt.Color.WHITE).hoverText("点击复制指令").clickSuggestCommand(text))
+                            .sendTo(adaptPlayer(sender))
+                        sender.nextChat {
+                            val index = arg.substringBefore('=').toInt()
+                            worker.setIndex(index, it)
+                            complete.complete(null)
+                        }
+                    }
+                }
+                complete.thenAccept { worker.display() }
+            }
+        }
+    }
+
 }
 
 fun CommandSender.isIgnoreNotice(): Boolean {

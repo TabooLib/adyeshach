@@ -39,3 +39,7 @@ Settings:
   # 玩家与单位的交互冷却（毫秒）
   # 左键、右键共用，按玩家计算；0 表示关闭
   interact-cooldown: 1000
+  # 修改绑定指令类型
+  # BOOK: 书本类型
+  # CHAT: 聊天栏类型
+  trait-command: BOOK

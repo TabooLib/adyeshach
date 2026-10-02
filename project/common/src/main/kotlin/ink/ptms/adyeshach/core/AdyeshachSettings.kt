@@ -73,6 +73,9 @@ object AdyeshachSettings {
     var visibleRefreshInterval = 10
         get() = if (field == 0) 10 else field
 
+    @ConfigNode("Settings.trait-command")
+    var traitCommand = "book"
+        get() = field.uppercase()
     /**
      * 单位生成时机
      * JOIN 表示玩家进入游戏时

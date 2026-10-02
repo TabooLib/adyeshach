@@ -135,18 +135,28 @@ internal object DefaultPlayerEvents {
                 if (MinecraftVersion.isUniversal) {
                     // 1.21+的字段变为c了,太操蛋了
                     // nm的缓存傻逼玩意,换了就必须清缓存
-                    val action = if (MinecraftVersion.versionId >= 12005) {
+                    val action = (if (MinecraftVersion.isUnobfuscated) {
+                        packet.read<Any>("hand")
+                    } else if (MinecraftVersion.versionId >= 12005) {
                         packet.read<Any>("action")
                     } else {
                         packet.read("b")
-                    }!!
+                    })!!
 
-                    val actionOrdinal = (action.invokeMethod<Any>("getType") as Enum<*>).ordinal
+                    val actionOrdinal = (try {
+                        action.invokeMethod<Any>("getType")
+                    } catch (_: NoSuchMethodException) {
+                        action
+                    } as Enum<*>).ordinal
 
                     when (actionOrdinal) {
                         // 冒险与生存模式可能只发送不携带命中位置的普通 INTERACT
                         0 -> {
-                            val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
+                            val hand = try {
+                                action.getProperty<Any>("hand")
+                            } catch (_: NoSuchFieldException) {
+                                action
+                            }.toString() == "MAIN_HAND"
                             submit { AdyeshachEntityInteractEvent(entity, player, hand, Vector(0, 0, 0)).call() }
                         }
                         // 左键

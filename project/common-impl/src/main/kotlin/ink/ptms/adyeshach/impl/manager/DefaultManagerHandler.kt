@@ -79,7 +79,7 @@ object DefaultManagerHandler {
                     if (isFirstReport) {
                         isFirstReport = false
                     } else {
-                        entityReport(manager.owner, time)
+                        if (AdyeshachSettings.debug) entityReport(manager.owner, time)
                     }
                 }
             }
