@@ -304,8 +304,20 @@ class NMS21Impl : NMS21 {
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.WEATHERING_COPPER_STATE), WeatheringCopper.a.valueOf(value.name))
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun createCopperGolemStatuePose(index: Int, value: BukkitCopperGolemStatuePose): Any {
-        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.COPPER_GOLEM_STATE), CopperGolemState.valueOf(value.name))
+        // 1.21.11 起姿态枚举移入 animal.golem 包，动态绑定新类并保留旧版本调用路径
+        val pose = if (MinecraftVersion.versionId >= 12111) {
+            dynamic(
+                opcode = DynamicOpcode.INVOKESTATIC,
+                descriptor = "net.minecraft.world.entity.animal.golem.CopperGolemState#valueOf(java.lang.String;)net.minecraft.world.entity.animal.golem.CopperGolemState;",
+                args = arrayOf(value.name),
+            )!!
+        } else {
+            CopperGolemState.valueOf(value.name)
+        }
+        val serializer = DataWatcherRegistry.COPPER_GOLEM_STATE as DataWatcherSerializer<Any>
+        return DataWatcher.Item(DataWatcherObject(index, serializer), pose)
     }
 
     override fun createCowVariant(index: Int, value: BukkitCowVariant): Any {
