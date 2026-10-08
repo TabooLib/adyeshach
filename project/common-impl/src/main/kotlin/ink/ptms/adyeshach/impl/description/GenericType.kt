@@ -6,5 +6,5 @@ package ink.ptms.adyeshach.impl.description
  */
 enum class GenericType {
 
-    INT, FLOAT, BOOLEAN, STRING, BYTE, BYTE_MASKED
+    INT, LONG, FLOAT, BOOLEAN, STRING, BYTE, BYTE_MASKED
 }

@@ -64,5 +64,9 @@ enum class CustomType(val id: String) {
 
     COLOR_PARTICLE("ColorParticle"),
 
+    RESOLVABLE_PROFILE("ResolvableProfile"),
+
+    ZOMBIE_NAUTILUS_VARIANT("ZombieNautilusVariant"),
+
     ;
 }

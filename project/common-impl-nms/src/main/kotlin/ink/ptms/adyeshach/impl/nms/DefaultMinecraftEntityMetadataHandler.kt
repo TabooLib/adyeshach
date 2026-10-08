@@ -25,6 +25,8 @@ import taboolib.library.reflex.Reflex.Companion.invokeConstructor
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.MinecraftVersion.isUniversal
 import taboolib.module.nms.createDataSerializer
+import taboolib.module.nms.remap.DynamicOpcode
+import taboolib.module.nms.remap.dynamic
 import java.util.*
 import java.util.function.Consumer
 
@@ -45,6 +47,7 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     init {
         addParser("Int", IntParser())
+        addParser("Long", LongParser())
         addParser("Byte", ByteParser())
         addParser("Float", FloatParser())
         addParser("Boolean", BooleanParser())
@@ -88,6 +91,10 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
         if (MinecraftVersion.versionId >= 12109) {
             addParser("CopperGolem.WeatherState", CopperGolemWeatherStateParse())
             addParser("CopperGolem.Statue", CopperGolemStatuePoseParser())
+            addParser("ResolvableProfile", ResolvableProfileParser())
+        }
+        if (MinecraftVersion.versionId >= 12111) {
+            addParser("ZombieNautilus.Variant", ZombieNautilusVariantParser())
         }
         // 注册一个事件专门用来处理 generateMetadata 方法中的特殊实体
         @Suppress("UNCHECKED_CAST")
@@ -188,6 +195,19 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
                 NMS16DataWatcherItem(NMS16DataWatcherObject(index, NMS16DataWatcherRegistry.b), value)
             }
         )
+    }
+
+    override fun createLongMeta(index: Int, value: Long): MinecraftMeta {
+        // LONG 序列化器自 1.19.3 起存在（骆驼的 lastPoseChangeTick）
+        if (majorLegacy < 11903) {
+            error("Long metadata is not supported in this version")
+        }
+        // 编译依赖中最早的版本不含 LONG，通过 dynamic 在字节码阶段绑定 Mojang 映射名
+        val serializer = dynamic(
+            DynamicOpcode.GETSTATIC,
+            "net.minecraft.network.syncher.EntityDataSerializers#LONG:net.minecraft.network.syncher.EntityDataSerializer"
+        ) as net.minecraft.network.syncher.DataWatcherSerializer<Any>
+        return DefaultMeta(NMSDataWatcherItem(NMSDataWatcherObject(index, serializer), value))
     }
 
     override fun createFloatMeta(index: Int, value: Float): MinecraftMeta {
@@ -686,6 +706,14 @@ class DefaultMinecraftEntityMetadataHandler : MinecraftEntityMetadataHandler {
 
     override fun createCowVariantMeta(index: Int, value: BukkitCowVariant): MinecraftMeta {
         return DefaultMeta(NMS21.instance.createCowVariant(index, value))
+    }
+
+    override fun createZombieNautilusVariantMeta(index: Int, value: BukkitZombieNautilusVariant): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createZombieNautilusVariant(index, value))
+    }
+
+    override fun createResolvableProfileMeta(index: Int, value: String): MinecraftMeta {
+        return DefaultMeta(NMS21.instance.createResolvableProfile(index, value))
     }
 
     fun jsonToChatBaseComponent(message: String): Any? {

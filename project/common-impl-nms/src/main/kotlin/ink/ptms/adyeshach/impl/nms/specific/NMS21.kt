@@ -155,6 +155,16 @@ interface NMS21 {
 
     fun createCowVariant(index: Int, value: BukkitCowVariant): Any
 
+    /**
+     * 创建僵尸鹦鹉螺变种数据（1.21.11+）
+     */
+    fun createZombieNautilusVariant(index: Int, value: BukkitZombieNautilusVariant): Any
+
+    /**
+     * 创建假人皮肤档案数据（1.21.9+）
+     */
+    fun createResolvableProfile(index: Int, value: String): Any
+
     fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean
 
     fun createAttribute(entityId: Int, attributes: Map<XAttribute, Double>): Any

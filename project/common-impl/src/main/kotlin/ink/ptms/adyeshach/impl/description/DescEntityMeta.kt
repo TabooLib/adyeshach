@@ -184,6 +184,8 @@ class DescEntityMeta(input: InputStream) : Description(input) {
         return when {
             // integer
             value == "i" -> PrepareMetaTypeGeneric(GenericType.INT)
+            // long
+            value == "l" -> PrepareMetaTypeGeneric(GenericType.LONG)
             // float
             value == "f" -> PrepareMetaTypeGeneric(GenericType.FLOAT)
             // boolean

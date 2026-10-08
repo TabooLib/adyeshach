@@ -155,7 +155,7 @@ ink.ptms.adyeshach.core.entity.type.AdyCamel
     isDashing z
         &camel0
         20 18
-    lastPoseChangeTick i
+    lastPoseChangeTick l
         &camel0
         ~
 
@@ -1137,3 +1137,35 @@ ink.ptms.adyeshach.core.entity.type.AdyCow
     cowVariant !CowVariant
         &cow0
         17
+
+ink.ptms.adyeshach.core.entity.type.AdyHappyGhast
+    isLeashHolder z
+        &happy_ghast0
+        17
+    staysStill z
+        &happy_ghast0
+        18
+
+ink.ptms.adyeshach.core.entity.type.AdyNautilus
+    isDashing z
+        &nautilus0
+        19
+
+ink.ptms.adyeshach.core.entity.type.AdyZombieNautilus
+    zombieNautilusVariant !ZombieNautilusVariant
+        &zombie_nautilus0
+        20
+
+ink.ptms.adyeshach.core.entity.type.AdyMannequin
+    skinCape 1b true | skinJacket 2b true | skinLeftSleeve 4b true | skinRightSleeve 8b true | skinLeftPants 16b true | skinRightPants 32b true | skinHat 64b true
+        &mannequin0
+        16
+    profileName !ResolvableProfile
+        &mannequin1
+        17
+    immovable z
+        &mannequin1
+        18
+    description !OptChat
+        &mannequin1
+        19

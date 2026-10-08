@@ -161,4 +161,13 @@ enum class EntityTypes {
     CREAKING, // 嘎枝
     FISHING_BOBBER, // 浮漂
     COPPER_GOLEM, // 铜傀儡
+    HAPPY_GHAST, // 快乐恶魂
+    NAUTILUS, // 鹦鹉螺
+    ZOMBIE_NAUTILUS, // 僵尸鹦鹉螺
+    CAMEL_HUSK, // 尸壳骆驼
+    PARCHED, // 焦骸
+    MANNEQUIN, // 假人
+    BREEZE_WIND_CHARGE, // 旋风人风弹
+    LINGERING_POTION, // 滞留药水
+    LIGHTNING_BOLT, // 闪电
 }

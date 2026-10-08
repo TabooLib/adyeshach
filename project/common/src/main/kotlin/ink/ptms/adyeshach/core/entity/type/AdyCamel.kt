@@ -15,10 +15,14 @@ interface AdyCamel : AdyHorseBase {
     }
 
     fun setLastPoseChangeTick(lastPoseChangeTick: Int) {
+        setLastPoseChangeTick(lastPoseChangeTick.toLong())
+    }
+
+    fun setLastPoseChangeTick(lastPoseChangeTick: Long) {
         setMetadata("lastPoseChangeTick", lastPoseChangeTick)
     }
 
-    fun getLastPoseChangeTick(): Int {
+    fun getLastPoseChangeTick(): Long {
         return getMetadata("lastPoseChangeTick")
     }
 }

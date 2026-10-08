@@ -29,6 +29,7 @@ import net.minecraft.world.entity.Relative
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.animal.armadillo.Armadillo
 import net.minecraft.world.entity.animal.coppergolem.CopperGolemState
+import net.minecraft.world.item.component.ResolvableProfile
 import net.minecraft.world.level.block.WeatheringCopper
 import net.minecraft.world.phys.Vec3D
 import net.minecraft.world.scores.Scoreboard
@@ -328,6 +329,35 @@ class NMS21Impl : NMS21 {
         }
         val variant = CraftCow.CraftVariant.bukkitToMinecraft(type)
         return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.COW_VARIANT), variant.direct())
+    }
+
+    /** 僵尸鹦鹉螺变种序列化器（1.21.11 新增，编译映射中不存在，需通过 dynamic 绑定） */
+    private val zombieNautilusVariantSerializer by lazy {
+        dynamic(
+            DynamicOpcode.GETSTATIC,
+            "net.minecraft.network.syncher.EntityDataSerializers#ZOMBIE_NAUTILUS_VARIANT:net.minecraft.network.syncher.EntityDataSerializer"
+        ) as DataWatcherSerializer<Any>
+    }
+
+    /** Bukkit 变种类与转换方法（反射获取，避免依赖 1.21.11 的 API） */
+    private val zombieNautilusVariantConverter by lazy {
+        val variantClass = Class.forName("org.bukkit.entity.ZombieNautilus\$Variant")
+        val craftClass = Class.forName("${Bukkit.getServer().javaClass.`package`.name}.entity.CraftZombieNautilus\$CraftVariant")
+        variantClass to craftClass.getMethod("bukkitToMinecraftHolder", variantClass)
+    }
+
+    override fun createZombieNautilusVariant(index: Int, value: BukkitZombieNautilusVariant): Any {
+        val (variantClass, method) = zombieNautilusVariantConverter
+        val variant = variantClass.getField(value.name).get(null)
+        return DataWatcher.Item(DataWatcherObject(index, zombieNautilusVariantSerializer), method.invoke(null, variant)!!)
+    }
+
+    override fun createResolvableProfile(index: Int, value: String): Any {
+        val profile = when {
+            value.isEmpty() -> ResolvableProfile.createResolved(GameProfile(UUID(0, 0), ""))
+            else -> runCatching { ResolvableProfile.createUnresolved(UUID.fromString(value)) }.getOrElse { ResolvableProfile.createUnresolved(value) }
+        }
+        return DataWatcher.Item(DataWatcherObject(index, DataWatcherRegistry.RESOLVABLE_PROFILE), profile)
     }
 
     override fun isChunkSent(player: Player, chunkX: Int, chunkZ: Int): Boolean {

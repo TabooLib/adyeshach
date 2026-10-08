@@ -35,7 +35,7 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: Stri
         var bits = 0
         val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: return null
         entityInstance.getAvailableEntityMeta().filter { it.index == index && it is MetaMasked<*> }.forEach {
-            event.byteMask[it as MetaMasked<*>] = byteMask[it.key] == true
+            event.byteMask[it as MetaMasked<*>] = byteMask[it.key] ?: (it.def as Boolean)
         }
         val eventBus = DefaultAdyeshachAPI.localEventBus
         if (eventBus.callMaskedMetaGenerate(event)) {
@@ -54,7 +54,7 @@ class DefaultMetaMasked<T : EntityInstance>(index: Int, key: String, group: Stri
         var bits = 0
         val byteMask = entityInstance.metadataMask[entityInstance.getByteMaskKey(index)] ?: error("Meta not supported")
         entityInstance.getAvailableEntityMeta().filter { it.index == index && it is MetaMasked<*> }.forEach {
-            generateByteMask[it as MetaMasked<*>] = byteMask[it.key] == true
+            generateByteMask[it as MetaMasked<*>] = byteMask[it.key] ?: (it.def as Boolean)
         }
         generateByteMask.filter { it.value }.forEach { (k, _) -> bits += k.mask }
         return parser.createMeta(index, bits.toByte())

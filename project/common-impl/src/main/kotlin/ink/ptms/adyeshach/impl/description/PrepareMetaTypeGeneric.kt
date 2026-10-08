@@ -4,6 +4,7 @@ import taboolib.common5.cbool
 import taboolib.common5.cbyte
 import taboolib.common5.cfloat
 import taboolib.common5.cint
+import taboolib.common5.clong
 
 /**
  * @author 坏黑
@@ -14,6 +15,7 @@ class PrepareMetaTypeGeneric(val type: GenericType) : PrepareMetaType {
     override fun parse(name: String, args: List<String>): PrepareMeta {
         return when (type) {
             GenericType.INT -> PrepareMetaNatural(name, args.getOrNull(1).cint, "Int")
+            GenericType.LONG -> PrepareMetaNatural(name, args.getOrNull(1).clong, "Long")
             GenericType.FLOAT -> PrepareMetaNatural(name, args.getOrNull(1).cfloat, "Float")
             GenericType.BOOLEAN -> PrepareMetaNatural(name, args.getOrNull(1).cbool, "Boolean")
             GenericType.STRING -> PrepareMetaNatural(name, args.getOrNull(1) ?: "", "String")

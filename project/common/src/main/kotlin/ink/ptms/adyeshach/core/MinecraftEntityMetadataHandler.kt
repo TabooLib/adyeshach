@@ -69,6 +69,11 @@ interface MinecraftEntityMetadataHandler {
     fun createIntMeta(index: Int, value: Int): MinecraftMeta
 
     /**
+     * 生成 Long 类型的元数据，对应 LONG 字段（1.19.3+）
+     */
+    fun createLongMeta(index: Int, value: Long): MinecraftMeta
+
+    /**
      * 生成 Float 类型的元数据，对应 FLOAT 字段
      */
     fun createFloatMeta(index: Int, value: Float): MinecraftMeta
@@ -221,4 +226,15 @@ interface MinecraftEntityMetadataHandler {
      * 生成 Cow 变种元数据,对应 Cow.Variant 字段
      */
     fun createCowVariantMeta(index: Int, value: BukkitCowVariant): MinecraftMeta
+
+    /**
+     * 生成 ZombieNautilus 变种元数据，对应 ZombieNautilus.Variant 字段（1.21.11+）
+     */
+    fun createZombieNautilusVariantMeta(index: Int, value: BukkitZombieNautilusVariant): MinecraftMeta
+
+    /**
+     * 生成 ResolvableProfile 元数据，对应 Mannequin 的皮肤档案字段（1.21.9+）
+     * 传入玩家名或 UUID，为空时使用无皮肤的空档案
+     */
+    fun createResolvableProfileMeta(index: Int, value: String): MinecraftMeta
 }
