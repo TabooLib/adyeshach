@@ -19,7 +19,6 @@ import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
-import taboolib.common.platform.function.submitAsync
 import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.library.xseries.XAttribute
@@ -330,7 +329,9 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             val finder = Adyeshach.api().getEntityFinder()
             var i = 0L
             onlinePlayers.forEach {
-                submitAsync(delay = i++) {
+                // 必须在主线程执行：异步发出的 remove/add 玩家信息包可能插入主线程 "添加玩家信息 → 生成实体" 之间，
+                // 客户端收到生成包时找不到玩家信息会直接丢弃该实体，而服务端仍认为可见
+                submit(delay = i++) {
                     finder.getVisibleEntities(it).filterIsInstance<AdyHuman>().forEach { human ->
                         human.refreshPlayerInfo(it)
                     }
