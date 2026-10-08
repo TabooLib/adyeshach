@@ -11,8 +11,10 @@ import ink.ptms.adyeshach.core.util.modify
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
 import ink.ptms.adyeshach.impl.entity.controller.BionicSight
+import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.Location
 import org.bukkit.util.Vector
+import kotlin.math.floor
 
 /**
  * Adyeshach
@@ -71,17 +73,20 @@ open class PositionHandler(protected val self: DefaultEntityInstance) {
         // 强制传送
         if (self.tag.containsKey(StandardTags.FORCE_TELEPORT)) {
             self.tag.remove(StandardTags.FORCE_TELEPORT)
-        } else if (newPosition == previousPosition) {
-            // 如果坐标没变则不做处理
+        } else if (newPosition == previousClientPosition) {
+            // 与最新目标坐标相同则不做处理
+            // 不能与 position 比较：位移同步前 position 仍是旧坐标，传回原位会被误判为未移动而丢弃
             return
         }
         // 是否切换世界
         val worldChanged = previousPosition.world != newPosition.world
         // 是否发生实质性位置变更
-        val isMoved = worldChanged || previousPosition.x != newPosition.x || previousPosition.y != newPosition.y || previousPosition.z != newPosition.z
+        val isMoved = worldChanged || previousClientPosition.x != newPosition.x || previousClientPosition.y != newPosition.y || previousClientPosition.z != newPosition.z
         // teleport 是整体位姿写入，目标 yaw 必须覆盖身体 yaw，避免头身分离。
         applyRuntimeBodyYaw(newPosition.yaw)
+        // 目标区块未加载时 onTick 不会执行位移同步，position 会一直停留在旧坐标，因此直接传送
         val syncPositionByMovement = !worldChanged && self.manager is TickService && self.allowSyncPosition()
+                && ChunkAccess.getChunkAccess(newPosition.world).isChunkLoaded(floor(newPosition.x).toInt() shr 4, floor(newPosition.z).toInt() shr 4)
         if (worldChanged) {
             // 跨世界：先销毁旧世界状态，再同时写 position/clientPosition 为目标，随后在目标世界重新 spawn
             // 不能先用旧 clientPosition respawn，也不能发送跨世界 teleport 包

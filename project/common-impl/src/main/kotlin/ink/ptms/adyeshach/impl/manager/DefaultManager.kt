@@ -107,6 +107,20 @@ open class DefaultManager : BaseManager() {
         }
     }
 
+    /**
+     * 按服务端记录销毁指定玩家当前可见的实体
+     * 玩家切换维度后客户端会整体重建世界，旧实体已全部失效，需先清除可见记录才能重新生成。
+     *
+     * @param player 需要重置的玩家
+     */
+    open fun resetVisible(player: Player) {
+        activeEntity.forEach {
+            if (!it.isCompanion() && it.isVisibleViewer(player)) {
+                it.visible(player, false)
+            }
+        }
+    }
+
     override fun onTick() {
         // 优化：只遍历有可见玩家的实体，而不是全部实体
         tickableEntities.forEach {

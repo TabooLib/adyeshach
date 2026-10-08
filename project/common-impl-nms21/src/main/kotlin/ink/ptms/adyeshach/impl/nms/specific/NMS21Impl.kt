@@ -142,10 +142,12 @@ class NMS21Impl : NMS21 {
     }
 
     override fun createTeleport(entityId: Int, location: Location, yaw: Byte, pitch: Byte, onGround: Boolean): Any {
+        // 坐标为绝对值，不能标记 Relative：客户端会把坐标叠加到当前位置上，
+        // 同一 tick 内连续传送时偏差会累积，后续的位置同步包也无法纠正。
         return PacketPlayOutEntityTeleport(
             entityId, PositionMoveRotation(
-                Vec3D(location.x, location.y, location.z), Vec3D(location.x, location.y, location.z), ifloor(yaw * 256.0 / 360.0).toFloat(), pitch.toFloat()
-            ), setOf(Relative.X, Relative.Y, Relative.Z), onGround
+                Vec3D(location.x, location.y, location.z), Vec3D(0.0, 0.0, 0.0), ifloor(yaw * 256.0 / 360.0).toFloat(), pitch.toFloat()
+            ), emptySet<Relative>(), onGround
         )
     }
 

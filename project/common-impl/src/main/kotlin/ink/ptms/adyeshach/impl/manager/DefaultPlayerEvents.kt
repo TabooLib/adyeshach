@@ -100,8 +100,25 @@ internal object DefaultPlayerEvents {
      */
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerChangedWorldEvent) {
-        // 下一主线程 tick 再 checkVisible，避免与传送当帧状态竞态
-        submit(delay = 1) { syncVisibleAfterTeleport(e.player) }
+        // 下一主线程 tick 再处理，避免与传送当帧状态竞态
+        submit(delay = 1) { resyncVisibleAfterWorldChange(e.player) }
+    }
+
+    /**
+     * 玩家切换世界后重建可见状态
+     * 客户端切换维度会丢弃全部实体；若玩家在本次处理前已回到原世界（同 tick 或其他插件抢先的往返传送），
+     * 仅按距离复查会认为实体仍然可见而不再补发。因此先按服务端记录销毁，再按当前位置重新生成。
+     *
+     * @param player 已切换世界的玩家
+     */
+    fun resyncVisibleAfterWorldChange(player: Player) {
+        if (!player.isOnline) {
+            return
+        }
+        DefaultAdyeshachBooster.api.localPublicEntityManager.resetVisible(player)
+        DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.resetVisible(player)
+        DefaultAdyeshachAPI.playerEntityTemporaryManagerMap[player]?.resetVisible(player)
+        syncVisibleAfterTeleport(player)
     }
 
     /**
