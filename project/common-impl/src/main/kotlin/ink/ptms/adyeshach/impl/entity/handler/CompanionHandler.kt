@@ -83,7 +83,9 @@ open class CompanionHandler(protected val self: DefaultEntityInstance) {
     }
 
     open fun isCompanion(): Boolean {
-        return hasHost()
+        // 宿主无法解析时（宿主已删除、位于其他管理器且缓存失效等）按普通实体处理：
+        // 伴生不参与独立可见性检查，宿主缺失时会永久不可见
+        return getHost() != null
     }
 
     open fun getCompanions(): List<EntityInstance> {
