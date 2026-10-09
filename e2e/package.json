@@ -1,0 +1,15 @@
+{
+  "name": "adyeshach-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Adyeshach 端到端测试：Paper 测试服 + Calcite 驱动的真实客户端",
+  "scripts": {
+    "test": "node --test --test-concurrency=1"
+  },
+  "devDependencies": {
+    "@bkm016/calcite": "^0.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
