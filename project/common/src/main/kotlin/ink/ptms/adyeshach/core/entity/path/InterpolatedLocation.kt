@@ -30,9 +30,9 @@ open class InterpolatedLocation(val world: World, val target: Location, frames: 
     var d = 0
         private set
 
-    /** 是否到达目的地 */
+    /** 是否到达目的地（最后一帧 length 也需要走完） */
     open fun isArrived(): Boolean {
-        return index >= length
+        return index > length
     }
 
     /** 重置进度 */

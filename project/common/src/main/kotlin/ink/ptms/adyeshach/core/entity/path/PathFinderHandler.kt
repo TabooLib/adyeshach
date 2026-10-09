@@ -16,6 +16,7 @@ import taboolib.module.navigation.PathSmoothing
 import taboolib.module.navigation.RandomPositionGenerator
 import taboolib.module.navigation.createPathfinder
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.abs
 
 /**
  * @author sky
@@ -103,8 +104,8 @@ object PathFinderHandler {
                     // 如果路径的最后一个点不是目的地
                     val last = pointList.last()
                     if (last.blockX != target.blockX || last.blockZ != target.blockZ) {
-                        // 如果高度相同，距离为 1
-                        if (last.blockY == target.blockY && last.distance(Vector(target.blockX, target.blockY, target.blockZ)) == 1.0) {
+                        // 如果高度相同且与目的地相邻（last 已居中，按方块坐标比较）
+                        if (last.blockY == target.blockY && abs(last.blockX - target.blockX) + abs(last.blockZ - target.blockZ) == 1) {
                             // 添加目的地（居中）
                             pointList.add(Vector(target.blockX + 0.5, target.blockY.toDouble(), target.blockZ + 0.5))
                         }

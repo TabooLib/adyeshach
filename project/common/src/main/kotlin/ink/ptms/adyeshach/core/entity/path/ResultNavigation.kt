@@ -28,13 +28,14 @@ class ResultNavigation(val pointList: MutableList<Vector>, beginTime: Long = 0, 
                 val timeInterval = point.clone().subtract(prevPoint).length() / moveSpeed
                 tick += timeInterval.toInt()
             }
-            interpolatedLocation.addPoint(tick, point.clone().add(Vector(0.5, 0.0, 0.5)))
+            // 路径点已是方块底面中心（PathSmoothing）或调用方给出的精确坐标，原样使用
+            interpolatedLocation.addPoint(tick, point.clone())
             prevPoint = point
         }
         // 调试模式下将显示路径节点
         if (AdyeshachSettings.debug) {
             for (point in pointList) {
-                world.spawnParticle(org.bukkit.Particle.END_ROD, point.x + 0.5, point.y, point.z + 0.5, 10, 0.0, 0.0, 0.0, 0.0)
+                world.spawnParticle(org.bukkit.Particle.END_ROD, point.x, point.y, point.z, 10, 0.0, 0.0, 0.0, 0.0)
             }
             var i = 0
             while (i < interpolatedLocation.length) {
