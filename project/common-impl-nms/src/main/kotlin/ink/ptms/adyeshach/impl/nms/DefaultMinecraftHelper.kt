@@ -172,7 +172,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS21.instance.isChunkSent(player, chunkX, chunkZ) }
         },
         // 你改你妈个🥚，我爱说实话
-        versionStrategy("nms20-player-chunk-loader", guard = { MinecraftVersion.versionId >= 12000 }) {
+        versionStrategy("nms20-player-chunk-loader", guard = { MinecraftVersion.versionId >= 12004 }) {
             nmsClass("WorldServer").unsafeInstance().getProperty<Any>("playerChunkLoader")
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int -> NMS20p.instance.isChunkSent(player, chunkX, chunkZ) }
         },
@@ -182,7 +182,7 @@ class DefaultMinecraftHelper : MinecraftHelper {
             nmsClass("WorldServer").unsafeInstance().invokeMethod<Any>("getChunkSource")
             return@versionStrategy { player: Player, chunkX: Int, chunkZ: Int ->
                 val craftWorld = player.world as CraftWorld19
-                NMS19p.instance.isChunkSent(player, craftWorld.handle.chunkSource.chunkMap, chunkX, chunkZ)
+                NMS19p.instance.isChunkSent(player, craftWorld.handle, chunkX, chunkZ)
             }
         },
         // 从 1.18 开始 getVisibleChunk -> getVisibleChunkIfPresent，getChunkProvider -> getChunkSource。
