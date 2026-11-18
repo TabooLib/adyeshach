@@ -73,8 +73,8 @@ class DefaultMinecraftScoreboardOperator : MinecraftScoreboardOperator {
                     }
                 }.build() as NMS13PacketDataSerializer)
             }
-            // 1.17, 1.18, 1.19, 1.20
-            9, 10, 11, 12, 13 -> {
+            // 1.17, 1.18, 1.19, 1.20, 1.21, 26.x 及以后
+            in 9..Int.MAX_VALUE -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createTeam(team, method)
                 } else {
