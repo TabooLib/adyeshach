@@ -7,9 +7,9 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerJoinEvent
 import ink.ptms.adyeshach.core.util.safeDistance
+import ink.ptms.adyeshach.core.util.submitEntity
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,12 +20,11 @@ import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
-import taboolib.platform.util.bukkitPlugin
 import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -44,11 +43,12 @@ internal object DefaultPlayerEvents {
     fun onActive() {
         // 释放玩家的数据包缓冲区
         val packetHandler = Adyeshach.api().getMinecraftAPI().getPacketHandler()
-        Bukkit.getScheduler().runTaskTimerAsynchronously(bukkitPlugin, Runnable {
+        // Folia 不支持 BukkitScheduler，使用 TabooLib 异步调度（非 Folia 下同样为 runTaskTimerAsynchronously）
+        submitAsync(delay = 1, period = 1) {
             onlinePlayers.forEach {
                 packetHandler.flush(it)
             }
-        }, 1, 1)
+        }
     }
 
     /**
@@ -58,7 +58,7 @@ internal object DefaultPlayerEvents {
     fun onJoin(e: PlayerJoinEvent) {
         if (AdyeshachSettings.spawnTrigger == SpawnTrigger.JOIN) {
             // 延迟初始化
-            submit(delay = AdyeshachSettings.spawnDelay.toLong()) {
+            e.player.submitEntity(delay = AdyeshachSettings.spawnDelay.toLong()) {
                 Adyeshach.api().setupEntityManager(e.player)
             }
         }
@@ -91,7 +91,7 @@ internal object DefaultPlayerEvents {
     fun onTeleport(e: PlayerTeleportEvent) {
         if (e.from.world == e.to.world && e.from.distance(e.to) > AdyeshachSettings.visibleDistance) {
             // 下一主线程 tick 再 checkVisible，避免与传送当帧状态竞态
-            submit(delay = 1) { syncVisibleAfterTeleport(e.player) }
+            e.player.submitEntity(delay = 1) { syncVisibleAfterTeleport(e.player) }
         }
     }
 
@@ -101,7 +101,7 @@ internal object DefaultPlayerEvents {
     @SubscribeEvent(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onTeleport(e: PlayerChangedWorldEvent) {
         // 下一主线程 tick 再处理，避免与传送当帧状态竞态
-        submit(delay = 1) { resyncVisibleAfterWorldChange(e.player) }
+        e.player.submitEntity(delay = 1) { resyncVisibleAfterWorldChange(e.player) }
     }
 
     /**
@@ -174,18 +174,18 @@ internal object DefaultPlayerEvents {
                             } catch (_: NoSuchFieldException) {
                                 action
                             }.toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, player, hand, Vector(0, 0, 0)).call() }
+                            player.submitEntity { AdyeshachEntityInteractEvent(entity, player, hand, Vector(0, 0, 0)).call() }
                         }
                         // 左键
                         1 -> {
-                            submit { AdyeshachEntityDamageEvent(entity, player).call() }
+                            player.submitEntity { AdyeshachEntityDamageEvent(entity, player).call() }
                         }
                         // 右键
                         2 -> {
                             val location = kotlin.runCatching { action.getProperty<Any>("location") }.getOrNull()!!
                             val vector = Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(location)
                             val hand = action.getProperty<Any>("hand").toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
+                            player.submitEntity { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
                         }
                     }
                 } else {
@@ -193,14 +193,14 @@ internal object DefaultPlayerEvents {
                     // 通过字符串判断点击方式
                     when (packet.read<Any>("action")!!.toString()) {
                         "ATTACK" -> {
-                            submit { AdyeshachEntityDamageEvent(entity, player).call() }
+                            player.submitEntity { AdyeshachEntityDamageEvent(entity, player).call() }
                         }
 
                         "INTERACT_AT" -> {
                             val location = packet.read<Any>("c")
                             val vector = location?.let { Adyeshach.api().getMinecraftAPI().getHelper().vec3dToVector(it) } ?: Vector(0, 0, 0)
                             val hand = packet.read<Any>("d").toString() == "MAIN_HAND"
-                            submit { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
+                            player.submitEntity { AdyeshachEntityInteractEvent(entity, player, hand, vector).call() }
                         }
                     }
                 }

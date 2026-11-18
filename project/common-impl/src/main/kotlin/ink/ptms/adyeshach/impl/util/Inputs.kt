@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.impl.util
 
+import ink.ptms.adyeshach.core.util.submitEntity
 import ink.ptms.adyeshach.core.Adyeshach
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.platform.util.buildBook
 import taboolib.platform.util.giveItem
@@ -49,7 +49,7 @@ object Inputs {
                 legacyText.split("\n")
             }
             listen.accept(lines)
-            submit(delay = 1) {
+            e.player.submitEntity(delay = 1) {
                 e.player.inventory.takeItem(99) { it.itemMeta == e.newBookMeta }
             }
         }

@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.module.editor
 
+import ink.ptms.adyeshach.core.util.submitEntity
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachEditor
 import ink.ptms.adyeshach.core.entity.EntityInstance
@@ -10,7 +11,6 @@ import ink.ptms.adyeshach.module.editor.page.Page
 import org.bukkit.entity.Player
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
-import taboolib.common.platform.function.submit
 import taboolib.common.util.resettableLazy
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
@@ -58,7 +58,7 @@ object ChatEditor : AdyeshachEditor {
     fun refresh(player: Player) {
         val page = player.getMetaFirstOrNull("adyeshach_last_open")?.value() as? Page
         val index = player.getMetaFirstOrNull("adyeshach_last_open_index")?.value() as? Int
-        submit(MinecraftVersion.major <= 12, delay = 1) {
+        player.submitEntity(MinecraftVersion.major <= 12, delay = 1) {
             page?.open(index ?: 0)
         }
     }

@@ -8,6 +8,9 @@ import ink.ptms.adyeshach.core.entity.path.PathFinderHandler
 import ink.ptms.adyeshach.core.entity.path.ResultNavigation
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.util.plus
+import ink.ptms.adyeshach.core.util.runInEntityRegion
+import ink.ptms.adyeshach.core.util.submitEntity
+import ink.ptms.adyeshach.impl.util.runOnEntityThread
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.ChunkAccess
 import org.bukkit.*
@@ -17,7 +20,6 @@ import org.bukkit.inventory.EquipmentSlot
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
-import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.warning
 import taboolib.common5.clong
 import taboolib.library.xseries.XMaterial
@@ -43,22 +45,29 @@ object TraitPatrol : Trait() {
     @Schedule(period = 2, async = true)
     fun process() {
         data.getKeys(false).forEach {
-            val entity = Adyeshach.api().getEntityFinder().getEntityFromUniqueId(it)
+            val entity = Adyeshach.api().getEntityFinder().getEntityFromUniqueId(it) ?: return@forEach
+            // Folia：在实体所属线程处理（非 Folia 保持在当前异步线程直接执行）
+            entity.runOnEntityThread { processPatrol(entity) }
+        }
+    }
+
+    private fun processPatrol(entity: EntityInstance) {
+        run {
             // 触发巡逻的前提 —— 不在编辑模式、不在移动、存在观察者
-            if (entity != null && !entity.isEditing() && !entity.hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START) && entity.hasViewer()) {
+            if (!entity.isRemoved && !entity.isEditing() && !entity.hasTag(StandardTags.IS_MOVING, StandardTags.IS_MOVING_START) && entity.hasViewer()) {
                 // 获取所有节点
                 val nodes = entity.getTraitPatrolNodes()
                 if (nodes.isEmpty()) {
-                    return@forEach
+                    return
                 }
                 // 设置等待
                 if (entity.getTag(PATROL_NEXT_MOVE) == null) {
                     entity.setTag(PATROL_NEXT_MOVE, System.currentTimeMillis() + entity.getTraitPatrolWaitTime())
-                    return@forEach
+                    return
                 }
                 // 等待移动
                 if (entity.getTag(PATROL_NEXT_MOVE).clong > System.currentTimeMillis()) {
-                    return@forEach
+                    return
                 }
                 // 获取节点序号
                 val index = entity.getNodeIndex()
@@ -84,6 +93,13 @@ object TraitPatrol : Trait() {
     @Schedule(period = 20, async = true)
     fun edit() {
         Bukkit.getOnlinePlayers().forEach { player ->
+            // Folia：粒子与全息需要在玩家所属线程处理（非 Folia 保持在当前异步线程直接执行）
+            player.runInEntityRegion { showEditNodes(player) }
+        }
+    }
+
+    private fun showEditNodes(player: Player) {
+        run {
             if (editCacheMap.containsKey(player.name)) {
                 val entity = editCacheMap[player.name]!!
                 val nodes = entity.getTraitPatrolNodes()
@@ -102,7 +118,7 @@ object TraitPatrol : Trait() {
                     // 节点全息
                     val hologram = Adyeshach.api().getHologramHandler().createHologram(player, pos.clone().plus(0.5, 1.0, 0.5), listOf("#${i + 1}"))
                     // 延迟删除
-                    submit(delay = 20) { hologram.remove() }
+                    player.submitEntity(delay = 20) { hologram.remove() }
                 }
                 language.sendLang(player, "trait-patrol", entity.getTraitPatrolNodeCount())
             }
@@ -321,7 +337,7 @@ fun Location.toInterpolatedLocation(to: Location, moveSpeed: Double): Completabl
         }
         // 修正路径高度
         val chunkAccess = ChunkAccess.getChunkAccess(world)
-        it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighest(p.x, p.y, p.z) }
+        it.pointList.forEach { p -> p.y = chunkAccess.getBlockHighestOrNull(p.x, p.y, p.z) ?: p.y }
         // 返回移动路径
         future.complete(it.toInterpolated(world, moveSpeed, to))
     }

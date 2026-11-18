@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.manager
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.AdyeshachParallelTask
 import ink.ptms.adyeshach.core.AdyeshachSettings
+import ink.ptms.adyeshach.core.util.FoliaSupport
 import ink.ptms.adyeshach.core.util.safeDistance
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
@@ -68,6 +69,12 @@ object DefaultManagerHandler {
         }
         // Tick
         submit(period = 1) {
+            // Folia：本任务运行在全局区域线程，只负责把实体分发到所属线程执行 tick
+            // 公有实体与私有多人观察实体使用区块线程，私有实体使用观察者（所有者）的实体线程
+            if (FoliaSupport.isFolia) {
+                FoliaEntityTicker.tick()
+                return@submit
+            }
             // 公共管理器
             DefaultAdyeshachBooster.api.localPublicEntityManager.onTick()
             DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary.onTick()

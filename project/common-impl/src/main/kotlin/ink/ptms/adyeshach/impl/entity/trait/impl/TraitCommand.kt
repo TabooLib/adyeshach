@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.trait.impl
 
+import ink.ptms.adyeshach.core.util.runInGlobalRegion
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.event.AdyeshachEntityDamageEvent
@@ -15,7 +16,6 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.platform.function.console
-import taboolib.common.platform.function.submit
 import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 import taboolib.module.kether.KetherShell
@@ -98,11 +98,15 @@ object TraitCommand : Trait() {
                 }
                 // 服务器控制台执行
                 line.startsWith("server:") -> {
-                    console().performCommand(line.substringAfter("server:").format())
+                    // Folia：控制台命令在全局区域线程执行
+                    val command = line.substringAfter("server:").format()
+                    runInGlobalRegion { console().performCommand(command) }
                 }
                 // 服务器控制台执行
                 line.startsWith("console:") -> {
-                    console().performCommand(line.substringAfter("console:").format())
+                    // Folia：控制台命令在全局区域线程执行
+                    val command = line.substringAfter("console:").format()
+                    runInGlobalRegion { console().performCommand(command) }
                 }
                 // Kether 脚本执行
                 line.startsWith("kether:") -> {

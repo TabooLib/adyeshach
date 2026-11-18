@@ -2,6 +2,8 @@ package ink.ptms.adyeshach.core.entity.path
 
 import ink.ptms.adyeshach.core.AdyeshachSettings
 import ink.ptms.adyeshach.core.entity.type.errorBy
+import ink.ptms.adyeshach.core.util.FoliaSupport
+import ink.ptms.adyeshach.core.util.submitInRegion
 import org.bukkit.Location
 import org.bukkit.util.Consumer
 import org.bukkit.util.Vector
@@ -10,6 +12,7 @@ import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
+import taboolib.common.platform.service.PlatformExecutor
 import taboolib.common5.util.getStackTraceString
 import taboolib.module.navigation.NodeEntity
 import taboolib.module.navigation.PathSmoothing
@@ -81,7 +84,9 @@ object PathFinderHandler {
         // 请求发起时间
         val startTime = System.currentTimeMillis()
         // 是否同步执行代码
-        submit(async = !AdyeshachSettings.pathfinderSync) {
+        // Folia 不允许在异步线程中读取方块，寻路始终以起点为锚点在所属区域线程中执行（非 Folia 同步模式即主线程）
+        val sync = AdyeshachSettings.pathfinderSync || FoliaSupport.isFolia
+        val executor: PlatformExecutor.PlatformTask.() -> Unit = {
             // 请求开始时间
             val scheduleTime = System.currentTimeMillis()
             // 寻路请求
@@ -125,6 +130,11 @@ object PathFinderHandler {
                     call.accept(ResultRandomPosition(vec!!, startTime, scheduleTime))
                 }
             }
+        }
+        if (sync) {
+            submitInRegion(start, executor = executor)
+        } else {
+            submit(async = true, executor = executor)
         }
     }
 }

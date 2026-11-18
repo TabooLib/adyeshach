@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.module.editor.meta.impl
 
+import ink.ptms.adyeshach.core.util.submitEntity
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.util.Components
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.submit
 import taboolib.module.chat.uncolored
 import taboolib.platform.util.nextChat
 
@@ -24,7 +24,7 @@ class MetaText(val key: String) : MetaEditor {
         player.clearScreen()
         player.sendLang("editor-input-chat-component", plainMessage, plainMessage, def.replace('§', '&'))
         player.nextChat {
-            submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
+            player.submitEntity { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
         }
     }
 }

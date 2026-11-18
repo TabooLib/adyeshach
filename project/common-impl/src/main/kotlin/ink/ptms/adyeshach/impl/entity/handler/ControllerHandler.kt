@@ -101,7 +101,9 @@ open class ControllerHandler(protected val self: DefaultEntityInstance) : Contro
         val newList = locations.map { it.clone() }
         // 修正路径高度
         if (fixHeight) {
-            newList.forEach { p -> p.y = ChunkAccess.getChunkAccess(self.world).getBlockHighest(p.x, p.y, p.z) }
+            val chunkAccess = ChunkAccess.getChunkAccess(self.world)
+            // Folia：区块暂不可在当前线程访问时保留原高度
+            newList.forEach { p -> p.y = chunkAccess.getBlockHighestOrNull(p.x, p.y, p.z) ?: p.y }
         }
         // 设置移动路径
         self.moveFrames = ResultNavigation(newList.map { it.toVector() }.toMutableList()).toInterpolated(self.world, speed)

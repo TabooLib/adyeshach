@@ -1,10 +1,13 @@
 package ink.ptms.adyeshach.impl.manager
 
+import ink.ptms.adyeshach.core.entity.StandardTags
 import ink.ptms.adyeshach.core.entity.manager.PlayerManager
+import ink.ptms.adyeshach.core.util.FoliaSupport
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.DefaultAdyeshachBooster
 import ink.ptms.adyeshach.impl.ServerTours
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
+import ink.ptms.adyeshach.impl.util.EntityThreads
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.submit
@@ -27,12 +30,15 @@ object VisibilityRefreshCoordinator {
      * 当前游戏刻的已 setup 玩家列表
      * 由可见性周期启动时刷新，供 ViewPlayers / hide 等路径复用，避免重复扫在线玩家。
      */
+    @Volatile
     var playersInGameTick: Collection<Player> = listOf()
 
     // 单航班可见性周期；非空时跳过新的全量计算，避免异步任务堆积。
+    @Volatile
     private var visibilityCycle: VisibilityCycle? = null
 
     // 每次成功启动周期时递增，主线程只接受当前 epoch 的异步结果。
+    @Volatile
     private var visibilityEpoch = 0L
 
     /**
@@ -63,18 +69,22 @@ object VisibilityRefreshCoordinator {
         }
         val contexts = ArrayList<EntityVisibilityContext>()
         val entitySnapshots = ArrayList<EntityVisibilitySnapshot>()
+        // Folia：载具位置校准需要在实体所属线程执行，这里只收集，快照完成后统一投递
+        val prepareBatch = if (FoliaSupport.isFolia) EntityThreads.Batch<DefaultEntityInstance>() else null
         // 公共管理器
         captureManagerVisibility(
             manager = DefaultAdyeshachBooster.api.localPublicEntityManager,
             playerIndex = ALL_PLAYERS,
             contexts = contexts,
             snapshots = entitySnapshots,
+            prepareBatch = prepareBatch,
         )
         captureManagerVisibility(
             manager = DefaultAdyeshachBooster.api.localPublicEntityManagerTemporary,
             playerIndex = ALL_PLAYERS,
             contexts = contexts,
             snapshots = entitySnapshots,
+            prepareBatch = prepareBatch,
         )
         // 私有管理器
         setupPlayers.forEachIndexed { playerIndex, player ->
@@ -84,9 +94,13 @@ object VisibilityRefreshCoordinator {
                 playerIndex = playerIndex,
                 contexts = contexts,
                 snapshots = entitySnapshots,
+                prepareBatch = prepareBatch,
             )
         }
         val epoch = ++visibilityEpoch
+        prepareBatch?.dispatch { list ->
+            list.forEach { EntityThreads.runSafely { if (!it.isRemoved) it.visibilityHandler.prepareVisibilityCycle() } }
+        }
         val cycle = VisibilityCycle(epoch, contexts)
         visibilityCycle = cycle
         try {
@@ -121,6 +135,21 @@ object VisibilityRefreshCoordinator {
     }
 
     /**
+     * 准备实体的可见性检查
+     * 非 Folia：在主线程直接执行（原有逻辑）
+     * Folia：当前为全局区域线程，载具校准投递到实体所属线程；伴生实体仍跳过玩家距离扫描
+     */
+    private fun prepareVisibilityCycle(entity: DefaultEntityInstance, prepareBatch: EntityThreads.Batch<DefaultEntityInstance>?): Boolean {
+        if (prepareBatch == null) {
+            return entity.visibilityHandler.prepareVisibilityCycle()
+        }
+        if (!entity.isDisableVehicleCheckOnTick && (entity.cacheVehicleEntity != null || entity.hasPersistentTag(StandardTags.IS_IN_VEHICLE))) {
+            prepareBatch.add(entity, entity)
+        }
+        return !entity.isCompanion()
+    }
+
+    /**
      * 在主线程同步载具位置并采集基础字段快照与并发可见性集合只读引用
      */
     private fun captureManagerVisibility(
@@ -128,10 +157,11 @@ object VisibilityRefreshCoordinator {
         playerIndex: Int,
         contexts: MutableList<EntityVisibilityContext>,
         snapshots: MutableList<EntityVisibilitySnapshot>,
+        prepareBatch: EntityThreads.Batch<DefaultEntityInstance>?,
     ) {
         manager.activeEntity.forEach { rawEntity ->
             val entity = rawEntity as DefaultEntityInstance
-            if (entity.isRemoved || !entity.visibilityHandler.prepareVisibilityCycle()) {
+            if (entity.isRemoved || !prepareVisibilityCycle(entity, prepareBatch)) {
                 return@forEach
             }
             val position = entity.clientPosition
@@ -207,7 +237,8 @@ object VisibilityRefreshCoordinator {
             return
         }
         try {
-            candidates.forEach { candidate ->
+            // 非 Folia：在主线程按顺序提交；Folia：按实体所属线程分组投递后提交
+            EntityThreads.forEach(candidates, { cycle.entities[it.entitySlot].entity }) { candidate ->
                 val context = cycle.entities.getOrNull(candidate.entitySlot) ?: return@forEach
                 val entity = context.entity
                 val manager = context.manager

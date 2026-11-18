@@ -7,6 +7,7 @@ import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityTitleEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
+import ink.ptms.adyeshach.core.util.runInEntityRegion
 import ink.ptms.adyeshach.impl.entity.trait.Trait
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
 import org.bukkit.Bukkit
@@ -126,7 +127,8 @@ object TraitTitle : Trait() {
      * 更新全息内容
      */
     fun update(entity: EntityInstance) {
-        Bukkit.getOnlinePlayers().forEach { update(it, entity) }
+        // Folia：Kether 以玩家为执行者，切换到玩家所属线程（非 Folia 保持在当前线程直接执行）
+        Bukkit.getOnlinePlayers().forEach { player -> player.runInEntityRegion { update(player, entity) } }
     }
 
     /**

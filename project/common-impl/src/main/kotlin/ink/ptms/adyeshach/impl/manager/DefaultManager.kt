@@ -3,6 +3,7 @@ package ink.ptms.adyeshach.impl.manager
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
+import ink.ptms.adyeshach.impl.util.EntityThreads
 import org.bukkit.entity.Player
 import taboolib.platform.util.onlinePlayers
 import java.util.concurrent.ConcurrentHashMap
@@ -91,7 +92,7 @@ open class DefaultManager : BaseManager() {
     }
 
     override fun checkVisible() {
-        activeEntity.forEach { it.checkVisible() }
+        EntityThreads.forEach(activeEntity) { it.checkVisible() }
     }
 
     /**
@@ -101,7 +102,7 @@ open class DefaultManager : BaseManager() {
      * @param player 需要重新检查的玩家
      */
     open fun checkVisible(player: Player) {
-        activeEntity.forEach {
+        EntityThreads.forEach(activeEntity) {
             it as DefaultEntityInstance
             it.visibilityHandler.checkVisible(player)
         }
@@ -114,7 +115,7 @@ open class DefaultManager : BaseManager() {
      * @param player 需要重置的玩家
      */
     open fun resetVisible(player: Player) {
-        activeEntity.forEach {
+        EntityThreads.forEach(activeEntity) {
             if (!it.isCompanion() && it.isVisibleViewer(player)) {
                 it.visible(player, false)
             }

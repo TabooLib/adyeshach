@@ -1,12 +1,12 @@
 package ink.ptms.adyeshach.module.editor.meta.impl
 
+import ink.ptms.adyeshach.core.util.submitEntity
 import ink.ptms.adyeshach.core.entity.EntityInstance
 import ink.ptms.adyeshach.core.util.sendLang
 import ink.ptms.adyeshach.module.editor.clearScreen
 import ink.ptms.adyeshach.module.editor.lang
 import ink.ptms.adyeshach.module.editor.meta.MetaEditor
 import org.bukkit.entity.Player
-import taboolib.common.platform.function.submit
 import taboolib.common.util.unsafeLazy
 import taboolib.module.chat.uncolored
 import taboolib.module.configuration.Type
@@ -34,7 +34,7 @@ class MetaPrimitive(val key: String) : MetaEditor {
                 player.clearScreen()
                 player.sendLang("editor-input-chat", def.replace('§', '&'))
                 player.nextChat {
-                    submit { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
+                    player.submitEntity { player.chat("/adyeshach api ee adyeshach edit ${entity.uniqueId} m:$key->${it}") }
                 }
             }
         }
