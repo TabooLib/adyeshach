@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.type
 
+import ink.ptms.adyeshach.impl.util.submitOnEntityThread
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
 import ink.ptms.adyeshach.core.entity.type.AdyItem
@@ -9,7 +10,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
-import taboolib.common.platform.function.submit
 
 /**
  * Adyeshach
@@ -42,7 +42,7 @@ abstract class DefaultItem(entityTypes: EntityTypes) : DefaultEntity(entityTypes
                     headYaw = positionHandler.headYaw(),
                 )
                 // 修正向量
-                submit(delay = 1) {
+                submitOnEntityThread(delay = 1) {
                     setNoGravity(true)
                     sendVelocity(Vector(0, 0, 0))
                 }

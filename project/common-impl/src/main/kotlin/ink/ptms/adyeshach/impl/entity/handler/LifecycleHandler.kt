@@ -8,6 +8,8 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntitySpawnEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.DefaultAdyeshachAPI
 import ink.ptms.adyeshach.impl.entity.DefaultEntityInstance
+import ink.ptms.adyeshach.impl.util.EntityThreads
+import ink.ptms.adyeshach.impl.util.runOnEntityThread
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -38,6 +40,12 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
         // 已 visible 不重复 spawn
         if (viewer.name in self.viewPlayers.visible) {
             return false
+        }
+        // Folia：外部从非实体所属线程调用时（例如其他插件直接调用 API），转到实体所属线程执行
+        // 返回值为预判结果（当前尚未可见），实际生成在所属线程中复核；非 Folia 不会进入此分支
+        if (!EntityThreads.isOnEntityThread(self)) {
+            self.runOnEntityThread { if (!self.isRemoved) prepareSpawn(viewer, impl) }
+            return true
         }
         val visibleEventAllowed = self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, true).call()
         val spawnEventAllowed = if (visibleEventAllowed || self.isCompanion()) {
@@ -80,6 +88,11 @@ open class LifecycleHandler(protected val self: DefaultEntityInstance) {
         // 未 visible 不重复 destroy
         if (viewer.name !in self.viewPlayers.visible) {
             return false
+        }
+        // Folia：外部从非实体所属线程调用时，转到实体所属线程执行（同 prepareSpawn）
+        if (!EntityThreads.isOnEntityThread(self)) {
+            self.runOnEntityThread { prepareDestroy(viewer, impl) }
+            return true
         }
         val visibleEventAllowed = self.isDisableVisibleEvent || AdyeshachEntityVisibleEvent(self, viewer, false).call()
         val destroyEventAllowed = if (visibleEventAllowed || self.isCompanion()) {

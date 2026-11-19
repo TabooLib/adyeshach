@@ -130,7 +130,8 @@ open class MovementHandler(protected val self: DefaultEntityInstance) {
         // 只有在向下移动的时候才会进行碰撞检测
         if (deltaMovement.y < 0) {
             val chunkAccess = ChunkAccess.getChunkAccess(self.world)
-            val blockHeight = chunkAccess.getBlockTypeAndHeight(nextPosition.x, nextPosition.y, nextPosition.z)
+            // Folia：区块暂不可在当前线程访问时本刻跳过物理模拟，等待下一刻重试（非 Folia 总是可访问）
+            val blockHeight = chunkAccess.getBlockTypeAndHeightOrNull(nextPosition.x, nextPosition.y, nextPosition.z) ?: return
             if (blockHeight.first.isSolid) {
                 self.clientPosition = nextPosition
                 self.clientPosition.y = ifloor(nextPosition.y) + blockHeight.second + 0.01

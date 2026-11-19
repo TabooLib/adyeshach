@@ -5,6 +5,7 @@ import ink.ptms.adyeshach.core.entity.manager.EventBus
 import ink.ptms.adyeshach.core.entity.manager.ManagerType
 import ink.ptms.adyeshach.core.event.AdyeshachPlayerSetupEvent
 import ink.ptms.adyeshach.impl.manager.*
+import ink.ptms.adyeshach.impl.util.EntityThreads
 import org.bukkit.entity.Player
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -112,7 +113,7 @@ class DefaultAdyeshachAPI : AdyeshachAPI {
 
     override fun refreshEntityManager(player: Player) {
         // 对范围内可视且在观察者列表的实体进行刷新
-        localEntityFinder.getVisibleEntities(player).filter { !it.isCompanion() }.forEach {
+        EntityThreads.forEach(localEntityFinder.getVisibleEntities(player).filter { !it.isCompanion() }) {
             if (it.visible(player, false)) {
                 it.visible(player, true)
             }

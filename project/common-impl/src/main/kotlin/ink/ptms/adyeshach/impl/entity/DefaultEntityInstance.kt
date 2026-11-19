@@ -72,6 +72,10 @@ abstract class DefaultEntityInstance(entityType: EntityTypes = EntityTypes.ZOMBI
 
     override var isRemoved = false
     override var isCreated = false
+
+    /** Folia：最近一次投递 tick 任务时的全局刻，0 表示没有尚未执行的 tick 任务 */
+    @Volatile
+    var foliaTickDispatchedAt = 0L
     @Expose override var isNitwit = false
     @Expose override var moveSpeed = 0.2
     override var brain: Brain? = EntityHandlerFactory.createBrain(this)

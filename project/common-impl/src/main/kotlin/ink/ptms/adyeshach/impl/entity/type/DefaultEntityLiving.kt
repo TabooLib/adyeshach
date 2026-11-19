@@ -1,5 +1,6 @@
 package ink.ptms.adyeshach.impl.entity.type
 
+import ink.ptms.adyeshach.impl.util.submitOnEntityThread
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.entity.EntityTypes
@@ -12,7 +13,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
 import java.util.concurrent.ConcurrentHashMap
 
@@ -54,11 +54,11 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
                 )
                 // 更新装备
                 if (isEquipmentRefreshOnSpawn) {
-                    submit(delay = 1) { updateEquipment() }
+                    submitOnEntityThread(delay = 1) { updateEquipment() }
                 }
                 // 更新死亡状态
                 if (isDie) {
-                    submit(delay = 5) { die(viewer = viewer) }
+                    submitOnEntityThread(delay = 5) { die(viewer = viewer) }
                 }
             }
         } else {
@@ -77,7 +77,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
         isDie = die
         if (isDie) {
             setHealth(-1f)
-            submit(delay = 15) {
+            submitOnEntityThread(delay = 15) {
                 if (isDie) {
                     setHealth(1f)
                 }
@@ -95,7 +95,7 @@ abstract class DefaultEntityLiving(entityType: EntityTypes) : DefaultEntity(enti
             val operator = Adyeshach.api().getMinecraftAPI().getEntityOperator()
             val metadataHandler = Adyeshach.api().getMinecraftAPI().getEntityMetadataHandler()
             operator.updateEntityMetadata(viewer, index, listOf(metadataHandler.createFloatMeta(healthMeta.index, -1f)))
-            submit(delay = 15) {
+            submitOnEntityThread(delay = 15) {
                 operator.updateEntityMetadata(viewer, index, listOf(metadataHandler.createFloatMeta(healthMeta.index, -1f)))
             }
         } else {

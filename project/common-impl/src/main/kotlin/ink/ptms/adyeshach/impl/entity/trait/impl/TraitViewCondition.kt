@@ -9,6 +9,7 @@ import ink.ptms.adyeshach.core.event.AdyeshachEntityInteractEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityRemoveEvent
 import ink.ptms.adyeshach.core.event.AdyeshachEntityVisibleEvent
 import ink.ptms.adyeshach.impl.entity.trait.Trait
+import ink.ptms.adyeshach.impl.util.EntityThreads
 import ink.ptms.adyeshach.impl.util.Inputs.inputBook
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
@@ -34,17 +35,24 @@ object TraitViewCondition : Trait() {
     val checkVersions = ConcurrentHashMap<String, Long>()
 
     /** Kether 异步结果的主线程提交队列，避免为每个实体和玩家分别创建调度任务。 */
-    val pendingVisibilityUpdates = ConcurrentLinkedQueue<Runnable>()
+    val pendingVisibilityUpdates = ConcurrentLinkedQueue<Pair<EntityInstance, Runnable>>()
 
     /**
      * 在主线程批量提交已完成的可见条件结果
      */
     @Schedule(period = 1)
     fun flushVisibilityUpdates() {
+        if (pendingVisibilityUpdates.isEmpty()) {
+            return
+        }
+        val updates = ArrayList<Pair<EntityInstance, Runnable>>()
         while (true) {
-            val update = pendingVisibilityUpdates.poll() ?: return
+            updates += pendingVisibilityUpdates.poll() ?: break
+        }
+        // 非 Folia：在主线程按顺序提交；Folia：在实体所属线程提交
+        EntityThreads.forEach(updates, { it.first }) { update ->
             try {
-                update.run()
+                update.second.run()
             } catch (ex: Throwable) {
                 // 单个脚本结果异常不能阻断后续队列，也不能让周期任务被调度器取消。
                 ex.printStackTrace()
@@ -54,7 +62,8 @@ object TraitViewCondition : Trait() {
 
     @Schedule(period = 20)
     fun update() {
-        Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities { !it.isDerived() }.forEach { it.updateTraitViewCondition() }
+        // Folia：可视条件以实体为单位在实体所属线程检查（非 Folia 在主线程按顺序执行）
+        EntityThreads.forEach(Adyeshach.api().getPublicEntityManager(ManagerType.PERSISTENT).getEntities { !it.isDerived() }) { it.updateTraitViewCondition() }
     }
 
     @SubscribeEvent
@@ -179,7 +188,7 @@ fun EntityInstance.updateTraitViewCondition() {
                     listOf(this@updateTraitViewCondition)
                 ).bool { cond ->
                     // Kether Future 的回调线程不固定，可见集合与发包只能回主线程提交
-                    TraitViewCondition.pendingVisibilityUpdates.add(Runnable {
+                    TraitViewCondition.pendingVisibilityUpdates.add(this@updateTraitViewCondition to Runnable {
                         if (TraitViewCondition.checkVersions[uniqueId] != checkVersion) {
                             return@Runnable
                         }

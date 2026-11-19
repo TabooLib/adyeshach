@@ -128,7 +128,8 @@ class DefaultMinecraftEntitySpawner : MinecraftEntitySpawner {
                 }.build() as NMS16PacketDataSerializer)
             }
             // 1.17, 1.18, 1.19, 1.20, 1.21
-            9, 10, 11, 12, 13, 14, 15 -> {
+            // 26.x 起 major 继续递增（26.1=14, 26.2=15, 26.3=16 ...）
+            in 9..Int.MAX_VALUE -> {
                 if (MinecraftVersion.versionId >= 12005) {
                     NMS21.instance.createSpawnEntity(
                         entityId,

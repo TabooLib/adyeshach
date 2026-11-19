@@ -1,5 +1,7 @@
 package ink.ptms.adyeshach.impl.entity.type
 
+import ink.ptms.adyeshach.core.util.submitEntity
+import ink.ptms.adyeshach.impl.util.submitOnEntityThread
 import com.google.gson.annotations.Expose
 import ink.ptms.adyeshach.core.Adyeshach
 import ink.ptms.adyeshach.core.bukkit.BukkitAnimation
@@ -18,7 +20,6 @@ import ink.ptms.adyeshach.impl.network.NetworkMineskin
 import ink.ptms.adyeshach.impl.util.ifTrue
 import org.bukkit.entity.Player
 import taboolib.common.platform.Schedule
-import taboolib.common.platform.function.submit
 import taboolib.common5.cbool
 import taboolib.common5.cint
 import taboolib.library.xseries.XAttribute
@@ -100,17 +101,17 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
                 // 启用皮肤
                 initSkin()
                 // 修复装备无法正常显示的问题
-                submit(delay = 1) {
+                submitOnEntityThread(delay = 1) {
                     updateEquipment(viewer)
                 }
                 // 更新状态
-                submit(delay = 5) {
+                submitOnEntityThread(delay = 5) {
                     if (isDie) die(viewer = viewer)
                     if (isSleepingLegacy) setSleeping(true)
                 }
                 // 在低版本中，如果玩家被隐藏，则需要延迟 10  ticks 后移除玩家信息
                 if (isHideFromTabList && !GameProfile.isListedSupported) {
-                    submit(delay = 10) { removePlayerInfo(viewer) }
+                    submitOnEntityThread(delay = 10) { removePlayerInfo(viewer) }
                 }
                 if (MinecraftVersion.versionId >= 12005) {
                     Adyeshach.api().getMinecraftAPI().getEntityOperator().updateAttribute(viewer, index, mapOf(XAttribute.SCALE to score.toDouble()))
@@ -293,7 +294,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
         removePlayerInfo(viewer)
         addPlayerInfo(viewer)
         // 短暂延迟后删除玩家信息
-        submit(delay = 10) {
+        submitOnEntityThread(delay = 10) {
             if (isHideFromTabList && !GameProfile.isListedSupported) {
                 removePlayerInfo(viewer)
             }
@@ -331,7 +332,7 @@ abstract class DefaultHuman(entityTypes: EntityTypes) : DefaultEntityLiving(enti
             onlinePlayers.forEach {
                 // 必须在主线程执行：异步发出的 remove/add 玩家信息包可能插入主线程 "添加玩家信息 → 生成实体" 之间，
                 // 客户端收到生成包时找不到玩家信息会直接丢弃该实体，而服务端仍认为可见
-                submit(delay = i++) {
+                it.submitEntity(delay = i++) {
                     finder.getVisibleEntities(it).filterIsInstance<AdyHuman>().forEach { human ->
                         human.refreshPlayerInfo(it)
                     }

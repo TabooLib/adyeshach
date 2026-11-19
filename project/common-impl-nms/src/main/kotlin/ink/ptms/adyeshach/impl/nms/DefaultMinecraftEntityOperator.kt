@@ -60,7 +60,8 @@ class DefaultMinecraftEntityOperator : MinecraftEntityOperator {
             }
             // 1.17, 1.18, 1.19, 1.20, 1.21
             // 使用带有 DataSerializer 的构造函数生成数据包
-            9, 10, 11, 12, 13, 14, 15 -> {
+            // 26.x 起 major 继续递增（26.1=14, 26.2=15, 26.3=16 ...）
+            in 9..Int.MAX_VALUE -> {
                 val data = createDataSerializer {
                     writeVarInt(entityId)
                     writeDouble(location.x)
